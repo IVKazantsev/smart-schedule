@@ -5,5 +5,7 @@
  */
 
 ?>
+</div>
+</div> <!-- External div -->
 </body>
 </html>

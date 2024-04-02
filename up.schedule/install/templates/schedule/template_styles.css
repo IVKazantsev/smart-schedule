@@ -1,0 +1,48 @@
+@import "https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css";
+
+body {
+	min-height: 100vh;
+}
+
+.box {
+	padding: 0!important;
+}
+
+a:hover {
+	border-radius: 5px;
+}
+
+.note-box {
+	height: 15px;
+	width: 15px;
+}
+
+.group-selection, .group-selection-trigger {
+	width: 100%;
+}
+
+.column-404 {
+	width: 100%;
+}
+
+.is-60-height {
+	height: 60px;
+}
+
+.is-60-height-child {
+	height: 100%;
+}
+
+.add-couple-button {
+	line-height:60px;
+}
+
+.dropdown-menu {
+	width: 100%;
+	height: 50vh;
+	overflow-y: scroll;
+}
+
+.dropdown-menu::-webkit-scrollbar {
+	display: none;
+}
