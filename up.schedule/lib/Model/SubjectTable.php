@@ -6,6 +6,8 @@ use Bitrix\Main\Localization\Loc,
 	Bitrix\Main\ORM\Fields\IntegerField,
 	Bitrix\Main\ORM\Fields\StringField,
 	Bitrix\Main\ORM\Fields\Validators\LengthValidator;
+use Bitrix\Main\ORM\Fields\Relations\Reference;
+use Bitrix\Main\ORM\Query\Join;
 
 Loc::loadMessages(__FILE__);
 
@@ -65,6 +67,11 @@ class SubjectTable extends DataManager
 					'title' => Loc::getMessage('SUBJECT_ENTITY_AUDIENCE_TYPE_ID_FIELD')
 				]
 			),
+			(new Reference(
+				'AUDIENCE_TYPE',
+				AudienceTypeTable::class,
+				Join::on('this.AUDIENCE_TYPE_ID', 'ref.ID')
+			))->configureJoinType('inner'),
 		];
 	}
 

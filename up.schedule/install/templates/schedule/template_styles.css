@@ -70,3 +70,8 @@ a:hover {
 	border-bottom-right-radius: 5px;
 	border-bottom-left-radius: 5px;
 }
+
+.couples .couple:last-child {
+	border-bottom-right-radius: 5px;
+	border-bottom-left-radius: 5px;
+}

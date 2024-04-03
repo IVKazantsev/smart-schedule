@@ -4,6 +4,8 @@ namespace Up\Schedule\Model;
 use Bitrix\Main\Localization\Loc,
 	Bitrix\Main\ORM\Data\DataManager,
 	Bitrix\Main\ORM\Fields\IntegerField;
+use Bitrix\Main\ORM\Fields\Relations\Reference;
+use Bitrix\Main\ORM\Query\Join;
 
 Loc::loadMessages(__FILE__);
 
@@ -47,6 +49,11 @@ class GroupSubjectTable extends DataManager
 					'title' => Loc::getMessage('GROUP_SUBJECT_ENTITY_SUBJECT_ID_FIELD')
 				]
 			),
+			(new Reference(
+				'SUBJECT',
+				SubjectTable::class,
+				Join::on('this.SUBJECT_ID', 'ref.ID')
+			))->configureJoinType('inner'),
 			new IntegerField(
 				'GROUP_ID',
 				[
@@ -54,6 +61,11 @@ class GroupSubjectTable extends DataManager
 					'title' => Loc::getMessage('GROUP_SUBJECT_ENTITY_GROUP_ID_FIELD')
 				]
 			),
+			(new Reference(
+				'GROUP',
+				GroupTable::class,
+				Join::on('this.GROUP_ID', 'ref.ID')
+			))->configureJoinType('inner'),
 			new IntegerField(
 				'HOURS_NUMBER',
 				[

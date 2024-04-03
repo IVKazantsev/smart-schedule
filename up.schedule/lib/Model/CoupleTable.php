@@ -6,6 +6,9 @@ use Bitrix\Main\Localization\Loc,
 	Bitrix\Main\ORM\Fields\IntegerField,
 	Bitrix\Main\ORM\Fields\StringField,
 	Bitrix\Main\ORM\Fields\Validators\LengthValidator;
+use Bitrix\Main\ORM\Fields\Relations\Reference;
+use Bitrix\Main\ORM\Query\Join;
+use Bitrix\Main\UserTable;
 
 Loc::loadMessages(__FILE__);
 
@@ -53,6 +56,11 @@ class CoupleTable extends DataManager
 					'title' => Loc::getMessage('COUPLE_ENTITY_GROUP_ID_FIELD')
 				]
 			),
+			(new Reference(
+				'GROUP',
+				GroupTable::class,
+				Join::on('this.GROUP_ID', 'ref.ID')
+			))->configureJoinType('inner'),
 			new IntegerField(
 				'SUBJECT_ID',
 				[
@@ -60,6 +68,11 @@ class CoupleTable extends DataManager
 					'title' => Loc::getMessage('COUPLE_ENTITY_SUBJECT_ID_FIELD')
 				]
 			),
+			(new Reference(
+				'SUBJECT',
+				SubjectTable::class,
+				Join::on('this.SUBJECT_ID', 'ref.ID')
+			))->configureJoinType('inner'),
 			new IntegerField(
 				'TEACHER_ID',
 				[
@@ -67,6 +80,11 @@ class CoupleTable extends DataManager
 					'title' => Loc::getMessage('COUPLE_ENTITY_TEACHER_ID_FIELD')
 				]
 			),
+			(new Reference(
+				'TEACHER',
+				UserTable::class,
+				Join::on('this.TEACHER_ID', 'ref.ID')
+			))->configureJoinType('inner'),
 			new IntegerField(
 				'AUDIENCE_ID',
 				[
@@ -74,6 +92,11 @@ class CoupleTable extends DataManager
 					'title' => Loc::getMessage('COUPLE_ENTITY_AUDIENCE_ID_FIELD')
 				]
 			),
+			(new Reference(
+				'AUDIENCE',
+				AudienceTable::class,
+				Join::on('this.AUDIENCE_ID', 'ref.ID')
+			))->configureJoinType('inner'),
 			new IntegerField(
 				'WEEK_DAY',
 				[
