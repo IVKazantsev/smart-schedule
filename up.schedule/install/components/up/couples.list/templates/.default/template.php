@@ -35,27 +35,93 @@
 			</div>
 		</div>
 		<div class="column is-1">
-			<a href="/add" class="box has-text-centered is-size-4 is-60-height add-couple-button">+</a>
+			<a href="/add-couple/" class="box has-text-centered is-size-4 is-60-height add-couple-button">+</a>
 		</div>
 	</div>
 	<div class="columns">
-		<div class="column">
-			Понедельник
+		<div class="column is-2">
+			<div class="box has-text-centered">
+				<div class="box day-of-week m-0 is-60-height is-flex is-align-items-center is-justify-content-center">
+					<?= GetMessage("MONDAY") ?>
+				</div>
+				<div class="box couple m-0 is-flex is-align-items-center is-justify-content-center">Дифференциальные уравнения (практика)<br>Ишанов С.А.<br>404 ауд.</div>
+				<div class="box couple m-0 is-flex is-align-items-center is-justify-content-center">Математическое моделирование (лекция)<br>Ишанов С.А.<br>231 ауд.</div>
+				<div class="box couple m-0 is-flex is-align-items-center is-justify-content-center"></div>
+				<div class="box couple m-0 is-flex is-align-items-center is-justify-content-center"></div>
+				<div class="box couple m-0 is-flex is-align-items-center is-justify-content-center"></div>
+				<div class="box couple m-0 is-flex is-align-items-center is-justify-content-center"></div>
+				<div class="box couple last-couple m-0 is-flex is-align-items-center is-justify-content-center"></div>
+			</div>
 		</div>
-		<div class="column">
-			Вторник
+		<div class="column is-2">
+			<div class="box has-text-centered">
+				<div class="box day-of-week m-0 is-60-height is-flex is-align-items-center is-justify-content-center">
+					<?= GetMessage("TUESDAY") ?>
+				</div>
+				<div class="box couple m-0 is-flex is-align-items-center is-justify-content-center">Математический анализ (лекция)<br>Худенко В.Н.<br>231 ауд.</div>
+				<div class="box couple m-0 is-flex is-align-items-center is-justify-content-center"></div>
+				<div class="box couple m-0 is-flex is-align-items-center is-justify-content-center"></div>
+				<div class="box couple m-0 is-flex is-align-items-center is-justify-content-center"></div>
+				<div class="box couple m-0 is-flex is-align-items-center is-justify-content-center"></div>
+				<div class="box couple m-0 is-flex is-align-items-center is-justify-content-center"></div>
+				<div class="box couple last-couple m-0 is-flex is-align-items-center is-justify-content-center"></div>
+			</div>
 		</div>
-		<div class="column">
-			Среда
+		<div class="column is-2">
+			<div class="box has-text-centered">
+				<div class="box day-of-week m-0 is-60-height is-flex is-align-items-center is-justify-content-center">
+					<?= GetMessage("WEDNESDAY") ?>
+				</div>
+				<div class="box couple m-0 is-flex is-align-items-center is-justify-content-center"></div>
+				<div class="box couple m-0 is-flex is-align-items-center is-justify-content-center"></div>
+				<div class="box couple m-0 is-flex is-align-items-center is-justify-content-center"></div>
+				<div class="box couple m-0 is-flex is-align-items-center is-justify-content-center"></div>
+				<div class="box couple m-0 is-flex is-align-items-center is-justify-content-center"></div>
+				<div class="box couple m-0 is-flex is-align-items-center is-justify-content-center"></div>
+				<div class="box couple last-couple m-0 is-flex is-align-items-center is-justify-content-center"></div>
+			</div>
 		</div>
-		<div class="column">
-			Четверг
+		<div class="column is-2">
+			<div class="box has-text-centered">
+				<div class="box day-of-week m-0 is-60-height is-flex is-align-items-center is-justify-content-center">
+					<?= GetMessage("THURSDAY") ?>
+				</div>
+				<div class="box couple m-0 is-flex is-align-items-center is-justify-content-center"></div>
+				<div class="box couple m-0 is-flex is-align-items-center is-justify-content-center"></div>
+				<div class="box couple m-0 is-flex is-align-items-center is-justify-content-center"></div>
+				<div class="box couple m-0 is-flex is-align-items-center is-justify-content-center"></div>
+				<div class="box couple m-0 is-flex is-align-items-center is-justify-content-center"></div>
+				<div class="box couple m-0 is-flex is-align-items-center is-justify-content-center"></div>
+				<div class="box couple last-couple m-0 is-flex is-align-items-center is-justify-content-center"></div>
+			</div>
 		</div>
-		<div class="column">
-			Пятница
+		<div class="column is-2">
+			<div class="box has-text-centered">
+				<div class="box day-of-week m-0 is-60-height is-flex is-align-items-center is-justify-content-center">
+					<?= GetMessage("FRIDAY") ?>
+				</div>
+				<div class="box couple m-0 is-flex is-align-items-center is-justify-content-center"></div>
+				<div class="box couple m-0 is-flex is-align-items-center is-justify-content-center"></div>
+				<div class="box couple m-0 is-flex is-align-items-center is-justify-content-center"></div>
+				<div class="box couple m-0 is-flex is-align-items-center is-justify-content-center"></div>
+				<div class="box couple m-0 is-flex is-align-items-center is-justify-content-center"></div>
+				<div class="box couple m-0 is-flex is-align-items-center is-justify-content-center"></div>
+				<div class="box couple last-couple m-0 is-flex is-align-items-center is-justify-content-center"></div>
+			</div>
 		</div>
-		<div class="column">
-			Суббота
+		<div class="column is-2">
+			<div class="box has-text-centered">
+				<div class="box day-of-week m-0 is-60-height is-flex is-align-items-center is-justify-content-center">
+					<?= GetMessage("SATURDAY") ?>
+				</div>
+				<div class="box couple m-0 is-flex is-align-items-center is-justify-content-center"></div>
+				<div class="box couple m-0 is-flex is-align-items-center is-justify-content-center"></div>
+				<div class="box couple m-0 is-flex is-align-items-center is-justify-content-center"></div>
+				<div class="box couple m-0 is-flex is-align-items-center is-justify-content-center"></div>
+				<div class="box couple m-0 is-flex is-align-items-center is-justify-content-center"></div>
+				<div class="box couple m-0 is-flex is-align-items-center is-justify-content-center"></div>
+				<div class="box couple last-couple m-0 is-flex is-align-items-center is-justify-content-center"></div>
+			</div>
 		</div>
 	</div>
 </div>
