@@ -19,7 +19,7 @@ if (!defined("B_PROLOG_INCLUDED") || B_PROLOG_INCLUDED !== true)
 			<li class="is-60-height-child"><a class="is-60-height-child is-flex is-align-items-center is-justify-content-center" href="/profile/">Иванов Иван<br>Администратор</a></li>
 		</ul>
 		<ul class="menu-list box">
-			<li><a class="is-60-height is-flex is-align-items-center is-justify-content-center" href="/make/">Составить расписание</a></li>
+			<li><a class="is-60-height is-flex is-align-items-center is-justify-content-center" href="/make-schedule/">Составить расписание</a></li>
 			<li><a class="is-60-height is-flex is-align-items-center is-justify-content-center" href="/optimize/">Оптимизировать расписание</a></li>
 			<li><a class="is-60-height is-flex is-align-items-center is-justify-content-center" href="/statistics/">Статистика</a></li>
 		</ul>
@@ -27,7 +27,7 @@ if (!defined("B_PROLOG_INCLUDED") || B_PROLOG_INCLUDED !== true)
 			Примечания:
 			<div class="note is-flex is-flex-direction-row columns is-centered mb-0">
 				<div class="column is-2 is-flex is-align-items-center pr-0">
-				<div class="note-box has-background-warning ml-auto"></div>
+					<div class="note-box has-background-warning ml-auto"></div>
 				</div>
 				<div class="column is-9">- преподаватель или группа заняты</div>
 			</div>
