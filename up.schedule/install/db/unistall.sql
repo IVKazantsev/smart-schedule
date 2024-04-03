@@ -6,3 +6,6 @@ DROP TABLE IF EXISTS up_schedule_group_subject;
 DROP TABLE IF EXISTS up_schedule_subject_teacher;
 DROP TABLE IF EXISTS up_schedule_role;
 DROP TABLE IF EXISTS up_schedule_couple;
+
+DROP TABLE IF EXISTS up_schedule_user_role;
+DROP TABLE IF EXISTS up_schedule_user_group;

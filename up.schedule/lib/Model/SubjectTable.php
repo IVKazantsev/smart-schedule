@@ -6,6 +6,7 @@ use Bitrix\Main\Localization\Loc,
 	Bitrix\Main\ORM\Fields\IntegerField,
 	Bitrix\Main\ORM\Fields\StringField,
 	Bitrix\Main\ORM\Fields\Validators\LengthValidator;
+use Bitrix\Main\ORM\Fields\Relations\ManyToMany;
 use Bitrix\Main\ORM\Fields\Relations\Reference;
 use Bitrix\Main\ORM\Query\Join;
 
@@ -72,6 +73,10 @@ class SubjectTable extends DataManager
 				AudienceTypeTable::class,
 				Join::on('this.AUDIENCE_TYPE_ID', 'ref.ID')
 			))->configureJoinType('inner'),
+			(new ManyToMany(
+				'GROUPS',
+				GroupTable::class
+			))->configureTableName('up_schedule_group_subject'),
 		];
 	}
 

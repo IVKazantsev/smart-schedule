@@ -6,6 +6,7 @@ use Bitrix\Main\Localization\Loc,
 	Bitrix\Main\ORM\Fields\IntegerField,
 	Bitrix\Main\ORM\Fields\StringField,
 	Bitrix\Main\ORM\Fields\Validators\LengthValidator;
+use Bitrix\Main\ORM\Fields\Relations\ManyToMany;
 
 Loc::loadMessages(__FILE__);
 
@@ -57,6 +58,10 @@ class GroupTable extends DataManager
 					'title' => Loc::getMessage('GROUP_ENTITY_TITLE_FIELD')
 				]
 			),
+			(new ManyToMany(
+				'SUBJECTS',
+				SubjectTable::class
+			))->configureTableName('up_schedule_group_subject'),
 		];
 	}
 

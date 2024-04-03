@@ -112,3 +112,28 @@ __scheduleMigrate(3, function ($updater, $DB)
 	}
 
 });
+
+__scheduleMigrate(5, function ($updater, $DB)
+{
+	if (
+		$updater->CanUpdateDatabase()
+		&& !$updater->TableExists('up_schedule_user_role')
+		&& !$updater->TableExists('up_schedule_user_group')
+	)
+	{
+		$DB->query("
+			CREATE TABLE IF NOT EXISTS up_schedule_user_role
+			(
+				USER_ID INT NOT NULL,
+				ROLE_ID INT NOT NULL
+			);
+		");
+		$DB->query("
+			CREATE TABLE IF NOT EXISTS up_schedule_user_group
+			(
+				USER_ID INT NOT NULL,
+				GROUP_ID INT NOT NULL
+			);
+		");
+	}
+});
