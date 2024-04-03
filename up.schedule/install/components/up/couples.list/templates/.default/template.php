@@ -30,107 +30,24 @@
 		</div>
 	</div>
 	<div class="columns">
-		<div class="column is-2">
-			<div class="box has-text-centered couples">
-				<div class="box day-of-week m-0 is-60-height is-flex is-align-items-center is-justify-content-center">
-					<?= GetMessage("MONDAY") ?>
-				</div>
-				<?php for ($i = 1; $i <= COUPLES_NUMBER_PER_DAY; $i++): ?>
-					<div class="box couple m-0 is-flex is-align-items-center is-justify-content-center">
-						<?php if(array_key_exists(1, $arResult['SORTED_COUPLES'])
-							&& array_key_exists($i, $arResult['SORTED_COUPLES'][1])): ?>
-							<?= htmlspecialcharsbx($arResult['SORTED_COUPLES'][1][$i]->getSubject()->getTitle()) ?>
-							<br>
-							<?= htmlspecialcharsbx($arResult['SORTED_COUPLES'][1][$i]->getAudience()->getNumber()) ?>
-						<?php endif; ?>
+		<?php foreach (GetMessage("DAYS_OF_WEEK") as $dayNumber => $day): ?>
+			<div class="column is-2">
+				<div class="box has-text-centered couples">
+					<div class="box day-of-week m-0 is-60-height is-flex is-align-items-center is-justify-content-center">
+						<?= $day ?>
 					</div>
-				<?php endfor; ?>
-			</div>
-		</div>
-		<div class="column is-2">
-			<div class="box has-text-centered couples">
-				<div class="box day-of-week m-0 is-60-height is-flex is-align-items-center is-justify-content-center">
-					<?= GetMessage("TUESDAY") ?>
+					<?php for ($i = 1; $i <= COUPLES_NUMBER_PER_DAY; $i++): ?>
+						<div class="box couple m-0 is-flex is-align-items-center is-justify-content-center">
+							<?php if(array_key_exists($dayNumber, $arResult['SORTED_COUPLES'])
+								&& array_key_exists($i, $arResult['SORTED_COUPLES'][$dayNumber])): ?>
+								<?= htmlspecialcharsbx($arResult['SORTED_COUPLES'][$dayNumber][$i]->getSubject()->getTitle()) ?>
+								<br>
+								<?= htmlspecialcharsbx($arResult['SORTED_COUPLES'][$dayNumber][$i]->getAudience()->getNumber()) ?>
+							<?php endif; ?>
+						</div>
+					<?php endfor; ?>
 				</div>
-				<?php for ($i = 1; $i <= COUPLES_NUMBER_PER_DAY; $i++): ?>
-					<div class="box couple m-0 is-flex is-align-items-center is-justify-content-center">
-						<?php if(array_key_exists(2, $arResult['SORTED_COUPLES'])
-							&& array_key_exists($i, $arResult['SORTED_COUPLES'][2])): ?>
-							<?= htmlspecialcharsbx($arResult['SORTED_COUPLES'][2][$i]->getSubject()->getTitle()) ?>
-							<br>
-							<?= htmlspecialcharsbx($arResult['SORTED_COUPLES'][2][$i]->getAudience()->getNumber()) ?>
-						<?php endif; ?>
-					</div>
-				<?php endfor; ?>
 			</div>
-		</div>
-		<div class="column is-2">
-			<div class="box has-text-centered couples">
-				<div class="box day-of-week m-0 is-60-height is-flex is-align-items-center is-justify-content-center">
-					<?= GetMessage("WEDNESDAY") ?>
-				</div>
-				<?php for ($i = 1; $i <= COUPLES_NUMBER_PER_DAY; $i++): ?>
-					<div class="box couple m-0 is-flex is-align-items-center is-justify-content-center">
-						<?php if(array_key_exists(3, $arResult['SORTED_COUPLES'])
-							&& array_key_exists($i, $arResult['SORTED_COUPLES'][3])): ?>
-							<?= htmlspecialcharsbx($arResult['SORTED_COUPLES'][3][$i]->getSubject()->getTitle()) ?>
-							<br>
-							<?= htmlspecialcharsbx($arResult['SORTED_COUPLES'][3][$i]->getAudience()->getNumber()) ?>
-						<?php endif; ?>
-					</div>
-				<?php endfor; ?>
-			</div>
-		</div>
-		<div class="column is-2">
-			<div class="box has-text-centered couples">
-				<div class="box day-of-week m-0 is-60-height is-flex is-align-items-center is-justify-content-center">
-					<?= GetMessage("THURSDAY") ?>
-				</div>
-				<?php for ($i = 1; $i <= COUPLES_NUMBER_PER_DAY; $i++): ?>
-					<div class="box couple m-0 is-flex is-align-items-center is-justify-content-center">
-						<?php if(array_key_exists(4, $arResult['SORTED_COUPLES'])
-							&& array_key_exists($i, $arResult['SORTED_COUPLES'][4])): ?>
-							<?= htmlspecialcharsbx($arResult['SORTED_COUPLES'][4][$i]->getSubject()->getTitle()) ?>
-							<br>
-							<?= htmlspecialcharsbx($arResult['SORTED_COUPLES'][4][$i]->getAudience()->getNumber()) ?>
-						<?php endif; ?>
-					</div>
-				<?php endfor; ?>
-			</div>
-		</div>
-		<div class="column is-2">
-			<div class="box has-text-centered couples">
-				<div class="box day-of-week m-0 is-60-height is-flex is-align-items-center is-justify-content-center">
-					<?= GetMessage("FRIDAY") ?>
-				</div>
-				<?php for ($i = 1; $i <= COUPLES_NUMBER_PER_DAY; $i++): ?>
-					<div class="box couple m-0 is-flex is-align-items-center is-justify-content-center">
-						<?php if(array_key_exists(5, $arResult['SORTED_COUPLES'])
-							&& array_key_exists($i, $arResult['SORTED_COUPLES'][5])): ?>
-							<?= htmlspecialcharsbx($arResult['SORTED_COUPLES'][5][$i]->getSubject()->getTitle()) ?>
-							<br>
-							<?= htmlspecialcharsbx($arResult['SORTED_COUPLES'][5][$i]->getAudience()->getNumber()) ?>
-						<?php endif; ?>
-					</div>
-				<?php endfor; ?>
-			</div>
-		</div>
-		<div class="column is-2">
-			<div class="box has-text-centered couples">
-				<div class="box day-of-week m-0 is-60-height is-flex is-align-items-center is-justify-content-center">
-					<?= GetMessage("SATURDAY") ?>
-				</div>
-				<?php for ($i = 1; $i <= COUPLES_NUMBER_PER_DAY; $i++): ?>
-					<div class="box couple m-0 is-flex is-align-items-center is-justify-content-center">
-						<?php if(array_key_exists(6, $arResult['SORTED_COUPLES'])
-							&& array_key_exists($i, $arResult['SORTED_COUPLES'][6])): ?>
-						<?= htmlspecialcharsbx($arResult['SORTED_COUPLES'][6][$i]->getSubject()->getTitle()) ?>
-						<br>
-						<?= htmlspecialcharsbx($arResult['SORTED_COUPLES'][6][$i]->getAudience()->getNumber()) ?>
-						<?php endif; ?>
-					</div>
-				<?php endfor; ?>
-			</div>
-		</div>
+		<?php endforeach; ?>
 	</div>
 </div>
