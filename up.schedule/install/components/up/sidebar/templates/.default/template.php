@@ -16,12 +16,12 @@ if (!defined("B_PROLOG_INCLUDED") || B_PROLOG_INCLUDED !== true)
 <div class="column is-one-fifth">
 	<aside class="menu has-text-centered is-flex is-flex-direction-column">
 		<ul class="menu-list box is-60-height">
-			<li class="is-60-height-child"><a class="is-60-height-child" href="/profile/">Иванов Иван<br>Администратор</a></li>
+			<li class="is-60-height-child"><a class="is-60-height-child is-flex is-align-items-center is-justify-content-center" href="/profile/">Иванов Иван<br>Администратор</a></li>
 		</ul>
 		<ul class="menu-list box">
-			<li><a href="/make/">Составить расписание</a></li>
-			<li><a href="/optimize/">Оптимизировать расписание</a></li>
-			<li><a href="/statistics/">Статистика</a></li>
+			<li><a class="is-60-height is-flex is-align-items-center is-justify-content-center" href="/make/">Составить расписание</a></li>
+			<li><a class="is-60-height is-flex is-align-items-center is-justify-content-center" href="/optimize/">Оптимизировать расписание</a></li>
+			<li><a class="is-60-height is-flex is-align-items-center is-justify-content-center" href="/statistics/">Статистика</a></li>
 		</ul>
 		<div class="box notes">
 			Примечания:
