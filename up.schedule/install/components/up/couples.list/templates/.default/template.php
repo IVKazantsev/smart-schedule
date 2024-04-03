@@ -42,7 +42,7 @@
 		<div class="column is-2">
 			<div class="box has-text-centered">
 				<div class="box day-of-week m-0 is-60-height is-flex is-align-items-center is-justify-content-center">
-					Понедельник
+					<?= GetMessage("MONDAY") ?>
 				</div>
 				<div class="box couple m-0 is-flex is-align-items-center is-justify-content-center">Дифференциальные уравнения (практика)<br>Ишанов С.А.<br>404 ауд.</div>
 				<div class="box couple m-0 is-flex is-align-items-center is-justify-content-center">Математическое моделирование (лекция)<br>Ишанов С.А.<br>231 ауд.</div>
@@ -56,7 +56,7 @@
 		<div class="column is-2">
 			<div class="box has-text-centered">
 				<div class="box day-of-week m-0 is-60-height is-flex is-align-items-center is-justify-content-center">
-					Вторник
+					<?= GetMessage("TUESDAY") ?>
 				</div>
 				<div class="box couple m-0 is-flex is-align-items-center is-justify-content-center">Математический анализ (лекция)<br>Худенко В.Н.<br>231 ауд.</div>
 				<div class="box couple m-0 is-flex is-align-items-center is-justify-content-center"></div>
@@ -70,7 +70,7 @@
 		<div class="column is-2">
 			<div class="box has-text-centered">
 				<div class="box day-of-week m-0 is-60-height is-flex is-align-items-center is-justify-content-center">
-					Среда
+					<?= GetMessage("WEDNESDAY") ?>
 				</div>
 				<div class="box couple m-0 is-flex is-align-items-center is-justify-content-center"></div>
 				<div class="box couple m-0 is-flex is-align-items-center is-justify-content-center"></div>
@@ -84,7 +84,7 @@
 		<div class="column is-2">
 			<div class="box has-text-centered">
 				<div class="box day-of-week m-0 is-60-height is-flex is-align-items-center is-justify-content-center">
-					Четверг
+					<?= GetMessage("THURSDAY") ?>
 				</div>
 				<div class="box couple m-0 is-flex is-align-items-center is-justify-content-center"></div>
 				<div class="box couple m-0 is-flex is-align-items-center is-justify-content-center"></div>
@@ -98,7 +98,7 @@
 		<div class="column is-2">
 			<div class="box has-text-centered">
 				<div class="box day-of-week m-0 is-60-height is-flex is-align-items-center is-justify-content-center">
-					Пятница
+					<?= GetMessage("FRIDAY") ?>
 				</div>
 				<div class="box couple m-0 is-flex is-align-items-center is-justify-content-center"></div>
 				<div class="box couple m-0 is-flex is-align-items-center is-justify-content-center"></div>
@@ -112,7 +112,7 @@
 		<div class="column is-2">
 			<div class="box has-text-centered">
 				<div class="box day-of-week m-0 is-60-height is-flex is-align-items-center is-justify-content-center">
-					Суббота
+					<?= GetMessage("SATURDAY") ?>
 				</div>
 				<div class="box couple m-0 is-flex is-align-items-center is-justify-content-center"></div>
 				<div class="box couple m-0 is-flex is-align-items-center is-justify-content-center"></div>
