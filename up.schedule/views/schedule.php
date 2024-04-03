@@ -10,6 +10,9 @@ $APPLICATION->SetTitle("Schedule");
 
 $APPLICATION->IncludeComponent('up:sidebar', '');
 
-$APPLICATION->IncludeComponent('up:couples.list', '');
+$APPLICATION->IncludeComponent('up:couples.list', '', [
+	'ENTITY' =>Context::getCurrent()->getRequest()->get('entity'),
+	'ID' =>Context::getCurrent()->getRequest()->get('id'),
+]);
 
 require($_SERVER["DOCUMENT_ROOT"] . "/bitrix/footer.php");

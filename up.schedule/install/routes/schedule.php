@@ -6,6 +6,8 @@ use Bitrix\Main\Routing\RoutingConfigurator;
 return static function(RoutingConfigurator $routes) {
 	$routes->get('/', new PublicPageController('/local/modules/up.schedule/views/schedule.php'));
 	$routes->get('/schedule/', new PublicPageController('/local/modules/up.schedule/views/schedule.php'));
+	$routes->get('/{entity}/{id}/', new PublicPageController('/local/modules/up.schedule/views/schedule.php'));
+	$routes->get('/schedule/{entity}/{id}/', new PublicPageController('/local/modules/up.schedule/views/schedule.php'));
 
 	$routes->get('/profile/', new PublicPageController('/local/modules/up.schedule/views/profile.php'));
 	$routes->get('/scheduling/', new PublicPageController('/local/modules/up.schedule/views/scheduling.php'));

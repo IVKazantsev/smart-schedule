@@ -1,3 +1,11 @@
+<?php
+
+/**
+ * @var array $arResult
+ */
+
+?>
+
 <div class="column">
 	<div class="columns">
 		<div class="column is-11">
@@ -5,30 +13,14 @@
 				<div class="dropdown group-selection is-60-height-child">
 					<div class="dropdown-trigger group-selection-trigger is-60-height-child">
 						<button id="group-selection-button" class="button is-fullwidth is-60-height-child" aria-haspopup="true" aria-controls="dropdown-menu">
-							<span>Прикладная математика<br>3 курс</span>
+							<span><?= $arResult['CURRENT_GROUP']['TITLE'] ?></span>
 						</button>
 					</div>
 					<div class="dropdown-menu" id="dropdown-menu" role="menu">
 						<div class="dropdown-content">
-							<a href="#" class="dropdown-item">Прикладная математика<br>1 курс</a>
-							<a class="dropdown-item">Прикладная математика<br>2 курс</a>
-							<a class="dropdown-item is-active">Прикладная математика<br>3 курс</a>
-							<a href="#" class="dropdown-item">Математическое обеспечение<br>1 курс</a>
-							<a href="#" class="dropdown-item">Математическое обеспечение<br>2 курс</a>
-							<a href="#" class="dropdown-item">Математическое обеспечение<br>2 курс</a>
-							<a href="#" class="dropdown-item">Математическое обеспечение<br>2 курс</a>
-							<a href="#" class="dropdown-item">Математическое обеспечение<br>2 курс</a>
-							<a href="#" class="dropdown-item">Математическое обеспечение<br>2 курс</a>
-							<a href="#" class="dropdown-item">Математическое обеспечение<br>2 курс</a>
-							<a href="#" class="dropdown-item">Математическое обеспечение<br>2 курс</a>
-							<a href="#" class="dropdown-item">Математическое обеспечение<br>2 курс</a>
-							<a href="#" class="dropdown-item">Математическое обеспечение<br>2 курс</a>
-							<a href="#" class="dropdown-item">Математическое обеспечение<br>2 курс</a>
-							<a href="#" class="dropdown-item">Математическое обеспечение<br>2 курс</a>
-							<a href="#" class="dropdown-item">Математическое обеспечение<br>2 курс</a>
-							<a href="#" class="dropdown-item">Математическое обеспечение<br>2 курс</a>
-							<a href="#" class="dropdown-item">Математическое обеспечение<br>2 курс</a>
-							<a href="#" class="dropdown-item">Математическое обеспечение<br>2 курс</a>
+							<?php foreach ($arResult['GROUPS'] as $group): ?>
+								<a href="/group/<?= $group['ID'] ?>/" class="dropdown-item <?= ((int)$group['ID'] === $arResult['CURRENT_GROUP_ID']) ? 'is-active' : '' ?>"><?= $group['TITLE'] ?></a>
+							<?php endforeach; ?>
 						</div>
 					</div>
 				</div>
@@ -44,7 +36,7 @@
 				<div class="box day-of-week m-0 is-60-height is-flex is-align-items-center is-justify-content-center">
 					<?= GetMessage("MONDAY") ?>
 				</div>
-				<div class="box couple m-0 is-flex is-align-items-center is-justify-content-center">Дифференциальные уравнения (практика)<br>Ишанов С.А.<br>404 ауд.</div>
+				<div class="box couple m-0 is-flex is-align-items-center is-justify-content-center is-fullwidth">Дифференциальные уравнения (практика)<br>Ишанов С.А.<br>404 ауд.</div>
 				<div class="box couple m-0 is-flex is-align-items-center is-justify-content-center">Математическое моделирование (лекция)<br>Ишанов С.А.<br>231 ауд.</div>
 				<div class="box couple m-0 is-flex is-align-items-center is-justify-content-center"></div>
 				<div class="box couple m-0 is-flex is-align-items-center is-justify-content-center"></div>

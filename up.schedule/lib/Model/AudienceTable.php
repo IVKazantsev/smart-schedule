@@ -1,5 +1,5 @@
 <?php
-namespace Bitrix\Schedule\Model;
+namespace Up\Schedule\Model;
 
 use Bitrix\Main\Localization\Loc,
 	Bitrix\Main\ORM\Data\DataManager,
@@ -19,7 +19,7 @@ Loc::loadMessages(__FILE__);
  * <li> AUDIENCE_TYPE_ID int mandatory
  * </ul>
  *
- * @package Bitrix\Schedule
+ * @package Up\Schedule
  **/
 
 class AudienceTable extends DataManager
