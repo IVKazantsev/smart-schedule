@@ -12,7 +12,7 @@
 				<div class="dropdown group-selection is-60-height-child">
 					<div class="dropdown-trigger group-selection-trigger is-60-height-child">
 						<button id="group-selection-button" class="button is-fullwidth is-60-height-child" aria-haspopup="true" aria-controls="dropdown-menu">
-							<span><?= htmlspecialcharsbx($arResult['CURRENT_GROUP']->getTitle()) ?></span>
+							<span><?= ($arResult['CURRENT_GROUP']) ? htmlspecialcharsbx($arResult['CURRENT_GROUP']->getTitle()) : '' ?></span>
 						</button>
 					</div>
 					<div class="dropdown-menu" id="dropdown-menu" role="menu">

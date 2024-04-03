@@ -1,6 +1,7 @@
 <?php
 
 use Up\Schedule\Model\CoupleTable;
+use Up\Schedule\Model\GroupTable;
 
 class CouplesListComponent extends CBitrixComponent
 {
@@ -14,7 +15,7 @@ class CouplesListComponent extends CBitrixComponent
 	protected function fetchGroupList(): void
 	{
 		$currentGroupId = (int)$this->arParams['ID'];
-		$groups = \Up\Schedule\Model\GroupTable::query()->setSelect(['ID', 'TITLE'])->fetchCollection();
+		$groups = GroupTable::query()->setSelect(['ID', 'TITLE'])->fetchCollection();
 		$currentGroup = [];
 		foreach ($groups as $group)
 		{
