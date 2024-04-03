@@ -3,9 +3,6 @@
 /**
  * @var array $arResult
  */
-// foreach ($arResult['COUPLES'] as $couple) {
-// 	var_dump($couple->getSubject()->getTitle());
-// }
 ?>
 
 <div class="column">
@@ -40,7 +37,8 @@
 				</div>
 				<?php for ($i = 1; $i <= COUPLES_NUMBER_PER_DAY; $i++): ?>
 					<div class="box couple m-0 is-flex is-align-items-center is-justify-content-center">
-						<?php if(key_exists(1, $arResult['SORTED_COUPLES']) && key_exists($i, $arResult['SORTED_COUPLES'][1])): ?>
+						<?php if(array_key_exists(1, $arResult['SORTED_COUPLES'])
+							&& array_key_exists($i, $arResult['SORTED_COUPLES'][1])): ?>
 							<?= htmlspecialcharsbx($arResult['SORTED_COUPLES'][1][$i]->getSubject()->getTitle()) ?>
 							<br>
 							<?= htmlspecialcharsbx($arResult['SORTED_COUPLES'][1][$i]->getAudience()->getNumber()) ?>
@@ -56,7 +54,8 @@
 				</div>
 				<?php for ($i = 1; $i <= COUPLES_NUMBER_PER_DAY; $i++): ?>
 					<div class="box couple m-0 is-flex is-align-items-center is-justify-content-center">
-						<?php if(key_exists(2, $arResult['SORTED_COUPLES']) && key_exists($i, $arResult['SORTED_COUPLES'][2])): ?>
+						<?php if(array_key_exists(2, $arResult['SORTED_COUPLES'])
+							&& array_key_exists($i, $arResult['SORTED_COUPLES'][2])): ?>
 							<?= htmlspecialcharsbx($arResult['SORTED_COUPLES'][2][$i]->getSubject()->getTitle()) ?>
 							<br>
 							<?= htmlspecialcharsbx($arResult['SORTED_COUPLES'][2][$i]->getAudience()->getNumber()) ?>
@@ -72,7 +71,8 @@
 				</div>
 				<?php for ($i = 1; $i <= COUPLES_NUMBER_PER_DAY; $i++): ?>
 					<div class="box couple m-0 is-flex is-align-items-center is-justify-content-center">
-						<?php if(key_exists(3, $arResult['SORTED_COUPLES']) && key_exists($i, $arResult['SORTED_COUPLES'][3])): ?>
+						<?php if(array_key_exists(3, $arResult['SORTED_COUPLES'])
+							&& array_key_exists($i, $arResult['SORTED_COUPLES'][3])): ?>
 							<?= htmlspecialcharsbx($arResult['SORTED_COUPLES'][3][$i]->getSubject()->getTitle()) ?>
 							<br>
 							<?= htmlspecialcharsbx($arResult['SORTED_COUPLES'][3][$i]->getAudience()->getNumber()) ?>
@@ -88,7 +88,8 @@
 				</div>
 				<?php for ($i = 1; $i <= COUPLES_NUMBER_PER_DAY; $i++): ?>
 					<div class="box couple m-0 is-flex is-align-items-center is-justify-content-center">
-						<?php if(key_exists(4, $arResult['SORTED_COUPLES']) && key_exists($i, $arResult['SORTED_COUPLES'][4])): ?>
+						<?php if(array_key_exists(4, $arResult['SORTED_COUPLES'])
+							&& array_key_exists($i, $arResult['SORTED_COUPLES'][4])): ?>
 							<?= htmlspecialcharsbx($arResult['SORTED_COUPLES'][4][$i]->getSubject()->getTitle()) ?>
 							<br>
 							<?= htmlspecialcharsbx($arResult['SORTED_COUPLES'][4][$i]->getAudience()->getNumber()) ?>
@@ -104,7 +105,8 @@
 				</div>
 				<?php for ($i = 1; $i <= COUPLES_NUMBER_PER_DAY; $i++): ?>
 					<div class="box couple m-0 is-flex is-align-items-center is-justify-content-center">
-						<?php if(key_exists(5, $arResult['SORTED_COUPLES']) && key_exists($i, $arResult['SORTED_COUPLES'][5])): ?>
+						<?php if(array_key_exists(5, $arResult['SORTED_COUPLES'])
+							&& array_key_exists($i, $arResult['SORTED_COUPLES'][5])): ?>
 							<?= htmlspecialcharsbx($arResult['SORTED_COUPLES'][5][$i]->getSubject()->getTitle()) ?>
 							<br>
 							<?= htmlspecialcharsbx($arResult['SORTED_COUPLES'][5][$i]->getAudience()->getNumber()) ?>
@@ -120,7 +122,8 @@
 				</div>
 				<?php for ($i = 1; $i <= COUPLES_NUMBER_PER_DAY; $i++): ?>
 					<div class="box couple m-0 is-flex is-align-items-center is-justify-content-center">
-						<?php if(key_exists(6, $arResult['SORTED_COUPLES']) && key_exists($i, $arResult['SORTED_COUPLES'][6])): ?>
+						<?php if(array_key_exists(6, $arResult['SORTED_COUPLES'])
+							&& array_key_exists($i, $arResult['SORTED_COUPLES'][6])): ?>
 						<?= htmlspecialcharsbx($arResult['SORTED_COUPLES'][6][$i]->getSubject()->getTitle()) ?>
 						<br>
 						<?= htmlspecialcharsbx($arResult['SORTED_COUPLES'][6][$i]->getAudience()->getNumber()) ?>

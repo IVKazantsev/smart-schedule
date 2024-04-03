@@ -1,5 +1,7 @@
 <?php
 
+use Up\Schedule\Model\CoupleTable;
+
 class CouplesListComponent extends CBitrixComponent
 {
 	public function executeComponent(): void
@@ -29,7 +31,7 @@ class CouplesListComponent extends CBitrixComponent
 	protected function fetchCouples(): void
 	{
 		$currentGroupId = (int)$this->arParams['ID'];
-		$couples = \Up\Schedule\Model\CoupleTable::query()->setSelect(['SUBJECT', 'AUDIENCE', 'COUPLE_NUMBER_IN_DAY', 'WEEK_DAY'])
+		$couples = CoupleTable::query()->setSelect(['SUBJECT', 'AUDIENCE', 'COUPLE_NUMBER_IN_DAY', 'WEEK_DAY'])
 														  ->where('GROUP_ID', $currentGroupId)->fetchCollection();
 		$sortedCouples = [];
 		foreach ($couples as $couple)
