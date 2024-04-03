@@ -5,6 +5,7 @@
 1. Bitrix Framework
 2. PHP - 8.1
 3. MySQL - 5.7
+4. Apache - 2.4
 #### Процесс установки
 ...
 
@@ -20,7 +21,7 @@ RewriteRule ^(.*)$ /bitrix/routing_index.php [L]
 2. В файле bitrix/.settings.php в секции routing указать:
 ```
 'routing' => [ 'value' => [  
-    'config' => [ 'tasks.php' ],  
+    'config' => [ 'schedule.php' ],  
 ]],
 ```
 
@@ -30,5 +31,5 @@ RewriteRule ^(.*)$ /bitrix/routing_index.php [L]
 
 use Bitrix\Main\Loader;
 
-Loader::includeModule('up.tasks');
+Loader::includeModule('up.schedule');
 ```
