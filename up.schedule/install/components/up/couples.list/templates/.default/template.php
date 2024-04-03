@@ -13,13 +13,13 @@
 				<div class="dropdown group-selection is-60-height-child">
 					<div class="dropdown-trigger group-selection-trigger is-60-height-child">
 						<button id="group-selection-button" class="button is-fullwidth is-60-height-child" aria-haspopup="true" aria-controls="dropdown-menu">
-							<span><?= $arResult['CURRENT_GROUP']['TITLE'] ?></span>
+							<span><?= htmlspecialcharsbx($arResult['CURRENT_GROUP']['TITLE']) ?></span>
 						</button>
 					</div>
 					<div class="dropdown-menu" id="dropdown-menu" role="menu">
 						<div class="dropdown-content">
 							<?php foreach ($arResult['GROUPS'] as $group): ?>
-								<a href="/group/<?= $group['ID'] ?>/" class="dropdown-item <?= ((int)$group['ID'] === $arResult['CURRENT_GROUP_ID']) ? 'is-active' : '' ?>"><?= $group['TITLE'] ?></a>
+								<a href="/group/<?= (int)$group['ID'] ?>/" class="dropdown-item <?= ((int)$group['ID'] === $arResult['CURRENT_GROUP_ID']) ? 'is-active' : '' ?>"><?= htmlspecialcharsbx($group['TITLE']) ?></a>
 							<?php endforeach; ?>
 						</div>
 					</div>
