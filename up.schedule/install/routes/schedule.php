@@ -9,6 +9,8 @@ return static function(RoutingConfigurator $routes) {
 	$routes->get('/{entity}/{id}/', new PublicPageController('/local/modules/up.schedule/views/schedule.php'));
 	$routes->get('/schedule/{entity}/{id}/', new PublicPageController('/local/modules/up.schedule/views/schedule.php'));
 
+	$routes->get('/auth/', new PublicPageController('/local/modules/up.schedule/views/auth.php'));
+
 	$routes->get('/profile/', new PublicPageController('/local/modules/up.schedule/views/profile.php'));
 	$routes->get('/scheduling/', new PublicPageController('/local/modules/up.schedule/views/scheduling.php'));
 	$routes->get('/optimize/', new PublicPageController('/local/modules/up.schedule/views/optimize.php'));

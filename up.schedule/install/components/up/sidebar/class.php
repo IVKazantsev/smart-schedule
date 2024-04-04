@@ -15,11 +15,17 @@ class SidebarComponent extends CBitrixComponent
 	{
 		$userId = CurrentUser::get()->getId();
 		$user = UserRepository::getById($userId);
-		if($user)
+		if ($user)
 		{
 			$this->arResult['USER_ROLE'] = $user->get('UP_SCHEDULE_ROLE')->get('TITLE');
 			$this->arResult['USER_NAME'] = $user->getName();
 			$this->arResult['USER_LAST_NAME'] = $user->getLastName();
+
+			$this->arResult['IS_AUTHORIZED'] = true;
+
+			return;
 		}
+
+		$this->arResult['IS_AUTHORIZED'] = false;
 	}
 }
