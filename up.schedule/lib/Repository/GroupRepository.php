@@ -8,21 +8,15 @@ class GroupRepository
 {
 	public static function getAll()
 	{
-		return GroupTable::getList([
-			'select' => [
-				'ID',
-				'TITLE',
-			]
-		])->fetchCollection();
+		return GroupTable::query()
+			->setSelect(['ID', 'TITLE'])
+			->fetchCollection();
 	}
 	public static function getById(int $id)
 	{
-		return GroupTable::getList([
-			'select' => [
-				'ID',
-				'TITLE',
-			],
-			'filter' => ['=ID' => $id],
-		])->fetch();
+		return GroupTable::query()
+			->setSelect(['ID', 'TITLE'])
+			->where('ID', $id)
+			->fetch();
 	}
 }
