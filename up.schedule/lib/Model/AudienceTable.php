@@ -28,20 +28,16 @@ class AudienceTable extends DataManager
 {
 	/**
 	 * Returns DB table name for entity.
-	 *
-	 * @return string
 	 */
-	public static function getTableName()
+	public static function getTableName(): string
 	{
 		return 'up_schedule_audience';
 	}
 
 	/**
 	 * Returns entity map definition.
-	 *
-	 * @return array
 	 */
-	public static function getMap()
+	public static function getMap(): array
 	{
 		return [
 			new IntegerField(
@@ -77,10 +73,8 @@ class AudienceTable extends DataManager
 
 	/**
 	 * Returns validators for NUMBER field.
-	 *
-	 * @return array
 	 */
-	public static function validateNumber()
+	public static function validateNumber(): array
 	{
 		return [
 			new LengthValidator(null, 10),

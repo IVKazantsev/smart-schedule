@@ -1,34 +1,14 @@
 <?php
 
-use Bitrix\Main\ORM\Fields\Relations\Reference;
-use Bitrix\Main\ORM\Query\Join;
-use Up\Schedule\Model\CoupleTable;
-use Up\Schedule\Model\GroupTable;
-use Up\Schedule\Model\RoleTable;
+use Bitrix\Main\ORM\Objectify\Collection;
+use Up\Schedule\Model\EO_Couple_Collection;
+use Up\Schedule\Repository\CoupleRepository;
 use Up\Schedule\Repository\GroupRepository;
 
 class CouplesListComponent extends CBitrixComponent
 {
 	public function executeComponent(): void
 	{
-		/*$user = new CUser;
-		$arFields = [
-			"NAME"              => "Сергей",
-			"LAST_NAME"         => "Иванов",
-			"EMAIL"             => "ivanov@microsoft.com",
-			"LOGIN"             => "ivan1",
-			"LID"               => "ru",
-			"ACTIVE"            => "Y",
-			"PASSWORD"          => "123456",
-			"CONFIRM_PASSWORD"  => "123456",
-			"UF_ROLE_ID" => 1,
-			"UF_GROUP_ID" => 1,
-		];
-		$ID = $user->Add($arFields);
-		if ((int)$ID > 0)
-			echo "Пользователь успешно добавлен.";
-		else
-			echo $user->LAST_ERROR;*/
 		$this->fetchGroupList();
 		$this->fetchCouples();
 		$this->includeComponentTemplate();
@@ -37,15 +17,6 @@ class CouplesListComponent extends CBitrixComponent
 	protected function fetchGroupList(): void
 	{
 		$currentGroupId = (int)$this->arParams['ID'];
-		/*$groups = GroupTable::query()->setSelect(['ID', 'TITLE'])->fetchCollection();
-		$currentGroup = [];
-		foreach ($groups as $group)
-		{
-			if($group->getId() === $currentGroupId)
-			{
-				$currentGroup = $group;
-			}
-		}*/
 		$currentGroup = GroupRepository::getById($currentGroupId) ?: [];
 		$this->arResult['GROUPS'] = GroupRepository::getAll();
 		$this->arResult['CURRENT_GROUP_ID'] = $currentGroup['ID'];
@@ -55,13 +26,11 @@ class CouplesListComponent extends CBitrixComponent
 	protected function fetchCouples(): void
 	{
 		$currentGroupId = (int)$this->arParams['ID'];
-		/*$couples = CoupleTable::query()->setSelect(['SUBJECT', 'AUDIENCE', 'COUPLE_NUMBER_IN_DAY', 'WEEK_DAY'])
-														  ->where('GROUP_ID', $currentGroupId)->fetchCollection();*/
-		$couples = \Up\Schedule\Repository\CoupleRepository::getByGroupId($currentGroupId);
-		$this->arResult['SORTED_COUPLES'] = $this->getSortedCouples($couples);
+		$couples = CoupleRepository::getByGroupId($currentGroupId);
+		$this->arResult['SORTED_COUPLES'] = $this->sortCouplesByWeekDay($couples);
 	}
 
-	protected function getSortedCouples(\Bitrix\Main\ORM\Objectify\Collection|null $couples): array
+	protected function sortCouplesByWeekDay(?EO_Couple_Collection $couples): array
 	{
 		$sortedCouples = [];
 		foreach ($couples as $couple)

@@ -33,20 +33,16 @@ class CoupleTable extends DataManager
 {
 	/**
 	 * Returns DB table name for entity.
-	 *
-	 * @return string
 	 */
-	public static function getTableName()
+	public static function getTableName(): string
 	{
 		return 'up_schedule_couple';
 	}
 
 	/**
 	 * Returns entity map definition.
-	 *
-	 * @return array
 	 */
-	public static function getMap()
+	public static function getMap(): array
 	{
 		return [
 			new IntegerField(
@@ -123,10 +119,8 @@ class CoupleTable extends DataManager
 
 	/**
 	 * Returns validators for WEEK_TYPE field.
-	 *
-	 * @return array
 	 */
-	public static function validateWeekType()
+	public static function validateWeekType(): array
 	{
 		return [
 			new LengthValidator(null, 10),

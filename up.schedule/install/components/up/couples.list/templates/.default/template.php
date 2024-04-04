@@ -43,6 +43,10 @@
 								<?= htmlspecialcharsbx($arResult['SORTED_COUPLES'][$dayNumber][$i]->getSubject()->getTitle()) ?>
 								<br>
 								<?= htmlspecialcharsbx($arResult['SORTED_COUPLES'][$dayNumber][$i]->getAudience()->getNumber()) ?>
+								<br>
+								<?= htmlspecialcharsbx($arResult['SORTED_COUPLES'][$dayNumber][$i]->getTeacher()->getName()
+													   . ' '
+													   . $arResult['SORTED_COUPLES'][$dayNumber][$i]->getTeacher()->getLastName()) ?>
 							<?php endif; ?>
 						</div>
 					<?php endfor; ?>

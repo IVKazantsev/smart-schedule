@@ -1,5 +1,8 @@
 <?php
 
+use Bitrix\Main\Engine\CurrentUser;
+use Up\Schedule\Repository\UserRepository;
+
 class SidebarComponent extends CBitrixComponent
 {
 	public function executeComponent(): void
@@ -8,12 +11,15 @@ class SidebarComponent extends CBitrixComponent
 		$this->includeComponentTemplate();
 	}
 
-	protected function fetchUserInfo()
+	protected function fetchUserInfo(): void
 	{
-		$userId = \Bitrix\Main\Engine\CurrentUser::get()->getId();
-		$user = \Up\Schedule\Repository\UserRepository::getById($userId);
-		$this->arResult['USER_ROLE'] = $user['ROLE'];
-		$this->arResult['USER_NAME'] = $user['NAME'];
-		$this->arResult['USER_LAST_NAME'] = $user['LAST_NAME'];
+		$userId = CurrentUser::get()->getId();
+		$user = UserRepository::getById($userId);
+		if($user)
+		{
+			$this->arResult['USER_ROLE'] = $user->get('UP_SCHEDULE_ROLE')->get('TITLE');
+			$this->arResult['USER_NAME'] = $user->getName();
+			$this->arResult['USER_LAST_NAME'] = $user->getLastName();
+		}
 	}
 }

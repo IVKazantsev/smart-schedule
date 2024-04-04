@@ -2,6 +2,7 @@
 
 namespace Up\Schedule\Repository;
 
+use Bitrix\Main\EO_User;
 use Bitrix\Main\ORM\Fields\Relations\Reference;
 use Bitrix\Main\ORM\Query\Join;
 use Bitrix\Main\UserTable;
@@ -10,28 +11,27 @@ use Up\Schedule\Model\RoleTable;
 
 class UserRepository
 {
-	public static function getById(int $id)
+	public static function getById(int $id): ?EO_User
 	{
-		$user = UserTable::query()->setSelect(['ID',
-											   'NAME',
-											   'LAST_NAME',
-											   'EMAIL',
-											   'ROLE' => 'UP_SCHEDULE_ROLE.TITLE',
-											   'GROUP' => 'UP_SCHEDULE_GROUP.TITLE'])
-								  ->registerRuntimeField(
+		return UserTable::query()->setSelect(['ID',
+											  'NAME',
+											  'LAST_NAME',
+											  'EMAIL',
+											  'ROLE' => 'UP_SCHEDULE_ROLE.TITLE',
+											  'GROUP' => 'UP_SCHEDULE_GROUP.TITLE'])
+						->registerRuntimeField(
 									  (new Reference(
 										  'UP_SCHEDULE_ROLE',
 										  RoleTable::class,
 										  Join::on('this.UF_ROLE_ID', 'ref.ID')
 									  )))
-								  ->registerRuntimeField(
+						->registerRuntimeField(
 									  (new Reference(
 										  'UP_SCHEDULE_GROUP',
 										  GroupTable::class,
 										  Join::on('this.UF_GROUP_ID', 'ref.ID')
 									  )))
-								  ->where('ID', $id)
-								  ->fetch();
-		return $user;
+						->where('ID', $id)
+						->fetchObject();
 	}
 }

@@ -9,6 +9,7 @@ use Bitrix\Main\Localization\Loc,
 use Bitrix\Main\ORM\Fields\Relations\ManyToMany;
 use Bitrix\Main\ORM\Fields\Relations\Reference;
 use Bitrix\Main\ORM\Query\Join;
+use Bitrix\Main\UserTable;
 
 Loc::loadMessages(__FILE__);
 
@@ -29,20 +30,16 @@ class SubjectTable extends DataManager
 {
 	/**
 	 * Returns DB table name for entity.
-	 *
-	 * @return string
 	 */
-	public static function getTableName()
+	public static function getTableName(): string
 	{
 		return 'up_schedule_subject';
 	}
 
 	/**
 	 * Returns entity map definition.
-	 *
-	 * @return array
 	 */
-	public static function getMap()
+	public static function getMap(): array
 	{
 		return [
 			new IntegerField(
@@ -77,15 +74,17 @@ class SubjectTable extends DataManager
 				'GROUPS',
 				GroupTable::class
 			))->configureTableName('up_schedule_group_subject'),
+			(new ManyToMany(
+				'USERS',
+				UserTable::class
+			))->configureTableName('up_schedule_subject_teacher'),
 		];
 	}
 
 	/**
 	 * Returns validators for TITLE field.
-	 *
-	 * @return array
 	 */
-	public static function validateTitle()
+	public static function validateTitle(): array
 	{
 		return [
 			new LengthValidator(null, 255),

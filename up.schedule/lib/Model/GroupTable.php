@@ -26,20 +26,16 @@ class GroupTable extends DataManager
 {
 	/**
 	 * Returns DB table name for entity.
-	 *
-	 * @return string
 	 */
-	public static function getTableName()
+	public static function getTableName(): string
 	{
 		return 'up_schedule_group';
 	}
 
 	/**
 	 * Returns entity map definition.
-	 *
-	 * @return array
 	 */
-	public static function getMap()
+	public static function getMap(): array
 	{
 		return [
 			new IntegerField(
@@ -67,10 +63,8 @@ class GroupTable extends DataManager
 
 	/**
 	 * Returns validators for TITLE field.
-	 *
-	 * @return array
 	 */
-	public static function validateTitle()
+	public static function validateTitle(): array
 	{
 		return [
 			new LengthValidator(null, 255),

@@ -4,7 +4,6 @@
  * @var array $arResult
  */
 
-use Bitrix\Main\Engine\CurrentUser;
 use Bitrix\Main\UI\Extension;
 
 Extension::load('up.sidebar');

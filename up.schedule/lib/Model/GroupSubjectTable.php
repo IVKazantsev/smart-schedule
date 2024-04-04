@@ -26,20 +26,16 @@ class GroupSubjectTable extends DataManager
 {
 	/**
 	 * Returns DB table name for entity.
-	 *
-	 * @return string
 	 */
-	public static function getTableName()
+	public static function getTableName(): string
 	{
 		return 'up_schedule_group_subject';
 	}
 
 	/**
 	 * Returns entity map definition.
-	 *
-	 * @return array
 	 */
-	public static function getMap()
+	public static function getMap(): array
 	{
 		return [
 			new IntegerField(
