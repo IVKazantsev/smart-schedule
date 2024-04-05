@@ -16,11 +16,12 @@ if (!defined("B_PROLOG_INCLUDED") || B_PROLOG_INCLUDED !== true)
 ?>
 <div class="column is-one-fifth">
 	<aside class="menu has-text-centered is-flex is-flex-direction-column">
-		<ul class="menu-list box is-60-height">
+		<ul class="menu-list box is-120-height">
 			<?php if($arResult['IS_AUTHORIZED']): ?>
 				<li class="is-60-height-child"><a class="is-60-height-child is-flex is-align-items-center is-justify-content-center" href="/profile/"><?= htmlspecialcharsbx($arResult['USER_NAME'] . ' ' . $arResult['USER_LAST_NAME']) ?><br><?= $arResult['USER_ROLE'] ?></a></li>
+				<li class="is-60-height-child"><a class="is-60-height-child is-flex is-align-items-center is-justify-content-center has-text-weight-bold" href="/logout/">Выйти</a></li>
 			<?php else: ?>
-				<li class="is-60-height-child"><a class="is-60-height-child is-flex is-align-items-center is-justify-content-center has-text-weight-bold" href="/auth/">Войти</a></li>
+				<li class="is-60-height-child"><a class="is-60-height-child is-flex is-align-items-center is-justify-content-center has-text-weight-bold" href="/login/">Войти</a></li>
 			<?php endif; ?>
 		</ul>
 		<ul class="menu-list box">
