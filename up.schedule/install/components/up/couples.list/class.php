@@ -9,6 +9,7 @@ class CouplesListComponent extends CBitrixComponent
 {
 	public function executeComponent(): void
 	{
+		$geneticPerson = new \Up\Schedule\AutomaticSchedule\GeneticPerson();
 		$this->fetchGroupList();
 		$this->fetchCouples();
 		$this->includeComponentTemplate();
