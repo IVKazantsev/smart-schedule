@@ -36,6 +36,7 @@ class up_schedule extends CModule
 		global $DB;
 
 		$DB->RunSQLBatch($_SERVER['DOCUMENT_ROOT'] . '/local/modules/up.schedule/install/db/install.sql');
+		$DB->RunSQLBatch($_SERVER['DOCUMENT_ROOT'] . '/local/modules/up.schedule/install/db/test_dataset.sql');
 	}
 
 	public function UnInstallDB(): void

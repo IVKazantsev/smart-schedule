@@ -9,3 +9,19 @@ DROP TABLE IF EXISTS up_schedule_couple;
 
 DROP TABLE IF EXISTS up_schedule_user_role;
 DROP TABLE IF EXISTS up_schedule_user_group;
+
+DELETE FROM b_user
+WHERE LOGIN IN ('teacher1',
+                'teacher2',
+                'teacher3',
+                'teacher4',
+                'teacher5',
+                'teacher6',
+                'teacher7',
+                'student1',
+                'student2',
+                'student3',
+                'student4');
+
+DELETE FROM b_uts_user
+WHERE UF_GROUP_ID IS NOT NULL OR UF_ROLE_ID IS NOT NULL;
