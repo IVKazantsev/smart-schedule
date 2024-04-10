@@ -10,12 +10,6 @@ class SidebarComponent extends CBitrixComponent
 {
 	public function executeComponent(): void
 	{
-		$groups = GroupRepository::getAll();
-		$audiences = AudienceRepository::getAll();
-		$teachers = UserRepository::getAllTeachers();
-		$subjects = SubjectRepository::getAll();
-		$geneticPerson = new \Up\Schedule\AutomaticSchedule\GeneticPerson($groups, $audiences, $teachers, $subjects);
-
 		$this->fetchUserInfo();
 		$this->includeComponentTemplate();
 	}

@@ -32,12 +32,6 @@ class GeneticPerson
 	// которые можно поставить для i группы в j день на k месте
 	public array $freeCouplesForGroups;
 
-	// Массив с количеством попыток создать пару для определенной группы
-	public array $attemptsToCreateCoupleForGroups;
-
-	// Максимальное количество попыток создать пару для группы
-	public int $maxAttempts = 10;
-
 	public function __construct(
 		EO_Group_Collection $groups,
 		EO_Audience_Collection $audiences,
@@ -63,7 +57,6 @@ class GeneticPerson
 			$this->freeCouplesForGroups[$group->getId()] = array_fill(1, 6, array_fill(1, 7, $group->getSubjects()));
 		}
 
-		$iterator = 0;
 		// Генерируем пары, пока не закончатся группы, у которых есть нераставленные пары
 		while (!$this->groups->isEmpty())
 		{
@@ -112,20 +105,6 @@ class GeneticPerson
 			$this->freeAudiencesInCouple[$couple->getWeekDay()]
 									   [$couple->getCoupleNumberInDay()]
 									   ->removeByPrimary($couple->getAudience()->getId());
-		}
-
-		// Вывод
-		foreach ($this->couples as $couple)
-		{
-			echo "--- Пара ---\n";
-
-			echo $couple->getGroup()->getTitle() . "\n";
-			echo $couple->getTeacher()->getName() . "\n";
-			echo $couple->getSubject()->getTitle() . "\n";
-			echo $couple->getWeekDay() . "\n";
-			echo $couple->getCoupleNumberInDay() . "\n";
-
-			echo "------------\n";
 		}
 	}
 
