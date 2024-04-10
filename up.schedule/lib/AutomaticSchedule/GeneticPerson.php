@@ -42,14 +42,21 @@ class GeneticPerson
 		EO_Group_Collection $groups,
 		EO_Audience_Collection $audiences,
 		EO_User_Collection $teachers,
-		EO_Subject_Collection $subjects,
 	)
 	{
 		$this->groups = $groups;
 
 		// Заполняем поля класса всевозможными сущностями
-		$this->freeAudiencesInCouple = array_fill(1, 6, array_fill(1, 7, $audiences));
-		$this->freeTeachersInCouple = array_fill(1, 6, array_fill(1, 7, $teachers));
+		for ($i = 1; $i <= 6; $i++)
+		{
+			for ($j = 1; $j <= 7; $j++)
+			{
+				$this->freeAudiencesInCouple[$i][$j] = new EO_Audience_Collection();
+				$this->freeAudiencesInCouple[$i][$j]->merge($audiences);
+				$this->freeTeachersInCouple[$i][$j] = new EO_User_Collection();
+				$this->freeTeachersInCouple[$i][$j]->merge($teachers);
+			}
+		}
 
 		foreach ($this->groups as $group)
 		{
@@ -141,29 +148,6 @@ class GeneticPerson
 		// Получаем коллекцию всех нераставленных предметов и берем рандомный
 		$randSubject = $this->getRandEntityFromCollection($subjectsInGroup);
 
-		// Проверяем, есть ли место для этого предмета
-		$isTherePlaceForSubject = false;
-		foreach ($this->freeCouplesForGroups[$randGroup->getId()] as $day)
-		{
-			foreach ($day as $subjectCollection)
-			{
-				if($subjectCollection->hasByPrimary($randSubject->getId()))
-				{
-					$isTherePlaceForSubject = true;
-					break;
-				}
-			}
-			if($isTherePlaceForSubject)
-			{
-				break;
-			}
-		}
-
-		if(!$isTherePlaceForSubject)
-		{
-			return false;
-		}
-
 		$freeCouplesForSubject = [];
 
 		foreach ($this->freeCouplesForGroups[$randGroup->getId()] as $dayKey => $day)
@@ -176,32 +160,44 @@ class GeneticPerson
 				}
 			}
 		}
-
+		if(empty($freeCouplesForSubject))
+		{
+			return false;
+		}
 		// Ищем свободное у группы место для пары, пока не найдем
 		while (true)
 		{
 			// Берем рандомную пару из свободных
-			$isUnique = true;
-			$freeCouplesForGroup = $this->freeCouplesForGroups[$randGroup->getId()];
+			// TODO: Где-то здесь ломается
 			if(empty($freeCouplesForSubject))
 			{
+				echo "\n\n" . $randSubject->getTitle() . "\n\n";
+
+				foreach ($this->freeTeachersInCouple as $day)
+				{
+					foreach ($day as $teacherCollection)
+					{
+						foreach ($teacherCollection as $teacher)
+						{
+							echo $teacher->getName() . "\n\n";
+						}
+					}
+				}
+
 				return false;
 			}
-			// TODO: Здесь возможно получение дня, у которого пустая коллекция предметов
 			$randDay = array_rand($freeCouplesForSubject);
 			if(empty($freeCouplesForSubject[$randDay]))
 			{
 				unset($freeCouplesForSubject[$randDay]);
 				continue;
 			}
-			// TODO: Здесь возможно получение дня, у которого пустая коллекция предметов
 			$randCoupleNumber = array_rand($freeCouplesForSubject[$randDay]);
 
 			// Избавляемся от ситуации, когда имеем пустую коллекцию предметов
-			if($freeCouplesForGroup[$randDay][$randCoupleNumber]->isEmpty())
+			if($this->freeCouplesForGroups[$randGroup->getId()][$randDay][$randCoupleNumber]->isEmpty())
 			{
-				unset($freeCouplesForGroup[$randDay][$randCoupleNumber],
-					$freeCouplesForSubject[$randDay][$randCoupleNumber]);
+				unset($this->freeCouplesForGroups[$randGroup->getId()][$randDay][$randCoupleNumber]);
 				continue;
 			}
 
@@ -214,6 +210,10 @@ class GeneticPerson
 			}
 
 			$freeTeachers = $this->freeTeachersInCouple[$randDay][$randCoupleNumber];
+			if($freeTeachers === null)
+			{
+				unset($freeCouplesForSubject[$randDay][$randCoupleNumber]);
+			}
 			if($freeTeachers->count() === 0)
 			{
 				unset($this->freeTeachersInCouple[$randDay][$randCoupleNumber]);
