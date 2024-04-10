@@ -183,8 +183,17 @@ class GeneticPerson
 			// Берем рандомную пару из свободных
 			$isUnique = true;
 			$freeCouplesForGroup = $this->freeCouplesForGroups[$randGroup->getId()];
+			if(empty($freeCouplesForSubject))
+			{
+				return false;
+			}
 			// TODO: Здесь возможно получение дня, у которого пустая коллекция предметов
 			$randDay = array_rand($freeCouplesForSubject);
+			if(empty($freeCouplesForSubject[$randDay]))
+			{
+				unset($freeCouplesForSubject[$randDay]);
+				continue;
+			}
 			// TODO: Здесь возможно получение дня, у которого пустая коллекция предметов
 			$randCoupleNumber = array_rand($freeCouplesForSubject[$randDay]);
 
