@@ -10,15 +10,11 @@ class GroupRepository
 {
 	public static function getAll(): ?EO_Group_Collection
 	{
-		return GroupTable::query()
-			->setSelect(['ID', 'TITLE'])
-			->fetchCollection();
+		return GroupTable::query()->setSelect(['ID', 'TITLE', 'SUBJECTS'])->fetchCollection();
 	}
+
 	public static function getById(int $id): ?EO_Group
 	{
-		return GroupTable::query()
-			->setSelect(['ID', 'TITLE'])
-			->where('ID', $id)
-			->fetchObject();
+		return GroupTable::query()->setSelect(['ID', 'TITLE'])->where('ID', $id)->fetchObject();
 	}
 }

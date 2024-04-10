@@ -3,6 +3,7 @@
 namespace Up\Schedule\Repository;
 
 use Bitrix\Main\EO_User;
+use Bitrix\Main\EO_User_Collection;
 use Bitrix\Main\ORM\Fields\Relations\Reference;
 use Bitrix\Main\ORM\Query\Join;
 use Bitrix\Main\UserTable;
@@ -34,7 +35,7 @@ class UserRepository
 			)->where('ID', $id)->fetchObject();
 	}
 
-	public static function getTeacherBySubjectId(int $subjectId): ?EO_User
+	public static function getTeacherBySubjectId(int $subjectId): EO_User_Collection
 	{
 		return UserTable::query()->setSelect([
 												 'ID',
@@ -56,6 +57,24 @@ class UserRepository
 								 )))
 								 ->where('ROLE', 'Преподаватель')
 								 ->where('SUBJECT_ID', $subjectId)
-								 ->fetchObject();
+								 ->fetchCollection();
+	}
+
+	public static function getAllTeachers(): EO_User_Collection
+	{
+		return UserTable::query()->setSelect([
+												 'ID',
+												 'NAME',
+												 'LAST_NAME',
+												 'EMAIL',
+												 'ROLE' => 'UP_SCHEDULE_ROLE.TITLE',
+											 ])
+						->registerRuntimeField((new Reference(
+							'UP_SCHEDULE_ROLE',
+							RoleTable::class,
+							Join::on('this.UF_ROLE_ID', 'ref.ID')
+						)))
+						->where('ROLE', 'Преподаватель')
+						->fetchCollection();
 	}
 }
