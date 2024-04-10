@@ -1,12 +1,21 @@
 <?php
 
 use Bitrix\Main\Engine\CurrentUser;
+use Up\Schedule\Repository\AudienceRepository;
+use Up\Schedule\Repository\GroupRepository;
+use Up\Schedule\Repository\SubjectRepository;
 use Up\Schedule\Repository\UserRepository;
 
 class SidebarComponent extends CBitrixComponent
 {
 	public function executeComponent(): void
 	{
+		$groups = GroupRepository::getAll();
+		$audiences = AudienceRepository::getAll();
+		$teachers = UserRepository::getAllTeachers();
+		$subjects = SubjectRepository::getAll();
+		$geneticPerson = new \Up\Schedule\AutomaticSchedule\GeneticPerson($groups, $audiences, $teachers, $subjects);
+
 		$this->fetchUserInfo();
 		$this->includeComponentTemplate();
 	}

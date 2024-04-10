@@ -5,6 +5,10 @@ namespace Up\Schedule\AutomaticSchedule;
 use Bitrix\Main\Entity\Query;
 use Up\Schedule\Model\GroupSubjectTable;
 use Up\Schedule\Model\GroupTable;
+use Up\Schedule\Repository\AudienceRepository;
+use Up\Schedule\Repository\GroupRepository;
+use Up\Schedule\Repository\SubjectRepository;
+use Up\Schedule\Repository\UserRepository;
 
 class GeneticSchedule
 {
@@ -14,77 +18,50 @@ class GeneticSchedule
 
 	private int $mutationRate = 10; // Процент мутации
 
-	// Функция для создания случайной особи
-	function createIndividual(): ?GeneticPerson
+	public function __construct()
 	{
-		// if (!$this->groups)
-		// {
-		// 	$groups = GroupTable::query()->setSelect(['ID', 'TITLE'])->fetchAll();
-		// }
-		// else
-		// {
-		// 	$groups = $this->groups;
-		// }
-		//
-		// if ($groups)
-		// {
-		// 	$group = array_rand($groups);
-		// }
-		// else
-		// {
-		// 	return null;
-		// }
-		//
-		// $subjectsForGroup = GroupSubjectTable::query()->setSelect(['SUBJECT_ID', 'HOURS_NUMBER'])->where(
-		// 		'GROUP_ID',
-		// 		$group['ID']
-		// 	)->fetchAll();
-		// if ($subjectsForGroup)
-		// {
-		// 	$subject = array_rand($subjectsForGroup);
-		// }
-		// else
-		// {
-		// 	return null;
-		// }
-		//
-		// return new GeneticPerson($group, $subject);
+		$this->createPopulation($this->populationSize);
 	}
 
 	// Функция для создания первой популяции
-	function createPopulation($populationSize)
+	public function createPopulation($populationSize): array
 	{
+		$groups = GroupRepository::getAll();
+		$audiences = AudienceRepository::getAll();
+		$teachers = UserRepository::getAllTeachers();
+		$subjects = SubjectRepository::getAll();
+
 		$population = [];
 		for ($i = 0; $i < $populationSize; $i++)
 		{
-			$population[] = $this->createIndividual();
+			$population[] = new GeneticPerson($groups, $audiences, $teachers, $subjects);
 		}
 
 		return $population;
 	}
 
 	// Функция приспособленности (evaluation function)
-	function fitness($schedule)
+	public function fitness($schedule)
 	{
 
 	}
 
 	// Функция скрещивания (crossover)
-	function crossover($schedule1, $schedule2)
+	public function crossover($schedule1, $schedule2)
 	{
 		// Применить оператор скрещивания для создания нового расписания
 		// Вернуть новое расписание
 	}
 
 	// Функция мутации (mutation)
-	function mutate($schedule)
+	public function mutate($schedule)
 	{
 		// Применить оператор мутации для изменения расписания
 		// Вернуть измененное расписание
 	}
 
 	// Генетический алгоритм для составления расписания
-	function geneticAlgorithm($populationSize, $generations)
+	public function geneticAlgorithm($populationSize, $generations)
 	{
 		$population = initializePopulation($populationSize);
 
