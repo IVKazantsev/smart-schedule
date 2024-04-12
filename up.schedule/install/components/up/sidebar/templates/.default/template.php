@@ -18,10 +18,23 @@ if (!defined("B_PROLOG_INCLUDED") || B_PROLOG_INCLUDED !== true)
 	<aside class="menu has-text-centered is-flex is-flex-direction-column">
 		<ul class="menu-list box is-120-height">
 			<?php if($arResult['IS_AUTHORIZED']): ?>
-				<li class="is-60-height-child"><a class="is-60-height-child is-flex is-align-items-center is-justify-content-center" href="/profile/"><?= htmlspecialcharsbx($arResult['USER_NAME'] . ' ' . $arResult['USER_LAST_NAME']) ?><br><?= $arResult['USER_ROLE'] ?></a></li>
-				<li class="is-60-height-child"><a class="is-60-height-child is-flex is-align-items-center is-justify-content-center has-text-weight-bold" href="/logout/">Выйти</a></li>
+				<li class="is-flex is-justify-content-space-between">
+					<a class="is-60-height is-flex is-align-items-center is-justify-content-center" href="/profile/">
+						<?= htmlspecialcharsbx($arResult['USER_NAME'] . ' ' . $arResult['USER_LAST_NAME']) ?><br><?= $arResult['USER_ROLE'] ?></a>
+					<a class="is-60-height is-flex is-align-items-center is-justify-content-end" href="/logout/">
+						<svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-logout" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+							<path stroke="none" d="M0 0h24v24H0z"/>
+							<path d="M14 8v-2a2 2 0 0 0 -2 -2h-7a2 2 0 0 0 -2 2v12a2 2 0 0 0 2 2h7a2 2 0 0 0 2 -2v-2" />
+							<path d="M7 12h14l-3 -3m0 6l3 -3" />
+						</svg>
+					</a>
+				</li>
 			<?php else: ?>
-				<li class="is-60-height-child"><a class="is-60-height-child is-flex is-align-items-center is-justify-content-center has-text-weight-bold" href="/login/">Войти</a></li>
+				<li class="has-text-centered">
+					<a class="is-60-height has-text-weight-bold" href="/login/">
+						Войти
+					</a>
+				</li>
 			<?php endif; ?>
 		</ul>
 		<ul class="menu-list box">

@@ -26,11 +26,15 @@ class UserRepository
 												 'GROUP' => 'UP_SCHEDULE_GROUP.TITLE',
 											 ])->registerRuntimeField(
 				(new Reference(
-					'UP_SCHEDULE_ROLE', RoleTable::class, Join::on('this.UF_ROLE_ID', 'ref.ID')
+					'UP_SCHEDULE_ROLE',
+					RoleTable::class,
+					Join::on('this.UF_ROLE_ID', 'ref.ID')
 				))
 			)->registerRuntimeField(
 				(new Reference(
-					'UP_SCHEDULE_GROUP', GroupTable::class, Join::on('this.UF_GROUP_ID', 'ref.ID')
+					'UP_SCHEDULE_GROUP',
+					GroupTable::class,
+					Join::on('this.UF_GROUP_ID', 'ref.ID')
 				))
 			)->where('ID', $id)->fetchObject();
 	}
@@ -54,8 +58,13 @@ class UserRepository
 									 'UP_SCHEDULE_SUBJECT_TEACHER',
 									 SubjectTeacherTable::class,
 									 Join::on('this.ID', 'ref.TEACHER_ID')
-								 )))
-								 ->where('ROLE', 'Преподаватель')
+								 )))->registerRuntimeField(
+				(new Reference(
+					'UP_SCHEDULE_GROUP',
+					GroupTable::class,
+					Join::on('this.UF_GROUP_ID', 'ref.ID')
+				))
+			)->where('ROLE', 'Преподаватель')
 								 ->where('SUBJECT_ID', $subjectId)
 								 ->fetchCollection();
 	}
@@ -63,6 +72,20 @@ class UserRepository
 	public static function getAllTeachers(): EO_User_Collection
 	{
 		return UserTable::query()->setSelect([
+			'ID',
+			'NAME',
+			'LAST_NAME',
+			'EMAIL',
+			'ROLE_ID' => 'UP_SCHEDULE_ROLE.ID',
+		])->registerRuntimeField(
+			(new Reference(
+				'UP_SCHEDULE_ROLE',
+				RoleTable::class,
+				Join::on('this.UF_ROLE_ID', 'ref.ID')
+			))
+		)->where('ROLE_ID', 2)->fetchCollection();
+
+		/*return UserTable::query()->setSelect([
 												 'ID',
 												 'NAME',
 												 'LAST_NAME',
@@ -75,6 +98,6 @@ class UserRepository
 							Join::on('this.UF_ROLE_ID', 'ref.ID')
 						)))
 						->where('ROLE', 'Преподаватель')
-						->fetchCollection();
+						->fetchCollection();*/
 	}
 }

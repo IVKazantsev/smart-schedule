@@ -32,9 +32,19 @@ class CouplesListComponent extends CBitrixComponent
 		$groups = GroupRepository::getAll();
 		$audiences = AudienceRepository::getAll();
 		$teachers = UserRepository::getAllTeachers();
-		$geneticPerson = new \Up\Schedule\AutomaticSchedule\GeneticPerson($groups, $audiences, $teachers);
-		// $couples = CoupleRepository::getByGroupId($currentGroupId);
-		$this->arResult['SORTED_COUPLES'] = $this->sortCouplesByWeekDay($geneticPerson->couples);
+
+		/*$geneticPerson = new \Up\Schedule\AutomaticSchedule\GeneticPerson($groups, $audiences, $teachers);
+		$couples = $geneticPerson->couples;
+		$currentGroupCouples = new EO_Couple_Collection();
+		foreach ($couples as $couple)
+		{
+			if ($couple->getGroup()->getId() === $currentGroupId)
+			{
+				$currentGroupCouples->add($couple);
+			}
+		}*/
+		$couples = CoupleRepository::getByGroupId($currentGroupId);
+		$this->arResult['SORTED_COUPLES'] = $this->sortCouplesByWeekDay(/*$currentGroupCouples*/$couples);
 	}
 
 	protected function sortCouplesByWeekDay(?EO_Couple_Collection $couples): array

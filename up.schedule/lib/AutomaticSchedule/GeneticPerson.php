@@ -16,11 +16,18 @@ use Up\Schedule\Repository\UserRepository;
 
 class GeneticPerson
 {
+	private int $fitness;
+
 	// Группы с неполным расписанием
 	private EO_Group_Collection $groups;
 
 	// Коллекция всех расставленных пар
 	public EO_Couple_Collection $couples;
+
+	public function setCouples(EO_Couple_Collection $couples): void
+	{
+		$this->couples = $couples;
+	}
 
 	// Массив, в котором на месте [i][j] лежит коллекция свободных для пары в i день на j месте аудиторий
 	public array $freeAudiencesInCouple;
@@ -38,7 +45,7 @@ class GeneticPerson
 		EO_User_Collection $teachers,
 	)
 	{
-		$this->groups = $groups;
+		$this->groups = clone $groups;
 
 		// Заполняем поля класса всевозможными сущностями
 		for ($i = 1; $i <= 6; $i++)
@@ -96,15 +103,15 @@ class GeneticPerson
 			$this->freeCouplesForGroups[$couple->getGroup()->getId()]
 									   [$couple->getWeekDay()]
 									   [$couple->getCoupleNumberInDay()]
-									   ->removeByPrimary($couple->getSubject()->getId());
+									   ?->removeByPrimary($couple->getSubject()->getId());
 
 			$this->freeTeachersInCouple[$couple->getWeekDay()]
 									   [$couple->getCoupleNumberInDay()]
-									   ->removeByPrimary($couple->getTeacher()->getId());
+									   ?->removeByPrimary($couple->getTeacher()->getId());
 
 			$this->freeAudiencesInCouple[$couple->getWeekDay()]
 									   [$couple->getCoupleNumberInDay()]
-									   ->removeByPrimary($couple->getAudience()->getId());
+									   ?->removeByPrimary($couple->getAudience()->getId());
 		}
 	}
 
@@ -174,7 +181,7 @@ class GeneticPerson
 			$randCoupleNumber = array_rand($freeCouplesForSubject[$randDay]);
 
 			// Избавляемся от ситуации, когда имеем пустую коллекцию предметов
-			if($this->freeCouplesForGroups[$randGroup->getId()][$randDay][$randCoupleNumber]->isEmpty())
+			if($this->freeCouplesForGroups[$randGroup->getId()][$randDay][$randCoupleNumber]?->isEmpty())
 			{
 				unset($this->freeCouplesForGroups[$randGroup->getId()][$randDay][$randCoupleNumber]);
 				continue;
@@ -224,7 +231,7 @@ class GeneticPerson
 			// Если подходящих преподавателей нет, то удаляем предмет из возможной расстановки
 			if ($suitableTeachers->count() === 0)
 			{
-				$this->freeCouplesForGroups[$randGroup->getId()][$randDay][$randCoupleNumber]->removeByPrimary(
+				$this->freeCouplesForGroups[$randGroup->getId()][$randDay][$randCoupleNumber]?->removeByPrimary(
 					$randSubject->getId()
 				);
 				unset($freeCouplesForSubject[$randDay][$randCoupleNumber]);
@@ -254,5 +261,15 @@ class GeneticPerson
 		$randId = $idList[$randKeyOfId];
 
 		return $collection->getByPrimary($randId);
+	}
+
+	public function getFitness(): int
+	{
+		return $this->fitness;
+	}
+
+	public function setFitness(int $fitness): void
+	{
+		$this->fitness = $fitness;
 	}
 }
