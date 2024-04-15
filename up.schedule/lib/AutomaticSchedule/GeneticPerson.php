@@ -13,7 +13,7 @@ use Up\Schedule\Model\EO_Group_Collection;
 use Up\Schedule\Model\EO_Subject;
 use Up\Schedule\Model\EO_Subject_Collection;
 use Up\Schedule\Repository\UserRepository;
-
+//TODO:Исправить возможность создания с накладками по парам у групп
 class GeneticPerson
 {
 	private int $fitness;
@@ -143,7 +143,7 @@ class GeneticPerson
 		while (true)
 		{
 			// Берем рандомный день из свободных
-			$randDay = array_rand($freeCouplesForSubject);
+			$randDay = array_rand($freeCouplesForSubject); // TODO:исправить индексацию
 
 			// Если рандомно полученный день пуст, т.е. в нем нет свободных пар, то удаляем его из массива
 			if (empty($freeCouplesForSubject[$randDay]))
@@ -153,7 +153,7 @@ class GeneticPerson
 			}
 
 			// Берем рандомную пару из свободных
-			$randCoupleNumber = array_rand($freeCouplesForSubject[$randDay]);
+			$randCoupleNumber = array_rand($freeCouplesForSubject[$randDay]); // TODO: исправить индексацию
 
 			// Избавляемся от ситуации, когда имеем пустую коллекцию предметов, которые можно выставить в этой паре
 			if ($this->freeCouplesForGroups[$randGroup->getId()][$randDay][$randCoupleNumber]?->isEmpty())

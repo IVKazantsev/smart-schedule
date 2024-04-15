@@ -28,9 +28,9 @@ class SidebarComponent extends CBitrixComponent
 		$count = 0;
 		$schedules = [];
 
-		$alg = new GeneticSchedule([$groups, $teachers, $audiences]);
+		/*$alg = new GeneticSchedule([$groups, $teachers, $audiences]);
 		echo "<pre>";
-		$alg->geneticAlgorithm(200);
+		$alg->geneticAlgorithm(200);*/
 
 		/*for($i = 0; $i < 2; $i++)
 		{
