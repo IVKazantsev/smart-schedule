@@ -46,7 +46,7 @@ class GeneticPerson
 	)
 	{
 		$this->groups = clone $groups;
-
+		$this->couples = new EO_Couple_Collection();
 		// Заполняем поля класса всевозможными сущностями
 		for ($i = 1; $i <= 6; $i++)
 		{
@@ -73,45 +73,32 @@ class GeneticPerson
 			// 1. Добавляем созданную пару в коллекцию пар
 			// 2. В выбранной группе удаляем предмет, пару по которому добавили
 			// 3. Убираем "свободность" выбранных сущностей
-			if($couple === null)
+			if ($couple === null)
 			{
 				continue;
 			}
-			if($couple === false)
+			if ($couple === false)
 			{
 				echo "СОСТАВИТЬ РАСПИСАНИЕ НЕ УДАЛОСЬ";
 				break;
 			}
 
-
-			if (!isset($this->couples))
-			{
-				$couples = new EO_Couple_Collection();
-				$couples->add($couple);
-				$this->couples = $couples;
-			}
-			else
-			{
-				$this->couples->add($couple);
-			}
+			$this->couples->add($couple);
 
 			// TODO: Если у предмета больше 1 часа в неделю
-			$this->groups->getByPrimary($couple->getGroup()->getId())
-						 ->getSubjects()
-						 ->removeByPrimary($couple->getSubject()->getId());
+			$this->groups->getByPrimary($couple->getGroup()->getId())->getSubjects()->removeByPrimary(
+					$couple->getSubject()->getId()
+				);
 
 			$this->freeCouplesForGroups[$couple->getGroup()->getId()]
-									   [$couple->getWeekDay()]
-									   [$couple->getCoupleNumberInDay()]
-									   ?->removeByPrimary($couple->getSubject()->getId());
+			[$couple->getWeekDay()]
+			[$couple->getCoupleNumberInDay()]?->removeByPrimary($couple->getSubject()->getId());
 
 			$this->freeTeachersInCouple[$couple->getWeekDay()]
-									   [$couple->getCoupleNumberInDay()]
-									   ?->removeByPrimary($couple->getTeacher()->getId());
+			[$couple->getCoupleNumberInDay()]?->removeByPrimary($couple->getTeacher()->getId());
 
 			$this->freeAudiencesInCouple[$couple->getWeekDay()]
-									   [$couple->getCoupleNumberInDay()]
-									   ?->removeByPrimary($couple->getAudience()->getId());
+			[$couple->getCoupleNumberInDay()]?->removeByPrimary($couple->getAudience()->getId());
 		}
 	}
 
@@ -136,52 +123,40 @@ class GeneticPerson
 
 		$freeCouplesForSubject = [];
 
+		// Ищем свободные места для рандомно полученного предмета
 		foreach ($this->freeCouplesForGroups[$randGroup->getId()] as $dayKey => $day)
 		{
 			foreach ($day as $coupleKey => $subjectCollection)
 			{
-				if($subjectCollection->hasByPrimary($randSubject->getId()))
+				if ($subjectCollection->hasByPrimary($randSubject->getId()))
 				{
 					$freeCouplesForSubject[$dayKey][$coupleKey] = true;
 				}
 			}
 		}
-		if(empty($freeCouplesForSubject))
+		// Если мест нет, то имеем, что у группы есть невыставленный предмет => расписание нам не подходит
+		if (empty($freeCouplesForSubject))
 		{
 			return false;
 		}
 		// Ищем свободное у группы место для пары, пока не найдем
 		while (true)
 		{
-			// Берем рандомную пару из свободных
-			// TODO: Где-то здесь ломается
-			if(empty($freeCouplesForSubject))
-			{
-				echo "\n\n" . $randSubject->getTitle() . "\n\n";
-
-				foreach ($this->freeTeachersInCouple as $day)
-				{
-					foreach ($day as $teacherCollection)
-					{
-						foreach ($teacherCollection as $teacher)
-						{
-							echo $teacher->getName() . "\n\n";
-						}
-					}
-				}
-
-				return false;
-			}
+			// Берем рандомный день из свободных
 			$randDay = array_rand($freeCouplesForSubject);
-			if(empty($freeCouplesForSubject[$randDay]))
+
+			// Если рандомно полученный день пуст, т.е. в нем нет свободных пар, то удаляем его из массива
+			if (empty($freeCouplesForSubject[$randDay]))
 			{
 				unset($freeCouplesForSubject[$randDay]);
 				continue;
 			}
+
+			// Берем рандомную пару из свободных
 			$randCoupleNumber = array_rand($freeCouplesForSubject[$randDay]);
 
-			// Избавляемся от ситуации, когда имеем пустую коллекцию предметов
-			if($this->freeCouplesForGroups[$randGroup->getId()][$randDay][$randCoupleNumber]?->isEmpty())
+			// Избавляемся от ситуации, когда имеем пустую коллекцию предметов, которые можно выставить в этой паре
+			if ($this->freeCouplesForGroups[$randGroup->getId()][$randDay][$randCoupleNumber]?->isEmpty())
 			{
 				unset($this->freeCouplesForGroups[$randGroup->getId()][$randDay][$randCoupleNumber]);
 				continue;
@@ -189,18 +164,21 @@ class GeneticPerson
 
 			// Свободные аудитории и преподаватели на этой паре
 			$freeAudiences = $this->freeAudiencesInCouple[$randDay][$randCoupleNumber];
-			if($freeAudiences->isEmpty())
+			// Избавляемся от ситуации, когда имеем пустую коллекцию свободных аудиторий в этой паре
+			if ($freeAudiences->isEmpty())
 			{
 				unset($this->freeAudiencesInCouple[$randDay][$randCoupleNumber]);
 				continue;
 			}
 
 			$freeTeachers = $this->freeTeachersInCouple[$randDay][$randCoupleNumber];
-			if($freeTeachers === null)
+
+			// Избавляемся от ситуации, когда имеем пустую коллекцию свободных преподавателей в этой паре
+			if ($freeTeachers === null)
 			{
 				unset($freeCouplesForSubject[$randDay][$randCoupleNumber]);
 			}
-			if($freeTeachers->count() === 0)
+			if ($freeTeachers->count() === 0)
 			{
 				unset($this->freeTeachersInCouple[$randDay][$randCoupleNumber]);
 				continue;
@@ -213,7 +191,7 @@ class GeneticPerson
 			// Берем только тех преподавателей, которые преподают данный предмет
 			$teachersForSubject = UserRepository::getTeacherBySubjectId($randSubject->getId());
 
-			if($teachersForSubject->count() === 0)
+			if ($teachersForSubject->count() === 0)
 			{
 				return false;
 			}
