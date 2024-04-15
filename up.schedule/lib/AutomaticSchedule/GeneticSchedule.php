@@ -18,7 +18,7 @@ use Up\Schedule\Repository\UserRepository;
 
 class GeneticSchedule
 {
-	private int $populationSize = 4; // Размер популяции. Можно увеличить.
+	private int $populationSize = 100; // Размер популяции. Можно увеличить.
 
 	private int $percentageOfSelection = 50;
 	private int $maxGenerations = 5000; // Макс. кол-во итерации.
@@ -283,10 +283,16 @@ class GeneticSchedule
 			return -1;
 		});
 
-		return array_slice(
+		$schedules = array_slice(
 			$schedules,
 			0,
 			round($this->populationSize * ($this->percentageOfSelection / 100)));
+		if ($schedules[0]->getFitness() < 50)
+		{
+			return [$schedules[0]];
+		}
+
+		return $schedules;
 	}
 
 	// Функция скрещивания (crossover)
@@ -355,12 +361,20 @@ class GeneticSchedule
 			}
 
 //			echo "\n\n\n\n\ncrossover: " . $groups->getByPrimary($groupId + 1)->getTitle()  . "\n";
-			$amountOfCouples = $groups->getByPrimary($groupId + 1)->getSubjects()->count();
+			//$amountOfCouples = $groups->getByPrimary($groupId + 1)->getSubjects()->count();
+			$amountOfCouples = min(count($secondCouples[$groupId]), count($firstCouples[$groupId]));
+			//echo "amount: " . count($secondCouples[$groupId]) . "\n";
 			$randAmountOfChanges = random_int(1, $amountOfCouples);
-//			echo "\namount: " . $randAmountOfChanges . "\n";
+			echo "\ncount" . count($secondCouples[$groupId]) . "\trand amount of changes: " . $randAmountOfChanges . "\tamount of couples" . $amountOfCouples . "\t" . "\tfit: " . $schedule1->getFitness() .
+			"\tfit2: " . $schedule2->getFitness() . "\n";
+			//echo "\namount: " . $randAmountOfChanges . "\n";
 			if ($randAmountOfChanges === 1)
 			{
-				$randCouplesId = [array_rand($secondCouples[$groupId], $randAmountOfChanges)];
+				$randCouplesId = [array_rand($secondCouples[$groupId])];
+			}
+			elseif ($randAmountOfChanges < 1)
+			{
+				$randCouplesId = [];
 			}
 			else
 			{
@@ -379,7 +393,10 @@ class GeneticSchedule
 			foreach ($remainingId as $coupleId)
 			{
 				$couple = $firstCouples[$groupId][$coupleId]; //Пары берутся из первого расписания
-				$newCouples->add($couple);
+				if ($couple !== null)
+				{
+					$newCouples->add($couple);
+				}
 			}
 		}
 		$newSchedule = clone $schedule1;
@@ -423,6 +440,10 @@ class GeneticSchedule
 			// Например, можно выбрать лучшие 50% расписаний
 
 			$selectedSchedules = $this->selection($population);
+			if (count($selectedSchedules) === 1)
+			{
+				return $selectedSchedules[0];
+			}
 			// Скрещивание
 			$newPopulation = [];
 			while (count($newPopulation) < $this->populationSize)
@@ -488,7 +509,9 @@ class GeneticSchedule
 			}
 		}
 //		echo "\n\n\n";
-		$this->fitness($bestSchedule); // TODO: УДАЛИТЬ ЭТУ СТРОЧКУ
+		//$this->fitness($bestSchedule); // TODO: УДАЛИТЬ ЭТУ СТРОЧКУ
 		return $bestSchedule;
 	}
+
+
 }
