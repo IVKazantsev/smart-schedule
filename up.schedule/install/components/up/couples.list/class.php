@@ -1,6 +1,7 @@
 <?php
 
 use Bitrix\Main\ORM\Objectify\Collection;
+use Up\Schedule\AutomaticSchedule\GeneticSchedule;
 use Up\Schedule\Model\EO_Couple_Collection;
 use Up\Schedule\Repository\AudienceRepository;
 use Up\Schedule\Repository\CoupleRepository;
@@ -33,9 +34,8 @@ class CouplesListComponent extends CBitrixComponent
 		$audiences = AudienceRepository::getAll();
 		$teachers = UserRepository::getAllTeachers();
 
-		//echo "<pre>";
-		$ga = new \Up\Schedule\AutomaticSchedule\GeneticSchedule();
-		$geneticPerson = $ga->geneticAlgorithm(100);
+		$ga = new GeneticSchedule([$groups, $audiences, $teachers]);
+		$geneticPerson = $ga->geneticAlgorithm(10);
 		$couples = $geneticPerson->couples;
 		$currentGroupCouples = new EO_Couple_Collection();
 		foreach ($couples as $couple)
