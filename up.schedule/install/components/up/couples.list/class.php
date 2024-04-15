@@ -33,7 +33,9 @@ class CouplesListComponent extends CBitrixComponent
 		$audiences = AudienceRepository::getAll();
 		$teachers = UserRepository::getAllTeachers();
 
-		/*$geneticPerson = new \Up\Schedule\AutomaticSchedule\GeneticPerson($groups, $audiences, $teachers);
+
+		/*$ga = new \Up\Schedule\AutomaticSchedule\GeneticSchedule();
+		$geneticPerson = $ga->geneticAlgorithm(100);
 		$couples = $geneticPerson->couples;
 		$currentGroupCouples = new EO_Couple_Collection();
 		foreach ($couples as $couple)

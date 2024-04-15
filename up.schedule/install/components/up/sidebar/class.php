@@ -29,7 +29,7 @@ class SidebarComponent extends CBitrixComponent
 		$schedules = [];
 
 		$alg = new GeneticSchedule([$groups, $teachers, $audiences]);
-		//echo "<pre>";
+		echo "<pre>";
 		$alg->geneticAlgorithm(200);
 
 		/*for($i = 0; $i < 2; $i++)

@@ -34,9 +34,10 @@ class GeneticSchedule
 		'overfulfilment' => 100,
 		'underfulfilment' => 120,
 		'big_spaces' => 10
+//TODO:нагрузка на день
 	];
 
-	private array $currentPopulation;
+	//private array $currentPopulation;
 
 	/**
 	 * @param Collection[] $parameters [EO_Group_Collection $groups, EO_User_Collection $teachers, EO_Audience_Collection $audiences]
@@ -143,7 +144,7 @@ class GeneticSchedule
 		{
 			$amountsOfCouples[$group->getId()] = count($group->getSubjects()->getIdList());
 		}
-
+// TODO: use array_fill
 		for ($i = 1; $i <= 6; $i++)
 		{
 			for ($j = 1; $j <= 7; $j++)
@@ -187,11 +188,11 @@ class GeneticSchedule
 		}
 		foreach ($amountsOfCouples as $amountOfCouples)
 		{
-			if ($amountOfCouples < 0)
+			if ($amountOfCouples > 0)
 			{
 				$penalty += abs($amountOfCouples) * self::$pricesOfPenalty['underfulfilment']; //Штраф за недовыполнение учебного плана
 			}
-			elseif ($amountOfCouples > 0)
+			elseif ($amountOfCouples < 0)
 			{
 				$penalty += abs($amountOfCouples) * self::$pricesOfPenalty['overfulfilment']; //Штраф за перевыполнение учебного плана
 			}
@@ -215,7 +216,7 @@ class GeneticSchedule
 			{
 				while (true)
 				{
-					$numberOfCouple = array_search(1, $couplesOnWeekForGroup[$id][$i], true);
+					$numberOfCouple = array_search(1, $couplesOnWeekForGroup[$id][$i], true); // TODO: change first parameter
 					unset($couplesOnWeekForGroup[$id][$i][$numberOfCouple]);
 
 					$numberOfNextCouple = array_search(1, $couplesOnWeekForGroup[$id][$i], true);
@@ -225,7 +226,7 @@ class GeneticSchedule
 					}
 
 					$spaceBetweenCouples = $numberOfNextCouple - $numberOfCouple - 1;
-					if ($spaceBetweenCouples > 3)
+					if ($spaceBetweenCouples > 3) // TODO: хранить расстояние в отдельном поле
 					{
 						$penalty += self::$pricesOfPenalty['big_spaces']; // Штраф за большие окна между парами (4 и более)
 					}
@@ -275,19 +276,20 @@ class GeneticSchedule
 	public function selection(array $schedules): array
 	{
 		uasort($schedules, static function (GeneticPerson $schedule1, GeneticPerson $schedule2) {
-			if ($schedule1->getFitness() > $schedule2->getFitness())
+			if ($schedule1->getFitness() === $schedule2->getFitness())
 			{
-				return 1;
+				return 0;
 			}
 
-			return -1;
+			return ($schedule1->getFitness() > $schedule2->getFitness()) ? 1 : -1;
 		});
 
 		$schedules = array_slice(
 			$schedules,
 			0,
 			round($this->populationSize * ($this->percentageOfSelection / 100)));
-		if ($schedules[0]->getFitness() < 50)
+
+		if ($schedules[0]->getFitness() < 0) // TODO:Вынести в отдельный метод
 		{
 			return [$schedules[0]];
 		}
@@ -445,10 +447,10 @@ class GeneticSchedule
 				return $selectedSchedules[0];
 			}
 			// Скрещивание
-			$newPopulation = [];
+			$newPopulation = $selectedSchedules;
 			while (count($newPopulation) < $this->populationSize)
 			{
-				$parent1 = $population[array_rand($selectedSchedules)];
+				$parent1 = $population[array_rand($selectedSchedules)]; //TODO: предусмотреть фиксированный маскимум детей
 				$parent2 = $population[array_rand($selectedSchedules)];
 
 
@@ -509,7 +511,6 @@ class GeneticSchedule
 			}
 		}
 //		echo "\n\n\n";
-		//$this->fitness($bestSchedule); // TODO: УДАЛИТЬ ЭТУ СТРОЧКУ
 		return $bestSchedule;
 	}
 
