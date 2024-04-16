@@ -10,6 +10,7 @@ return static function(RoutingConfigurator $routes) {
 	$routes->get('/schedule/{entity}/{id}/', new PublicPageController('/local/modules/up.schedule/views/schedule.php'));
 
 	$routes->get('/profile/', new PublicPageController('/local/modules/up.schedule/views/profile.php'));
+	$routes->get('/admin/', new PublicPageController('/local/modules/up.schedule/views/admin.php'));
 	$routes->get('/scheduling/', new PublicPageController('/local/modules/up.schedule/views/scheduling.php'));
 	$routes->get('/optimize/', new PublicPageController('/local/modules/up.schedule/views/optimize.php'));
 	$routes->get('/statistics/', new PublicPageController('/local/modules/up.schedule/views/statistics.php'));

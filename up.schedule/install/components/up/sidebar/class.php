@@ -20,35 +20,6 @@ class SidebarComponent extends CBitrixComponent
 	{
 		$userId = CurrentUser::get()->getId();
 		$user = UserRepository::getById($userId);
-		//
-		$groups = GroupRepository::getAll();
-		$audiences = AudienceRepository::getAll();
-		$teachers = UserRepository::getAllTeachers();
-		//echo "<pre>";
-		$count = 0;
-		$schedules = [];
-
-		/*$alg = new GeneticSchedule([$groups, $teachers, $audiences]);
-		echo "<pre>";
-		$alg->geneticAlgorithm(200);*/
-
-		/*for($i = 0; $i < 2; $i++)
-		{
-			$schedules[] = new GeneticPerson($groups, $audiences, $teachers);
-			$fit = $alg->fitness($schedules[$i]);
-			$schedules[$i]->setFitness($fit);
-			echo "$i итерация: " . $fit . "\n\n\n";
-			if ($fit > 0) $count++;
-		}
-		$selectedSchedules = $alg->selection($schedules);
-		$i = 0;
-		foreach ($selectedSchedules as $selectedSchedule) {
-			$i++;
-			echo "\nfitness of $i schedule: " . $selectedSchedule->getFitness();
-		}
-		echo "\nКоличество расписаний с накладками: $count";*/
-		//
-
 
 		if ($user)
 		{
@@ -59,6 +30,10 @@ class SidebarComponent extends CBitrixComponent
 			$this->arResult['IS_AUTHORIZED'] = true;
 
 			return;
+		}
+		else
+		{
+			$this->arResult['USER_ROLE'] = 'Гость';
 		}
 
 		$this->arResult['IS_AUTHORIZED'] = false;

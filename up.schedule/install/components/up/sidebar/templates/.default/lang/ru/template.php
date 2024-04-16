@@ -1,5 +1,6 @@
 <?php
 
+$MESS["ADMIN_PANEL"] = "Административная панель";
 $MESS["SCHEDULING"] = "Составить расписание";
 $MESS["OPTIMIZE"] = "Оптимизировать расписание";
 $MESS["STATISTICS"] = "Статистика";
