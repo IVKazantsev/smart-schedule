@@ -47,8 +47,7 @@ if (!defined("B_PROLOG_INCLUDED") || B_PROLOG_INCLUDED !== true)
 		<ul class="menu-list box">
 			<li><a class="is-60-height is-flex is-align-items-center is-justify-content-center" href="/admin/"><?= GetMessage("ADMIN_PANEL") ?></a></li>
 			<li><a class="is-60-height is-flex is-align-items-center is-justify-content-center" href="/scheduling/"><?= GetMessage("SCHEDULING") ?></a></li>
-			<li><a class="is-60-height is-flex is-align-items-center is-justify-content-center" href="/optimize/"><?= GetMessage("OPTIMIZE") ?></a></li>
-			<li><a class="is-60-height is-flex is-align-items-center is-justify-content-center" href="/statistics/"><?= GetMessage("STATISTICS") ?></a></li>
+			<li><a class="is-60-height is-flex is-align-items-center is-justify-content-center" href="/"><?= GetMessage("BACK_TO_SCHEDULE") ?></a></li>
 		</ul>
 		<div class="box notes">
 			<?= GetMessage("NOTES") ?>:

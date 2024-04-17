@@ -12,4 +12,9 @@ class AudienceRepository
 	{
 		return AudienceTable::query()->setSelect(['ID', 'NUMBER', 'AUDIENCE_TYPE'])->fetchCollection();
 	}
+
+	public static function getAllArray(): ?array
+	{
+		return AudienceTable::query()->setSelect(['ID', 'NUMBER', 'AUDIENCE_TYPE'])->fetchAll();
+	}
 }

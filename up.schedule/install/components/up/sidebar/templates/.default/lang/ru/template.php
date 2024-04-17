@@ -2,8 +2,7 @@
 
 $MESS["ADMIN_PANEL"] = "Административная панель";
 $MESS["SCHEDULING"] = "Составить расписание";
-$MESS["OPTIMIZE"] = "Оптимизировать расписание";
-$MESS["STATISTICS"] = "Статистика";
+$MESS["BACK_TO_SCHEDULE"] = "Вернуться к расписанию";
 
 $MESS["ADMINISTRATOR_ROLE"] = "Администратор";
 

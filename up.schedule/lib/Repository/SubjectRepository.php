@@ -11,4 +11,9 @@ class SubjectRepository
 	{
 		return SubjectTable::query()->setSelect(['ID', 'TITLE'])->fetchCollection();
 	}
+
+	public static function getAllArray(): ?array
+	{
+		return SubjectTable::query()->setSelect(['ID', 'TITLE'])->fetchAll();
+	}
 }

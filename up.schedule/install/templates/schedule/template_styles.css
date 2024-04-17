@@ -5,7 +5,7 @@ body {
 }
 
 .box {
-	padding: 0!important;
+	padding: 0 !important;
 }
 
 a:hover {
@@ -34,14 +34,14 @@ a:hover {
 }
 
 .add-couple-button {
-	line-height:60px;
+	line-height: 60px;
 }
 
 .dropdown-menu {
 	width: 100%;
 	max-height: 50vh;
 	overflow-y: scroll;
-	box-shadow: 0 0.5em 1em -0.125em rgba(10,10,10,.3), 0 0 0 1px rgba(10,10,10,.02);
+	box-shadow: 0 0.5em 1em -0.125em rgba(10, 10, 10, .3), 0 0 0 1px rgba(10, 10, 10, .02);
 	border-radius: 5px;
 }
 
@@ -49,11 +49,10 @@ a:hover {
 	display: none;
 }
 
-.day-of-week {
+.day-of-week, .title-of-table {
 	color: white;
 	background-color: #1b1b1b;
-	border-bottom-right-radius: 0;
-	border-bottom-left-radius: 0;
+	border-radius: 6px 6px 0 0;
 }
 
 .couple {
@@ -74,4 +73,28 @@ a:hover {
 .couples .couple:last-child {
 	border-bottom-right-radius: 5px;
 	border-bottom-left-radius: 5px;
+}
+
+.tabs {
+	display: none!important;
+}
+
+.tabs.is-active {
+	display: flex!important;
+}
+
+.tabs-content > div > div {
+	display: none;
+}
+
+.tabs-content > div > div.active {
+	display: flex;
+}
+
+#entity-list-app {
+	width: 100%;
+}
+
+.is-fullwidth {
+	width: 100%;
 }
