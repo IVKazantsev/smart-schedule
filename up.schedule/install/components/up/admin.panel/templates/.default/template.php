@@ -22,33 +22,33 @@ if (!defined("B_PROLOG_INCLUDED") || B_PROLOG_INCLUDED !== true)
 
 	<div class="columns tabs is-active">
 		<div class="column">
-			<a class="is-60-height box is-flex is-align-items-center is-justify-content-center" href="/admin/#subjects">Предметы</a>
+			<a class="is-60-height box is-flex is-align-items-center is-justify-content-center" href="/admin/#subject">Предметы</a>
 		</div>
 		<div class="column">
-			<a class="is-60-height box is-flex is-align-items-center is-justify-content-center" href="/admin/#users">Пользователи</a>
+			<a class="is-60-height box is-flex is-align-items-center is-justify-content-center" href="/admin/#user">Пользователи</a>
 		</div>
 	</div>
 	<div class="columns tabs is-active">
 		<div class="column">
-			<a class="is-60-height box is-flex is-align-items-center is-justify-content-center" href="/admin/#groups">Группы</a>
+			<a class="is-60-height box is-flex is-align-items-center is-justify-content-center" href="/admin/#group">Группы</a>
 		</div>
 		<div class="column">
-			<a class="is-60-height box is-flex is-align-items-center is-justify-content-center" href="/admin/#audiences">Аудитории</a>
+			<a class="is-60-height box is-flex is-align-items-center is-justify-content-center" href="/admin/#audience">Аудитории</a>
 		</div>
 	</div>
 
 	<div class="columns tabs-content">
 		<div class="column">
 			<div id="back-button-container">
-				<a class="is-60-height mb-5 box is-flex is-align-items-center is-justify-content-center" href="/admin/">Вернуться</a>
+				<a id ="back-button" class="is-60-height mb-5 box is-flex is-align-items-center is-justify-content-center" href="/admin/">Вернуться</a>
 			</div>
-			<div class="" id="subjects">
+			<div class="" id="subject">
 			</div>
-			<div class="" id="users">
+			<div class="" id="user">
 			</div>
-			<div class="" id="groups">
+			<div class="" id="group">
 			</div>
-			<div class="" id="audiences">
+			<div class="" id="audience">
 			</div>
 		</div>
 	</div>

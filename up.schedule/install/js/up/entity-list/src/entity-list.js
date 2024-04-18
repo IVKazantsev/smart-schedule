@@ -69,14 +69,14 @@ export class EntityList
 
 		switch (this.entity)
 		{
-			case 'subjects':
+			case 'subject':
 				containerContent = `
 					<div class="column is-11 is-60-height">
 						Название
 					</div>
 				`;
 				break;
-			case 'users':
+			case 'user':
 				containerContent = `
 					<div class="column is-4 is-60-height">
 						Имя
@@ -89,14 +89,14 @@ export class EntityList
 					</div>
 				`;
 				break;
-			case 'groups':
+			case 'group':
 				containerContent = `
 					<div class="column is-60-height">
 						Название
 					</div>
 				`;
 				break;
-			case 'audiences':
+			case 'audience':
 				containerContent = `
 					<div class="column is-60-height">
 						Номер
@@ -121,9 +121,9 @@ export class EntityList
 
 		this.entityList.forEach(entityData => {
 			const entityNode = Tag.render`
-				<div class="columns is-fullwidth is-60-height button has-text-left">
+				<a class="columns is-fullwidth is-60-height button has-text-left" href="/admin/edit/${this.entity}/${entityData.ID}/">
 					${this.getEntityNodeContent(entityData)}
-				</div>
+				</a>
 			`;
 
 			entitiesContainerNode.appendChild(entityNode);
@@ -136,7 +136,7 @@ export class EntityList
 	{
 		switch (this.entity)
 		{
-			case 'subjects':
+			case 'subject':
 				return `
 					<div class="column is-1">
 						${entityData.ID}
@@ -146,7 +146,7 @@ export class EntityList
 					</div>
 				`;
 
-			case 'users':
+			case 'user':
 				return `
 					<div class="column is-1">
 						${entityData.ID}
@@ -162,7 +162,7 @@ export class EntityList
 					</div>
 				`;
 
-			case 'groups':
+			case 'group':
 				return `
 					<div class="column is-1">
 						${entityData.ID}
@@ -172,7 +172,7 @@ export class EntityList
 					</div>
 				`;
 
-			case 'audiences':
+			case 'audience':
 				return `
 					<div class="column is-1">
 						${entityData.ID}

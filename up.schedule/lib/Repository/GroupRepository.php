@@ -22,4 +22,9 @@ class GroupRepository
 	{
 		return GroupTable::query()->setSelect(['ID', 'TITLE'])->where('ID', $id)->fetchObject();
 	}
+
+	public static function getArrayById(int $id): ?array
+	{
+		return GroupTable::query()->setSelect(['ID', 'TITLE'])->where('ID', $id)->fetch();
+	}
 }

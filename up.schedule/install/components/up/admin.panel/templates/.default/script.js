@@ -2,7 +2,8 @@ window.addEventListener('load', () => {
 	const tabButtonsContainers = document.querySelectorAll('.tabs');
 	const tabButtons = document.querySelectorAll('.tabs .column a');
 	const tabContainers = document.querySelectorAll('.tabs-content div');
-	const backButton = document.getElementById('back-button-container');
+	const backButtonContainer = document.getElementById('back-button-container');
+	const backButton = document.getElementById('back-button');
 
 	let id = window.location.hash.substring(1);
 

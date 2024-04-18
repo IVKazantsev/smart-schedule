@@ -16,8 +16,7 @@ return static function(RoutingConfigurator $routes) {
 	$routes->get('/statistics/', new PublicPageController('/local/modules/up.schedule/views/statistics.php'));
 	$routes->get('/add-couple/', new PublicPageController('/local/modules/up.schedule/views/add-couple.php'));
 
-	$routes->get('/admin/edit/{entity}/{id}/', new PublicPageController('/local/modules/up.schedule/views/edit-form.php'));
-
+	$routes->get('/admin/edit/{entity}/{id}/', new PublicPageController('/local/modules/up.schedule/views/admins-entity-edit.php'));
 
 	$routes->any('/login/', new PublicPageController('/local/modules/up.schedule/views/login.php'));
 	$routes->get('/logout/', function () {

@@ -10,7 +10,7 @@ use Up\Schedule\Repository\UserRepository;
 
 class AdminPanel extends Controller
 {
-	public function getSubjectsListAction(): ?array
+	public function getSubjectListAction(): ?array
 	{
 		$entityList = SubjectRepository::getAllArray();
 		return [
@@ -18,7 +18,7 @@ class AdminPanel extends Controller
 		];
 	}
 
-	public function getUsersListAction(): ?array
+	public function getUserListAction(): ?array
 	{
 		$entityList = UserRepository::getAllArray();
 		return [
@@ -26,7 +26,7 @@ class AdminPanel extends Controller
 		];
 	}
 
-	public function getGroupsListAction(): ?array
+	public function getGroupListAction(): ?array
 	{
 		$entityList = GroupRepository::getAllArray();
 		return [
@@ -34,7 +34,7 @@ class AdminPanel extends Controller
 		];
 	}
 
-	public function getAudiencesListAction(): ?array
+	public function getAudienceListAction(): ?array
 	{
 		$entityList = AudienceRepository::getAllArray();
 		return [
