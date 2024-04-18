@@ -30,23 +30,24 @@ class CouplesListComponent extends CBitrixComponent
 	protected function fetchCouples(): void
 	{
 		$currentGroupId = (int)$this->arParams['ID'];
-		// $groups = GroupRepository::getAll();
-		// $audiences = AudienceRepository::getAll();
-		// $teachers = UserRepository::getAllTeachers();
+		/*$groups = GroupRepository::getAll();
+		$audiences = AudienceRepository::getAll();
+		$teachers = UserRepository::getAllTeachers();*/
 
-		// $ga = new GeneticSchedule([$groups, $audiences, $teachers]);
-		// $geneticPerson = $ga->geneticAlgorithm(10);
-		// $couples = $geneticPerson->couples;
-		// $currentGroupCouples = new EO_Couple_Collection();
-		// foreach ($couples as $couple)
-		// {
-		// 	if ($couple->getGroup()->getId() === $currentGroupId)
-		// 	{
-		// 		$currentGroupCouples->add($couple);
-		// 	}
-		// }
+		//echo "<pre>";
+		/*$ga = new \Up\Schedule\AutomaticSchedule\GeneticSchedule();
+		$geneticPerson = $ga->geneticAlgorithm(100);
+		$couples = $geneticPerson->couples;
+		$currentGroupCouples = new EO_Couple_Collection();
+		foreach ($couples as $couple)
+		{
+			if ($couple->getGroup()->getId() === $currentGroupId)
+			{
+				$currentGroupCouples->add($couple);
+			}
+		}*/
 		$couples = CoupleRepository::getByGroupId($currentGroupId);
-		$this->arResult['SORTED_COUPLES'] = $this->sortCouplesByWeekDay($couples /*$currentGroupCouples*/);
+		$this->arResult['SORTED_COUPLES'] = $this->sortCouplesByWeekDay(/*$currentGroupCouples*/$couples);
 	}
 
 	protected function sortCouplesByWeekDay(?EO_Couple_Collection $couples): array

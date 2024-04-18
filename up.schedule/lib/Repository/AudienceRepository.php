@@ -4,6 +4,7 @@ namespace Up\Schedule\Repository;
 
 
 use Up\Schedule\Model\AudienceTable;
+use Up\Schedule\Model\EO_Audience;
 use Up\Schedule\Model\EO_Audience_Collection;
 
 class AudienceRepository
@@ -16,5 +17,12 @@ class AudienceRepository
 	public static function getAllArray(): ?array
 	{
 		return AudienceTable::query()->setSelect(['ID', 'NUMBER', 'AUDIENCE_TYPE'])->fetchAll();
+	}
+
+	public static function getById(): ?EO_Audience
+	{
+		return AudienceTable::query()
+			->setSelect(['ID', 'NUMBER', 'AUDIENCE_TYPE'])
+			->fetchObject();
 	}
 }
