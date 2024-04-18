@@ -98,3 +98,8 @@ a:hover {
 .is-fullwidth {
 	width: 100%;
 }
+
+.edit-fields {
+	padding: 8px 12px!important;
+	height: auto;
+}
