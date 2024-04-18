@@ -15,7 +15,7 @@ if (!defined("B_PROLOG_INCLUDED") || B_PROLOG_INCLUDED !== true)
 	<div class="columns">
 		<div class="column">
 			<div class="box is-60-height is-flex is-align-items-center is-justify-content-center">
-				Административная панель
+				<?= GetMessage('ADMIN_PANEL') ?>
 			</div>
 		</div>
 	</div>
