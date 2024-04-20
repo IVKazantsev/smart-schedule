@@ -48,7 +48,6 @@ class AudienceRepository
 	public static function getArrayForAdminById(int $id): ?array
 	{
 		$result = AudienceTable::query()->setSelect([
-			'ID',
 			'NUMBER',
 			'TYPE' => 'UP_SCHEDULE_AUDIENCE_TYPE.TITLE'
 			])

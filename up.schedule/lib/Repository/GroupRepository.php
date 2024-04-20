@@ -42,7 +42,7 @@ class GroupRepository
 	public static function getArrayForAdminById(int $id): ?array
 	{
 		return GroupTable::query()
-			->setSelect(['ID', 'TITLE'])
+			->setSelect(['TITLE'])
 			->where('ID', $id)
 			->fetch();
 	}

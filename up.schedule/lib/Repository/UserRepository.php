@@ -79,7 +79,6 @@ class UserRepository
 	{
 		$user = UserTable::query()
 			->setSelect([
-						 'ID',
 						 'NAME',
 						 'LAST_NAME',
 						 'EMAIL',

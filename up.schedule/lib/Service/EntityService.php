@@ -43,10 +43,8 @@ class EntityService
 				self::getData($entityName)
 			);
 		}
-		catch (\Error $error)
+		catch (\Error)
 		{
-			echo "<pre>";
-			echo $error;
 			echo "Entity $entityName not found"; die();
 		}
 	}

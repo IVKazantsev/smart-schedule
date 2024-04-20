@@ -30,7 +30,6 @@ class SubjectRepository
 	{
 		$subject = SubjectTable::query()
 			->setSelect([
-				'ID',
 				'TITLE',
 				'TYPE' => 'UP_SCHEDULE_AUDIENCE_TYPE.TITLE',
 			])

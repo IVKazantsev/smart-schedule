@@ -22,11 +22,13 @@ return static function(RoutingConfigurator $routes) {
 		$entityId = (int)Context::getCurrent()?->getRequest()->get('id');
 		$entityName = Context::getCurrent()?->getRequest()->get('entity');
 		\Up\Schedule\Service\EntityService::deleteEntityById($entityName, $entityId);
+		LocalRedirect("/admin/edit/$entityName/$entityId/");
 	});
 	$routes->post('/admin/edit/{entity}/{id}/', function () {
 		$entityId = (int)Context::getCurrent()?->getRequest()->get('id');
 		$entityName = Context::getCurrent()?->getRequest()->get('entity');
 		\Up\Schedule\Service\EntityService::editEntityById($entityName, $entityId);
+		LocalRedirect("/admin/edit/$entityName/$entityId/");
 	});
 
 
