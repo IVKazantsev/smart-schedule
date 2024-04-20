@@ -23,24 +23,45 @@ use Bitrix\Main\Application;
 
 		<?php foreach ($arResult['ENTITY'] as $key => $field): ?>
 			<div class="is-60-height box edit-fields">
-					<!--<div>
-						<?php /*= GetMessage($key) */?>:
-					</div>
-					<input name="$key" class="input" type="text" value="<?php /*= $field */?>">-->
 				<?php if (is_array($field)): ?>
 					<label class="label"><?= $key ?></label>
-					<div class="control">
-						<div class="select">
-							<label>
-								<select name="<?=$key?>">
-									<?php foreach ($field as $subfield): ?>
-										<option><?= $subfield ?></option>
-									<?php endforeach; ?>
-								</select>
-							</label>
+						<?php if ($key === 'SUBJECTS'): ?>
+							<?php
+								$allSubjectsString = '';
+								foreach ($field['ALL_SUBJECTS'] as $subjectId => $subjectTitle)
+								{
+									$allSubjectsString .= "<option>$subjectTitle</option>";
+								}
+							?>
+							<?php foreach ($field['CURRENT_SUBJECTS'] as $subjectId => $subjectTitle): ?>
+							<div id="subjectContainer">
+								<div class="control mb-2">
+									<div class="select">
+										<label>
+											<select class="mb-1" name="<?='current_subject_' . $subjectId?>">
+													<option><?= $subjectTitle ?></option>
+													<?= $allSubjectsString ?>
+											</select>
+										</label>
+									</div>
+								</div>
+							</div>
+							<?php endforeach; ?>
+							<button class="button is-primary is-dark are-small" type="button" id="addSubject">Добавить <?=$key?></button>
+						<?php else: ?>
+						<div class="control">
+							<div class="select">
+								<label>
+									<select name="<?=$key?>">
+										<?php foreach ($field as $subfield): ?>
+											<option><?= $subfield ?></option>
+										<?php endforeach; ?>
+									</select>
+								</label>
+							</div>
 						</div>
-					</div>
-					<?php else: ?>
+						<?php endif; ?>
+				<?php else: ?>
 					<div class="field">
 						<label class="label"><?= $key ?></label>
 						<div class="control">
@@ -51,7 +72,7 @@ use Bitrix\Main\Application;
 							<strong> <?=$field?> </strong>
 						</p>
 					</div>
-					<?php endif; ?>
+				<?php endif; ?>
 			</div>
 		<?php endforeach; ?>
 
@@ -69,3 +90,20 @@ use Bitrix\Main\Application;
 		</div>
 	</form>
 </div>
+
+<script>
+	document.querySelector('#addSubject').addEventListener('click', () => {
+		const newListItem = document.createElement('div');
+		newListItem.innerHTML = `<div class="control mb-2">
+									<div class="select">
+										<label>
+											<select class="mb-1" name="">
+													<option> Не выбрано </option>
+													<?=$allSubjectsString?>
+											</select>
+										</label>
+									</div>
+								</div>`
+		document.querySelector('#subjectContainer').appendChild(newListItem);
+	});
+</script>

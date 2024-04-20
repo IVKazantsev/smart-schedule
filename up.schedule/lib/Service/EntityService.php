@@ -18,8 +18,9 @@ class EntityService
 		{
 			return self::getEntityRepositoryName($entityName)::getArrayForAdminById($entityId);
 		}
-		catch (\Error)
+		catch (\Error $error)
 		{
+			echo "$error";
 			echo "Entity $entityName not found"; die();
 		}
 	}
@@ -68,8 +69,18 @@ class EntityService
 
 	private static function getGroupData(): ?array
 	{
+		$subjects = [];
+		echo "<pre>";
+		foreach (Context::getCurrent()?->getRequest()->getPostList() as $key => $value)
+		{
+			if (str_starts_with($key, 'current_subject_'))
+			{
+				$subjects[] = $value;
+			}
+		}
 		return [
 			'TITLE' => self::getParameter('TITLE'),
+			'SUBJECTS' => $subjects,
 		];
 	}
 

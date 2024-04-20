@@ -29,7 +29,7 @@ class GroupRepository
 	public static function getById(int $id): ?EO_Group
 	{
 		return GroupTable::query()
-			->setSelect(['ID', 'TITLE'])
+			->setSelect(['ID', 'TITLE', 'SUBJECTS'])
 			->where('ID', $id)
 			->fetchObject();
 	}
@@ -41,10 +41,25 @@ class GroupRepository
 
 	public static function getArrayForAdminById(int $id): ?array
 	{
-		return GroupTable::query()
-			->setSelect(['TITLE'])
+		/*echo "<pre>";
+		$subjects = self::getById($id)?->getSubjects();
+		var_dump($subjects);*/
+		$data = [];
+		$group = self::getById($id);/*GroupTable::query()
+			->setSelect(['TITLE', 'SUBJECTS'])
 			->where('ID', $id)
-			->fetch();
+			->fetch();*/
+		$data['TITLE'] = $group?->getTitle();
+		foreach (SubjectRepository::getAll() as $subject)
+		{
+			$data['SUBJECTS']['ALL_SUBJECTS'][$subject->getId()] = $subject->getTitle();
+		}
+		foreach ($group?->getSubjects() as $subject)
+		{
+			$data['SUBJECTS']['CURRENT_SUBJECTS'][$subject->getId()] = $subject->getTitle();
+			unset($data['SUBJECTS']['ALL_SUBJECTS'][$subject->getId()]);
+		}
+		return $data;
 	}
 
 	public static function editById(int $id, array $data): void
