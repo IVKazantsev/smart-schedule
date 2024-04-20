@@ -1,33 +1,20 @@
 <?php
 
-use Bitrix\Main\Engine\CurrentUser;
-use Bitrix\Main\EO_User;
-use Up\Schedule\Model\EO_Audience;
-use Up\Schedule\Model\EO_Couple;
-use Up\Schedule\Model\EO_Group;
-use Up\Schedule\Model\EO_Subject;
+use Up\Schedule\Service\EntityService;
 
 class AdminsEntityEditComponent extends CBitrixComponent
 {
 	public function executeComponent(): void
 	{
-		$id = (int)$this->arParams['ID'];
-		$entityName = $this->arParams['ENTITY'];
-		$entity = $this->getEntityInfo($id, $entityName);
+		$entity = $this->getEntityInfo();
 		$this->arResult['ENTITY'] = $entity;
 		$this->includeComponentTemplate();
 	}
 
-	public function getEntityInfo(int $id, string $entityName): ?array
+	public function getEntityInfo(): ?array
 	{
-		$repository = '\Up\Schedule\Repository\\' . $entityName . 'Repository';
-		try
-		{
-			return $repository::getArrayById($id);
-		}
-		catch (Error)
-		{
-			echo "Entity $entityName not found"; die();
-		}
+		$id = (int)$this->arParams['ID'];
+		$entityName = (string)$this->arParams['ENTITY'];
+		return EntityService::getEntityById($entityName, $id);
 	}
 }

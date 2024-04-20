@@ -1,5 +1,6 @@
 <?php
 
+use Bitrix\Main\Context;
 use Bitrix\Main\Routing\Controllers\PublicPageController;
 use Bitrix\Main\Routing\RoutingConfigurator;
 
@@ -17,6 +18,17 @@ return static function(RoutingConfigurator $routes) {
 	$routes->get('/add-couple/', new PublicPageController('/local/modules/up.schedule/views/add-couple.php'));
 
 	$routes->get('/admin/edit/{entity}/{id}/', new PublicPageController('/local/modules/up.schedule/views/admins-entity-edit.php'));
+	$routes->post('/admin/delete/{entity}/{id}/', function () {
+		$entityId = (int)Context::getCurrent()?->getRequest()->get('id');
+		$entityName = Context::getCurrent()?->getRequest()->get('entity');
+		\Up\Schedule\Service\EntityService::deleteEntityById($entityName, $entityId);
+	});
+	$routes->post('/admin/edit/{entity}/{id}/', function () {
+		$entityId = (int)Context::getCurrent()?->getRequest()->get('id');
+		$entityName = Context::getCurrent()?->getRequest()->get('entity');
+		\Up\Schedule\Service\EntityService::editEntityById($entityName, $entityId);
+	});
+
 
 	$routes->any('/login/', new PublicPageController('/local/modules/up.schedule/views/login.php'));
 	$routes->get('/logout/', function () {

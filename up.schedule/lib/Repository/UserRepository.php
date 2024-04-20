@@ -75,24 +75,51 @@ class UserRepository
 		)->where('ID', $id)->fetchObject();
 	}
 
-	public static function getArrayById(int $id): ?array
+	public static function getArrayForAdminById(int $id): ?array
 	{
-		return UserTable::query()->setSelect([
-												 'ID',
-												 'NAME',
-												 'LAST_NAME',
-												 'EMAIL',
-												 'ROLE' => 'UP_SCHEDULE_ROLE.TITLE',
-												 'GROUP' => 'UP_SCHEDULE_GROUP.TITLE',
-											 ])->registerRuntimeField(
+		$user = UserTable::query()
+			->setSelect([
+						 'ID',
+						 'NAME',
+						 'LAST_NAME',
+						 'EMAIL',
+						 'ROLE' => 'UP_SCHEDULE_ROLE.TITLE',
+						 'GROUP' => 'UP_SCHEDULE_GROUP.TITLE',
+					 ])
+			->registerRuntimeField(
 			(new Reference(
 				'UP_SCHEDULE_ROLE', RoleTable::class, Join::on('this.UF_ROLE_ID', 'ref.ID')
-			))
-		)->registerRuntimeField(
+			)))
+			->registerRuntimeField(
 			(new Reference(
 				'UP_SCHEDULE_GROUP', GroupTable::class, Join::on('this.UF_GROUP_ID', 'ref.ID')
-			))
-		)->where('ID', $id)->fetch();
+			)))
+			->where('ID', $id)
+			->fetch();
+
+		$roles = RoleTable::query()
+			->setSelect(['ID', 'TITLE',])
+			->fetchAll();
+
+		$groups = GroupTable::query()
+			->setSelect(['ID', 'TITLE'])
+			->fetchAll();
+
+		$user['GROUP'] = array_unique(
+			array_merge_recursive(
+				[$user['GROUP']],
+				array_column($groups, 'TITLE')
+			)
+		);
+
+		$user['ROLE'] = array_unique(
+			array_merge_recursive(
+				[$user['ROLE']],
+				array_column($roles, 'TITLE')
+			)
+		);
+
+		return $user;
 	}
 
 	public static function getTeacherBySubjectId(int $subjectId): EO_User_Collection
@@ -147,5 +174,39 @@ class UserRepository
 						)))
 						->where('ROLE', 'Преподаватель')
 						->fetchCollection();*/
+	}
+
+	public static function editById(int $id, array $data): void
+	{
+		/*$rsUser = \CUser::GetByID($id);
+		$arUser = $rsUser->Fetch();*/
+		echo "<pre>";
+		var_dump($data);
+
+		$fields = [];
+		$validate = function (string $fieldName, mixed $value) use (&$fields): void {
+			if ($value !== null)
+			{
+				$fields[$fieldName] = $value;
+			}
+		};
+
+		$validate('NAME', $data['NAME']);
+		$validate('LAST_NAME', $data['LAST_NAME']);
+		$validate('EMAIL', $data['EMAIL']);
+		$validate('UF_GROUP_ID', GroupRepository::getByTitle($data['GROUP']??'')?->getId());
+		$validate('UF_ROLE_ID', RoleRepository::getByTitle($data['ROLE']??'')?->getId());
+
+		echo "<pre>";
+		var_dump($fields);
+		$user = new \CUser();
+		$user->Update($id, $fields);
+		var_dump($user->LAST_ERROR);
+		// TODO: handle exceptions
+	}
+
+	public static function deleteById(int $id): void
+	{
+		//TODO: delete function
 	}
 }
