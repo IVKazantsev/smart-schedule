@@ -103,13 +103,19 @@ class UserRepository
 		$groups = GroupTable::query()
 			->setSelect(['ID', 'TITLE'])
 			->fetchAll();
-
-		$user['GROUP'] = array_unique(
-			array_merge_recursive(
-				[$user['GROUP']],
-				array_column($groups, 'TITLE')
-			)
-		);
+		if ($user['ROLE'] === 'Студент')
+		{
+			$user['GROUP'] = array_unique(
+				array_merge_recursive(
+					[$user['GROUP']],
+					array_column($groups, 'TITLE')
+				)
+			);
+		}
+		else
+		{
+			unset($user['GROUP']);
+		}
 
 		$user['ROLE'] = array_unique(
 			array_merge_recursive(
