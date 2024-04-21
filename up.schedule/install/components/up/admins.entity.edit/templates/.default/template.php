@@ -106,16 +106,18 @@ use Bitrix\Main\Application;
 				<div class="is-size-4">Вы действительно хотите удалить данный элемент?</div>
 				<?php if (!empty($arResult['RELATED_ENTITIES'])): ?>
 					<div class="mt-3 mb-2 has-text-danger">При его удалении, удалится следующее:</div>
-					<?php foreach ($arResult['RELATED_ENTITIES'] as $key => $entity): ?>
-						<strong><?= GetMessage($key) ?></strong>
-						<?php foreach ($entity as $exemplar): ?>
-							<div class="box edit-fields mb-1">
-								<?php foreach ($exemplar as $field): ?>
-								<?= $field ?>
+						<div class="related-entities">
+							<?php foreach ($arResult['RELATED_ENTITIES'] as $key => $entity): ?>
+								<strong><?= GetMessage($key) ?></strong>
+								<?php foreach ($entity as $exemplar): ?>
+									<div class="box edit-fields mb-1">
+										<?php foreach ($exemplar as $field): ?>
+										<?= $field ?>
+										<?php endforeach; ?>
+									</div>
 								<?php endforeach; ?>
-							</div>
-						<?php endforeach; ?>
-					<?php endforeach; ?>
+							<?php endforeach; ?>
+						</div>
 				<?php endif; ?>
 				<div class="is-flex is-align-items-center is-justify-content-center mt-2">
 					<button id="delete-button" class="button is-danger" type="submit" formaction="<?=
