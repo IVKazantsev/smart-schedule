@@ -20,7 +20,7 @@ use Bitrix\Main\Application;
 
 	<div id="back-button-container" class="mb-4">
 		<div class="column is-1 p-0">
-			<a id ="back-button" class="is-60-height box is-flex is-align-items-center is-justify-content-center" href="/admin/#<?= $arResult['ENTITY_NAME'] ?>">Назад</a>
+			<a id ="back-button" class="is-60-height box is-flex is-align-items-center is-justify-content-center" href="/admin/#<?= $arResult['ENTITY_NAME'] ?>"><?= GetMessage('BACK') ?></a>
 		</div>
 	</div>
 
@@ -58,7 +58,7 @@ use Bitrix\Main\Application;
 							</div>
 						<?php
 						endforeach; ?>
-						<button class="button is-primary is-dark are-small" type="button" id="addSubject">Добавить <?= mb_strtolower(
+						<button class="button is-primary is-dark are-small" type="button" id="addSubject"><?= GetMessage('ADD') ?> <?= mb_strtolower(
 								GetMessage($key)
 							) ?></button>
 					<?php
@@ -86,7 +86,7 @@ use Bitrix\Main\Application;
 							<input class="input" type="text" name="<?= $key ?>" placeholder="Введите данные">
 						</div>
 						<p class="help">
-							Сейчас это поле имеет значение:
+							<?= GetMessage('CURRENT_FIELD_VALUE_HELPER') ?>:
 							<strong> <?= $field ?> </strong>
 						</p>
 					</div>
@@ -99,19 +99,19 @@ use Bitrix\Main\Application;
 		<div class="columns">
 			<div class="column is-flex is-justify-content-center">
 				<button class="button" type="submit" formaction="<?= $APPLICATION->GetCurUri() ?>">
-					Сохранить
+					<?= GetMessage('SAVE') ?>
 				</button>
 				<button data-modal-target="#modal" class="button ml-2 is-danger" id="open-modal-button" type="button">
-					Удалить
+					<?= GetMessage('DELETE') ?>
 				</button>
 			</div>
 		</div>
 
 		<div id="modal" class="box">
 			<div class="column">
-				<div class="is-size-4">Вы действительно хотите удалить данный элемент?</div>
+				<div class="is-size-4"><?= GetMessage('DELETION_CONFIRM_HELPER') ?></div>
 				<?php if (!empty($arResult['RELATED_ENTITIES'])): ?>
-					<div class="mt-3 mb-2 has-text-danger">При его удалении, удалится следующее:</div>
+					<div class="mt-3 mb-2 has-text-danger"><?= GetMessage('FIELDS_BEING_REMOVED_WARNING') ?>:</div>
 						<div class="related-entities">
 							<?php foreach ($arResult['RELATED_ENTITIES'] as $key => $entity): ?>
 								<strong><?= GetMessage($key) ?></strong>
@@ -129,8 +129,8 @@ use Bitrix\Main\Application;
 					<button id="delete-button" class="button is-danger" type="submit" formaction="<?=
 					str_replace('edit', 'delete', $APPLICATION->GetCurUri()) ?>"
 					>
-					Удалить</button>
-					<button id="close-modal-button" class="button ml-2" type="button">Отменить</button>
+						<?= GetMessage('DELETE') ?></button>
+					<button id="close-modal-button" class="button ml-2" type="button"><?= GetMessage('CANCEL') ?></button>
 				</div>
 			</div>
 		</div>

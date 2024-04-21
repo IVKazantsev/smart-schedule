@@ -1,5 +1,6 @@
 <?php
 
+use Bitrix\Main\Engine\CurrentUser;
 use Up\Schedule\Service\EntityService;
 
 class AdminsEntityEditComponent extends CBitrixComponent

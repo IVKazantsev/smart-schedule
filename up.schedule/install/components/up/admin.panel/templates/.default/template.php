@@ -22,18 +22,18 @@ if (!defined("B_PROLOG_INCLUDED") || B_PROLOG_INCLUDED !== true)
 
 	<div class="columns tabs is-active">
 		<div class="column">
-			<a class="is-60-height box is-flex is-align-items-center is-justify-content-center" href="/admin/#subject">Предметы</a>
+			<a class="is-60-height box is-flex is-align-items-center is-justify-content-center" href="/admin/#subject"><?= GetMessage('SUBJECTS') ?></a>
 		</div>
 		<div class="column">
-			<a class="is-60-height box is-flex is-align-items-center is-justify-content-center" href="/admin/#user">Пользователи</a>
+			<a class="is-60-height box is-flex is-align-items-center is-justify-content-center" href="/admin/#user"><?= GetMessage('USERS') ?></a>
 		</div>
 	</div>
 	<div class="columns tabs is-active">
 		<div class="column">
-			<a class="is-60-height box is-flex is-align-items-center is-justify-content-center" href="/admin/#group">Группы</a>
+			<a class="is-60-height box is-flex is-align-items-center is-justify-content-center" href="/admin/#group"><?= GetMessage('GROUPS') ?></a>
 		</div>
 		<div class="column">
-			<a class="is-60-height box is-flex is-align-items-center is-justify-content-center" href="/admin/#audience">Аудитории</a>
+			<a class="is-60-height box is-flex is-align-items-center is-justify-content-center" href="/admin/#audience"><?= GetMessage('AUDIENCES') ?></a>
 		</div>
 	</div>
 
@@ -41,7 +41,7 @@ if (!defined("B_PROLOG_INCLUDED") || B_PROLOG_INCLUDED !== true)
 		<div class="column">
 			<div id="back-button-container" class="mb-2">
 				<div class="column is-1 p-0">
-				<a id ="back-button" class="is-60-height mb-5 box is-flex is-align-items-center is-justify-content-center" href="/admin/">Назад</a>
+				<a id ="back-button" class="is-60-height mb-5 box is-flex is-align-items-center is-justify-content-center" href="/admin/"><?= GetMessage('BACK') ?></a>
 				</div>
 			</div>
 			<div class="" id="subject">
