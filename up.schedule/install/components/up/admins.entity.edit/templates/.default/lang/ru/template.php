@@ -9,5 +9,6 @@ $MESS['GROUP'] = 'Группа';
 $MESS['TITLE'] = 'Название';
 $MESS['NUMBER'] = 'Номер';
 $MESS['TYPE'] = 'Тип';
+$MESS['SUBJECTS'] = 'Предметы';
 
 $MESS['ENTITY_EDIT'] = 'Редактирование';

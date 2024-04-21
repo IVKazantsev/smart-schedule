@@ -24,7 +24,7 @@ use Bitrix\Main\Application;
 		<?php foreach ($arResult['ENTITY'] as $key => $field): ?>
 			<div class="is-60-height box edit-fields">
 				<?php if (is_array($field)): ?>
-					<label class="label"><?= $key ?></label>
+					<label class="label"><?= GetMessage($key) ?></label>
 						<?php if ($key === 'SUBJECTS'): ?>
 							<?php
 								$allSubjectsString = '';
@@ -47,7 +47,7 @@ use Bitrix\Main\Application;
 								</div>
 							</div>
 							<?php endforeach; ?>
-							<button class="button is-primary is-dark are-small" type="button" id="addSubject">Добавить <?=$key?></button>
+							<button class="button is-primary is-dark are-small" type="button" id="addSubject">Добавить <?= mb_strtolower(GetMessage($key)) ?></button>
 						<?php else: ?>
 						<div class="control">
 							<div class="select">
@@ -63,7 +63,7 @@ use Bitrix\Main\Application;
 						<?php endif; ?>
 				<?php else: ?>
 					<div class="field">
-						<label class="label"><?= $key ?></label>
+						<label class="label"><?= GetMessage($key) ?></label>
 						<div class="control">
 							<input class="input" type="text" name="<?=$key?>" placeholder="Введите данные">
 						</div>
