@@ -39,25 +39,28 @@ use Bitrix\Main\Application;
 						$allSubjectsString = '';
 						foreach ($field['ALL_SUBJECTS'] as $subjectId => $subjectTitle)
 						{
-							$allSubjectsString .= "<option>$subjectTitle</option>";
+							$allSubjectsString .= "<option value='$subjectId'> $subjectTitle</option>";
 						}
 						?>
-						<?php
-						foreach ($field['CURRENT_SUBJECTS'] as $subjectId => $subjectTitle): ?>
-							<div id="subjectContainer">
-								<div class="control mb-2">
-									<div class="select">
-										<label>
-											<select class="mb-1" name="<?= 'current_subject_' . $subjectId ?>">
-												<option><?= $subjectTitle ?></option>
-												<?= $allSubjectsString ?>
-											</select>
-										</label>
+						<div id="subjectContainer">
+							<?php foreach ($field['CURRENT_SUBJECTS'] as $subjectId => $subjectTitle): ?>
+								<div class="mb-2" id="current_subject_<?=$subjectId?>">
+									<div class="box">
+										<div class="p-1 is-flex is-justify-content-space-between is-flex-wrap-nowrap is-align-items-center">
+											<div class="mb-2">
+												<input name="current_subject_<?=$subjectId?>" type="hidden">
+												<?=$subjectTitle?>
+											</div>
+											<!--<select class="mb-1" name="<?php /*= 'current_subject_' . $subjectId */?>">
+												<option><?php /*= $subjectTitle */?></option>
+												<?php /*= $allSubjectsString */?>
+											</select>-->
+											<button class="btnDelete delete is-medium" type="button" id="delete_subject_<?=$subjectId?>"></button>
+										</div>
 									</div>
 								</div>
-							</div>
-						<?php
-						endforeach; ?>
+							<?php endforeach; ?>
+						</div>
 						<button class="button is-primary is-dark are-small" type="button" id="addSubject"><?= GetMessage('ADD') ?> <?= mb_strtolower(
 								GetMessage($key)
 							) ?></button>
@@ -143,21 +146,39 @@ use Bitrix\Main\Application;
 	const addSubjectButton = document.querySelector('#addSubject');
 	if (addSubjectButton !== null)
 	{
+		let i = 0;
 		addSubjectButton.addEventListener('click', () => {
 			const newListItem = document.createElement('div');
-			newListItem.innerHTML = `<div class="control mb-2">
-									<div class="select">
+			newListItem.className = "mb-2";
+			newListItem.innerHTML = `<div class="select">
 										<label>
-											<select class="mb-1" name="">
-													<option> Не выбрано </option>
+											<select class="mb-1" name="add_subject_`+ i +`">
 													<?=$allSubjectsString?>
 											</select>
 										</label>
-									</div>
-								</div>`;
+									</div>`;
 			document.querySelector('#subjectContainer').appendChild(newListItem);
+			i++;
 		});
 	}
+	const buttons = document.querySelectorAll('.btnDelete');
+
+	function handleDeleteClick(e)
+	{
+		const elementId = e.target.id;
+		const lengthOfSubstr = 'delete_subject_'.length;
+		const itemId = elementId.slice(lengthOfSubstr, elementId.length);
+		const currentSubject = document.getElementById('current_subject_' + itemId);
+		const hiddenInput = document.getElementsByName('current_subject_' + itemId);
+		hiddenInput.item(0).name = 'delete_subject_' + itemId;
+		currentSubject.id = 'delete_subject_' + itemId;
+		currentSubject.style.display = 'none';
+	}
+
+	buttons.forEach((button) => {
+		button.addEventListener('click', handleDeleteClick);
+	});
+
 </script>
 
 <script>

@@ -27,6 +27,21 @@ class SubjectRepository
 		return SubjectTable::query()->setSelect(['ID', 'TITLE'])->where('ID', $id)->fetch();
 	}
 
+	public static function getByIds(array $id): ?EO_Subject_Collection
+	{
+		return SubjectTable::query()
+			->setSelect([
+				'TITLE',
+				'TYPE' => 'UP_SCHEDULE_AUDIENCE_TYPE.TITLE',
+				])
+			->registerRuntimeField(
+				(new Reference(
+					'UP_SCHEDULE_AUDIENCE_TYPE', AudienceTypeTable::class, Join::on('this.AUDIENCE_TYPE_ID', 'ref.ID')
+				)))
+			->whereIn('ID', $id)
+			->fetchCollection();
+	}
+
 	public static function getArrayForAdminById(int $id): ?array
 	{
 		$subject = SubjectTable::query()->setSelect([

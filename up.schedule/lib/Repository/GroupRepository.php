@@ -5,7 +5,10 @@ namespace Up\Schedule\Repository;
 use Up\Schedule\Model\CoupleTable;
 use Up\Schedule\Model\EO_Group;
 use Up\Schedule\Model\EO_Group_Collection;
+use Up\Schedule\Model\EO_Subject;
+use Up\Schedule\Model\EO_Subject_Collection;
 use Up\Schedule\Model\GroupTable;
+use Up\Schedule\Model\SubjectTable;
 
 class GroupRepository
 {
@@ -60,13 +63,38 @@ class GroupRepository
 
 	public static function editById(int $id, array $data): void
 	{
-		$group = GroupTable::getByPrimary($id)->fetchObject();
+		$group = self::getById($id);
+		/*$group = GroupTable::getByPrimary($id)->fetchObject();*/
 
 		if ($data['TITLE'] !== null)
 		{
-			$group->setTitle($data['TITLE']);
+			$group?->setTitle($data['TITLE']);
 		}
-		$group->save();
+		//echo "<pre>";
+		//echo "do:\n";
+		//var_dump($group->getSubjects());
+		/*$subjectsEntities = SubjectTable::query()
+			->setSelect(['ID', 'TITLE',])
+			->whereIn('TITLE', $data['SUBJECTS'])
+			->fetchCollection();*/
+		echo "<pre>";
+		/*var_dump($data); die;*/
+		foreach ($data['SUBJECTS_TO_DELETE'] as $subjectId)
+		{
+			$group?->getSubjects()->removeByPrimary($subjectId);
+		}
+		$subjectsToAdd = SubjectRepository::getByIds($data['SUBJECTS_TO_ADD']);
+		if ($subjectsToAdd !== null)
+		{
+			foreach ($subjectsToAdd as $subject)
+			{
+				$group?->addToSubjects($subject);
+			}
+		}
+		//die;
+		//echo "posle:\n";
+		//var_dump($group); die;
+		$group?->save();
 		// TODO: handle exceptions
 	}
 

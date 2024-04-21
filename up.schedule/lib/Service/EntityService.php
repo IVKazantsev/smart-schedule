@@ -58,8 +58,9 @@ class EntityService
 				self::getData($entityName)
 			);
 		}
-		catch (\Error)
+		catch (\Error $error)
 		{
+			echo "$error";
 			echo "Entity $entityName not found"; die();
 		}
 	}
@@ -83,18 +84,26 @@ class EntityService
 
 	private static function getGroupData(): ?array
 	{
-		$subjects = [];
-		echo "<pre>";
+		$subjectsToAdd = [];
+		$subjectsToDelete = [];
+		//echo "<pre>";
 		foreach (Context::getCurrent()?->getRequest()->getPostList() as $key => $value)
 		{
-			if (str_starts_with($key, 'current_subject_'))
+			//echo $key . "\t\t" . $value . "\n";
+			if (str_starts_with($key, 'delete_subject_'))
 			{
-				$subjects[] = $value;
+				$subjectsToDelete[] = (int)substr($key, offset: strlen('delete_subject_'));
+			}
+			if (str_starts_with($key, 'add_subject_'))
+			{
+				$subjectsToAdd[] = (int)$value;
 			}
 		}
+
 		return [
 			'TITLE' => self::getParameter('TITLE'),
-			'SUBJECTS' => $subjects,
+			'SUBJECTS_TO_DELETE' => $subjectsToDelete,
+			'SUBJECTS_TO_ADD' => $subjectsToAdd,
 		];
 	}
 
