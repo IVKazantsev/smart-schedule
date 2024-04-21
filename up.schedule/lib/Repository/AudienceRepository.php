@@ -10,9 +10,11 @@ use Bitrix\Main\ORM\Query\Join;
 use Bitrix\Main\SystemException;
 use Up\Schedule\Model\AudienceTable;
 use Up\Schedule\Model\AudienceTypeTable;
+use Up\Schedule\Model\CoupleTable;
 use Up\Schedule\Model\EO_Audience;
 use Up\Schedule\Model\EO_Audience_Collection;
 use Up\Schedule\Model\EO_AudienceType_Collection;
+use Up\Schedule\Model\EO_Couple_Collection;
 
 class AudienceRepository
 {
@@ -49,14 +51,8 @@ class AudienceRepository
 	{
 		$result = AudienceTable::query()->setSelect([
 			'NUMBER',
-			'TYPE' => 'UP_SCHEDULE_AUDIENCE_TYPE.TITLE'
+			'TYPE' => 'AUDIENCE_TYPE.TITLE',
 			])
-			->registerRuntimeField(
-				(new Reference(
-					'UP_SCHEDULE_AUDIENCE_TYPE',
-					AudienceTypeTable::class,
-					Join::on('this.AUDIENCE_TYPE_ID', 'ref.ID')
-				)))
 			->where('ID', $id)
 			->fetch();
 
@@ -94,6 +90,29 @@ class AudienceRepository
 
 	public static function deleteById(int $id): void
 	{
-		//TODO: delete function
+		$relatedCouples = CoupleTable::query()->setSelect(['SUBJECT.TITLE', 'AUDIENCE.NUMBER', 'GROUP.TITLE', 'TEACHER.NAME', 'TEACHER.LAST_NAME'])
+									 ->where('AUDIENCE_ID', $id)->fetchCollection();
+		foreach ($relatedCouples as $couple)
+		{
+			$couple->delete();
+		}
+		AudienceTable::delete($id);
+
+		//TODO: handle exceptions
+	}
+
+	public static function getArrayOfRelatedEntitiesById(int $id): ?array
+	{
+		$relatedEntities = [];
+		$relatedCouples = CoupleTable::query()
+									 ->setSelect(['SUBJECT.TITLE', 'AUDIENCE.NUMBER', 'GROUP.TITLE', 'TEACHER.NAME', 'TEACHER.LAST_NAME'])
+									 ->where('AUDIENCE_ID', $id)
+									 ->fetchAll();
+		if(!empty($relatedCouples))
+		{
+			$relatedEntities['COUPLES'] = $relatedCouples;
+		}
+		return $relatedEntities;
+		// TODO: handle exceptions
 	}
 }

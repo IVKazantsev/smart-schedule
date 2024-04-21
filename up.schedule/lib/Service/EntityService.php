@@ -24,6 +24,20 @@ class EntityService
 			echo "Entity $entityName not found"; die();
 		}
 	}
+
+	public static function getArrayOfRelatedEntitiesById(string $entityName, int $entityId): ?array
+	{
+		try
+		{
+			return self::getEntityRepositoryName($entityName)::getArrayOfRelatedEntitiesById($entityId);
+		}
+		catch (\Error $error)
+		{
+			echo "$error";
+			echo "Entity $entityName not found"; die();
+		}
+	}
+
 	public static function deleteEntityById(string $entityName, int $entityId): ?array
 	{
 		try
@@ -129,6 +143,6 @@ class EntityService
 			return null;
 		}
 
-		return '\Up\Schedule\Repository\\' . $entityName . "Repository";
+		return '\Up\Schedule\Repository\\' . $entityName . 'Repository';
 	}
 }

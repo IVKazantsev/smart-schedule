@@ -10,5 +10,6 @@ $MESS['TITLE'] = 'Название';
 $MESS['NUMBER'] = 'Номер';
 $MESS['TYPE'] = 'Тип';
 $MESS['SUBJECTS'] = 'Предметы';
+$MESS['COUPLES'] = 'Пары';
 
 $MESS['ENTITY_EDIT'] = 'Редактирование';

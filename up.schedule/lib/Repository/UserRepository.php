@@ -7,6 +7,8 @@ use Bitrix\Main\EO_User_Collection;
 use Bitrix\Main\ORM\Fields\Relations\Reference;
 use Bitrix\Main\ORM\Query\Join;
 use Bitrix\Main\UserTable;
+use CUser;
+use Up\Schedule\Model\CoupleTable;
 use Up\Schedule\Model\EO_Group;
 use Up\Schedule\Model\EO_Subject;
 use Up\Schedule\Model\GroupTable;
@@ -212,6 +214,30 @@ class UserRepository
 
 	public static function deleteById(int $id): void
 	{
-		//TODO: delete function
+		$relatedCouples = CoupleTable::query()->setSelect(
+			['SUBJECT.TITLE', 'AUDIENCE.NUMBER', 'GROUP.TITLE', 'TEACHER.NAME', 'TEACHER.LAST_NAME']
+		)->where('TEACHER_ID', $id)->fetchCollection();
+		foreach ($relatedCouples as $couple)
+		{
+			$couple->delete();
+		}
+		CUser::Delete($id);
+
+		//TODO: handle exceptions
+	}
+
+	public static function getArrayOfRelatedEntitiesById(int $id): ?array
+	{
+		$relatedEntities = [];
+		$relatedCouples = CoupleTable::query()
+									 ->setSelect(['SUBJECT.TITLE', 'AUDIENCE.NUMBER', 'GROUP.TITLE', 'TEACHER.NAME', 'TEACHER.LAST_NAME'])
+									 ->where('TEACHER_ID', $id)
+									 ->fetchAll();
+		if(!empty($relatedCouples))
+		{
+			$relatedEntities['COUPLES'] = $relatedCouples;
+		}
+		return $relatedEntities;
+		// TODO: handle exceptions
 	}
 }
