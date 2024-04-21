@@ -15,6 +15,7 @@ class AdminsEntityEditComponent extends CBitrixComponent
 	{
 		$id = (int)$this->arParams['ID'];
 		$entityName = (string)$this->arParams['ENTITY'];
+		$this->arResult['ENTITY_NAME'] = $entityName;
 		$this->arResult['RELATED_ENTITIES'] = EntityService::getArrayOfRelatedEntitiesById($entityName, $id);
 		return EntityService::getEntityById($entityName, $id);
 	}

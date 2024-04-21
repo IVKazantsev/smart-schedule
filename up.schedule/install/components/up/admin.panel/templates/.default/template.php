@@ -39,8 +39,10 @@ if (!defined("B_PROLOG_INCLUDED") || B_PROLOG_INCLUDED !== true)
 
 	<div class="columns tabs-content">
 		<div class="column">
-			<div id="back-button-container">
-				<a id ="back-button" class="is-60-height mb-5 box is-flex is-align-items-center is-justify-content-center" href="/admin/">Вернуться</a>
+			<div id="back-button-container" class="mb-2">
+				<div class="column is-1 p-0">
+				<a id ="back-button" class="is-60-height mb-5 box is-flex is-align-items-center is-justify-content-center" href="/admin/">Назад</a>
+				</div>
 			</div>
 			<div class="" id="subject">
 			</div>
