@@ -84,26 +84,12 @@ class EntityService
 
 	private static function getGroupData(): ?array
 	{
-		$subjectsToAdd = [];
-		$subjectsToDelete = [];
 		//echo "<pre>";
-		foreach (Context::getCurrent()?->getRequest()->getPostList() as $key => $value)
-		{
-			//echo $key . "\t\t" . $value . "\n";
-			if (str_starts_with($key, 'delete_subject_'))
-			{
-				$subjectsToDelete[] = (int)substr($key, offset: strlen('delete_subject_'));
-			}
-			if (str_starts_with($key, 'add_subject_'))
-			{
-				$subjectsToAdd[] = (int)$value;
-			}
-		}
 
 		return [
 			'TITLE' => self::getParameter('TITLE'),
-			'SUBJECTS_TO_DELETE' => $subjectsToDelete,
-			'SUBJECTS_TO_ADD' => $subjectsToAdd,
+			'SUBJECTS_TO_DELETE' => self::getDeleteSubjectsData(),
+			'SUBJECTS_TO_ADD' => self::getAddSubjectsData(),
 		];
 	}
 
@@ -117,13 +103,47 @@ class EntityService
 
 	private static function getUserData(): ?array
 	{
-		return [
+		$data = [
 			'NAME' => self::getParameter('NAME'),
 			'LAST_NAME' => self::getParameter('LAST_NAME'),
 			'EMAIL' => self::getParameter('EMAIL'),
 			'ROLE' => self::getParameter('ROLE'),
 			'GROUP' => self::getParameter('GROUP'),
 		];
+		if ($data['ROLE'] === 'Преподаватель')
+		{
+			$data['SUBJECTS_TO_DELETE'] = self::getDeleteSubjectsData();
+			$data['SUBJECTS_TO_ADD'] = self::getAddSubjectsData();
+		}
+		return $data;
+	}
+
+	private static function getDeleteSubjectsData(): ?array
+	{
+		$subjectsToDelete = [];
+		foreach (Context::getCurrent()?->getRequest()->getPostList() as $key => $value)
+		{
+			//echo $key . "\t\t" . $value . "\n";
+			if (str_starts_with($key, 'delete_subject_'))
+			{
+				$subjectsToDelete[] = (int)substr($key, offset: strlen('delete_subject_'));
+			}
+		}
+		return $subjectsToDelete;
+	}
+
+	private static function getAddSubjectsData(): ?array
+	{
+		$subjectsToAdd = [];
+		foreach (Context::getCurrent()?->getRequest()->getPostList() as $key => $value)
+		{
+			//echo $key . "\t\t" . $value . "\n";
+			if (str_starts_with($key, 'add_subject_'))
+			{
+				$subjectsToAdd[] = (int)$value;
+			}
+		}
+		return $subjectsToAdd;
 	}
 
 	private static function getSubjectData(): ?array

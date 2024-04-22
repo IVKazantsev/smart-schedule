@@ -29,6 +29,10 @@ class SubjectRepository
 
 	public static function getByIds(array $id): ?EO_Subject_Collection
 	{
+		if (empty($id))
+		{
+			return null;
+		}
 		return SubjectTable::query()
 			->setSelect([
 				'TITLE',

@@ -70,15 +70,6 @@ class GroupRepository
 		{
 			$group?->setTitle($data['TITLE']);
 		}
-		//echo "<pre>";
-		//echo "do:\n";
-		//var_dump($group->getSubjects());
-		/*$subjectsEntities = SubjectTable::query()
-			->setSelect(['ID', 'TITLE',])
-			->whereIn('TITLE', $data['SUBJECTS'])
-			->fetchCollection();*/
-		echo "<pre>";
-		/*var_dump($data); die;*/
 		foreach ($data['SUBJECTS_TO_DELETE'] as $subjectId)
 		{
 			$group?->getSubjects()->removeByPrimary($subjectId);

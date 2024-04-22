@@ -11,8 +11,11 @@ use CUser;
 use Up\Schedule\Model\CoupleTable;
 use Up\Schedule\Model\EO_Group;
 use Up\Schedule\Model\EO_Subject;
+use Up\Schedule\Model\EO_SubjectTeacher;
+use Up\Schedule\Model\EO_SubjectTeacher_Collection;
 use Up\Schedule\Model\GroupTable;
 use Up\Schedule\Model\RoleTable;
+use Up\Schedule\Model\SubjectTable;
 use Up\Schedule\Model\SubjectTeacherTable;
 
 class UserRepository
@@ -119,6 +122,27 @@ class UserRepository
 			unset($user['GROUP']);
 		}
 
+		if ($user['ROLE'] === 'Преподаватель')
+		{
+			foreach (SubjectRepository::getAll() as $subject)
+			{
+				$user['SUBJECTS']['ALL_SUBJECTS'][$subject->getId()] = $subject->getTitle();
+			}
+			$subjects = SubjectTeacherTable::query()
+				->setSelect(['SUBJECTS' => 'UP_SCHEDULE_SUBJECT'])
+				->where('TEACHER_ID', $id)
+				->registerRuntimeField(
+					(new Reference(
+						'UP_SCHEDULE_SUBJECT', SubjectTable::class, Join::on('this.SUBJECT_ID', 'ref.ID')
+					)))
+				->fetchAll();
+			foreach ($subjects as $subject)
+			{
+				$user['SUBJECTS']['CURRENT_SUBJECTS'][$subject['SUBJECTSID']] = $subject['SUBJECTSTITLE'];
+				unset($user['SUBJECTS']['ALL_SUBJECTS'][$subject['SUBJECTSID']]);
+			}
+		}
+
 		$user['ROLE'] = array_unique(
 			array_merge_recursive(
 				[$user['ROLE']],
@@ -166,30 +190,10 @@ class UserRepository
 				'UP_SCHEDULE_ROLE', RoleTable::class, Join::on('this.UF_ROLE_ID', 'ref.ID')
 			))
 		)->where('ROLE_ID', 2)->fetchCollection();
-
-		/*return UserTable::query()->setSelect([
-												 'ID',
-												 'NAME',
-												 'LAST_NAME',
-												 'EMAIL',
-												 'ROLE' => 'UP_SCHEDULE_ROLE.TITLE',
-											 ])
-						->registerRuntimeField((new Reference(
-							'UP_SCHEDULE_ROLE',
-							RoleTable::class,
-							Join::on('this.UF_ROLE_ID', 'ref.ID')
-						)))
-						->where('ROLE', 'Преподаватель')
-						->fetchCollection();*/
 	}
 
 	public static function editById(int $id, array $data): void
 	{
-		/*$rsUser = \CUser::GetByID($id);
-		$arUser = $rsUser->Fetch();*/
-		echo "<pre>";
-		var_dump($data);
-
 		$fields = [];
 		$validate = function (string $fieldName, mixed $value) use (&$fields): void {
 			if ($value !== null)
@@ -204,11 +208,27 @@ class UserRepository
 		$validate('UF_GROUP_ID', GroupRepository::getByTitle($data['GROUP']??'')?->getId());
 		$validate('UF_ROLE_ID', RoleRepository::getByTitle($data['ROLE']??'')?->getId());
 
-		echo "<pre>";
-		var_dump($fields);
+		/*echo "<pre>";
+		var_dump($fields);*/
 		$user = new \CUser();
 		$user->Update($id, $fields);
-		var_dump($user->LAST_ERROR);
+		if ($data['ROLE'] === 'Преподаватель')
+		{
+			foreach ($data['SUBJECTS_TO_DELETE'] as $subjectId)
+			{
+				$result = SubjectTeacherTable::getByPrimary(['TEACHER_ID' => $id, 'SUBJECT_ID' => $subjectId])->fetchObject();
+				$result?->delete();
+			}
+			$collection = new EO_SubjectTeacher_Collection();
+			foreach ($data['SUBJECTS_TO_ADD'] as $subjectId)
+			{
+				$subjectTeacherEntity = new EO_SubjectTeacher();
+				$subjectTeacherEntity->setSubjectId($subjectId);
+				$subjectTeacherEntity->setTeacherId($id);
+				$collection->add($subjectTeacherEntity);
+			}
+			$collection->save();
+		}
 		// TODO: handle exceptions
 	}
 
