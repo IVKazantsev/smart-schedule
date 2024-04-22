@@ -36,8 +36,8 @@ use Bitrix\Main\Application;
 						<div class="select">
 							<label>
 								<select name="<?= $key ?>">
-									<?php foreach ($field as $subfield): ?>
-										<option>
+									<?php foreach ($field as $keyOfField => $subfield): ?>
+										<option value="<?=($key === 'DAYS_OF_WEEK' || $key === 'NUMBER_IN_DAY') ? $keyOfField : $subfield['ID']?>">
 											<?= ($key === 'DAYS_OF_WEEK' || $key === 'NUMBER_IN_DAY') ? $subfield : $subfield['TITLE']?>
 										</option>
 									<?php

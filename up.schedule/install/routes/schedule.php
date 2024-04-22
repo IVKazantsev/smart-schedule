@@ -15,6 +15,12 @@ return static function(RoutingConfigurator $routes) {
 	$routes->get('/add/couple/group/{groupId}/subject/{subjectId}/', new PublicPageController('/local/modules/up.schedule/views/add-couple.php'))
 		->where('groupId', '[0-9]+')
 		->where('subjectId', '[0-9]+');
+	$routes->post('/add/couple/group/{groupId}/subject/{subjectId}/', function () {
+		$subjectId = (int)Context::getCurrent()?->getRequest()->get('subjectId');
+		$groupId = (int)Context::getCurrent()?->getRequest()->get('groupId');
+		\Up\Schedule\Service\CoupleService::addCouple($groupId, $subjectId);
+		LocalRedirect("/add/couple/group/$groupId/subject/$subjectId/");
+	});
 
 	$routes->get('/profile/', new PublicPageController('/local/modules/up.schedule/views/profile.php'));
 	$routes->get('/admin/', new PublicPageController('/local/modules/up.schedule/views/admin.php'));
