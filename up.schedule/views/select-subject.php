@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @var CMain $APPLICATION
  */
@@ -13,9 +14,8 @@ $APPLICATION->SetTitle("Schedule|Admin");
 
 $APPLICATION->IncludeComponent('up:sidebar', '');
 
-$APPLICATION->IncludeComponent('up:admins.couple.add', '', [
+$APPLICATION->IncludeComponent('up:admins.select.subject', '', [
 	'GROUP_ID' => (int)Context::getCurrent()->getRequest()->get('groupId'),
-	'SUBJECT_ID' => (int)Context::getCurrent()->getRequest()->get('subjectId'),
 ]);
 
 require($_SERVER["DOCUMENT_ROOT"] . "/bitrix/footer.php");

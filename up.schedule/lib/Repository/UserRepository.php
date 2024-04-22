@@ -153,7 +153,7 @@ class UserRepository
 		return $user;
 	}
 
-	public static function getTeacherBySubjectId(int $subjectId): EO_User_Collection
+	public static function getTeachersBySubjectId(int $subjectId): EO_User_Collection
 	{
 		return UserTable::query()->setSelect([
 												 'ID',

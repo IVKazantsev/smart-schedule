@@ -8,6 +8,7 @@ use Up\Schedule\Model\AudienceTypeTable;
 use Up\Schedule\Model\CoupleTable;
 use Up\Schedule\Model\EO_Subject;
 use Up\Schedule\Model\EO_Subject_Collection;
+use Up\Schedule\Model\GroupSubjectTable;
 use Up\Schedule\Model\SubjectTable;
 
 class SubjectRepository
@@ -24,7 +25,7 @@ class SubjectRepository
 
 	public static function getArrayById(int $id): ?array
 	{
-		return SubjectTable::query()->setSelect(['ID', 'TITLE'])->where('ID', $id)->fetch();
+		return SubjectTable::query()->setSelect(['ID', 'TITLE', 'AUDIENCE_TYPE_ID'])->where('ID', $id)->fetch();
 	}
 
 	public static function getByIds(array $id): ?EO_Subject_Collection
@@ -44,6 +45,19 @@ class SubjectRepository
 				)))
 			->whereIn('ID', $id)
 			->fetchCollection();
+	}
+
+	public static function getArrayByGroupId(int $id): ?array
+	{
+		$subjects = GroupSubjectTable::query()
+			->setSelect(['SUBJECTS' => 'UP_SCHEDULE_SUBJECT'])
+			->where('GROUP_ID', $id)
+			->registerRuntimeField(
+				(new Reference(
+					'UP_SCHEDULE_SUBJECT', SubjectTable::class, Join::on('this.SUBJECT_ID', 'ref.ID')
+				)))
+			->fetchAll();
+		return $subjects;
 	}
 
 	public static function getArrayForAdminById(int $id): ?array

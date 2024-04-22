@@ -189,7 +189,7 @@ class GeneticPerson
 			$randAudience = $this->getRandEntityFromCollection($freeAudiences);
 
 			// Берем только тех преподавателей, которые преподают данный предмет
-			$teachersForSubject = UserRepository::getTeacherBySubjectId($randSubject->getId());
+			$teachersForSubject = UserRepository::getTeachersBySubjectId($randSubject->getId());
 
 			if ($teachersForSubject->count() === 0)
 			{

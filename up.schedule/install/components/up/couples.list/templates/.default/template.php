@@ -32,7 +32,7 @@ if (!defined("B_PROLOG_INCLUDED") || B_PROLOG_INCLUDED !== true)
 			</div>
 		</div>
 		<div class="column is-1">
-			<a href="/add-couple/" class="box has-text-centered is-size-4 is-60-height add-couple-button">+</a>
+			<a href="/add/couple/select/group/" class="box has-text-centered is-size-4 is-60-height add-couple-button">+</a>
 		</div>
 	</div>
 	<div class="columns">
