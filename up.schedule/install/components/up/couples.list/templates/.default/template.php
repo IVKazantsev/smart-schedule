@@ -43,9 +43,10 @@ if (!defined("B_PROLOG_INCLUDED") || B_PROLOG_INCLUDED !== true)
 						<?= $day ?>
 					</div>
 					<?php for ($i = 1; $i <= COUPLES_NUMBER_PER_DAY; $i++): ?>
-						<div class="box couple m-0 is-flex is-align-items-center is-justify-content-center">
+						<div class="box is-clickable couple m-0 is-flex is-align-items-center is-flex-direction-row is-flex-wrap-wrap-reverse is-justify-content-center">
 							<?php if(array_key_exists($dayNumber, $arResult['SORTED_COUPLES'])
 								&& array_key_exists($i, $arResult['SORTED_COUPLES'][$dayNumber])): ?>
+								<button type="button" id="button-day-<?=$day?>-number-<?=$i?>" class="btnEdit button is-clickable is-small is-ghost">...</button>
 								<?= htmlspecialcharsbx($arResult['SORTED_COUPLES'][$dayNumber][$i]->getSubject()->getTitle()) ?>
 								<br>
 								<?= htmlspecialcharsbx($arResult['SORTED_COUPLES'][$dayNumber][$i]->getAudience()->getNumber()) ?>
@@ -61,3 +62,61 @@ if (!defined("B_PROLOG_INCLUDED") || B_PROLOG_INCLUDED !== true)
 		<?php endforeach; ?>
 	</div>
 </div>
+
+<script>
+	/*const buttons = document.querySelectorAll('.btnEdit');
+
+	function handleEditCoupleClick(e)
+	{
+		// button-day-<?=$day?>-number-<?=$i?>
+		const elementId = e.target.id;
+		const lengthOfSubstr = 'button-day-'.length;
+		const dayId = elementId.slice(lengthOfSubstr, elementId.length);
+		/!*const currentSubject = document.getElementById('current_subject_' + itemId);
+		const hiddenInput = document.getElementsByName('current_subject_' + itemId);
+		hiddenInput.item(0).name = 'delete_subject_' + itemId;
+		currentSubject.id = 'delete_subject_' + itemId;
+		currentSubject.style.display = 'none';*!/
+	}
+
+	buttons.forEach((button) => {
+		button.addEventListener('click', handleDeleteClick);
+	});
+
+	const openModalButton = document.getElementById('open-modal-button');
+	const closeModalButton = document.getElementById('close-modal-button');
+	const overlay = document.getElementById('overlay');
+	const modal = document.getElementById('modal');
+
+	openModalButton.addEventListener('click', () => {
+		openModal(modal);
+	});
+
+	overlay.addEventListener('click', () => {
+		closeModal(modal);
+	});
+
+	closeModalButton.addEventListener('click', () => {
+		closeModal(modal);
+	});
+
+	function openModal(modal)
+	{
+		if (modal === null)
+		{
+			return;
+		}
+		modal.classList.add('active');
+		overlay.classList.add('active');
+	}
+
+	function closeModal(modal)
+	{
+		if (modal === null)
+		{
+			return;
+		}
+		modal.classList.remove('active');
+		overlay.classList.remove('active');
+	}*/
+</script>

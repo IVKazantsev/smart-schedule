@@ -61,6 +61,38 @@ class GroupRepository
 		return $data;
 	}
 
+	public static function getArrayForAdding(): ?array
+	{
+		$result = [];
+		$result['TITLE'] = '';
+		foreach (SubjectRepository::getAll() as $subject)
+		{
+			$result['SUBJECTS']['ALL_SUBJECTS'][$subject->getId()] = $subject->getTitle();
+		}
+		$result['SUBJECTS']['CURRENT_SUBJECTS'] = [];
+		return $result;
+	}
+
+	public static function add(array $data): void
+	{
+		if (($title = $data['TITLE']) === null)
+		{
+			throw new \Exception();
+		}
+
+		$group = new EO_Group();
+		$group->setTitle($title);
+
+		if (($subjectsToAdd = SubjectRepository::getByIds($data['SUBJECTS_TO_ADD'])) !== null)
+		{
+			foreach ($subjectsToAdd as $subject)
+			{
+				$group->addToSubjects($subject);
+			}
+		}
+		$group->save();
+	}
+
 	public static function editById(int $id, array $data): void
 	{
 		$group = self::getById($id);

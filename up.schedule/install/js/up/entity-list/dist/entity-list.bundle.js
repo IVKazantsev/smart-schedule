@@ -40,7 +40,7 @@ this.BX.Up = this.BX.Up || {};
 	    value: function loadList() {
 	      var _this2 = this;
 	      return new Promise(function (resolve, reject) {
-	        BX.ajax.runAction('up:schedule.adminPanel.get' + _this2.entity + 'List', {
+	        BX.ajax.runAction('up:schedule.api.adminPanel.get' + _this2.entity + 'List', {
 	          data: {}
 	        }).then(function (response) {
 	          var entityList = response.data.entityList;
@@ -69,6 +69,8 @@ this.BX.Up = this.BX.Up || {};
 	        case 'audience':
 	          containerContent = "\n\t\t\t\t\t<div class=\"column is-60-height\">\n\t\t\t\t\t\t\u041D\u043E\u043C\u0435\u0440\n\t\t\t\t\t</div>\n\t\t\t\t\t<div class=\"column is-60-height\">\n\t\t\t\t\t\t\u0422\u0438\u043F\n\t\t\t\t\t</div>\n\t\t\t\t";
 	          break;
+	        case 'audienceType':
+	          containerContent = "\n\t\t\t\t\t<div class=\"column is-60-height\">\n\t\t\t\t\t\t\u041D\u0430\u0437\u0432\u0430\u043D\u0438\u0435\n\t\t\t\t\t</div>\n\t\t\t\t";
 	      }
 	      var entitiesContainerNode = main_core.Tag.render(_templateObject || (_templateObject = babelHelpers.taggedTemplateLiteral(["\n\t\t\t<div class=\"box is-flex is-align-items-center is-flex-direction-column\">\n\t\t\t\t<div class=\"columns is-60-height is-fullwidth title-of-table\">\n\t\t\t\t\t<div class=\"column is-60-height is-1\">\n\t\t\t\t\t\tID\n\t\t\t\t\t</div>\n\t\t\t\t\t", "\n\t\t\t\t</div>\n\t\t\t</div>\n\t\t"])), containerContent);
 	      this.entityList.forEach(function (entityData) {
@@ -89,6 +91,8 @@ this.BX.Up = this.BX.Up || {};
 	          return "\n\t\t\t\t\t<div class=\"column is-1\">\n\t\t\t\t\t\t".concat(entityData.ID, "\n\t\t\t\t\t</div>\n\t\t\t\t\t<div class=\"column\">\n\t\t\t\t\t\t").concat(entityData.TITLE, "\n\t\t\t\t\t</div>\n\t\t\t\t");
 	        case 'audience':
 	          return "\n\t\t\t\t\t<div class=\"column is-1\">\n\t\t\t\t\t\t".concat(entityData.ID, "\n\t\t\t\t\t</div>\n\t\t\t\t\t<div class=\"column\">\n\t\t\t\t\t\t").concat(entityData.NUMBER, "\n\t\t\t\t\t</div>\n\t\t\t\t\t<div class=\"column\">\n\t\t\t\t\t\t").concat(entityData.UP_SCHEDULE_MODEL_AUDIENCE_AUDIENCE_TYPE_TITLE, "\n\t\t\t\t\t</div>\n\t\t\t\t");
+	        case 'audienceType':
+	          return "\n\t\t\t\t\t<div class=\"column is-1\">\n\t\t\t\t\t\t".concat(entityData.ID, "\n\t\t\t\t\t</div>\n\t\t\t\t\t<div class=\"column\">\n\t\t\t\t\t\t").concat(entityData.TITLE, "\n\t\t\t\t\t</div>\n\t\t\t\t");
 	      }
 	    }
 	  }]);

@@ -46,7 +46,7 @@ export class EntityList
 	{
 		return new Promise((resolve, reject) => {
 			BX.ajax.runAction(
-				'up:schedule.adminPanel.get' + this.entity + 'List',
+				'up:schedule.api.adminPanel.get' + this.entity + 'List',
 				{
 					data:
 						{},
@@ -106,6 +106,12 @@ export class EntityList
 					</div>
 				`;
 				break;
+			case 'audienceType':
+				containerContent = `
+					<div class="column is-60-height">
+						Название
+					</div>
+				`;
 		}
 
 		const entitiesContainerNode = Tag.render`
@@ -182,6 +188,15 @@ export class EntityList
 					</div>
 					<div class="column">
 						${entityData.UP_SCHEDULE_MODEL_AUDIENCE_AUDIENCE_TYPE_TITLE}
+					</div>
+				`;
+			case 'audienceType':
+				return `
+					<div class="column is-1">
+						${entityData.ID}
+					</div>
+					<div class="column">
+						${entityData.TITLE}
 					</div>
 				`;
 		}
