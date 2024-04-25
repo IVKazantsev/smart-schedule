@@ -143,15 +143,20 @@ a:hover {
 	overflow-x: hidden;
 }
 
-
-.errors, .success {
+#errors, #success {
 	position: fixed;
 	left: 50%;
-	transform: translateX(-50%) scale(1);
+	transition: 200ms ease-in-out;
+	transform: translateX(-50%) scale(0);
 	z-index: 10;
 	max-height: 500px;
+}
+
+#errors.active, #success.active {
+	transform: translateX(-50%) scale(1);
 }
 
 .error-title {
 	border-radius: 6px 6px 0 0;
 }
+

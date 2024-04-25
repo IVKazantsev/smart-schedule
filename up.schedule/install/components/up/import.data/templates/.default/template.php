@@ -9,7 +9,7 @@
 
 <?php if(\Bitrix\Main\Context::getCurrent()->getRequest()->isPost()): ?>
 	<?php if(isset($arResult['ERRORS'])): ?>
-		<div class="box errors">
+		<div class="box errors active" id="errors">
 			<div class="error-title has-background-danger has-text-white is-size-4 p-3 is-flex is-justify-content-center">
 				Ошибка
 			</div>
@@ -18,7 +18,7 @@
 			</div>
 		</div>
 	<?php else: ?>
-		<div class="success box has-background-success">
+		<div class="success box active has-background-success" id="success">
 			<div class="is-60-height p-3 has-text-white is-size-4">
 				Данные успешно импортированы.
 			</div>
@@ -64,4 +64,19 @@
 	document.getElementById("excel-file").onchange = function() {
 		document.getElementById("send-excel-form").submit();
 	};
+</script>
+
+<script>
+	const successMessage = document.getElementById('success');
+	const errorsMessage = document.getElementById('errors');
+
+	if(successMessage)
+	{
+		setTimeout(() => { successMessage.classList.remove('active') }, 3000);
+	}
+
+	if(errorsMessage)
+	{
+		setTimeout(() => { errorsMessage.classList.remove('active') }, 10000);
+	}
 </script>
