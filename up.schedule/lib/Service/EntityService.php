@@ -389,7 +389,7 @@ class EntityService
 				$subject = SubjectRepository::getByTitle($subjectName);
 				if (!$subject)
 				{
-					continue;
+					return "Для преподавателя {$name} {$lastName} неверно заданы предметы";
 				}
 
 				$subjectTeacher = new EO_SubjectTeacher();
