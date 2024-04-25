@@ -150,7 +150,7 @@ class AudienceRepository
 	public static function deleteAllFromDB(): string
 	{
 		global $DB;
-		$DB->Query('TRUNCATE TABLE up_schedule_audience');
+		$DB->Query('DELETE FROM up_schedule_audience');
 
 		return $DB->GetErrorSQL();
 	}

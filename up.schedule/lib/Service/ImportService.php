@@ -2,6 +2,10 @@
 
 namespace Up\Schedule\Service;
 
+use Bitrix\Main\Application;
+use Bitrix\Main\DB\Connection;
+use Bitrix\Main\DB\TransactionException;
+use PhpOffice\PhpSpreadsheet\Calculation\Database\DVar;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
@@ -85,12 +89,11 @@ class ImportService
 			'students' => $students,
 		];
 
-		if($couplesSheet !== null)
+		if ($couplesSheet !== null)
 		{
 			$couples = self::preprocessingSheetData($couplesSheet);
 			$arrayToReturn['couples'] = $couples;
 		}
-
 
 		return $arrayToReturn;
 	}

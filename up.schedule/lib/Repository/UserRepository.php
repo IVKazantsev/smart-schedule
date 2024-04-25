@@ -331,7 +331,8 @@ class UserRepository
 												   'NAME',
 												   'LAST_NAME',
 											   ])
-						  ->where(
+						  ->whereNot('UF_ROLE_ID',  1)
+								   ->where(
 				Query::filter()
 				->logic('or')
 				->whereNotNull('UF_ROLE_ID')
@@ -347,8 +348,8 @@ class UserRepository
 			}
 		}
 
-		$DB->Query('TRUNCATE TABLE b_uts_user');
-		$DB->Query('TRUNCATE TABLE up_schedule_subject_teacher');
+		$DB->Query("DELETE FROM b_uts_user where UF_ROLE_ID != 1");
+		$DB->Query("DELETE FROM up_schedule_subject_teacher");
 		return $DB->GetErrorSQL();
 	}
 }

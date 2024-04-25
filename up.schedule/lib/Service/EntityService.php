@@ -2,7 +2,9 @@
 
 namespace Up\Schedule\Service;
 
+use Bitrix\Main\Application;
 use Bitrix\Main\Context;
+use Bitrix\Main\DB\TransactionException;
 use CUser;
 use Up\Schedule\Model\EO_Audience;
 use Up\Schedule\Model\EO_Audience_Collection;
@@ -30,7 +32,7 @@ class EntityService
 		'Subject',
 		'User',
 		'Audience',
-		'AudienceType'
+		'AudienceType',
 	];
 
 	private static array $entitiesToClean = [
@@ -287,7 +289,7 @@ class EntityService
 			$audiencesTypesCollection->add($audienceType);
 		}
 
-		$result = $audiencesTypesCollection->save();
+		$result = $audiencesTypesCollection->save(true);
 		if ($result->isSuccess())
 		{
 			return '';
@@ -317,7 +319,7 @@ class EntityService
 			$audiencesCollection->add($audience);
 		}
 
-		$result = $audiencesCollection->save();
+		$result = $audiencesCollection->save(true);
 		if ($result->isSuccess())
 		{
 			return '';
@@ -347,7 +349,7 @@ class EntityService
 			$subjectsCollection->add($subject);
 		}
 
-		$result = $subjectsCollection->save();
+		$result = $subjectsCollection->save(true);
 		if ($result->isSuccess())
 		{
 			return '';
@@ -398,7 +400,7 @@ class EntityService
 				$subjectTeacherCollection->add($subjectTeacher);
 			}
 
-			$result = $subjectTeacherCollection->save();
+			$result = $subjectTeacherCollection->save(true);
 
 			if (!$result->isSuccess())
 			{
@@ -419,7 +421,7 @@ class EntityService
 
 			$group->setTitle($title);
 
-			$result = $group->save();
+			$result = $group->save(true);
 			if(!$result->isSuccess())
 			{
 				return implode(', ', $result->getErrorMessages());
@@ -458,7 +460,7 @@ class EntityService
 				$iterator++;
 			}
 
-			$result = $groupSubjectCollection->save();
+			$result = $groupSubjectCollection->save(true);
 			if (!$result->isSuccess())
 			{
 				return implode(', ', $result->getErrorMessages());
@@ -490,6 +492,7 @@ class EntityService
 				'PASSWORD' => $password,
 				'EMAIL' => 'test@test.ru',
 				'UF_GROUP_ID' => $group->getId(),
+				'UF_ROLE_ID' => 3,
 			];
 			$userId = $user->Add($arFields);
 			if ((int)$userId === 0)
@@ -545,7 +548,7 @@ class EntityService
 			$couplesCollection->add($couple);
 		}
 
-		$result = $couplesCollection->save();
+		$result = $couplesCollection->save(true);
 		if ($result->isSuccess())
 		{
 			return '';

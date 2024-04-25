@@ -153,8 +153,8 @@ class GroupRepository
 	public static function deleteAllFromDB(): string
 	{
 		global $DB;
-		$DB->Query('TRUNCATE TABLE up_schedule_group');
-		$DB->Query('TRUNCATE TABLE up_schedule_group_subject');
+		$DB->Query('DELETE FROM up_schedule_group');
+		$DB->Query('DELETE FROM up_schedule_group_subject');
 		return $DB->GetErrorSQL();
 	}
 }
