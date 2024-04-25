@@ -193,6 +193,18 @@ class UserRepository
 		)->where('ROLE_ID', 2)->fetchCollection();
 	}
 
+	public static function getTeacherByFirstAndLastName(string $name, string $lastName): ?EO_User
+	{
+		return UserTable::query()->setSelect([
+												 'ID',
+												 'NAME',
+												 'LAST_NAME',
+											 ])->where('UF_ROLE_ID', 2)
+											   ->where('NAME', $name)
+											   ->where('LAST_NAME', $lastName)
+											   ->fetchObject();
+	}
+
 	public static function editById(int $id, array $data): void
 	{
 		$fields = [];

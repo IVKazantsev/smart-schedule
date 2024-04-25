@@ -8,6 +8,8 @@ use Up\Schedule\Model\EO_Audience;
 use Up\Schedule\Model\EO_Audience_Collection;
 use Up\Schedule\Model\EO_AudienceType;
 use Up\Schedule\Model\EO_AudienceType_Collection;
+use Up\Schedule\Model\EO_Couple;
+use Up\Schedule\Model\EO_Couple_Collection;
 use Up\Schedule\Model\EO_Group;
 use Up\Schedule\Model\EO_GroupSubject;
 use Up\Schedule\Model\EO_GroupSubject_Collection;
@@ -15,9 +17,11 @@ use Up\Schedule\Model\EO_Subject;
 use Up\Schedule\Model\EO_Subject_Collection;
 use Up\Schedule\Model\EO_SubjectTeacher;
 use Up\Schedule\Model\EO_SubjectTeacher_Collection;
+use Up\Schedule\Repository\AudienceRepository;
 use Up\Schedule\Repository\AudienceTypeRepository;
 use Up\Schedule\Repository\GroupRepository;
 use Up\Schedule\Repository\SubjectRepository;
+use Up\Schedule\Repository\UserRepository;
 
 class EntityService
 {
@@ -34,6 +38,17 @@ class EntityService
 		'AudienceType',
 		'Group',
 		'Subject',
+		'Couple',
+	];
+
+	private static array $daysOfWeek = [
+		1 => 'Понедельник',
+		'Вторник',
+		'Среда',
+		'Четверг',
+		'Пятница',
+		'Суббота',
+		'Воскресенье',
 	];
 
 	public static function getEntityById(string $entityName, int $entityId): ?array
@@ -439,6 +454,59 @@ class EntityService
 		}
 
 		return '';
+	}
+
+	private static function addCouplesToDB(array $couples): string
+	{
+		$couplesCollection = new EO_Couple_Collection();
+		foreach ($couples as $couple)
+		{
+			// Деструктурируем массив на поля
+			[$groupTitle, $subjectTitle, $audienceNumber, $teacherName, $teacherLastName, $dayOfWeek, $numberOfCoupleInDay] = $couple;
+
+			$group = GroupRepository::getByTitle($groupTitle);
+			if(!$group)
+			{
+				return "При создании пары на {$dayOfWeek}, {$numberOfCoupleInDay} пару возникла ошибка: Группы {$groupTitle} не существует";
+			}
+
+			$subject = SubjectRepository::getByTitle($subjectTitle);
+			if(!$subject)
+			{
+				return "При создании пары на {$dayOfWeek}, {$numberOfCoupleInDay} пару возникла ошибка: Предмета {$subjectTitle} не существует";
+			}
+
+			$audience = AudienceRepository::getByNumber($audienceNumber);
+			if(!$audience)
+			{
+				return "При создании пары на {$dayOfWeek}, {$numberOfCoupleInDay} пару возникла ошибка: Аудитории {$audienceNumber} не существует";
+			}
+
+			$teacher = UserRepository::getTeacherByFirstAndLastName($teacherName, $teacherLastName);
+			if(!$teacher)
+			{
+				return "При создании пары на {$dayOfWeek}, {$numberOfCoupleInDay} пару возникла ошибка: Преподаватель {$teacherName} {$teacherLastName} не добавлен";
+			}
+
+			$couple = new EO_Couple();
+			$couple->setGroup($group);
+			$couple->setSubject($subject);
+			$couple->setAudience($audience);
+			$couple->setTeacher($teacher);
+			$dayNumberOfWeek = array_search($dayOfWeek, self::$daysOfWeek, true);
+			$couple->setWeekDay($dayNumberOfWeek);
+			$couple->setCoupleNumberInDay($numberOfCoupleInDay);
+
+			$couplesCollection->add($couple);
+		}
+
+		$result = $couplesCollection->save();
+		if ($result->isSuccess())
+		{
+			return '';
+		}
+
+		return implode(', ', $result->getErrorMessages());
 	}
 
 	public static function clearEntitiesFromDB(): string

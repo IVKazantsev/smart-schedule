@@ -31,4 +31,11 @@ class CoupleRepository
 			->setCoupleNumberInDay($data['NUMBER_IN_DAY'])
 			->save();
 	}
+
+	public static function deleteAllFromDB(): string
+	{
+		global $DB;
+		$DB->Query('TRUNCATE TABLE up_schedule_couple');
+		return $DB->GetErrorSQL();
+	}
 }

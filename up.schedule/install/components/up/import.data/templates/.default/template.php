@@ -13,7 +13,7 @@
 			<div class="error-title has-background-danger has-text-white is-size-4 p-3 is-flex is-justify-content-center">
 				Ошибка
 			</div>
-			<div class="errors-text is-60-height p-3">
+			<div class="errors-text p-3">
 				<?= $arResult['ERRORS'] ?>
 			</div>
 		</div>
