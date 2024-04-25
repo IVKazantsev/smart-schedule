@@ -30,6 +30,7 @@ class EntityService
 		'Subject',
 		'User',
 		'Audience',
+		'AudienceType'
 	];
 
 	private static array $entitiesToClean = [
@@ -104,6 +105,38 @@ class EntityService
 		}
 	}
 
+	public static function addEntity(string $entityName)
+	{
+		try
+		{
+			return self::getEntityRepositoryName($entityName)::add(
+				self::getData($entityName)
+			);
+		}
+		catch (\Error $error)
+		{
+			echo "$error";
+			echo "Entity $entityName not added"; die();
+		}
+	}
+
+	public static function getEntityInfoForAdding(string $entityName): ?array
+	{
+		try
+		{
+			if ($entityName === 'AudienceType')
+			{
+				return null;
+			}
+			return self::getEntityRepositoryName($entityName)::getArrayForAdding();
+		}
+		catch (\Error $error)
+		{
+			echo "$error";
+			echo "Entity $entityName not found"; die();
+		}
+	}
+
 	private static function getData(string $entityName): ?array
 	{
 		switch ($entityName)
@@ -116,6 +149,8 @@ class EntityService
 				return self::getUserData();
 			case 'subject':
 				return self::getSubjectData();
+			case 'audienceType':
+				return self::getAudienceTypeData();
 			default:
 				return null;
 		}
@@ -146,6 +181,9 @@ class EntityService
 			'NAME' => self::getParameter('NAME'),
 			'LAST_NAME' => self::getParameter('LAST_NAME'),
 			'EMAIL' => self::getParameter('EMAIL'),
+			'LOGIN' => self::getParameter('LOGIN'),
+			'PASSWORD' => self::getParameter('PASSWORD'),
+			'CONFIRM_PASSWORD' => self::getParameter('CONFIRM_PASSWORD'),
 			'ROLE' => self::getParameter('ROLE'),
 			'GROUP' => self::getParameter('GROUP'),
 		];
@@ -193,6 +231,13 @@ class EntityService
 		];
 	}
 
+	private static function getAudienceTypeData(): ?array
+	{
+		return [
+			'TITLE' => self::getParameter('TITLE'),
+		];
+	}
+
 	private static function getParameter(string $paramName): ?string
 	{
 		if (($param = Context::getCurrent()?->getRequest()->get($paramName)) !== '')
@@ -205,7 +250,7 @@ class EntityService
 
 	private static function getEntityRepositoryName(string $entityName, bool $isNeedPermission = true): ?string
 	{
-		$entityName = ucfirst(strtolower($entityName));
+		$entityName = ucfirst(($entityName));
 		if($isNeedPermission && !in_array($entityName, self::$allowedEntity, true))
 		{
 			return null;

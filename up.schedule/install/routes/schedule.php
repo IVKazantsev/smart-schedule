@@ -3,6 +3,7 @@
 use Bitrix\Main\Context;
 use Bitrix\Main\Routing\Controllers\PublicPageController;
 use Bitrix\Main\Routing\RoutingConfigurator;
+use Up\Schedule\Service\EntityService;
 use Up\Schedule\Service\CoupleService;
 use Up\Schedule\Service\ImportService;
 
@@ -30,6 +31,17 @@ return static function(RoutingConfigurator $routes) {
 	$routes->get('/optimize/', new PublicPageController('/local/modules/up.schedule/views/optimize.php'));
 	$routes->get('/statistics/', new PublicPageController('/local/modules/up.schedule/views/statistics.php'));
 
+	$routes
+		->where('entity', '[a-zA-Z]+')
+		->group(function (RoutingConfigurator $routes) {
+			$routes->get('/admin/add/{entity}/', new PublicPageController('/local/modules/up.schedule/views/admins-entity-add.php'));
+			$routes->post('/admin/add/{entity}/', function () {
+				$entityName = request()->get('entity');
+				EntityService::addEntity($entityName);
+				LocalRedirect("/admin/#$entityName");
+			});
+		});
+
 	$routes->get('/import/', new PublicPageController('/local/modules/up.schedule/views/import.php'));
 	$routes->post('/import/', new PublicPageController('/local/modules/up.schedule/views/import.php'));
 
@@ -46,14 +58,14 @@ return static function(RoutingConfigurator $routes) {
 			$routes->post('/admin/delete/{entity}/{id}/', function () {
 				$entityId = (int)Context::getCurrent()?->getRequest()->get('id');
 				$entityName = Context::getCurrent()?->getRequest()->get('entity');
-				\Up\Schedule\Service\EntityService::deleteEntityById($entityName, $entityId);
+				EntityService::deleteEntityById($entityName, $entityId);
 				LocalRedirect("/admin/#$entityName");
 			});
 
 			$routes->post('/admin/edit/{entity}/{id}/', function () {
 				$entityId = (int)Context::getCurrent()?->getRequest()->get('id');
 				$entityName = Context::getCurrent()?->getRequest()->get('entity');
-				\Up\Schedule\Service\EntityService::editEntityById($entityName, $entityId);
+				EntityService::editEntityById($entityName, $entityId);
 				LocalRedirect("/admin/edit/$entityName/$entityId/");
 			});
 		});

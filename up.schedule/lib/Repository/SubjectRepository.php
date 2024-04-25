@@ -6,6 +6,7 @@ use Bitrix\Main\ORM\Fields\Relations\Reference;
 use Bitrix\Main\ORM\Query\Join;
 use Up\Schedule\Model\AudienceTypeTable;
 use Up\Schedule\Model\CoupleTable;
+use Up\Schedule\Model\EO_Audience;
 use Up\Schedule\Model\EO_Subject;
 use Up\Schedule\Model\EO_Subject_Collection;
 use Up\Schedule\Model\GroupSubjectTable;
@@ -96,11 +97,38 @@ class SubjectRepository
 		$subject['TYPE'] = array_unique(
 			array_merge_recursive(
 				[$subject['TYPE']],
-				array_column(AudienceRepository::getAllTypes(), 'TITLE')
+				array_column(AudienceTypeRepository::getAllArray(), 'TITLE')
 			)
 		);
 
 		return $subject;
+	}
+
+	public static function getArrayForAdding(): ?array
+	{
+		$result = [];
+		$result['TITLE'] = '';
+		$result['TYPE'] = array_column(AudienceTypeRepository::getAllArray(), 'TITLE');
+		return $result;
+	}
+
+	public static function add(array $data): void
+	{
+		$subject = new EO_Subject();
+		if (($title = $data['TITLE']) !== null && ($type = $data['TYPE']) !== null)
+		{
+			$subject->setTitle($title);
+			$typeEntityObject = AudienceTypeTable::query()
+				->setSelect(['ID'])
+				->where('TITLE', $type)
+				->fetchObject();
+			$subject->setAudienceType($typeEntityObject);
+			$subject->save();
+		}
+		else
+		{
+			throw new \Exception();
+		}
 	}
 
 	public static function editById(int $id, array $data): void

@@ -2,6 +2,7 @@
 
 namespace Up\Schedule\Repository;
 
+use Bitrix\Main\DB\Exception;
 use Bitrix\Main\EO_User;
 use Bitrix\Main\EO_User_Collection;
 use Bitrix\Main\ORM\Fields\Relations\Reference;
@@ -191,6 +192,54 @@ class UserRepository
 				'UP_SCHEDULE_ROLE', RoleTable::class, Join::on('this.UF_ROLE_ID', 'ref.ID')
 			))
 		)->where('ROLE_ID', 2)->fetchCollection();
+	}
+
+	public static function getArrayForAdding(): ?array
+	{
+		$result = [];
+		$result['LOGIN'] = '';
+		$result['NAME'] = '';
+		$result['LAST_NAME'] = '';
+		$result['EMAIL'] = '';
+		$result['PASSWORD'] = '';
+		$result['CONFIRM_PASSWORD'] = '';
+
+		$result['ROLE'] = array_column(RoleRepository::getAllArray(), 'TITLE');
+
+		return $result;
+	}
+
+	public static function add(array $data): void
+	{
+		$fields = [];
+		$validate = function (string $fieldName, mixed $value) use (&$fields): void {
+			if ($value !== null)
+			{
+				$fields[$fieldName] = $value;
+			}
+		};
+
+		$validate('LOGIN', $data['LOGIN']);
+		$validate('EMAIL', $data['EMAIL']);
+		$validate('NAME', $data['NAME']);
+		$validate('LAST_NAME', $data['LAST_NAME']);
+		$validate('PASSWORD', $data['PASSWORD']);
+		$validate('CONFIRM_PASSWORD', $data['CONFIRM_PASSWORD']);
+		$validate('UF_ROLE_ID', RoleRepository::getByTitle($data['ROLE']??'')?->getId());
+
+		$user = new CUser();
+		$ID = $user->Add($fields);
+
+		if ((int)$ID <= 0)
+		{
+			throw new Exception($user->LAST_ERROR);
+		}
+/*
+		var_dump($user->GetID()); die;
+		if (($roleId = RoleRepository::getByTitle($data['ROLE']??'')?->getId()) !== null)
+		{
+			$user->Update($user->GetID(), ['UF_ROLE_ID' => $roleId]);
+		}*/
 	}
 
 	public static function getTeacherByFirstAndLastName(string $name, string $lastName): ?EO_User

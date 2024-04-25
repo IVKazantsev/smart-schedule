@@ -36,13 +36,23 @@ if (!defined("B_PROLOG_INCLUDED") || B_PROLOG_INCLUDED !== true)
 			<a class="is-60-height box is-flex is-align-items-center is-justify-content-center" href="/admin/#audience"><?= GetMessage('AUDIENCES') ?></a>
 		</div>
 	</div>
+	<div class="columns tabs is-active">
+		<div class="column">
+			<a class="is-60-height box is-flex is-align-items-center is-justify-content-center" href="/admin/#audienceType"><?= GetMessage('AUDIENCE_TYPE') ?></a>
+		</div>
+	</div>
 
 	<div class="columns tabs-content">
 		<div class="column">
 			<div id="back-button-container" class="mb-2">
-				<div class="column is-1 p-0">
-				<a id ="back-button" class="is-60-height mb-5 box is-flex is-align-items-center is-justify-content-center" href="/admin/"><?= GetMessage('BACK') ?></a>
-				</div>
+				<a id ="back-button" class="column is-1 is-offset-0 buttonLink is-60-height mb-5 box is-flex is-align-items-center is-justify-content-center" href="/admin/"><?= GetMessage('BACK') ?></a>
+				<a id ="add-button" class="column is-offset-10 is-1 buttonLink is-60-height mb-5 box is-flex is-align-items-center is-justify-content-center" onclick="location.href=getEntityAddUrl()"><?= GetMessage('ADD') ?></a>
+				<!--<div class="column is-full p-0">
+					<div id="buttonsLinkContainer" class="columns">
+						<a id ="back-button" class="column is-1 is-offset-1 buttonLink is-60-height mb-5 box is-flex is-align-items-center is-justify-content-center" href="/admin/"><?php /*= GetMessage('BACK') */?></a>
+						<a id ="add-button" class="column is-offset-8 is-1 buttonLink is-60-height mb-5 box is-flex is-align-items-center is-justify-content-center" onclick="location.href=getEntityAddUrl()"><?php /*= GetMessage('ADD') */?></a>
+					</div>
+				</div>-->
 			</div>
 			<div class="" id="subject">
 			</div>
@@ -52,11 +62,20 @@ if (!defined("B_PROLOG_INCLUDED") || B_PROLOG_INCLUDED !== true)
 			</div>
 			<div class="" id="audience">
 			</div>
+			<div class="" id="audienceType">
+			</div>
 		</div>
 	</div>
 </div>
 
 <script>
+	function getEntityAddUrl()
+	{
+		const anchor = window.location.hash;
+		const entity = anchor.slice(1, anchor.length);
+		return '/admin/add/' + entity + '/';
+	}
+
 	const waitForElement = (selector, callback) => {
 		const observer = new MutationObserver(mutations => {
 			mutations.forEach(mutation => {

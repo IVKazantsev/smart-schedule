@@ -12,6 +12,7 @@ use Up\Schedule\Model\AudienceTypeTable;
 use Up\Schedule\Model\CoupleTable;
 use Up\Schedule\Model\EO_Audience;
 use Up\Schedule\Model\EO_Audience_Collection;
+use Up\Schedule\Model\EO_AudienceType;
 use Up\Schedule\Model\EO_AudienceType_Collection;
 use Up\Schedule\Model\EO_Couple_Collection;
 
@@ -32,11 +33,6 @@ class AudienceRepository
 		return AudienceTable::query()->setSelect(['ID', 'NUMBER', 'AUDIENCE_TYPE'])->where('ID', $id)->fetchObject();
 	}
 
-	public static function getAllTypes(): ?array
-	{
-		return AudienceTypeTable::query()->setSelect(['ID', 'TITLE',])->fetchAll();
-	}
-
 	public static function getArrayForAdminById(int $id): ?array
 	{
 		$result = AudienceTable::query()->setSelect([
@@ -52,10 +48,37 @@ class AudienceRepository
 		$result['TYPE'] = array_unique(
 			array_merge_recursive(
 				[$result['TYPE']],
-				array_column(self::getAllTypes(), 'TITLE')
+				array_column(AudienceTypeRepository::getAllArray(), 'TITLE')
 			)
 		);
 
+		return $result;
+	}
+
+	public static function add(array $data): void
+	{
+		$audience = new EO_Audience();
+		if (($number = $data['NUMBER']) !== null && ($type = $data['TYPE']) !== null)
+		{
+			$audience->setNumber($number);
+			$typeEntityObject = AudienceTypeTable::query()
+				->setSelect(['ID'])
+				->where('TITLE', $type)
+				->fetchObject();
+			$audience->setAudienceType($typeEntityObject);
+			$audience->save();
+		}
+		else
+		{
+			throw new \Exception();
+		}
+	}
+
+	public static function getArrayForAdding(): ?array
+	{
+		$result = [];
+		$result['NUMBER'] = '';
+		$result['TYPE'] = array_column(AudienceTypeRepository::getAllArray(), 'TITLE');
 		return $result;
 	}
 

@@ -14,4 +14,11 @@ class RoleRepository
 			->where('TITLE', $title)
 			->fetchObject();
 	}
+
+	public static function getAllArray(): ?array
+	{
+		return RoleTable::query()
+			->setSelect(['ID', 'TITLE'])
+			->fetchAll();
+	}
 }
