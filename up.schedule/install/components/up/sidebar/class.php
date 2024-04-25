@@ -18,12 +18,21 @@ class SidebarComponent extends CBitrixComponent
 
 	protected function fetchUserInfo(): void
 	{
-		$userId = CurrentUser::get()->getId();
+		$user = CurrentUser::get();
+		$isAdmin = $user->isAdmin();
+		$userId = $user->getId();
 		$user = UserRepository::getById($userId);
 
 		if ($user)
 		{
-			$this->arResult['USER_ROLE'] = $user->get('UP_SCHEDULE_ROLE')?->get('TITLE') ?? 'Гость';
+			if($isAdmin)
+			{
+				$this->arResult['USER_ROLE'] = 'Администратор';
+			}
+			else
+			{
+				$this->arResult['USER_ROLE'] = $user->get('UP_SCHEDULE_ROLE')?->get('TITLE') ?? 'Гость';
+			}
 			$this->arResult['USER_NAME'] = $user->getName();
 			$this->arResult['USER_LAST_NAME'] = $user->getLastName();
 

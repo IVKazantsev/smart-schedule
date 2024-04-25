@@ -48,6 +48,7 @@ if (!defined("B_PROLOG_INCLUDED") || B_PROLOG_INCLUDED !== true)
 			<li><a class="is-60-height is-flex is-align-items-center is-justify-content-center" href="/admin/"><?= GetMessage("ADMIN_PANEL") ?></a></li>
 			<li><a class="is-60-height is-flex is-align-items-center is-justify-content-center" href="/scheduling/"><?= GetMessage("SCHEDULING") ?></a></li>
 			<li><a class="is-60-height is-flex is-align-items-center is-justify-content-center" href="/"><?= GetMessage("BACK_TO_SCHEDULE") ?></a></li>
+			<li><a class="is-60-height is-flex is-align-items-center is-justify-content-center" href="/import/"><?= GetMessage("IMPORT_FROM_EXCEL") ?></a></li>
 		</ul>
 		<div class="box notes">
 			<?= GetMessage("NOTES") ?>:

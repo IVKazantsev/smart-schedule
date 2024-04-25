@@ -48,6 +48,28 @@ class SubjectRepository
 			->fetchCollection();
 	}
 
+	public static function getByTitle(string $title): ?EO_Subject
+	{
+		return SubjectTable::query()
+						   ->setSelect([
+										   'TITLE',
+										   'AUDIENCE_TYPE.TITLE',
+									   ])
+						   ->where('TITLE', $title)
+						   ->fetchObject();
+	}
+
+	public static function getByTitles(array $titles): ?EO_Subject_Collection
+	{
+		return SubjectTable::query()
+						   ->setSelect([
+										   'TITLE',
+										   'AUDIENCE_TYPE.TITLE',
+									   ])
+						   ->whereIn('TITLE', $titles)
+						   ->fetchCollection();
+	}
+
 	public static function getArrayByGroupId(int $id): ?array
 	{
 		$subjects = GroupSubjectTable::query()
@@ -148,5 +170,15 @@ class SubjectRepository
 
 		return $relatedEntities;
 		// TODO: handle exceptions
+	}
+
+	public static function deleteAllFromDB(): string
+	{
+		global $DB;
+		$DB->Query('TRUNCATE TABLE up_schedule_subject');
+		$DB->Query('TRUNCATE TABLE up_schedule_group_subject');
+		$DB->Query('TRUNCATE TABLE up_schedule_subject_teacher');
+		$DB->Query('TRUNCATE TABLE b_uts_user');
+		return $DB->GetErrorSQL();
 	}
 }

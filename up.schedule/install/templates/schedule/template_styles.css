@@ -142,3 +142,16 @@ a:hover {
 	scrollbar-width: thin;
 	overflow-x: hidden;
 }
+
+
+.errors, .success {
+	position: fixed;
+	left: 50%;
+	transform: translateX(-50%) scale(1);
+	z-index: 10;
+	max-height: 500px;
+}
+
+.error-title {
+	border-radius: 6px 6px 0 0;
+}

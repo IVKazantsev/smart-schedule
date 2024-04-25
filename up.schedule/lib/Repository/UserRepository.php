@@ -7,6 +7,7 @@ use Bitrix\Main\EO_User;
 use Bitrix\Main\EO_User_Collection;
 use Bitrix\Main\ORM\Fields\Relations\Reference;
 use Bitrix\Main\ORM\Query\Join;
+use Bitrix\Main\ORM\Query\Query;
 use Bitrix\Main\UserTable;
 use CUser;
 use Up\Schedule\Model\CoupleTable;
@@ -308,5 +309,34 @@ class UserRepository
 		}
 		return $relatedEntities;
 		// TODO: handle exceptions
+	}
+
+	public static function deleteAllFromDB(): string
+	{
+		global $DB;
+		$users = UserTable::query()->setSelect([
+												   'ID',
+												   'NAME',
+												   'LAST_NAME',
+											   ])
+						  ->where(
+				Query::filter()
+				->logic('or')
+				->whereNotNull('UF_ROLE_ID')
+				->whereNotNull('UF_GROUP_ID')
+			)->fetchCollection();
+
+		foreach ($users as $user)
+		{
+			$result = CUser::Delete($user->getId());
+			if(!$result)
+			{
+				return "Не удалось удалить пользователя {$user->getName()} {$user->getLastName()}";
+			}
+		}
+
+		$DB->Query('TRUNCATE TABLE b_uts_user');
+		$DB->Query('TRUNCATE TABLE up_schedule_subject_teacher');
+		return $DB->GetErrorSQL();
 	}
 }

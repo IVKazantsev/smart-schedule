@@ -4,6 +4,8 @@ use Bitrix\Main\Context;
 use Bitrix\Main\Routing\Controllers\PublicPageController;
 use Bitrix\Main\Routing\RoutingConfigurator;
 use Up\Schedule\Service\EntityService;
+use Up\Schedule\Service\CoupleService;
+use Up\Schedule\Service\ImportService;
 
 return static function(RoutingConfigurator $routes) {
 	$routes->get('/', new PublicPageController('/local/modules/up.schedule/views/schedule.php'));
@@ -19,7 +21,7 @@ return static function(RoutingConfigurator $routes) {
 	$routes->post('/add/couple/group/{groupId}/subject/{subjectId}/', function () {
 		$subjectId = (int)Context::getCurrent()?->getRequest()->get('subjectId');
 		$groupId = (int)Context::getCurrent()?->getRequest()->get('groupId');
-		\Up\Schedule\Service\CoupleService::addCouple($groupId, $subjectId);
+		CoupleService::addCouple($groupId, $subjectId);
 		LocalRedirect("/add/couple/group/$groupId/subject/$subjectId/");
 	});
 
@@ -39,6 +41,9 @@ return static function(RoutingConfigurator $routes) {
 				LocalRedirect("/admin/#$entityName");
 			});
 		});
+
+	$routes->get('/import/', new PublicPageController('/local/modules/up.schedule/views/import.php'));
+	$routes->post('/import/', new PublicPageController('/local/modules/up.schedule/views/import.php'));
 
 	$routes
 		->where('entity', '[a-zA-Z]+')

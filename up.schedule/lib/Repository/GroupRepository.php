@@ -149,4 +149,12 @@ class GroupRepository
 		return $relatedEntities;
 		// TODO: handle exceptions
 	}
+
+	public static function deleteAllFromDB(): string
+	{
+		global $DB;
+		$DB->Query('TRUNCATE TABLE up_schedule_group');
+		$DB->Query('TRUNCATE TABLE up_schedule_group_subject');
+		return $DB->GetErrorSQL();
+	}
 }

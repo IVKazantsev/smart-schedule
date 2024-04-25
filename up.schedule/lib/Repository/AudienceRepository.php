@@ -149,4 +149,11 @@ class AudienceRepository
 				)))
 			->fetchCollection();
 	}
+
+	public static function deleteAllFromDB(): string
+	{
+		global $DB;
+		$DB->Query('TRUNCATE TABLE up_schedule_audience');
+		return $DB->GetErrorSQL();
+	}
 }
