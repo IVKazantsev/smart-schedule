@@ -43,6 +43,9 @@ use Bitrix\Main\Application;
 						}
 						?>
 						<div id="subjectContainer">
+							<?php if(!empty($field['CURRENT_SUBJECTS'])): ?>
+								<div class="has-text-danger mb-2"><?= GetMessage('DELETE_SUBJECTS_WARNING') ?></div>
+							<?php endif; ?>
 							<?php foreach ($field['CURRENT_SUBJECTS'] as $subjectId => $subjectTitle): ?>
 								<div class="mb-2" id="current_subject_<?=$subjectId?>">
 									<div class="box">

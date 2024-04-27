@@ -3,6 +3,7 @@
 namespace Up\Schedule\Repository;
 
 use Up\Schedule\Model\CoupleTable;
+use Up\Schedule\Model\EO_Couple;
 use Up\Schedule\Model\EO_Group;
 use Up\Schedule\Model\EO_Group_Collection;
 use Up\Schedule\Model\EO_Subject;
@@ -75,6 +76,7 @@ class GroupRepository
 			$result['SUBJECTS']['ALL_SUBJECTS'][$subject->getId()] = $subject->getTitle();
 		}
 		$result['SUBJECTS']['CURRENT_SUBJECTS'] = [];
+
 		return $result;
 	}
 
@@ -107,9 +109,24 @@ class GroupRepository
 		{
 			$group?->setTitle($data['TITLE']);
 		}
-		foreach ($data['SUBJECTS_TO_DELETE'] as $subjectId)
+
+		if (!empty($data['SUBJECTS_TO_DELETE']))
 		{
-			$group?->getSubjects()->removeByPrimary($subjectId);
+			$couplesCollection = CoupleRepository::getByGroupId($id);
+			foreach ($data['SUBJECTS_TO_DELETE'] as $subjectId)
+			{
+				$group?->getSubjects()->removeByPrimary($subjectId);
+
+				foreach ($couplesCollection as $couple)
+				{
+					if ($couple->getSubjectId() !== $subjectId)
+					{
+						continue;
+					}
+
+					$couple->delete();
+				}
+			}
 		}
 		$subjectsToAdd = SubjectRepository::getByIds($data['SUBJECTS_TO_ADD']);
 		if ($subjectsToAdd !== null)
@@ -119,9 +136,7 @@ class GroupRepository
 				$group?->addToSubjects($subject);
 			}
 		}
-		//die;
-		//echo "posle:\n";
-		//var_dump($group); die;
+
 		$group?->save();
 		// TODO: handle exceptions
 	}
@@ -144,8 +159,8 @@ class GroupRepository
 	{
 		$relatedEntities = [];
 		$relatedCouples = CoupleTable::query()->setSelect(
-				['SUBJECT.TITLE', 'AUDIENCE.NUMBER', 'GROUP.TITLE', 'TEACHER.NAME', 'TEACHER.LAST_NAME']
-			)->where('GROUP_ID', $id)->fetchAll();
+			['SUBJECT.TITLE', 'AUDIENCE.NUMBER', 'GROUP.TITLE', 'TEACHER.NAME', 'TEACHER.LAST_NAME']
+		)->where('GROUP_ID', $id)->fetchAll();
 		if (!empty($relatedCouples))
 		{
 			$relatedEntities['COUPLES'] = $relatedCouples;
@@ -160,6 +175,7 @@ class GroupRepository
 		global $DB;
 		$DB->Query('DELETE FROM up_schedule_group');
 		$DB->Query('DELETE FROM up_schedule_group_subject');
+
 		return $DB->GetErrorSQL();
 	}
 }

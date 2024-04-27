@@ -24,3 +24,4 @@ $MESS['CANCEL'] = 'Отменить';
 
 $MESS['DELETION_CONFIRM_HELPER'] = 'Вы действительно хотите удалить данный элемент?';
 $MESS['FIELDS_BEING_REMOVED_WARNING'] = 'При его удалении, удалится следующее';
+$MESS['DELETE_SUBJECTS_WARNING'] = 'Внимание! При удалении предметов, удалятся и соотвествующие пары';
