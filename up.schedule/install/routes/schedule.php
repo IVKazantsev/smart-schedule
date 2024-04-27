@@ -11,7 +11,6 @@ return static function(RoutingConfigurator $routes) {
 	$routes->get('/', new PublicPageController('/local/modules/up.schedule/views/schedule.php'));
 	$routes->get('/schedule/', new PublicPageController('/local/modules/up.schedule/views/schedule.php'));
 
-
 	$routes->get('/add/couple/select/group/', new PublicPageController('/local/modules/up.schedule/views/select-group.php'));
 	$routes->get('/add/couple/group/{groupId}/select/subject/', new PublicPageController('/local/modules/up.schedule/views/select-subject.php'))
 		->where('groupId', '[0-9]+');

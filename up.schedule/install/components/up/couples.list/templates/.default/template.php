@@ -10,6 +10,8 @@ if (!defined("B_PROLOG_INCLUDED") || B_PROLOG_INCLUDED !== true)
 	die();
 }
 
+$entityNameMethod = $arResult['ENTITY_NAME_METHOD'];
+
 Extension::load('up.couples-list');
 ?>
 
@@ -17,16 +19,28 @@ Extension::load('up.couples-list');
 	<div class="columns">
 		<div class="column is-11">
 			<div class="box is-60-height">
-				<div id="group-selection" class="dropdown group-selection is-60-height-child">
-					<div class="dropdown-trigger group-selection-trigger is-60-height-child">
-						<button id="group-selection-button" class="button is-fullwidth is-60-height-child" aria-haspopup="true" aria-controls="dropdown-menu">
-							<span><?= ($arResult['CURRENT_GROUP']) ? htmlspecialcharsbx($arResult['CURRENT_GROUP']->getTitle()) : '' ?></span>
+				<div id="entity-selection" class="dropdown entity-selection is-60-height-child">
+					<div class="dropdown-trigger entity-selection-trigger is-60-height-child">
+						<button id="entity-selection-button" class="button is-fullwidth is-60-height-child" aria-haspopup="true" aria-controls="dropdown-menu">
+							<span>
+								<?= ($arResult['CURRENT_ENTITY'])
+									? GetMessage($arResult['LOC_ENTITY']) . ' ' . htmlspecialcharsbx($arResult['CURRENT_ENTITY_NAME']) : '' ?>
+							</span>
 						</button>
 					</div>
 					<div class="dropdown-menu" id="dropdown-menu" role="menu">
 						<div class="dropdown-content">
-							<?php foreach ($arResult['GROUPS'] as $group): ?>
-								<a href="/group/<?= $group->getId() ?>/" class="dropdown-item <?= ($group->getId() === $arResult['CURRENT_GROUP_ID']) ? 'is-active' : '' ?>"><?= htmlspecialcharsbx($group->getTitle()) ?></a>
+							<?php foreach ($arResult['ENTITIES'] as $entity): ?>
+								<a href="/<?= $arResult['ENTITY'] ?>/<?= $entity->getId() ?>/" class="dropdown-item <?= ($entity->getId() === $arResult['CURRENT_ENTITY_ID']) ? 'is-active' : '' ?>">
+									<?php if(is_array($entityNameMethod)): ?>
+										<?= GetMessage($arResult['LOC_ENTITY']) . ' ' ?>
+										<?php foreach ($entityNameMethod as $method): ?>
+											<?= htmlspecialcharsbx($entity->$method()) . ' ' ?>
+										<?php endforeach; ?>
+									<?php else: ?>
+										<?= GetMessage($arResult['LOC_ENTITY']) . ' ' . htmlspecialcharsbx($entity->$entityNameMethod()) ?>
+									<?php endif; ?>
+								</a>
 							<?php endforeach; ?>
 						</div>
 					</div>

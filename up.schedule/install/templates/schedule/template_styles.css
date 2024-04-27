@@ -17,7 +17,7 @@ a:hover {
 	width: 15px;
 }
 
-.group-selection, .group-selection-trigger {
+.entity-selection, .entity-selection-trigger {
 	width: 100%;
 }
 
@@ -184,4 +184,10 @@ a:hover {
 	position: relative;
 	left: 70px;
 	bottom: 10px;
+}
+
+.selected-sidebar-entity {
+	color: white !important;
+	background-color: #1b1b1b !important;
+	border-radius: 6px !important;
 }

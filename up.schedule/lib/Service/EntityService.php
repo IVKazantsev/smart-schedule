@@ -250,12 +250,16 @@ class EntityService
 		return null;
 	}
 
-	private static function getEntityRepositoryName(string $entityName, bool $isNeedPermission = true): ?string
+	public static function getEntityRepositoryName(string $entityName, bool $isNeedPermission = true): ?string
 	{
 		$entityName = ucfirst(($entityName));
 		if($isNeedPermission && !in_array($entityName, self::$allowedEntity, true))
 		{
 			return null;
+		}
+		if($entityName === 'Teacher' || $entityName === 'Student')
+		{
+			$entityName = 'User';
 		}
 
 		return '\Up\Schedule\Repository\\' . $entityName . 'Repository';

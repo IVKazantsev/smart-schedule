@@ -10,3 +10,7 @@ $MESS["ADMINISTRATOR_ROLE"] = "Администратор";
 $MESS["NOTES"] = "Примечание";
 $MESS["BUSY_TEACHER_OR_GROUP"] = "преподаватель или группа заняты";
 $MESS["OCCUPIED_ROOM"] = "помещение занято";
+
+$MESS['SIDEBAR_GROUP'] = 'группам';
+$MESS['SIDEBAR_TEACHER'] = 'преподавателям';
+$MESS['SIDEBAR_AUDIENCE'] = 'аудиториям';

@@ -20,6 +20,22 @@ class CoupleRepository
 			->fetchCollection();
 	}
 
+	public static function getByAudienceId(int $audienceId): ?EO_Couple_Collection
+	{
+		return CoupleTable::query()
+			->setSelect(['SUBJECT', 'AUDIENCE', 'COUPLE_NUMBER_IN_DAY', 'WEEK_DAY', 'TEACHER'])
+			->where('AUDIENCE_ID', $audienceId)
+			->fetchCollection();
+	}
+
+	public static function getByTeacherId(int $teacherId): ?EO_Couple_Collection
+	{
+		return CoupleTable::query()
+			->setSelect(['SUBJECT', 'AUDIENCE', 'COUPLE_NUMBER_IN_DAY', 'WEEK_DAY', 'TEACHER'])
+			->where('TEACHER_ID', $teacherId)
+			->fetchCollection();
+	}
+
 	public static function getArrayByGroupId(int $groupId): ?array
 	{
 		return CoupleTable::query()

@@ -10,8 +10,15 @@ use Up\Schedule\Repository\UserRepository;
 
 class SidebarComponent extends CBitrixComponent
 {
+	private array $entitiesForDisplaySchedule = [
+		'group',
+		'audience',
+		'teacher',
+	];
+
 	public function executeComponent(): void
 	{
+		$this->prepareTemplateParams();
 		$this->fetchUserInfo();
 		$this->includeComponentTemplate();
 	}
@@ -25,7 +32,7 @@ class SidebarComponent extends CBitrixComponent
 
 		if ($user)
 		{
-			if($isAdmin)
+			if ($isAdmin)
 			{
 				$this->arResult['USER_ROLE'] = 'Администратор';
 			}
@@ -40,11 +47,18 @@ class SidebarComponent extends CBitrixComponent
 
 			return;
 		}
-		else
-		{
-			$this->arResult['USER_ROLE'] = 'Гость';
-		}
+
+		$this->arResult['USER_ROLE'] = 'Гость';
 
 		$this->arResult['IS_AUTHORIZED'] = false;
+	}
+
+	protected function prepareTemplateParams(): void
+	{
+		$this->arResult['ENTITY'] = $this->arParams['ENTITY'];
+		$this->arResult['ENTITIES_FOR_DISPLAY'] = $this->entitiesForDisplaySchedule;
+		$this->arResult['LOC_ENTITIES_FOR_DISPLAY'] = array_map(static function(string $elem) {
+			return strtoupper($elem);
+		}, $this->entitiesForDisplaySchedule);
 	}
 }

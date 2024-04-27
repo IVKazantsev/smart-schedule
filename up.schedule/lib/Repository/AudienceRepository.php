@@ -33,6 +33,11 @@ class AudienceRepository
 		return AudienceTable::query()->setSelect(['ID', 'NUMBER', 'AUDIENCE_TYPE'])->where('ID', $id)->fetchObject();
 	}
 
+	public static function getAnyObject(): ?EO_Audience
+	{
+		return AudienceTable::query()->setSelect(['ID', 'NUMBER', 'AUDIENCE_TYPE'])->fetchObject();
+	}
+
 	public static function getArrayForAdminById(int $id): ?array
 	{
 		$result = AudienceTable::query()->setSelect([
