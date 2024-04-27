@@ -150,6 +150,35 @@ class AudienceRepository
 			->fetchCollection();
 	}
 
+	public static function getArrayOfAudiencesBySubjectId(int $id): ?array
+	{
+		$subject = SubjectRepository::getArrayById($id);
+		$audienceTypeId = $subject['AUDIENCE_TYPE_ID'];
+		return AudienceTable::query()
+			->setSelect(['ID', 'NUMBER', 'TYPE' => 'UP_SCHEDULE_AUDIENCE_TYPE'])
+			->where('AUDIENCE_TYPE_ID', $audienceTypeId)
+			->registerRuntimeField(
+				(new Reference(
+					'UP_SCHEDULE_AUDIENCE_TYPE', AudienceTypeTable::class, Join::on('this.AUDIENCE_TYPE_ID', 'ref.ID')
+				)))
+			->fetchAll();
+	}
+//	public static function getArrayOfAudiencesBySubjectsId(array $id): ?array
+//	{
+//		$subjects = SubjectRepository::getArrayByIds($id);
+//
+//		/*$audiencesTypeId = $subject['AUDIENCE_TYPE_ID'];*/
+//		return AudienceTable::query()
+//			->setSelect(['ID', 'NUMBER', 'TYPE' => 'UP_SCHEDULE_AUDIENCE_TYPE'])
+//			->setGroup([''])
+//			->whereIn('AUDIENCE_TYPE_ID', $audiencesTypeId)
+//			->registerRuntimeField(
+//				(new Reference(
+//					'UP_SCHEDULE_AUDIENCE_TYPE', AudienceTypeTable::class, Join::on('this.AUDIENCE_TYPE_ID', 'ref.ID')
+//				)))
+//			->fetchAll();
+//	}
+
 	public static function deleteAllFromDB(): string
 	{
 		global $DB;

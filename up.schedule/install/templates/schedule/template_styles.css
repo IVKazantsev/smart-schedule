@@ -155,3 +155,29 @@ a:hover {
 .error-title {
 	border-radius: 6px 6px 0 0;
 }
+.couple {
+}
+
+
+.couple-text {
+	box-sizing: border-box;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	display: -moz-box;
+	-moz-box-orient: vertical;
+	display: -webkit-box;
+	-webkit-line-clamp: 6;
+	-webkit-box-orient: vertical;
+	line-clamp: 6;
+	box-orient: vertical;
+}
+
+.btn-edit-couple-container {
+	max-height: 7px;
+}
+
+.btn-dropdown-couple {
+	position: relative;
+	left: 70px;
+	bottom: 10px;
+}

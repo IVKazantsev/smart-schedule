@@ -20,6 +20,14 @@ class CoupleRepository
 			->fetchCollection();
 	}
 
+	public static function getArrayByGroupId(int $groupId): ?array
+	{
+		return CoupleTable::query()
+			->setSelect(['SUBJECT', 'AUDIENCE', 'COUPLE_NUMBER_IN_DAY', 'WEEK_DAY', 'TEACHER'])
+			->where('GROUP_ID', $groupId)
+			->fetchAll();
+	}
+
 	public static function addCouple(array $data): void
 	{
 		(new EO_Couple())

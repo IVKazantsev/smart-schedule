@@ -179,6 +179,57 @@ class UserRepository
 			)->where('ROLE', 'Преподаватель')->where('SUBJECT_ID', $subjectId)->fetchCollection();
 	}
 
+	public static function getArrayOfTeachersBySubjectId(int $subjectId): ?array
+	{
+		return UserTable::query()->setSelect([
+			'ID',
+			'NAME',
+			'LAST_NAME',
+			'EMAIL',
+			'ROLE' => 'UP_SCHEDULE_ROLE.TITLE',
+			'SUBJECT_ID' => 'UP_SCHEDULE_SUBJECT_TEACHER.SUBJECT_ID',
+		])->registerRuntimeField(
+			(new Reference(
+				'UP_SCHEDULE_ROLE', RoleTable::class, Join::on('this.UF_ROLE_ID', 'ref.ID')
+			))
+		)->registerRuntimeField(
+			(new Reference(
+				'UP_SCHEDULE_SUBJECT_TEACHER', SubjectTeacherTable::class, Join::on('this.ID', 'ref.TEACHER_ID')
+			))
+		)->registerRuntimeField(
+			(new Reference(
+				'UP_SCHEDULE_GROUP', GroupTable::class, Join::on('this.UF_GROUP_ID', 'ref.ID')
+			))
+		)->where('ROLE', 'Преподаватель')->where('SUBJECT_ID', $subjectId)->fetchAll();
+	}
+
+//	public static function getArrayOfTeachersBySubjectsId(array $subjectsId): ?array
+//	{
+//		return UserTable::query()->setSelect([
+//			'ID',
+//			'NAME',
+//			'LAST_NAME',
+//			'EMAIL',
+//			'ROLE' => 'UP_SCHEDULE_ROLE.TITLE',
+//			'SUBJECT_ID' => 'UP_SCHEDULE_SUBJECT_TEACHER.SUBJECT_ID',
+//		])->registerRuntimeField(
+//			(new Reference(
+//				'UP_SCHEDULE_ROLE', RoleTable::class, Join::on('this.UF_ROLE_ID', 'ref.ID')
+//			))
+//		)->registerRuntimeField(
+//			(new Reference(
+//				'UP_SCHEDULE_SUBJECT_TEACHER', SubjectTeacherTable::class, Join::on('this.ID', 'ref.TEACHER_ID')
+//			))
+//		)->registerRuntimeField(
+//			(new Reference(
+//				'UP_SCHEDULE_GROUP', GroupTable::class, Join::on('this.UF_GROUP_ID', 'ref.ID')
+//			))
+//		)
+//			->where('ROLE', 'Преподаватель')
+//			->whereIn('SUBJECT_ID', $subjectsId)
+//			->fetchAll();
+//	}
+
 	public static function getAllTeachers(): EO_User_Collection
 	{
 		return UserTable::query()->setSelect([

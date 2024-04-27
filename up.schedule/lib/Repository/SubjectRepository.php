@@ -24,7 +24,7 @@ class SubjectRepository
 		return SubjectTable::query()->setSelect(['ID', 'TITLE'])->fetchAll();
 	}
 
-	public static function getArrayById(int $id): ?array
+	public static function getArrayById(int $id): array|false
 	{
 		return SubjectTable::query()->setSelect(['ID', 'TITLE', 'AUDIENCE_TYPE_ID'])->where('ID', $id)->fetch();
 	}
@@ -46,6 +46,24 @@ class SubjectRepository
 				)))
 			->whereIn('ID', $id)
 			->fetchCollection();
+	}
+	public static function getArrayByIds(array $id): ?array
+	{
+		if (empty($id))
+		{
+			return null;
+		}
+		return SubjectTable::query()
+			->setSelect([
+				'TITLE',
+				'TYPE' => 'UP_SCHEDULE_AUDIENCE_TYPE.TITLE',
+			])
+			->registerRuntimeField(
+				(new Reference(
+					'UP_SCHEDULE_AUDIENCE_TYPE', AudienceTypeTable::class, Join::on('this.AUDIENCE_TYPE_ID', 'ref.ID')
+				)))
+			->whereIn('ID', $id)
+			->fetchAll();
 	}
 
 	public static function getByTitle(string $title): ?EO_Subject

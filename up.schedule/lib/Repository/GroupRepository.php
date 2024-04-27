@@ -24,12 +24,17 @@ class GroupRepository
 
 	public static function getAllArray(): ?array
 	{
-		return GroupTable::query()->setSelect(['ID', 'TITLE'])->fetchAll();
+		return GroupTable::query()->setSelect(['ID', 'TITLE',])->fetchAll();
 	}
 
 	public static function getById(int $id): ?EO_Group
 	{
 		return GroupTable::query()->setSelect(['ID', 'TITLE', 'SUBJECTS'])->where('ID', $id)->fetchObject();
+	}
+
+	public static function getArrayById(int $id): ?array
+	{
+		return GroupTable::query()->setSelect(['ID', 'TITLE', 'SUBJECTS'])->where('ID', $id)->fetch();
 	}
 
 	/*	public static function getArrayById(int $id): ?array

@@ -9,23 +9,23 @@ use Up\Schedule\Repository\UserRepository;
 
 class CoupleService
 {
-	public static function addCouple(int $groupId, int $subjectId): void
+	public static function addCouple(/*int $groupId, int $subjectId, */array $data): void
 	{
 		/*var_dump(Context::getCurrent()?->getRequest()->getPostList()->toArray());*/
-		$parameters = Context::getCurrent()?->getRequest()->getPostList()->toArray();
+		/*$parameters = Context::getCurrent()?->getRequest()->getPostList()->toArray();
 		$teacherId = (int)$parameters['TEACHERS'];
 		$audienceId = (int)$parameters['AUDIENCES'];
 		$dayOfWeek = (int)$parameters['DAYS_OF_WEEK'];
 		$numberInDay = (int)$parameters['NUMBER_IN_DAY'];
 
-		$data = [
+		$result = [
 			'GROUP_ID' => $groupId,
 			'SUBJECT_ID' => $subjectId,
 			'TEACHER_ID' => $teacherId,
 			'AUDIENCE_ID' => $audienceId,
 			'DAY_OF_WEEK' => $dayOfWeek,
 			'NUMBER_IN_DAY' => $numberInDay,
-		];
+		];*/
 
 		/*var_dump($data); die;*/
 		CoupleRepository::addCouple($data);

@@ -21,7 +21,7 @@ return static function(RoutingConfigurator $routes) {
 	$routes->post('/add/couple/group/{groupId}/subject/{subjectId}/', function () {
 		$subjectId = (int)Context::getCurrent()?->getRequest()->get('subjectId');
 		$groupId = (int)Context::getCurrent()?->getRequest()->get('groupId');
-		CoupleService::addCouple($groupId, $subjectId);
+		//CoupleService::addCouple($groupId, $subjectId);
 		LocalRedirect("/add/couple/group/$groupId/subject/$subjectId/");
 	});
 
