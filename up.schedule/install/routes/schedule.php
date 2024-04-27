@@ -20,6 +20,10 @@ return static function(RoutingConfigurator $routes) {
 	$routes->post('/add/couple/group/{groupId}/subject/{subjectId}/', function () {
 		$subjectId = (int)Context::getCurrent()?->getRequest()->get('subjectId');
 		$groupId = (int)Context::getCurrent()?->getRequest()->get('groupId');
+		// if(!check_bitrix_sessid())
+		// {
+		// 	LocalRedirect("/add/couple/group/$groupId/subject/$subjectId/");
+		// }
 		//CoupleService::addCouple($groupId, $subjectId);
 		LocalRedirect("/add/couple/group/$groupId/subject/$subjectId/");
 	});
@@ -36,6 +40,10 @@ return static function(RoutingConfigurator $routes) {
 			$routes->get('/admin/add/{entity}/', new PublicPageController('/local/modules/up.schedule/views/admins-entity-add.php'));
 			$routes->post('/admin/add/{entity}/', function () {
 				$entityName = request()->get('entity');
+				if(!check_bitrix_sessid())
+				{
+					LocalRedirect("/admin/#$entityName");
+				}
 				EntityService::addEntity($entityName);
 				LocalRedirect("/admin/#$entityName");
 			});
@@ -57,6 +65,10 @@ return static function(RoutingConfigurator $routes) {
 			$routes->post('/admin/delete/{entity}/{id}/', function () {
 				$entityId = (int)Context::getCurrent()?->getRequest()->get('id');
 				$entityName = Context::getCurrent()?->getRequest()->get('entity');
+				if(!check_bitrix_sessid())
+				{
+					LocalRedirect("/admin/#$entityName");
+				}
 				EntityService::deleteEntityById($entityName, $entityId);
 				LocalRedirect("/admin/#$entityName");
 			});
@@ -64,6 +76,10 @@ return static function(RoutingConfigurator $routes) {
 			$routes->post('/admin/edit/{entity}/{id}/', function () {
 				$entityId = (int)Context::getCurrent()?->getRequest()->get('id');
 				$entityName = Context::getCurrent()?->getRequest()->get('entity');
+				if(!check_bitrix_sessid())
+				{
+					LocalRedirect("/admin/edit/$entityName/$entityId/");
+				}
 				EntityService::editEntityById($entityName, $entityId);
 				LocalRedirect("/admin/edit/$entityName/$entityId/");
 			});

@@ -73,7 +73,7 @@ if (!defined("B_PROLOG_INCLUDED") || B_PROLOG_INCLUDED !== true)
 
 		<?php if($arResult['ENTITY']): ?>
 			<ul class="menu-list box">
-					<div class="mt-3 mb-3 is-flex is-align-items-center is-justify-content-center is-fullwidth">Отображение по:</div>
+					<div class="mt-3 mb-3 is-flex is-align-items-center is-justify-content-center is-fullwidth"><?= GetMessage('DISPLAY_BY') ?>:</div>
 					<?php foreach ($arResult['ENTITIES_FOR_DISPLAY'] as $key => $entity): ?>
 						<li>
 							<a href="/<?= $entity ?>/1/" class="is-60-height is-flex is-align-items-center is-justify-content-center <?= ($arResult['ENTITY'] === $entity) ? 'selected-sidebar-entity' : '' ?>">
