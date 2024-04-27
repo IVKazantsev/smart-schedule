@@ -5,7 +5,7 @@ body {
 }
 
 .box {
-	padding: 0!important;
+	padding: 0 !important;
 }
 
 a:hover {
@@ -34,14 +34,14 @@ a:hover {
 }
 
 .add-couple-button {
-	line-height:60px;
+	line-height: 60px;
 }
 
 .dropdown-menu {
 	width: 100%;
 	max-height: 50vh;
 	overflow-y: scroll;
-	box-shadow: 0 0.5em 1em -0.125em rgba(10,10,10,.3), 0 0 0 1px rgba(10,10,10,.02);
+	box-shadow: 0 0.5em 1em -0.125em rgba(10, 10, 10, .3), 0 0 0 1px rgba(10, 10, 10, .02);
 	border-radius: 5px;
 }
 
@@ -49,16 +49,15 @@ a:hover {
 	display: none;
 }
 
-.day-of-week {
+.day-of-week, .title-of-table {
 	color: white;
 	background-color: #1b1b1b;
-	border-bottom-right-radius: 0;
-	border-bottom-left-radius: 0;
+	border-radius: 6px 6px 0 0;
 }
 
 .couple {
 	border-radius: 0;
-	height: 100px;
+	height: 120px;
 	font-size: 0.8em;
 }
 
@@ -74,4 +73,115 @@ a:hover {
 .couples .couple:last-child {
 	border-bottom-right-radius: 5px;
 	border-bottom-left-radius: 5px;
+}
+
+.tabs {
+	display: none !important;
+}
+
+.tabs.is-active {
+	display: flex !important;
+}
+
+.tabs-content > div > div {
+	display: none;
+}
+
+.tabs-content > div > div.active {
+	display: flex;
+}
+
+#entity-list-app {
+	width: 100%;
+}
+
+.is-fullwidth {
+	width: 100%;
+}
+
+.edit-fields {
+	padding: 8px 12px !important;
+	height: auto;
+}
+
+#modal {
+	position: fixed;
+	top: 50%;
+	left: 50%;
+	transition: 200ms ease-in-out;
+	transform: translate(-50%, -50%) scale(0);
+	z-index: 10;
+	max-height: 500px;
+}
+
+#modal.active {
+	transform: translate(-50%, -50%) scale(1);
+}
+
+#overlay {
+	position: fixed;
+	opacity: 0;
+	transition: 200ms ease-in-out;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	background-color: rgba(0, 0, 0, .5);
+	pointer-events: none;
+}
+
+#overlay.active {
+	opacity: 1;
+	pointer-events: all;
+}
+
+#modal .related-entities {
+	max-height: 300px;
+	overflow-y: auto;
+	scrollbar-color: #000000 #e0e0e0;
+	scrollbar-width: thin;
+	overflow-x: hidden;
+}
+
+#errors, #success {
+	position: fixed;
+	left: 50%;
+	transition: 200ms ease-in-out;
+	transform: translateX(-50%) scale(0);
+	z-index: 10;
+	max-height: 500px;
+}
+
+#errors.active, #success.active {
+	transform: translateX(-50%) scale(1);
+}
+
+.error-title {
+	border-radius: 6px 6px 0 0;
+}
+.couple {
+}
+
+
+.couple-text {
+	box-sizing: border-box;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	display: -moz-box;
+	-moz-box-orient: vertical;
+	display: -webkit-box;
+	-webkit-line-clamp: 6;
+	-webkit-box-orient: vertical;
+	line-clamp: 6;
+	box-orient: vertical;
+}
+
+.btn-edit-couple-container {
+	max-height: 7px;
+}
+
+.btn-dropdown-couple {
+	position: relative;
+	left: 70px;
+	bottom: 10px;
 }

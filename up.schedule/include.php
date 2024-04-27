@@ -8,7 +8,7 @@ const COUPLES_NUMBER_PER_DAY = 7;
 
 function request(): Request
 {
-	return Application::getInstance()->getContext()->getRequest();
+	return Application::getInstance()?->getContext()->getRequest();
 }
 
 function db(): Connection
