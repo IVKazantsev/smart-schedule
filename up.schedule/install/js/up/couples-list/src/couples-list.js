@@ -1,6 +1,5 @@
 import {Tag, Type} from 'main.core';
 
-
 export class CouplesList
 {
 	formData = {};
@@ -42,7 +41,15 @@ export class CouplesList
 		{
 
 		}
-		const groupId = url.slice('group/'.length + 1, 'group/'.length + 2);
+
+		const addresses = url.split('/');
+		const groupIdIndex = addresses.findIndex((element, index, array) => {
+			const needle = 'group';
+
+			return element === needle;
+		}) + 1;
+
+		const groupId = addresses[groupIdIndex];
 
 		return typeof Number(groupId) === "number" ? groupId : undefined;
 	}
@@ -503,6 +510,4 @@ export class CouplesList
 		const modal = document.getElementById('coupleModal');
 		modal.classList.remove('is-active');
 	}
-
-
 }
