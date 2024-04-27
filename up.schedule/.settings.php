@@ -3,10 +3,10 @@
 return [
 	'controllers' => [
 		'value' => [
-			'namespaces' => [
-				'\\Up\\Schedule\\Controller\\' => 'api',
-			],
 			'defaultNamespace' => '\\Up\\Schedule\\Controller',
+			'namespaces' => [
+				'\\Up\\Schedule\\Controller' => 'api',
+			],
 		],
 		'readonly' => true,
 	],

@@ -1,8 +1,9 @@
 <?php
 
+$MESS["ADMIN_PANEL"] = "Административная панель";
 $MESS["SCHEDULING"] = "Составить расписание";
-$MESS["OPTIMIZE"] = "Оптимизировать расписание";
-$MESS["STATISTICS"] = "Статистика";
+$MESS["BACK_TO_SCHEDULE"] = "Вернуться к расписанию";
+$MESS["IMPORT_FROM_EXCEL"] = "Импортировать данные из Excel";
 
 $MESS["ADMINISTRATOR_ROLE"] = "Администратор";
 

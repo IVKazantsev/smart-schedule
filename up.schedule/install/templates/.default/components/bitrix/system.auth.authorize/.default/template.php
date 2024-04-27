@@ -13,13 +13,13 @@ if (!empty($arResult['ERROR_MESSAGE']))
 }
 ?>
 
-<div class="bx-auth column is-full is-offset-one-third">
+<div class="box is-flex is-flex-direction-column is-justify-content-center is-align-content-center is-align-items-center bx-auth column is-half is-offset-one-third">
 <?if($arResult["AUTH_SERVICES"]):?>
 	<div class="bx-auth-title"><?echo GetMessage("AUTH_TITLE")?></div>
 <?endif?>
 	<div class="bx-auth-note"><?=GetMessage("AUTH_PLEASE_AUTH")?></div>
 
-	<form name="form_auth" method="post" target="_top" action="<?=$arResult["AUTH_URL"]?>">
+	<form class="is-flex is-flex-direction-column is-justify-content-center is-align-content-center is-align-items-center" name="form_auth" method="post" target="_top" action="<?=$arResult["AUTH_URL"]?>">
 
 		<input type="hidden" name="AUTH_FORM" value="Y" />
 		<input type="hidden" name="TYPE" value="AUTH" />
@@ -72,17 +72,15 @@ document.getElementById('bx_auth_secure').style.display = 'inline-block';
 <?endif?>
 			<tr>
 				<td></td>
-				<td class="authorize-submit-cell"><input type="submit" class="btn btn-primary" name="Login" value="<?=GetMessage("AUTH_AUTHORIZE")?>" /></td>
+				<td class="authorize-submit-cell is-60-height">
+					<input type="submit" class="btn btn-primary" name="Login" value="<?=GetMessage("AUTH_AUTHORIZE")?>" />
+					<?if ($arParams["NOT_SHOW_LINKS"] != "Y"):?>
+
+						<a class="is-60-height-child" href="<?=$arResult["AUTH_FORGOT_PASSWORD_URL"]?>" rel="nofollow"><?=GetMessage("AUTH_FORGOT_PASSWORD_2")?></a>
+					<?endif?>
+				</td>
 			</tr>
 		</table>
-
-<?if ($arParams["NOT_SHOW_LINKS"] != "Y"):?>
-		<noindex>
-			<p>
-				<a href="<?=$arResult["AUTH_FORGOT_PASSWORD_URL"]?>" rel="nofollow"><?=GetMessage("AUTH_FORGOT_PASSWORD_2")?></a>
-			</p>
-		</noindex>
-<?endif?>
 
 <?if($arParams["NOT_SHOW_LINKS"] != "Y" && $arResult["NEW_USER_REGISTRATION"] == "Y" && $arParams["AUTHORIZE_REGISTRATION"] != "Y"):?>
 		<noindex>
