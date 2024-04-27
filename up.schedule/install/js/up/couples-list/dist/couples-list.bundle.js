@@ -37,7 +37,12 @@ this.BX.Up = this.BX.Up || {};
 	    value: function getGroupId() {
 	      var url = window.location.pathname;
 	      if (url.length === 0) ;
-	      var groupId = url.slice('group/'.length + 1, 'group/'.length + 2);
+	      var addresses = url.split('/');
+	      var groupIdIndex = addresses.findIndex(function (element, index, array) {
+	        var needle = 'group';
+	        return element === needle;
+	      }) + 1;
+	      var groupId = addresses[groupIdIndex];
 	      return typeof Number(groupId) === "number" ? groupId : undefined;
 	    }
 	  }, {
