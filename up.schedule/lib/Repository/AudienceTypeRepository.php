@@ -124,7 +124,7 @@ class AudienceTypeRepository
 	public static function deleteAllFromDB(): string
 	{
 		global $DB;
-		$DB->Query('TRUNCATE TABLE up_schedule_audience_type');
+		$DB->Query('DELETE FROM up_schedule_audience_type');
 		return $DB->GetErrorSQL();
 	}
 }

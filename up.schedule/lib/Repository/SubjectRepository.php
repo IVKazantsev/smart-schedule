@@ -193,10 +193,9 @@ class SubjectRepository
 	public static function deleteAllFromDB(): string
 	{
 		global $DB;
-		$DB->Query('TRUNCATE TABLE up_schedule_subject');
-		$DB->Query('TRUNCATE TABLE up_schedule_group_subject');
-		$DB->Query('TRUNCATE TABLE up_schedule_subject_teacher');
-		$DB->Query('TRUNCATE TABLE b_uts_user');
+		$DB->Query('DELETE FROM up_schedule_subject');
+		$DB->Query('DELETE FROM up_schedule_group_subject');
+		$DB->Query('DELETE FROM up_schedule_subject_teacher');
 		return $DB->GetErrorSQL();
 	}
 }

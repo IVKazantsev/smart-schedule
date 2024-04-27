@@ -293,6 +293,18 @@ class UserRepository
 		}*/
 	}
 
+	public static function getTeacherByFirstAndLastName(string $name, string $lastName): ?EO_User
+	{
+		return UserTable::query()->setSelect([
+												 'ID',
+												 'NAME',
+												 'LAST_NAME',
+											 ])->where('UF_ROLE_ID', 2)
+											   ->where('NAME', $name)
+											   ->where('LAST_NAME', $lastName)
+											   ->fetchObject();
+	}
+
 	public static function editById(int $id, array $data): void
 	{
 		$fields = [];
@@ -370,7 +382,8 @@ class UserRepository
 												   'NAME',
 												   'LAST_NAME',
 											   ])
-						  ->where(
+						  ->whereNot('UF_ROLE_ID',  1)
+								   ->where(
 				Query::filter()
 				->logic('or')
 				->whereNotNull('UF_ROLE_ID')
@@ -386,8 +399,8 @@ class UserRepository
 			}
 		}
 
-		$DB->Query('TRUNCATE TABLE b_uts_user');
-		$DB->Query('TRUNCATE TABLE up_schedule_subject_teacher');
+		$DB->Query("DELETE FROM b_uts_user where UF_ROLE_ID != 1");
+		$DB->Query("DELETE FROM up_schedule_subject_teacher");
 		return $DB->GetErrorSQL();
 	}
 }
