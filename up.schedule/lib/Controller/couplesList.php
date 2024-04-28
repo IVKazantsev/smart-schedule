@@ -3,7 +3,9 @@
 namespace Up\Schedule\Controller;
 
 use Bitrix\Main\Engine\Controller;
+use Bitrix\Main\Entity\Query;
 use Up\Schedule\Model\EO_Couple_Collection;
+use Up\Schedule\Model\EO_Subject;
 use Up\Schedule\Repository\AudienceRepository;
 use Up\Schedule\Repository\CoupleRepository;
 use Up\Schedule\Repository\GroupRepository;
@@ -14,45 +16,54 @@ use Up\Schedule\Service\CoupleService;
 class CouplesList extends Controller
 {
 	private array $couples = [];
-	public function getCouplesListAction(): array
+
+	public function getCouplesListAction(string $entity, int $id): array
 	{
-		$this->fetchCouples();
+		$this->fetchCouples($entity, $id);
+
 		return [
 			'couples' => $this->couples,
 		];
 	}
 
-	public function addCoupleAction(): array
+	public function addCoupleAction(array $coupleInfo): array
 	{
-		$data = [
-			'GROUP_ID' => request()->get('GROUP_ID'),
-			'SUBJECT_ID' => request()->get('SUBJECT_ID'),
-			'TEACHER_ID' => request()->get('TEACHER_ID'),
-			'AUDIENCE_ID' => request()->get('AUDIENCE_ID'),
-			'DAY_OF_WEEK' => request()->get('DAY_OF_WEEK'),
-			'NUMBER_IN_DAY' => request()->get('NUMBER_IN_DAY'),
+		if(!check_bitrix_sessid())
+		{
+			return [
+				'result' => false,
+			];
+		}
+
+		CoupleRepository::addCouple($coupleInfo);
+
+		return [
+			'result' => true,
 		];
-		CoupleService::addCouple($data);
-		return ['result' => true];
 	}
 
-	public function fetchAddCoupleDataAction(): array
+	public function fetchAddCoupleDataAction(string $entity, int $id): array
 	{
 		$result = [];
-		$currentGroupId = (int)request()->get('id');
 		/*$numberOfDay = (int)request()->get('numberOfDay');
 		$numberOfCouple = (int)request()->get('numberOfCouple');*/
-		$this->fetchCouples();
-		$subjects = SubjectRepository::getArrayByGroupId($currentGroupId);
-		$idListOfSubjects = array_column($subjects, 'SUBJECTSID');
-		foreach ($this->couples as $day)
+		$this->fetchCouples($entity, $id);
+		$getMethodName = "getArrayBy{$entity}Id";
+		$subjects = SubjectRepository::$getMethodName($id);
+		if($entity === 'group')
 		{
-			foreach ($day as $couple)
+			$idListOfSubjects = array_column($subjects, 'ID');
+			foreach ($this->couples as $day)
 			{
-				if (($index = array_search($couple['UP_SCHEDULE_MODEL_COUPLE_SUBJECT_ID'], $idListOfSubjects, true)) !== false)
+				foreach ($day as $couple)
 				{
-					unset($subjects[$index]);
-					unset($idListOfSubjects[$index]);
+					if (
+						($index = array_search($couple['UP_SCHEDULE_MODEL_COUPLE_SUBJECT_ID'], $idListOfSubjects, true))
+						!== false
+					)
+					{
+						unset($subjects[$index], $idListOfSubjects[$index]);
+					}
 				}
 			}
 		}
@@ -61,19 +72,20 @@ class CouplesList extends Controller
 		{
 			$result[] = [
 				'subject' => $subject,
-				'teachers' => UserRepository::getArrayOfTeachersBySubjectId((int)$subject['SUBJECTSID']),
-				'audiences' => AudienceRepository::getArrayOfAudiencesBySubjectId((int)$subject['SUBJECTSID']),
+				'teachers' => ($entity === 'teacher') ? [ UserRepository::getArrayById($id) ] : UserRepository::getArrayOfTeachersBySubjectId((int)$subject['ID']),
+				'audiences' => ($entity === 'audience') ? [ AudienceRepository::getArrayById($id) ] : AudienceRepository::getArrayOfAudiencesBySubjectId((int)$subject['ID']),
+				'groups' => ($entity === 'group') ? [ GroupRepository::getArrayById($id) ] : GroupRepository::getArrayOfGroupsBySubjectId((int)$subject['ID']),
 				];
 		}
 
 		return $result;
 	}
 
-	protected function fetchCouples(): void
+	protected function fetchCouples(string $entity, int $id): void
 	{
-		$currentGroupId = (int)request()->get('id');
-		$couples = CoupleRepository::getArrayByGroupId($currentGroupId);
-		/*$this->data['couples'] = $this->sortCouplesByWeekDay($couples);*/
+
+		$getMethodName = "getArrayBy{$entity}Id";
+		$couples = CoupleRepository::$getMethodName($id);
 		$this->couples = $this->sortCouplesByWeekDay($couples);
 	}
 

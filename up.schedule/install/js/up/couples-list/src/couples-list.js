@@ -1,4 +1,4 @@
-import {Tag, Type} from 'main.core';
+import { Tag, Type } from 'main.core';
 
 export class CouplesList
 {
@@ -11,7 +11,9 @@ export class CouplesList
 		5: 'Пятница',
 		6: 'Суббота',
 	};
-	groupId = undefined;
+	entityId = undefined;
+	entity = undefined;
+
 	constructor(options = {})
 	{
 		if (Type.isStringFilled(options.rootNodeId))
@@ -29,29 +31,37 @@ export class CouplesList
 			throw new Error(`CouplesList: element with id = "${this.rootNodeId}" not found`);
 		}
 
-		this.groupId = this.getGroupId();
+		this.extractEntityFromUrl();
 		this.coupleList = [];
 		this.reload();
 	}
 
-	getGroupId()
+	extractEntityFromUrl()
 	{
 		const url = window.location.pathname;
 		if (url.length === 0)
 		{
-
+			return;
 		}
 
 		const addresses = url.split('/');
-		const groupIdIndex = addresses.findIndex((element, index, array) => {
-			const needle = 'group';
+		const entityIndex = addresses.findIndex((element, index, array) => {
+			const needles = [
+				'group',
+				'teacher',
+				'audience',
+			];
 
-			return element === needle;
-		}) + 1;
+			return needles.includes(element);
+		});
 
-		const groupId = addresses[groupIdIndex];
+		const entityIdIndex = entityIndex + 1;
 
-		return typeof Number(groupId) === "number" ? groupId : undefined;
+		const entity = addresses[entityIndex];
+		const entityId = addresses[entityIdIndex];
+
+		this.entityId = typeof Number(entityId) === 'number' ? entityId : undefined;
+		this.entity = typeof entity === 'string' ? entity : undefined;
 	}
 
 	reload()
@@ -72,13 +82,14 @@ export class CouplesList
 				{
 					data:
 						{
-							id: this.groupId,
+							entity: this.entity,
+							id: this.entityId,
 						},
 				},
 			).then((response) => {
-				const coupleList = response.data.couples;
-				resolve(coupleList);
-			})
+					const coupleList = response.data.couples;
+					resolve(coupleList);
+				})
 				.catch((error) => {
 					reject(error);
 				});
@@ -97,7 +108,6 @@ export class CouplesList
 				</div>
 			`;
 
-
 			const dayColumnContainer = document.createElement('div');
 			dayColumnContainer.className = 'column is-2';
 
@@ -106,20 +116,21 @@ export class CouplesList
 
 			dayContainer.appendChild(dayTitleContainer);
 
-
 			for (let i = 1; i < 7; i++)
 			{
 				let coupleTextContainer = Tag.render`<br>`;
 				const dropdownContent = Tag.render`<div class="dropdown-content"></div>`;
 
-				if (typeof this.coupleList[day] !== "undefined" && typeof this.coupleList[day][i] !== "undefined")
+				if (typeof this.coupleList[day] !== 'undefined' && typeof this.coupleList[day][i] !== 'undefined')
 				{
-					//console.log(this.coupleList[day][i]);
+					console.log(this.coupleList);
 					coupleTextContainer = Tag.render`
 						<div class="couple-text">
 							${this.coupleList[day][i].UP_SCHEDULE_MODEL_COUPLE_SUBJECT_TITLE}
 							<br>
-							${this.coupleList[day][i].UP_SCHEDULE_MODEL_COUPLE_AUDIENCE_NUMBER}
+							${ this.coupleList[day][i].UP_SCHEDULE_MODEL_COUPLE_AUDIENCE_NUMBER}
+							<br>
+							${this.coupleList[day][i].UP_SCHEDULE_MODEL_COUPLE_GROUP_TITLE}
 							<br>
 							${this.coupleList[day][i].UP_SCHEDULE_MODEL_COUPLE_TEACHER_NAME} ${this.coupleList[day][i].UP_SCHEDULE_MODEL_COUPLE_TEACHER_LAST_NAME}
 						</div>
@@ -166,7 +177,6 @@ export class CouplesList
 				const coupleContainer = document.createElement('div');
 				coupleContainer.className = 'box is-clickable couple m-0';
 
-
 //КНОПКА
 				const dropdownTrigger = Tag.render`<div class="dropdown-trigger"></div>`;
 				const button = Tag.render`
@@ -177,10 +187,9 @@ export class CouplesList
 
 				button.addEventListener('click', () => {
 					this.handleOpenDropdownCoupleButtonClick(day, i);
-				}, {once: true});
+				}, { once: true });
 
 				dropdownTrigger.appendChild(button);
-
 
 				const btnContainer = Tag.render`
 					<div id="dropdown-${day}-${i}" class="btn-edit-couple-container dropdown"></div>`;
@@ -188,10 +197,8 @@ export class CouplesList
 				const dropdownMenu = Tag.render`<div class="dropdown-menu" id="dropdown-menu" role="menu"></div>`;
 				dropdownMenu.appendChild(dropdownContent);
 
-
 				btnContainer.appendChild(dropdownTrigger);
 				btnContainer.appendChild(dropdownMenu);
-
 
 				//coupleContainer.appendChild(some);
 
@@ -205,17 +212,20 @@ export class CouplesList
 		}
 	}
 
-
 	handleOpenDropdownCoupleButtonClick(numberOfDay, numberOfCouple)
 	{
 		console.log('open');
+		const modals = document.querySelectorAll('.dropdown');
+		modals.forEach((modalWindow) => {
+			modalWindow.classList.remove('is-active');
+		});
 		const dropdown = document.getElementById(`dropdown-${numberOfDay}-${numberOfCouple}`);
 		dropdown.className = 'btn-edit-couple-container dropdown is-active';
 
 		const button = document.getElementById(`button-${numberOfDay}-${numberOfCouple}`);
 		button.addEventListener('click', () => {
 			this.handleCloseDropdownCoupleButtonClick(numberOfDay, numberOfCouple);
-		}, {once: true});
+		}, { once: true });
 	}
 
 	handleCloseDropdownCoupleButtonClick(numberOfDay, numberOfCouple)
@@ -226,7 +236,7 @@ export class CouplesList
 		const button = document.getElementById(`button-${numberOfDay}-${numberOfCouple}`);
 		button.addEventListener('click', () => {
 			this.handleOpenDropdownCoupleButtonClick(numberOfDay, numberOfCouple);
-		}, {once: true});
+		}, { once: true });
 	}
 
 	handleAddCoupleButtonClick(numberOfDay, numberOfCouple)
@@ -237,11 +247,13 @@ export class CouplesList
 		this.createAddForm(numberOfDay, numberOfCouple);
 		console.log('add');
 	}
+
 	handleRemoveCoupleButtonClick(numberOfDay, numberOfCouple)
 	{
 		this.openCoupleModal();
 		console.log('remove');
 	}
+
 	handleEditCoupleButtonClick(numberOfDay, numberOfCouple)
 	{
 		this.openCoupleModal();
@@ -253,7 +265,8 @@ export class CouplesList
 		const modal = document.getElementById('coupleModal');
 		modal.classList.add('is-active');
 		document.addEventListener('keydown', (event) => {
-			if(event.key === "Escape") {
+			if (event.key === 'Escape')
+			{
 				this.closeCoupleModal();
 			}
 		});
@@ -267,7 +280,7 @@ export class CouplesList
 	{
 		this.fetchSubjectsForAddForm()
 			.then((subjectsList) => {
-				this.insertDataForAddForm(subjectsList);
+				this.insertSubjectsDataForAddForm(subjectsList);
 			});
 
 		console.log(numberOfDay + ' ' + numberOfCouple);
@@ -277,11 +290,11 @@ export class CouplesList
 		submitButton.addEventListener('click', () => {
 			//console.log(numberOfDay);
 			this.sendForm(numberOfDay, numberOfCouple);
-		}, {once: true});
+		}, { once: true });
 
 		cancelButton.addEventListener('click', () => {
 			this.closeCoupleModal();
-		}, {once: true});
+		}, { once: true });
 
 		/*const form = document.getElementById('add-edit-form');*/
 
@@ -311,47 +324,67 @@ export class CouplesList
 		const subjectInput = document.getElementById('subject-select');
 		const teacherInput = document.getElementById('teacher-select');
 		const audienceInput = document.getElementById('audience-select');
+		const groupInput = document.getElementById('group-select');
 
-		if (subjectInput && teacherInput && audienceInput)
+		if (subjectInput && teacherInput && audienceInput && groupInput)
 		{
 			console.log(subjectInput.value);
+			const coupleInfo = {
+				'GROUP_ID': groupInput.value,
+				'SUBJECT_ID': subjectInput.value,
+				'TEACHER_ID': teacherInput.value,
+				'AUDIENCE_ID': audienceInput.value,
+				'DAY_OF_WEEK': numberOfDay,
+				'NUMBER_IN_DAY': numberOfCouple,
+			};
 			BX.ajax.runAction(
 				'up:schedule.api.couplesList.addCouple',
 				{
 					data:
 						{
-							GROUP_ID: this.groupId,
-							SUBJECT_ID: subjectInput.value,
-							TEACHER_ID: teacherInput.value,
-							AUDIENCE_ID: audienceInput.value,
-							DAY_OF_WEEK: numberOfDay,
-							NUMBER_IN_DAY: numberOfCouple,
+							coupleInfo: coupleInfo,
 						},
 				},
 			).then((response) => {
-				console.log(response);
-				this.closeCoupleModal();
-				this.reload();
-			})
+					console.log(response);
+					this.closeCoupleModal();
+					this.reload();
+				})
 				.catch((error) => {
 					console.error(error);
 				});
 		}
 	}
 
-	insertDataForAddForm(subjectsList)
+	insertSubjectsDataForAddForm(subjectsList)
 	{
 		let form;
 		const modalBody = document.getElementById('modal-body');
 		if (document.getElementById('add-edit-form'))
 		{
 			form = document.getElementById('add-edit-form');
-			form = Tag.render`<form id="add-edit-form"></form>`
+			form = Tag.render`<form id="add-edit-form"></form>`;
 			modalBody.innerHTML = '';
 		}
 
 		this.formData = subjectsList;
 
+		if(subjectsList.length === 0)
+		{
+			if (document.getElementById('empty-form'))
+			{
+				form.removeChild(document.getElementById('empty-form'));
+			}
+
+			const emptyForm = Tag.render`
+				<div id="empty-form">Добавлять больше нечего</div>
+			`
+
+
+
+			modalBody.appendChild(emptyForm);
+			return;
+		}
 		const selectContainer = Tag.render`
 			<select id="subject-select" name="subject"> </select>
 		`;
@@ -362,20 +395,20 @@ export class CouplesList
 		selectContainer.appendChild(option);
 		subjectsList.forEach((subject) => {
 			const option = Tag.render`
-				<option value="${subject.subject.SUBJECTSID}">
-					${subject.subject.SUBJECTSTITLE}
+				<option value="${subject.subject.ID}">
+					${subject.subject.TITLE}
 				</option>
 			`;
 			selectContainer.appendChild(option);
 			//console.log(subject.subject);
-		})
+		});
 
 		const container = Tag.render`<div class="is-60-height box edit-fields"></div>`;
 
 		const label = Tag.render`<label class="label">Предмет</label>`;
 		const divControl = Tag.render`<div class="control"></div>`;
 		const divSelect = Tag.render`<div class="select"></div>`;
-		const underLabel = Tag.render`<label></label>`
+		const underLabel = Tag.render`<label></label>`;
 
 		underLabel.appendChild(selectContainer);
 		divSelect.appendChild(underLabel);
@@ -389,9 +422,9 @@ export class CouplesList
 		const select = document.getElementById('subject-select');
 		select.addEventListener('change', () => {
 			this.insertAudiencesDataForForm(select.value);
+			this.insertGroupsDataForForm(select.value);
 			this.insertTeachersDataForForm(select.value);
 		});
-		//console.log(subjectsList);
 	}
 
 	insertAudiencesDataForForm(subjectId)
@@ -405,9 +438,8 @@ export class CouplesList
 		const selectContainer = Tag.render`
 			<select id="audience-select" name="subject"> </select>
 		`;
-		//console.log(this.formData);
 		this.formData.forEach((subject) => {
-			if (subject.subject.SUBJECTSID === subjectId)
+			if (subject.subject.ID === subjectId)
 			{
 				subject.audiences.forEach((audience) => {
 					const option = Tag.render`
@@ -416,17 +448,57 @@ export class CouplesList
 						</option>
 					`;
 					selectContainer.appendChild(option);
-				})
+				});
 			}
-			//console.log(subject.subject);
-		})
+		});
 
 		const container = Tag.render`<div id="audience-container" class="is-60-height box edit-fields"></div>`;
 
 		const label = Tag.render`<label class="label">Аудитория</label>`;
 		const divControl = Tag.render`<div class="control"></div>`;
 		const divSelect = Tag.render`<div class="select"></div>`;
-		const underLabel = Tag.render`<label></label>`
+		const underLabel = Tag.render`<label></label>`;
+
+		underLabel.appendChild(selectContainer);
+		divSelect.appendChild(underLabel);
+		divControl.appendChild(divSelect);
+		container.appendChild(label);
+		container.appendChild(divControl);
+
+		form.appendChild(container);
+	}
+
+	insertGroupsDataForForm(subjectId)
+	{
+		const form = document.getElementById('add-edit-form');
+		if (document.getElementById('group-container'))
+		{
+			form.removeChild(document.getElementById('group-container'));
+		}
+
+		const selectContainer = Tag.render`
+			<select id="group-select" name="subject"> </select>
+		`;
+		this.formData.forEach((subject) => {
+			if (subject.subject.ID === subjectId)
+			{
+				subject.groups.forEach((group) => {
+					const option = Tag.render`
+						<option value="${group.ID}">
+							${group.TITLE}
+						</option>
+					`;
+					selectContainer.appendChild(option);
+				});
+			}
+		});
+
+		const container = Tag.render`<div id="group-container" class="is-60-height box edit-fields"></div>`;
+
+		const label = Tag.render`<label class="label">Группа</label>`;
+		const divControl = Tag.render`<div class="control"></div>`;
+		const divSelect = Tag.render`<div class="select"></div>`;
+		const underLabel = Tag.render`<label></label>`;
 
 		underLabel.appendChild(selectContainer);
 		divSelect.appendChild(underLabel);
@@ -448,9 +520,9 @@ export class CouplesList
 		const selectContainer = Tag.render`
 			<select id="teacher-select" name="subject"> </select>
 		`;
-		//console.log(this.formData);
+		// console.log(this.formData);
 		this.formData.forEach((subject) => {
-			if (subject.subject.SUBJECTSID === subjectId)
+			if (subject.subject.ID === subjectId)
 			{
 				subject.teachers.forEach((teacher) => {
 					const option = Tag.render`
@@ -459,17 +531,16 @@ export class CouplesList
 						</option>
 					`;
 					selectContainer.appendChild(option);
-				})
+				});
 			}
-			//console.log(subject.subject);
-		})
+		});
 
 		const container = Tag.render`<div id="teacher-container" class="is-60-height box edit-fields"></div>`;
 
 		const label = Tag.render`<label class="label">Преподаватели</label>`;
 		const divControl = Tag.render`<div class="control"></div>`;
 		const divSelect = Tag.render`<div class="select"></div>`;
-		const underLabel = Tag.render`<label></label>`
+		const underLabel = Tag.render`<label></label>`;
 
 		underLabel.appendChild(selectContainer);
 		divSelect.appendChild(underLabel);
@@ -482,25 +553,29 @@ export class CouplesList
 
 	fetchSubjectsForAddForm(numberOfDay, numberOfCouple)
 	{
+		this.extractEntityFromUrl();
 		return (new Promise((resolve, reject) => {
 			BX.ajax.runAction(
-				'up:schedule.api.couplesList.fetchAddCoupleData',
-				{
-					data:
-						{
-							id: this.groupId,
-							numberOfDay: numberOfDay,
-							numberOfCouple: numberOfCouple,
-						},
-				},
-			)
+					'up:schedule.api.couplesList.fetchAddCoupleData',
+					{
+						data:
+							{
+								entity: this.entity,
+								id: this.entityId,
+								// numberOfDay: numberOfDay,
+								// numberOfCouple: numberOfCouple,
+							},
+					},
+				)
 				.then((response) => {
+					console.log('Subjects:');
+					console.log(response.data);
 					const subjectList = response.data;
 					resolve(subjectList);
 				})
 				.catch((error) => {
 					reject(error);
-				})
+				});
 		}))
 			;
 	}

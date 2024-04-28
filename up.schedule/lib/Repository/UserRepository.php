@@ -82,6 +82,26 @@ class UserRepository
 		)->where('ID', $id)->fetchObject();
 	}
 
+	public static function getArrayById(int $id): ?array
+	{
+		return UserTable::query()->setSelect([
+												 'ID',
+												 'NAME',
+												 'LAST_NAME',
+												 'EMAIL',
+												 'ROLE' => 'UP_SCHEDULE_ROLE.TITLE',
+												 'GROUP' => 'UP_SCHEDULE_GROUP.TITLE',
+											 ])->registerRuntimeField(
+			(new Reference(
+				'UP_SCHEDULE_ROLE', RoleTable::class, Join::on('this.UF_ROLE_ID', 'ref.ID')
+			))
+		)->registerRuntimeField(
+			(new Reference(
+				'UP_SCHEDULE_GROUP', GroupTable::class, Join::on('this.UF_GROUP_ID', 'ref.ID')
+			))
+		)->where('ID', $id)->fetch();
+	}
+
 	public static function getTeacherById(int $id): ?EO_User
 	{
 		return UserTable::query()->setSelect([
@@ -100,26 +120,6 @@ class UserRepository
 				'UP_SCHEDULE_GROUP', GroupTable::class, Join::on('this.UF_GROUP_ID', 'ref.ID')
 			))
 		)->where('ID', $id)->where('ROLE', 'Преподаватель')->fetchObject();
-	}
-
-	public static function getAnyTeacher(): ?EO_User
-	{
-		return UserTable::query()->setSelect([
-												 'ID',
-												 'NAME',
-												 'LAST_NAME',
-												 'EMAIL',
-												 'ROLE' => 'UP_SCHEDULE_ROLE.TITLE',
-												 'GROUP' => 'UP_SCHEDULE_GROUP.TITLE',
-											 ])->registerRuntimeField(
-			(new Reference(
-				'UP_SCHEDULE_ROLE', RoleTable::class, Join::on('this.UF_ROLE_ID', 'ref.ID')
-			))
-		)->registerRuntimeField(
-			(new Reference(
-				'UP_SCHEDULE_GROUP', GroupTable::class, Join::on('this.UF_GROUP_ID', 'ref.ID')
-			))
-		)->where('ROLE', 'Преподаватель')->fetchObject();
 	}
 
 	public static function getArrayForAdminById(int $id): ?array

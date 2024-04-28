@@ -20,26 +20,26 @@ class CoupleRepository
 			->fetchCollection();
 	}
 
-	public static function getByAudienceId(int $audienceId): ?EO_Couple_Collection
+	public static function getArrayByAudienceId(int $audienceId): ?array
 	{
 		return CoupleTable::query()
-			->setSelect(['SUBJECT', 'AUDIENCE', 'COUPLE_NUMBER_IN_DAY', 'WEEK_DAY', 'TEACHER'])
+			->setSelect(['SUBJECT', 'AUDIENCE', 'COUPLE_NUMBER_IN_DAY', 'WEEK_DAY', 'TEACHER', 'GROUP'])
 			->where('AUDIENCE_ID', $audienceId)
-			->fetchCollection();
+			->fetchAll();
 	}
 
-	public static function getByTeacherId(int $teacherId): ?EO_Couple_Collection
+	public static function getArrayByTeacherId(int $teacherId): ?array
 	{
 		return CoupleTable::query()
-			->setSelect(['SUBJECT', 'AUDIENCE', 'COUPLE_NUMBER_IN_DAY', 'WEEK_DAY', 'TEACHER'])
+			->setSelect(['SUBJECT', 'AUDIENCE', 'COUPLE_NUMBER_IN_DAY', 'WEEK_DAY', 'TEACHER', 'GROUP'])
 			->where('TEACHER_ID', $teacherId)
-			->fetchCollection();
+			->fetchAll();
 	}
 
 	public static function getArrayByGroupId(int $groupId): ?array
 	{
 		return CoupleTable::query()
-			->setSelect(['SUBJECT', 'AUDIENCE', 'COUPLE_NUMBER_IN_DAY', 'WEEK_DAY', 'TEACHER'])
+			->setSelect(['SUBJECT', 'AUDIENCE', 'COUPLE_NUMBER_IN_DAY', 'WEEK_DAY', 'TEACHER', 'GROUP'])
 			->where('GROUP_ID', $groupId)
 			->fetchAll();
 	}

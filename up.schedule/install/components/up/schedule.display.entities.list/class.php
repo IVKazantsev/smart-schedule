@@ -51,44 +51,45 @@ class CouplesListComponent extends CBitrixComponent
 
 		if ($entity === 'teacher')
 		{
-			$currentEntity = $repository::getTeacherById($currentEntityId) ? : $repository::getAnyTeacher();
+			$currentEntity = $repository::getTeacherById($currentEntityId);
 			$this->arResult['ENTITIES'] = $repository::getAllTeachers();
 		}
 		else
 		{
-			$currentEntity = $repository::getById($currentEntityId) ? : $repository::getAnyObject();
+			$currentEntity = $repository::getById($currentEntityId);
 			$this->arResult['ENTITIES'] = $repository::getAll();
 		}
 		$this->arResult['CURRENT_ENTITY_ID'] = $currentEntity['ID'];
 		$this->arResult['CURRENT_ENTITY'] = $currentEntity;
 
-		$entityNameMethod = $this->arResult['ENTITY_NAME_METHOD'];
-		if (is_array($entityNameMethod))
+		$entityNameMethods = $this->arResult['ENTITY_NAME_METHODS'];
+		if(!$currentEntity)
 		{
-			foreach ($entityNameMethod as $method)
-			{
-				$this->arResult['CURRENT_ENTITY_NAME'] .= $currentEntity->$method() . ' ';
-			}
+			return;
 		}
-		else
+		foreach ($entityNameMethods as $method)
 		{
-			$this->arResult['CURRENT_ENTITY_NAME'] = $currentEntity->$entityNameMethod();
+			$this->arResult['CURRENT_ENTITY_NAME'] .= $currentEntity->$method() . ' ';
 		}
 	}
 
 	protected function fillGroupNameMethod(): void
 	{
-		$this->arResult['ENTITY_NAME_METHOD'] = 'getTitle';
+		$this->arResult['ENTITY_NAME_METHODS'] = [
+			'getTitle'
+		];
 	}
 
 	protected function fillAudienceNameMethod(): void
 	{
-		$this->arResult['ENTITY_NAME_METHOD'] = 'getNumber';
+		$this->arResult['ENTITY_NAME_METHODS'] = [
+			'getNumber'
+		];
 	}
 
 	protected function fillTeacherNameMethod(): void
 	{
-		$this->arResult['ENTITY_NAME_METHOD'] = [
+		$this->arResult['ENTITY_NAME_METHODS'] = [
 			'getName',
 			'getLastName',
 		];

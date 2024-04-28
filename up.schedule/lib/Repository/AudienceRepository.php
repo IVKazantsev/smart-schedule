@@ -33,9 +33,9 @@ class AudienceRepository
 		return AudienceTable::query()->setSelect(['ID', 'NUMBER', 'AUDIENCE_TYPE'])->where('ID', $id)->fetchObject();
 	}
 
-	public static function getAnyObject(): ?EO_Audience
+	public static function getArrayById(int $id): ?array
 	{
-		return AudienceTable::query()->setSelect(['ID', 'NUMBER', 'AUDIENCE_TYPE'])->fetchObject();
+		return AudienceTable::query()->setSelect(['ID', 'NUMBER', 'AUDIENCE_TYPE'])->where('ID', $id)->fetch();
 	}
 
 	public static function getArrayForAdminById(int $id): ?array

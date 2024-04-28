@@ -75,7 +75,7 @@ class SubjectTable extends DataManager
 				GroupTable::class
 			))->configureTableName('up_schedule_group_subject'),
 			(new ManyToMany(
-				'USERS',
+				'TEACHERS',
 				UserTable::class
 			))->configureTableName('up_schedule_subject_teacher'),
 		];

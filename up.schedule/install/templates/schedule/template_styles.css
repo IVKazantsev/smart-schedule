@@ -191,3 +191,7 @@ a:hover {
 	background-color: #1b1b1b !important;
 	border-radius: 6px !important;
 }
+
+.couple-text {
+	line-height: 1;
+}

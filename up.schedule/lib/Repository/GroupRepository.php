@@ -33,14 +33,17 @@ class GroupRepository
 		return GroupTable::query()->setSelect(['ID', 'TITLE', 'SUBJECTS'])->where('ID', $id)->fetchObject();
 	}
 
-	public static function getAnyObject(): ?EO_Group
-	{
-		return GroupTable::query()->setSelect(['ID', 'TITLE', 'SUBJECTS'])->fetchObject();
-	}
-
 	public static function getArrayById(int $id): ?array
 	{
 		return GroupTable::query()->setSelect(['ID', 'TITLE', 'SUBJECTS'])->where('ID', $id)->fetch();
+	}
+
+	public static function getArrayOfGroupsBySubjectId(int $id): ?array
+	{
+		return GroupTable::query()
+						 ->setSelect(['ID', 'TITLE', 'SUBJECTS'])
+						 ->where('SUBJECTS.ID', $id)
+						 ->fetchAll();
 	}
 
 	/*	public static function getArrayById(int $id): ?array
