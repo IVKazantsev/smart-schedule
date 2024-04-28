@@ -10,6 +10,7 @@ if (!defined("B_PROLOG_INCLUDED") || B_PROLOG_INCLUDED !== true)
 	die();
 }
 
+Extension::load('up.display-schedule-entities-list');
 Extension::load('up.couples-list');
 ?>
 
@@ -20,22 +21,14 @@ Extension::load('up.couples-list');
 				<div id="entity-selection" class="dropdown entity-selection is-60-height-child">
 					<div class="dropdown-trigger entity-selection-trigger is-60-height-child">
 						<button id="entity-selection-button" class="button is-fullwidth is-60-height-child" aria-haspopup="true" aria-controls="dropdown-menu">
-							<span>
+							<span id="current-entity">
 								<?= ($arResult['CURRENT_ENTITY'])
 									? GetMessage($arResult['LOC_ENTITY']) . ' ' . htmlspecialcharsbx($arResult['CURRENT_ENTITY_NAME']) : GetMessage("SELECT_{$arResult['LOC_ENTITY']}") ?>
 							</span>
 						</button>
 					</div>
 					<div class="dropdown-menu" id="dropdown-menu" role="menu">
-						<div class="dropdown-content">
-							<?php foreach ($arResult['ENTITIES'] as $entity): ?>
-								<a href="/<?= $arResult['ENTITY'] ?>/<?= $entity->getId() ?>/" class="dropdown-item <?= ($entity->getId() === $arResult['CURRENT_ENTITY_ID']) ? 'is-active' : '' ?>">
-									<?= GetMessage($arResult['LOC_ENTITY']) . ' ' ?>
-									<?php foreach ($arResult['ENTITY_NAME_METHODS'] as $method): ?>
-										<?= htmlspecialcharsbx($entity->$method()) . ' ' ?>
-									<?php endforeach; ?>
-								</a>
-							<?php endforeach; ?>
+						<div id="dropdown-menu-container" class="dropdown-content">
 						</div>
 					</div>
 				</div>
@@ -75,5 +68,44 @@ Extension::load('up.couples-list');
 		window.ScheduleCouplesList = new BX.Up.Schedule.CouplesList({
 			rootNodeId: 'couples-container',
 		});
+		window.DisplayEntitiesList = new BX.Up.Schedule.DisplayScheduleEntitiesList({
+			rootNodeId: 'dropdown-menu-container',
+			entityInfo: window.ScheduleCouplesList.extractEntityFromUrl(),
+		});
+
+		const entityButtons = document.querySelectorAll('.display-entity');
+		entityButtons.forEach((button) => {
+			button.addEventListener('click', () => {
+				const address = button.href;
+				const addresses = address.split('/');
+				const entityIndex = addresses.findIndex((element, index, array) => {
+					const needles = [
+						'group',
+						'teacher',
+						'audience',
+					];
+
+					return needles.includes(element);
+				});
+
+				const entityIdIndex = entityIndex + 1;
+
+				let entity = addresses[entityIndex];
+				let entityId = addresses[entityIdIndex];
+
+				entityId = typeof Number(entityId) === 'number' ? entityId : undefined;
+				entity = typeof entity === 'string' ? entity : undefined;
+
+				const entityInfo = {
+					'entityId': entityId,
+					'entity': entity,
+				};
+
+				window.ScheduleCouplesList.entityId = entityId;
+				window.ScheduleCouplesList.entity = entity;
+				window.ScheduleCouplesList.reload();
+				window.DisplayEntitiesList.reload(entityInfo);
+			})
+		})
 	});
 </script>

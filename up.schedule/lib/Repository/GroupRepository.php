@@ -20,12 +20,12 @@ class GroupRepository
 
 	public static function getByTitle(string $title): ?EO_Group
 	{
-		return GroupTable::query()->setSelect(['ID', 'TITLE',])->where('TITLE', $title)->fetchObject();
+		return GroupTable::query()->setSelect(['ID', 'TITLE'])->where('TITLE', $title)->fetchObject();
 	}
 
 	public static function getAllArray(): ?array
 	{
-		return GroupTable::query()->setSelect(['ID', 'TITLE',])->fetchAll();
+		return GroupTable::query()->setSelect(['ID', 'TITLE'])->fetchAll();
 	}
 
 	public static function getById(int $id): ?EO_Group

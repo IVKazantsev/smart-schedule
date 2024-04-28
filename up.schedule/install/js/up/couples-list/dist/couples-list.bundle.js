@@ -38,7 +38,10 @@ this.BX.Up = this.BX.Up || {};
 	    value: function extractEntityFromUrl() {
 	      var url = window.location.pathname;
 	      if (url.length === 0) {
-	        return;
+	        return {
+	          'entityId': null,
+	          'entity': null
+	        };
 	      }
 	      var addresses = url.split('/');
 	      var entityIndex = addresses.findIndex(function (element, index, array) {
@@ -50,6 +53,10 @@ this.BX.Up = this.BX.Up || {};
 	      var entityId = addresses[entityIdIndex];
 	      this.entityId = typeof Number(entityId) === 'number' ? entityId : undefined;
 	      this.entity = typeof entity === 'string' ? entity : undefined;
+	      return {
+	        'entityId': this.entityId,
+	        'entity': this.entity
+	      };
 	    }
 	  }, {
 	    key: "reload",

@@ -82,6 +82,7 @@ class UserRepository
 		)->where('ID', $id)->fetchObject();
 	}
 
+
 	public static function getArrayById(int $id): ?array
 	{
 		return UserTable::query()->setSelect([
@@ -283,6 +284,21 @@ class UserRepository
 				'UP_SCHEDULE_ROLE', RoleTable::class, Join::on('this.UF_ROLE_ID', 'ref.ID')
 			))
 		)->where('ROLE_ID', 2)->fetchCollection();
+	}
+
+	public static function getAllTeachersArray(): array
+	{
+		return UserTable::query()->setSelect([
+												 'ID',
+												 'NAME',
+												 'LAST_NAME',
+												 'EMAIL',
+												 'ROLE_ID' => 'UP_SCHEDULE_ROLE.ID',
+											 ])->registerRuntimeField(
+			(new Reference(
+				'UP_SCHEDULE_ROLE', RoleTable::class, Join::on('this.UF_ROLE_ID', 'ref.ID')
+			))
+		)->where('ROLE_ID', 2)->fetchAll();
 	}
 
 	public static function getArrayForAdding(): ?array

@@ -186,12 +186,18 @@ a:hover {
 	bottom: 10px;
 }
 
-.selected-sidebar-entity {
-	color: white !important;
-	background-color: #1b1b1b !important;
-	border-radius: 6px !important;
-}
-
 .couple-text {
 	line-height: 1;
 }
+
+.selected-indicator {
+	position: absolute;
+	background-color: rgba(0, 0, 0, 0.3);
+	border-radius: 6px;
+	transition: top 1s ease;
+}
+
+/*.selected-sidebar-entity {*/
+/*	color: white !important;*/
+/*	!*transition: color 1s ease;*!*/
+/*}*/

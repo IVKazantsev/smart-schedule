@@ -41,7 +41,10 @@ export class CouplesList
 		const url = window.location.pathname;
 		if (url.length === 0)
 		{
-			return;
+			return {
+				'entityId': null,
+				'entity': null,
+			};
 		}
 
 		const addresses = url.split('/');
@@ -62,6 +65,11 @@ export class CouplesList
 
 		this.entityId = typeof Number(entityId) === 'number' ? entityId : undefined;
 		this.entity = typeof entity === 'string' ? entity : undefined;
+
+		return {
+			'entityId': this.entityId,
+			'entity': this.entity,
+		};
 	}
 
 	reload()

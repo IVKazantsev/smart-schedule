@@ -73,15 +73,48 @@ if (!defined("B_PROLOG_INCLUDED") || B_PROLOG_INCLUDED !== true)
 
 		<?php if($arResult['ENTITY']): ?>
 			<ul class="menu-list box">
-					<div class="mt-3 mb-3 is-flex is-align-items-center is-justify-content-center is-fullwidth"><?= GetMessage('DISPLAY_BY') ?>:</div>
-					<?php foreach ($arResult['ENTITIES_FOR_DISPLAY'] as $key => $entity): ?>
-						<li>
-							<a href="/<?= $entity ?>/1/" class="is-60-height is-flex is-align-items-center is-justify-content-center <?= ($arResult['ENTITY'] === $entity) ? 'selected-sidebar-entity' : '' ?>">
+				<div class="mt-3 mb-3 is-flex is-align-items-center is-justify-content-center is-fullwidth"><?= GetMessage('DISPLAY_BY') ?>:</div>
+				<?php foreach ($arResult['ENTITIES_FOR_DISPLAY'] as $key => $entity): ?>
+					<li>
+						<a href="/<?= $entity ?>/1/" class="display-entity is-60-height is-flex is-align-items-center is-justify-content-center <?= ($arResult['ENTITY'] === $entity) ? 'selected-sidebar-entity' : '' ?>">
 							<?= GetMessage('SIDEBAR_' . $arResult['LOC_ENTITIES_FOR_DISPLAY'][$key]) ?>
-							</a>
-						</li>
-					<?php endforeach; ?>
+						</a>
+					</li>
+				<?php endforeach; ?>
+				<div class="selected-indicator"></div> <!-- Добавленный блок для индикатора -->
 			</ul>
+
 		<?php endif; ?>
 	</aside>
 </div>
+
+<script>
+	document.addEventListener("DOMContentLoaded", function() {
+		const indicator = document.querySelector('.selected-indicator');
+		let selectedLink = document.querySelector('.selected-sidebar-entity');
+
+		function moveIndicator() {
+			indicator.style.top = selectedLink.offsetTop + "px";
+			indicator.style.width = selectedLink.offsetWidth + "px";
+			indicator.style.height = selectedLink.offsetHeight + "px";
+		}
+
+		moveIndicator();
+
+		const links = document.querySelectorAll('.display-entity');
+		links.forEach(function(link) {
+			link.addEventListener('click', function(event) {
+				event.preventDefault();
+				selectedLink.classList.remove('selected-sidebar-entity');
+				selectedLink = this;
+				selectedLink.classList.add('selected-sidebar-entity');
+				moveIndicator();
+
+				if (history.pushState) {
+					const newUrl = link.href;
+					window.history.pushState({path:newUrl},'',newUrl);
+				}
+			});
+		});
+	});
+</script>
