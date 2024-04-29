@@ -12,6 +12,21 @@ use Up\Schedule\Model\SubjectTable;
 
 class CoupleRepository
 {
+	/**
+	 * @throws \Exception
+	 */
+	public static function deleteCouple(array $coupleInfo): void
+	{
+		$primary = [
+			'GROUP_ID' => $coupleInfo['GROUP_ID'],
+			'SUBJECT_ID' => $coupleInfo['SUBJECT_ID'],
+			'TEACHER_ID' => $coupleInfo['TEACHER_ID'],
+			'AUDIENCE_ID' => $coupleInfo['AUDIENCE_ID'],
+		];
+		CoupleTable::delete($primary);
+
+	}
+
 	public static function getByGroupId(int $groupId): ?EO_Couple_Collection
 	{
 		return CoupleTable::query()
