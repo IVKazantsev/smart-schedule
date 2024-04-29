@@ -14,9 +14,9 @@ Extension::load('up.display-schedule-entities-list');
 Extension::load('up.couples-list');
 ?>
 
-<div class="column">
+<div class="column is-four-fifths">
 	<div class="columns">
-		<div class="column">
+		<div class="column entity-selection-container">
 			<div class="box is-60-height">
 				<div id="entity-selection" class="dropdown entity-selection is-60-height-child">
 					<div class="dropdown-trigger entity-selection-trigger is-60-height-child">

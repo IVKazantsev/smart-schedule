@@ -219,3 +219,13 @@ a:hover {
 	overflow: hidden;
 	white-space: nowrap;
 }
+
+.entity-selection-container {
+	width: 100%;
+}
+
+#current-entity {
+	text-overflow: ellipsis;
+	overflow: hidden;
+	white-space: nowrap;
+}
