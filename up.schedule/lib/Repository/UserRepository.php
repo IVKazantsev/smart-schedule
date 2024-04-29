@@ -122,6 +122,26 @@ class UserRepository
 		)->where('ID', $id)->where('ROLE', 'Преподаватель')->fetchObject();
 	}
 
+	public static function getArrayOfTeacherById(int $id): array|false
+	{
+		return UserTable::query()->setSelect([
+												 'ID',
+												 'NAME',
+												 'LAST_NAME',
+												 'EMAIL',
+												 'ROLE' => 'UP_SCHEDULE_ROLE.TITLE',
+												 'GROUP' => 'UP_SCHEDULE_GROUP.TITLE',
+											 ])->registerRuntimeField(
+			(new Reference(
+				'UP_SCHEDULE_ROLE', RoleTable::class, Join::on('this.UF_ROLE_ID', 'ref.ID')
+			))
+		)->registerRuntimeField(
+			(new Reference(
+				'UP_SCHEDULE_GROUP', GroupTable::class, Join::on('this.UF_GROUP_ID', 'ref.ID')
+			))
+		)->where('ID', $id)->where('ROLE', 'Преподаватель')->fetch();
+	}
+
 	public static function getArrayForAdminById(int $id): ?array
 	{
 		$user = UserTable::query()->setSelect([

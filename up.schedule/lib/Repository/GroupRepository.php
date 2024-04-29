@@ -33,7 +33,7 @@ class GroupRepository
 		return GroupTable::query()->setSelect(['ID', 'TITLE', 'SUBJECTS'])->where('ID', $id)->fetchObject();
 	}
 
-	public static function getArrayById(int $id): ?array
+	public static function getArrayById(int $id): array|false
 	{
 		return GroupTable::query()->setSelect(['ID', 'TITLE', 'SUBJECTS'])->where('ID', $id)->fetch();
 	}

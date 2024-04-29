@@ -108,7 +108,6 @@ Extension::load('up.couples-list');
 	const dropdown = document.querySelector('.dropdown');
 	const entitySelectionInput = document.getElementById('entity-selection-button');
 	entitySelectionInput.addEventListener('input', () => {
-		// console.log(entitySelectionInput.value);
 		window.DisplayEntitiesList.reload([], entitySelectionInput.value);
 		dropdown.classList.add('is-active');
 	})

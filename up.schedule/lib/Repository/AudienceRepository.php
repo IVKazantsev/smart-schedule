@@ -33,7 +33,7 @@ class AudienceRepository
 		return AudienceTable::query()->setSelect(['ID', 'NUMBER', 'AUDIENCE_TYPE'])->where('ID', $id)->fetchObject();
 	}
 
-	public static function getArrayById(int $id): ?array
+	public static function getArrayById(int $id): array|false
 	{
 		return AudienceTable::query()->setSelect(['ID', 'NUMBER', 'AUDIENCE_TYPE'])->where('ID', $id)->fetch();
 	}

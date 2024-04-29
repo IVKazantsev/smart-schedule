@@ -3,9 +3,11 @@ import { Tag, Type, Loc } from 'main.core';
 export class DisplayScheduleEntitiesList
 {
 	entityList = [];
+	suitableEntityList = [];
+
 	entity = undefined;
-	suitableEntityList = undefined;
 	entityId = undefined;
+
 	currentEntity = undefined;
 	defaultEntity = 'group';
 
@@ -38,27 +40,31 @@ export class DisplayScheduleEntitiesList
 
 		this.entityList = [];
 		this.suitableEntityList = [];
+
 		this.reload();
 	}
 
-	reload(entityInfo = [], searchInput = '')
+	reload(entityInfo = [], searchInput = false)
 	{
-		if (entityInfo.length !== 0)
-		{
-			this.entity = entityInfo.entity;
-			this.entityId = entityInfo.entityId;
-		}
-		if (searchInput.length !== 0)
+		if (typeof searchInput === 'string' || searchInput instanceof String)
 		{
 			this.searchInList(searchInput);
 			this.render(false);
 			return;
 		}
+
+		if (entityInfo.length !== 0)
+		{
+			this.entity = entityInfo.entity;
+			this.entityId = entityInfo.entityId;
+		}
+
 		this.loadList()
 			.then((data) => {
 				this.entityList = data.entities;
 				this.suitableEntityList = data.entities;
 
+				console.log(data);
 				this.currentEntity = data.currentEntity;
 				this.locEntity = data.locEntity;
 				this.render();
@@ -68,6 +74,11 @@ export class DisplayScheduleEntitiesList
 	searchInList(searchInput)
 	{
 		let suitableEntityList = [];
+		if (String.length === 0)
+		{
+			this.suitableEntityList = this.entityList;
+			return;
+		}
 		this.entityList.forEach((entity) => {
 			if (entity['NAMING'].toLowerCase().includes(searchInput.toLowerCase()))
 			{
@@ -76,8 +87,6 @@ export class DisplayScheduleEntitiesList
 		});
 
 		this.suitableEntityList = suitableEntityList;
-		console.log(this.entityList)
-		console.log(this.suitableEntityList)
 	}
 
 	loadList()
@@ -104,10 +113,10 @@ export class DisplayScheduleEntitiesList
 		});
 	}
 
-	render(needToChangeInputValue = true)
+	render(isStateChanged = true)
 	{
 		this.rootNode.innerHTML = '';
-		if(this.suitableEntityList.length === 0)
+		if (this.suitableEntityList.length === 0)
 		{
 			const message = Tag.render`
 				<div class="dropdown-item">
@@ -132,7 +141,7 @@ export class DisplayScheduleEntitiesList
 			}
 			else
 			{
-				if (needToChangeInputValue)
+				if (isStateChanged)
 				{
 					document.getElementById('entity-selection-button').placeholder = Loc.getMessage('SELECT_' + this.locEntity);
 					document.getElementById('entity-selection-button').value = '';
@@ -145,50 +154,39 @@ export class DisplayScheduleEntitiesList
 			}
 
 			this.rootNode.appendChild(entityLink);
-			this.dropdownsListeners();
+
 			entityLink.addEventListener('click', (event) => {
 				event.preventDefault();
+
+				console.log('click');
+				this.entityList.forEach((entity) => {
+					if (entity['NAMING'] === entityLink.textContent)
+					{
+						this.currentEntity = entity;
+						this.entityId = entity['ID'];
+					}
+				});
+
 				const dropdowns = document.querySelectorAll('.dropdown-item');
 
 				dropdowns.forEach((dropdown) => {
 					dropdown.classList.remove('is-active');
 				});
 				entityLink.classList.add('is-active');
-				if (needToChangeInputValue)
-				{
-					document.getElementById('entity-selection-button').placeholder = Loc.getMessage(this.locEntity) + ' ' + entityLink.textContent;
-					document.getElementById('entity-selection-button').value = '';
-				}
+
+				document.getElementById('entity-selection-button').placeholder = Loc.getMessage(this.locEntity) + ' ' + entityLink.textContent;
+				document.getElementById('entity-selection-button').value = '';
+
 				if (history.pushState)
 				{
 					const newUrl = entityLink.href;
 					window.history.pushState({ path: newUrl }, '', newUrl);
 				}
-				window.ScheduleCouplesList.extractEntityFromUrl();
-				window.ScheduleCouplesList.reload();
-			});
-		});
-	}
 
-	dropdownsListeners()
-	{
-		const dropdowns = document.querySelectorAll('.dropdown-item');
-		dropdowns.forEach((dropdown) => {
-			dropdown.addEventListener('click', (event) => {
-				event.preventDefault();
-				dropdowns.forEach((dropdown) => {
-					dropdown.classList.remove('is-active');
-				});
-				dropdown.classList.add('is-active');
-				document.getElementById('entity-selection-button').placeholder = Loc.getMessage(this.locEntity) + ' ' + dropdown.textContent;
-				document.getElementById('entity-selection-button').value = '';
-				if (history.pushState)
-				{
-					const newUrl = dropdown.href;
-					window.history.pushState({ path: newUrl }, '', newUrl);
-				}
 				window.ScheduleCouplesList.extractEntityFromUrl();
 				window.ScheduleCouplesList.reload();
+
+				this.reload();
 			});
 		});
 	}

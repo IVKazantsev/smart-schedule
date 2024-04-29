@@ -115,7 +115,6 @@ this.BX.Up = this.BX.Up || {};
 	          var coupleTextContainer = main_core.Tag.render(_templateObject2 || (_templateObject2 = babelHelpers.taggedTemplateLiteral(["<br>"])));
 	          var dropdownContent = main_core.Tag.render(_templateObject3 || (_templateObject3 = babelHelpers.taggedTemplateLiteral(["<div class=\"dropdown-content\"></div>"])));
 	          if (typeof _this4.coupleList[day] !== 'undefined' && typeof _this4.coupleList[day][i] !== 'undefined') {
-	            console.log(_this4.coupleList);
 	            coupleTextContainer = main_core.Tag.render(_templateObject4 || (_templateObject4 = babelHelpers.taggedTemplateLiteral(["\n\t\t\t\t\t\t<div class=\"couple-text\">\n\t\t\t\t\t\t\t<p>", "</p>\n\t\t\t\t\t\t\t<p hidden id=\"subjectId-", "-", "\">", "</p>\n\t\t\t\t\t\t\t<p>", "</p>\n\t\t\t\t\t\t\t<p hidden id=\"audienceId-", "-", "\">", "</p>\n\t\t\t\t\t\t\t<p>", "</p>\n\t\t\t\t\t\t\t<p hidden id=\"groupId-", "-", "\">", "</p>\n\t\t\t\t\t\t\t<p>", " ", "</p>\n\t\t\t\t\t\t\t<p hidden id=\"teacherId-", "-", "\">", "</p>\n\t\t\t\t\t\t</div>\n\t\t\t\t\t"])), _this4.coupleList[day][i].UP_SCHEDULE_MODEL_COUPLE_SUBJECT_TITLE, day, i, _this4.coupleList[day][i].UP_SCHEDULE_MODEL_COUPLE_SUBJECT_ID, _this4.coupleList[day][i].UP_SCHEDULE_MODEL_COUPLE_AUDIENCE_NUMBER, day, i, _this4.coupleList[day][i].UP_SCHEDULE_MODEL_COUPLE_AUDIENCE_ID, _this4.coupleList[day][i].UP_SCHEDULE_MODEL_COUPLE_GROUP_TITLE, day, i, _this4.coupleList[day][i].UP_SCHEDULE_MODEL_COUPLE_GROUP_ID, _this4.coupleList[day][i].UP_SCHEDULE_MODEL_COUPLE_TEACHER_NAME, _this4.coupleList[day][i].UP_SCHEDULE_MODEL_COUPLE_TEACHER_LAST_NAME, day, i, _this4.coupleList[day][i].UP_SCHEDULE_MODEL_COUPLE_TEACHER_ID);
 	            if (_this4.isAdmin === true) {
 	              var removeCoupleButton = main_core.Tag.render(_templateObject5 || (_templateObject5 = babelHelpers.taggedTemplateLiteral(["\n\t\t\t\t\t\t<button \n\t\t\t\t\t\tdata-target=\"modal-js-example\" type=\"button\" id=\"button-remove-", "-", "\" class=\"js-modal-trigger dropdown-item btn-remove-couple button is-clickable is-small is-primary is-light\">\n\t\t\t\t\t\t\t\u0423\u0434\u0430\u043B\u0438\u0442\u044C\n\t\t\t\t\t\t</button>\n\t\t\t\t\t"])), day, i);
@@ -176,7 +175,6 @@ this.BX.Up = this.BX.Up || {};
 	    key: "handleOpenDropdownCoupleButtonClick",
 	    value: function handleOpenDropdownCoupleButtonClick(numberOfDay, numberOfCouple) {
 	      var _this5 = this;
-	      console.log('open');
 	      var modals = document.querySelectorAll('.dropdown');
 	      modals.forEach(function (modalWindow) {
 	        modalWindow.classList.remove('is-active');
@@ -194,7 +192,6 @@ this.BX.Up = this.BX.Up || {};
 	    key: "handleCloseDropdownCoupleButtonClick",
 	    value: function handleCloseDropdownCoupleButtonClick(numberOfDay, numberOfCouple) {
 	      var _this6 = this;
-	      console.log('close');
 	      var dropdown = document.getElementById("dropdown-".concat(numberOfDay, "-").concat(numberOfCouple));
 	      dropdown.className = 'btn-edit-couple-container dropdown';
 	      var button = document.getElementById("button-".concat(numberOfDay, "-").concat(numberOfCouple));
@@ -207,23 +204,18 @@ this.BX.Up = this.BX.Up || {};
 	  }, {
 	    key: "handleAddCoupleButtonClick",
 	    value: function handleAddCoupleButtonClick(numberOfDay, numberOfCouple) {
-	      //console.log(numberOfDay);
-
 	      this.openCoupleModal();
 	      this.createAddForm(numberOfDay, numberOfCouple);
-	      console.log('add');
 	    }
 	  }, {
 	    key: "handleRemoveCoupleButtonClick",
 	    value: function handleRemoveCoupleButtonClick(numberOfDay, numberOfCouple) {
 	      this.removeCouple(numberOfDay, numberOfCouple);
-	      console.log('remove');
 	    }
 	  }, {
 	    key: "handleEditCoupleButtonClick",
 	    value: function handleEditCoupleButtonClick(numberOfDay, numberOfCouple) {
 	      this.openCoupleModal();
-	      console.log('edit');
 	    }
 	  }, {
 	    key: "openCoupleModal",
@@ -248,11 +240,9 @@ this.BX.Up = this.BX.Up || {};
 	      this.fetchSubjectsForAddForm().then(function (subjectsList) {
 	        _this8.insertSubjectsDataForAddForm(subjectsList);
 	      });
-	      console.log(numberOfDay + ' ' + numberOfCouple);
 	      var submitButton = document.getElementById('submit-form-button');
 	      var cancelButton = document.getElementById('cancel-form-button');
 	      submitButton.addEventListener('click', function () {
-	        //console.log(numberOfDay);
 	        _this8.sendForm(numberOfDay, numberOfCouple, 'add');
 	      }, {
 	        once: true
@@ -294,7 +284,6 @@ this.BX.Up = this.BX.Up || {};
 	      var audienceInput = document.getElementById('audience-select');
 	      var groupInput = document.getElementById('group-select');
 	      if (subjectInput && teacherInput && audienceInput && groupInput) {
-	        console.log(subjectInput.value);
 	        var coupleInfo = {
 	          'GROUP_ID': groupInput.value,
 	          'SUBJECT_ID': subjectInput.value,
@@ -308,7 +297,6 @@ this.BX.Up = this.BX.Up || {};
 	            coupleInfo: coupleInfo
 	          }
 	        }).then(function (response) {
-	          console.log(response);
 	          _this9.closeCoupleModal();
 	          _this9.reload();
 	        })["catch"](function (error) {
@@ -320,7 +308,6 @@ this.BX.Up = this.BX.Up || {};
 	    key: "removeCouple",
 	    value: function removeCouple(numberOfDay, numberOfCouple) {
 	      var _this10 = this;
-	      console.log(numberOfDay, numberOfCouple);
 	      var subject = document.getElementById("subjectId-".concat(numberOfDay, "-").concat(numberOfCouple)).innerText;
 	      var teacher = document.getElementById("teacherId-".concat(numberOfDay, "-").concat(numberOfCouple)).innerText;
 	      var audience = document.getElementById("audienceId-".concat(numberOfDay, "-").concat(numberOfCouple)).innerText;
@@ -339,7 +326,6 @@ this.BX.Up = this.BX.Up || {};
 	            coupleInfo: coupleInfo
 	          }
 	        }).then(function (response) {
-	          console.log(response);
 	          _this10.reload();
 	        })["catch"](function (error) {
 	          console.error(error);
@@ -372,9 +358,7 @@ this.BX.Up = this.BX.Up || {};
 	      subjectsList.forEach(function (subject) {
 	        var option = main_core.Tag.render(_templateObject16 || (_templateObject16 = babelHelpers.taggedTemplateLiteral(["\n\t\t\t\t<option value=\"", "\">\n\t\t\t\t\t", "\n\t\t\t\t</option>\n\t\t\t"])), subject.subject.ID, subject.subject.TITLE);
 	        selectContainer.appendChild(option);
-	        //console.log(subject.subject);
 	      });
-
 	      var container = main_core.Tag.render(_templateObject17 || (_templateObject17 = babelHelpers.taggedTemplateLiteral(["<div class=\"is-60-height box edit-fields\"></div>"])));
 	      var label = main_core.Tag.render(_templateObject18 || (_templateObject18 = babelHelpers.taggedTemplateLiteral(["<label class=\"label\">\u041F\u0440\u0435\u0434\u043C\u0435\u0442</label>"])));
 	      var divControl = main_core.Tag.render(_templateObject19 || (_templateObject19 = babelHelpers.taggedTemplateLiteral(["<div class=\"control\"></div>"])));
@@ -458,7 +442,6 @@ this.BX.Up = this.BX.Up || {};
 	        form.removeChild(document.getElementById('teacher-container'));
 	      }
 	      var selectContainer = main_core.Tag.render(_templateObject36 || (_templateObject36 = babelHelpers.taggedTemplateLiteral(["\n\t\t\t<select id=\"teacher-select\" name=\"subject\"> </select>\n\t\t"])));
-	      // console.log(this.formData);
 	      this.formData.forEach(function (subject) {
 	        if (subject.subject.ID === subjectId) {
 	          subject.teachers.forEach(function (teacher) {
@@ -489,12 +472,8 @@ this.BX.Up = this.BX.Up || {};
 	          data: {
 	            entity: _this12.entity,
 	            id: _this12.entityId
-	            // numberOfDay: numberOfDay,
-	            // numberOfCouple: numberOfCouple,
 	          }
 	        }).then(function (response) {
-	          console.log('Subjects:');
-	          console.log(response.data);
 	          var subjectList = response.data;
 	          resolve(subjectList);
 	        })["catch"](function (error) {
