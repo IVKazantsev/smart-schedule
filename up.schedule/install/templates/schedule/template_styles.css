@@ -50,6 +50,7 @@ a:hover {
 }
 
 .dropdown-item {
+	padding: .375rem 1rem !important;
 	text-overflow: ellipsis;
 	overflow: hidden;
 	white-space: nowrap;
