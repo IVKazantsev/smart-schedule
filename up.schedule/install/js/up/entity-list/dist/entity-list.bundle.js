@@ -84,15 +84,15 @@ this.BX.Up = this.BX.Up || {};
 	    value: function getEntityNodeContent(entityData) {
 	      switch (this.entity) {
 	        case 'subject':
-	          return "\n\t\t\t\t\t<div class=\"column is-1\">\n\t\t\t\t\t\t".concat(entityData.ID, "\n\t\t\t\t\t</div>\n\t\t\t\t\t<div class=\"column is-11\">\n\t\t\t\t\t\t").concat(entityData.TITLE, "\n\t\t\t\t\t</div>\n\t\t\t\t");
+	          return "\n\t\t\t\t\t<div class=\"column is-1 admin-entity-list-item\">\n\t\t\t\t\t\t".concat(entityData.ID, "\n\t\t\t\t\t</div>\n\t\t\t\t\t<div class=\"column is-11 admin-entity-list-item\">\n\t\t\t\t\t\t").concat(entityData.TITLE, "\n\t\t\t\t\t</div>\n\t\t\t\t");
 	        case 'user':
-	          return "\n\t\t\t\t\t<div class=\"column is-1\">\n\t\t\t\t\t\t".concat(entityData.ID, "\n\t\t\t\t\t</div>\n\t\t\t\t\t<div class=\"column is-4\">\n\t\t\t\t\t\t").concat(entityData.NAME, " ").concat(entityData.LAST_NAME, "\n\t\t\t\t\t</div>\n\t\t\t\t\t<div class=\"column is-4\">\n\t\t\t\t\t\t").concat(entityData.EMAIL ? entityData.EMAIL : 'Отсутствует', "\n\t\t\t\t\t</div>\n\t\t\t\t\t<div class=\"column is-3\">\n\t\t\t\t\t\t").concat(entityData.ROLE, "\n\t\t\t\t\t</div>\n\t\t\t\t");
+	          return "\n\t\t\t\t\t<div class=\"column is-1 admin-entity-list-item\">\n\t\t\t\t\t\t".concat(entityData.ID, "\n\t\t\t\t\t</div>\n\t\t\t\t\t<div class=\"column is-4 admin-entity-list-item\">\n\t\t\t\t\t\t").concat(entityData.NAME, " ").concat(entityData.LAST_NAME, "\n\t\t\t\t\t</div>\n\t\t\t\t\t<div class=\"column is-4 admin-entity-list-item\">\n\t\t\t\t\t\t").concat(entityData.EMAIL ? entityData.EMAIL : 'Отсутствует', "\n\t\t\t\t\t</div>\n\t\t\t\t\t<div class=\"column is-3 admin-entity-list-item\">\n\t\t\t\t\t\t").concat(entityData.ROLE, "\n\t\t\t\t\t</div>\n\t\t\t\t");
 	        case 'group':
-	          return "\n\t\t\t\t\t<div class=\"column is-1\">\n\t\t\t\t\t\t".concat(entityData.ID, "\n\t\t\t\t\t</div>\n\t\t\t\t\t<div class=\"column\">\n\t\t\t\t\t\t").concat(entityData.TITLE, "\n\t\t\t\t\t</div>\n\t\t\t\t");
+	          return "\n\t\t\t\t\t<div class=\"column is-1 admin-entity-list-item\">\n\t\t\t\t\t\t".concat(entityData.ID, "\n\t\t\t\t\t</div>\n\t\t\t\t\t<div class=\"column admin-entity-list-item\">\n\t\t\t\t\t\t").concat(entityData.TITLE, "\n\t\t\t\t\t</div>\n\t\t\t\t");
 	        case 'audience':
-	          return "\n\t\t\t\t\t<div class=\"column is-1\">\n\t\t\t\t\t\t".concat(entityData.ID, "\n\t\t\t\t\t</div>\n\t\t\t\t\t<div class=\"column\">\n\t\t\t\t\t\t").concat(entityData.NUMBER, "\n\t\t\t\t\t</div>\n\t\t\t\t\t<div class=\"column\">\n\t\t\t\t\t\t").concat(entityData.UP_SCHEDULE_MODEL_AUDIENCE_AUDIENCE_TYPE_TITLE, "\n\t\t\t\t\t</div>\n\t\t\t\t");
+	          return "\n\t\t\t\t\t<div class=\"column is-1 admin-entity-list-item\">\n\t\t\t\t\t\t".concat(entityData.ID, "\n\t\t\t\t\t</div>\n\t\t\t\t\t<div class=\"column admin-entity-list-item\">\n\t\t\t\t\t\t").concat(entityData.NUMBER, "\n\t\t\t\t\t</div>\n\t\t\t\t\t<div class=\"column admin-entity-list-item\">\n\t\t\t\t\t\t").concat(entityData.UP_SCHEDULE_MODEL_AUDIENCE_AUDIENCE_TYPE_TITLE, "\n\t\t\t\t\t</div>\n\t\t\t\t");
 	        case 'audienceType':
-	          return "\n\t\t\t\t\t<div class=\"column is-1\">\n\t\t\t\t\t\t".concat(entityData.ID, "\n\t\t\t\t\t</div>\n\t\t\t\t\t<div class=\"column\">\n\t\t\t\t\t\t").concat(entityData.TITLE, "\n\t\t\t\t\t</div>\n\t\t\t\t");
+	          return "\n\t\t\t\t\t<div class=\"column is-1 admin-entity-list-item\">\n\t\t\t\t\t\t".concat(entityData.ID, "\n\t\t\t\t\t</div>\n\t\t\t\t\t<div class=\"column admin-entity-list-item\">\n\t\t\t\t\t\t").concat(entityData.TITLE, "\n\t\t\t\t\t</div>\n\t\t\t\t");
 	      }
 	    }
 	  }]);

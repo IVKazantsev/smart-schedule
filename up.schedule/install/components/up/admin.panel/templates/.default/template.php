@@ -11,7 +11,7 @@ if (!defined("B_PROLOG_INCLUDED") || B_PROLOG_INCLUDED !== true)
 
 ?>
 
-<div class="column">
+<div class="column is-four-fifths">
 	<div class="columns">
 		<div class="column">
 			<div class="box is-60-height is-flex is-align-items-center is-justify-content-center">
@@ -43,7 +43,7 @@ if (!defined("B_PROLOG_INCLUDED") || B_PROLOG_INCLUDED !== true)
 	</div>
 
 	<div class="columns tabs-content">
-		<div class="column">
+		<div class="column" id="main-content-of-admin-panel">
 			<div id="back-button-container" class="mb-2">
 				<a id ="back-button" class="column is-1 is-offset-0 buttonLink is-60-height mb-5 box is-flex is-align-items-center is-justify-content-center" href="/admin/"><?= GetMessage('BACK') ?></a>
 				<a id ="add-button" class="column is-offset-10 is-1 buttonLink is-60-height mb-5 box is-flex is-align-items-center is-justify-content-center" onclick="location.href=getEntityAddUrl()"><?= GetMessage('ADD') ?></a>

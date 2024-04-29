@@ -144,58 +144,58 @@ export class EntityList
 		{
 			case 'subject':
 				return `
-					<div class="column is-1">
+					<div class="column is-1 admin-entity-list-item">
 						${entityData.ID}
 					</div>
-					<div class="column is-11">
+					<div class="column is-11 admin-entity-list-item">
 						${entityData.TITLE}
 					</div>
 				`;
 
 			case 'user':
 				return `
-					<div class="column is-1">
+					<div class="column is-1 admin-entity-list-item">
 						${entityData.ID}
 					</div>
-					<div class="column is-4">
+					<div class="column is-4 admin-entity-list-item">
 						${entityData.NAME} ${entityData.LAST_NAME}
 					</div>
-					<div class="column is-4">
+					<div class="column is-4 admin-entity-list-item">
 						${entityData.EMAIL ? entityData.EMAIL : 'Отсутствует'}
 					</div>
-					<div class="column is-3">
+					<div class="column is-3 admin-entity-list-item">
 						${entityData.ROLE}
 					</div>
 				`;
 
 			case 'group':
 				return `
-					<div class="column is-1">
+					<div class="column is-1 admin-entity-list-item">
 						${entityData.ID}
 					</div>
-					<div class="column">
+					<div class="column admin-entity-list-item">
 						${entityData.TITLE}
 					</div>
 				`;
 
 			case 'audience':
 				return `
-					<div class="column is-1">
+					<div class="column is-1 admin-entity-list-item">
 						${entityData.ID}
 					</div>
-					<div class="column">
+					<div class="column admin-entity-list-item">
 						${entityData.NUMBER}
 					</div>
-					<div class="column">
+					<div class="column admin-entity-list-item">
 						${entityData.UP_SCHEDULE_MODEL_AUDIENCE_AUDIENCE_TYPE_TITLE}
 					</div>
 				`;
 			case 'audienceType':
 				return `
-					<div class="column is-1">
+					<div class="column is-1 admin-entity-list-item">
 						${entityData.ID}
 					</div>
-					<div class="column">
+					<div class="column admin-entity-list-item">
 						${entityData.TITLE}
 					</div>
 				`;
