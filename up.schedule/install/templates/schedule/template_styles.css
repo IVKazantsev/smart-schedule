@@ -93,6 +93,8 @@ a:hover {
 
 .admin-entity-list-item {
 	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
 }
 
 #entity-list-app {
@@ -142,7 +144,7 @@ a:hover {
 #modal .related-entities {
 	max-height: 300px;
 	overflow-y: auto;
-	scrollbar-color: #000000 #e0e0e0;
+	scrollbar-color: #000 #e0e0e0;
 	scrollbar-width: thin;
 	overflow-x: hidden;
 }
@@ -163,6 +165,7 @@ a:hover {
 .error-title {
 	border-radius: 6px 6px 0 0;
 }
+
 .couple {
 }
 
@@ -209,3 +212,10 @@ a:hover {
 /*	color: white !important;*/
 /*	!*transition: color 1s ease;*!*/
 /*}*/
+
+.user-info-container {
+	width: 100%;
+	text-overflow: ellipsis;
+	overflow: hidden;
+	white-space: nowrap;
+}
