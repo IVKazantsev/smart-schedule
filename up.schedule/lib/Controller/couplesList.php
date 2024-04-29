@@ -2,6 +2,7 @@
 
 namespace Up\Schedule\Controller;
 
+use Bitrix\Main\Engine\ActionFilter\Authentication;
 use Bitrix\Main\Engine\Controller;
 use Bitrix\Main\Entity\Query;
 use Up\Schedule\Model\EO_Couple_Collection;
