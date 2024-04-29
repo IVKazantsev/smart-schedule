@@ -14,6 +14,7 @@ export class CouplesList
 	entityId = undefined;
 	entity = undefined;
 	defaultEntity = 'group';
+	isAdmin = false;
 
 	constructor(options = {})
 	{
@@ -34,7 +35,7 @@ export class CouplesList
 
 		this.extractEntityFromUrl();
 		this.coupleList = [];
-		this.reload();
+		this.checkRole();
 	}
 
 	extractEntityFromUrl()
@@ -43,8 +44,8 @@ export class CouplesList
 		if (url.length === 0)
 		{
 			return {
-				'entityId': null,
-				'entity': null,
+				'entityId': 0,
+				'entity': this.defaultEntity,
 			};
 		}
 
@@ -58,19 +59,32 @@ export class CouplesList
 
 			return needles.includes(element);
 		});
+		const entity = addresses[entityIndex];
 
 		const entityIdIndex = entityIndex + 1;
-
-		const entity = addresses[entityIndex];
 		const entityId = addresses[entityIdIndex];
 
 		this.entityId = typeof Number(entityId) === 'number' ? entityId : undefined;
-		this.entity = typeof entity === 'string' ? entity : undefined;
+		this.entity = typeof entity === 'string' ? entity : this.defaultEntity;
 
 		return {
 			'entityId': this.entityId,
 			'entity': this.entity,
 		};
+	}
+
+	checkRole()
+	{
+		BX.ajax.runAction(
+			'up:schedule.api.userRole.isAdmin',
+			{},
+		).then((response) => {
+				this.isAdmin = response.data;
+				this.reload();
+			})
+			.catch((error) => {
+				console.error(error);
+			});
 	}
 
 	reload()
@@ -137,7 +151,7 @@ export class CouplesList
 						<div class="couple-text">
 							${this.coupleList[day][i].UP_SCHEDULE_MODEL_COUPLE_SUBJECT_TITLE}
 							<br>
-							${ this.coupleList[day][i].UP_SCHEDULE_MODEL_COUPLE_AUDIENCE_NUMBER}
+							${this.coupleList[day][i].UP_SCHEDULE_MODEL_COUPLE_AUDIENCE_NUMBER}
 							<br>
 							${this.coupleList[day][i].UP_SCHEDULE_MODEL_COUPLE_GROUP_TITLE}
 							<br>
@@ -145,28 +159,31 @@ export class CouplesList
 						</div>
 					`;
 
-					const removeCoupleButton = Tag.render`
+					if (this.isAdmin === true)
+					{
+						const removeCoupleButton = Tag.render`
 						<button 
 						data-target="modal-js-example" type="button" id="button-remove-${day}-${i}" class="js-modal-trigger dropdown-item btn-remove-couple button is-clickable is-small is-primary is-light">
 							Удалить
 						</button>
 					`;
-					removeCoupleButton.addEventListener('click', () => {
-						this.handleRemoveCoupleButtonClick();
-					});
+						removeCoupleButton.addEventListener('click', () => {
+							this.handleRemoveCoupleButtonClick();
+						});
 
-					const editCoupleButton = Tag.render`
+						const editCoupleButton = Tag.render`
 						<button 
 						data-target="modal-js-example" type="button" id="button-edit-${day}-${i}" class="js-modal-trigger dropdown-item btn-edit-couple button is-clickable is-small is-primary is-light mb-1">
 							Изменить
 						</button>
 					`;
-					editCoupleButton.addEventListener('click', () => {
-						this.handleEditCoupleButtonClick();
-					});
+						editCoupleButton.addEventListener('click', () => {
+							this.handleEditCoupleButtonClick();
+						});
 
-					dropdownContent.appendChild(editCoupleButton);
-					dropdownContent.appendChild(removeCoupleButton);
+						dropdownContent.appendChild(editCoupleButton);
+						dropdownContent.appendChild(removeCoupleButton);
+					}
 				}
 				else
 				{
@@ -176,17 +193,22 @@ export class CouplesList
 							Добавить
 						</button>
 					`;
-					addCoupleButton.addEventListener('click', () => {
-						this.handleAddCoupleButtonClick(day, i);
-					});
 
-					dropdownContent.appendChild(addCoupleButton);
+					if (this.isAdmin === true)
+					{
+						addCoupleButton.addEventListener('click', () => {
+							this.handleAddCoupleButtonClick(day, i);
+						});
+
+						dropdownContent.appendChild(addCoupleButton);
+					}
 				}
 
 				const coupleContainer = document.createElement('div');
 				coupleContainer.className = 'box is-clickable couple m-0';
 
-//КНОПКА
+				if(this.isAdmin)
+				{
 				const dropdownTrigger = Tag.render`<div class="dropdown-trigger"></div>`;
 				const button = Tag.render`
 					<button type="button" aria-haspopup="true" aria-controls="dropdown-menu" id="button-${day}-${i}" class="btn-dropdown-couple button is-clickable is-small is-ghost">
@@ -212,6 +234,7 @@ export class CouplesList
 				//coupleContainer.appendChild(some);
 
 				coupleContainer.appendChild(btnContainer);
+			}
 				coupleContainer.appendChild(coupleTextContainer);
 
 				dayContainer.appendChild(coupleContainer);
@@ -378,7 +401,7 @@ export class CouplesList
 
 		this.formData = subjectsList;
 
-		if(subjectsList.length === 0)
+		if (subjectsList.length === 0)
 		{
 			if (document.getElementById('empty-form'))
 			{
@@ -387,9 +410,7 @@ export class CouplesList
 
 			const emptyForm = Tag.render`
 				<div id="empty-form">Добавлять больше нечего</div>
-			`
-
-
+			`;
 
 			modalBody.appendChild(emptyForm);
 			return;

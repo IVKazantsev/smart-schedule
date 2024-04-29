@@ -51,12 +51,13 @@ this.BX.Up = this.BX.Up || {};
 	  }, {
 	    key: "loadList",
 	    value: function loadList() {
-	      var _this2 = this;
+	      var _this$entity,
+	        _this2 = this;
+	      this.entity = (_this$entity = this.entity) !== null && _this$entity !== void 0 ? _this$entity : this.defaultEntity;
 	      return new Promise(function (resolve, reject) {
-	        var _this2$entity;
 	        BX.ajax.runAction('up:schedule.api.displayEntitiesList.getDisplayEntitiesList', {
 	          data: {
-	            entity: (_this2$entity = _this2.entity) !== null && _this2$entity !== void 0 ? _this2$entity : _this2.defaultEntity,
+	            entity: _this2.entity,
 	            id: Number(_this2.entityId)
 	          }
 	        }).then(function (response) {

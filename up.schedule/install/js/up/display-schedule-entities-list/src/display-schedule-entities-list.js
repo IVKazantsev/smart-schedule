@@ -57,13 +57,14 @@ export class DisplayScheduleEntitiesList
 
 	loadList()
 	{
+		this.entity = (this.entity) ?? this.defaultEntity;
 		return new Promise((resolve, reject) => {
 			BX.ajax.runAction(
 				'up:schedule.api.displayEntitiesList.getDisplayEntitiesList',
 				{
 					data:
 						{
-							entity: (this.entity) ?? this.defaultEntity,
+							entity: this.entity,
 							id: Number(this.entityId),
 						},
 				},

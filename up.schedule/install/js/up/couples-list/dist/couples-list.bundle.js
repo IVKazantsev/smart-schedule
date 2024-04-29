@@ -21,6 +21,7 @@ this.BX.Up = this.BX.Up || {};
 	    babelHelpers.defineProperty(this, "entityId", undefined);
 	    babelHelpers.defineProperty(this, "entity", undefined);
 	    babelHelpers.defineProperty(this, "defaultEntity", 'group');
+	    babelHelpers.defineProperty(this, "isAdmin", false);
 	    if (main_core.Type.isStringFilled(options.rootNodeId)) {
 	      this.rootNodeId = options.rootNodeId;
 	    } else {
@@ -32,7 +33,7 @@ this.BX.Up = this.BX.Up || {};
 	    }
 	    this.extractEntityFromUrl();
 	    this.coupleList = [];
-	    this.reload();
+	    this.checkRole();
 	  }
 	  babelHelpers.createClass(CouplesList, [{
 	    key: "extractEntityFromUrl",
@@ -40,8 +41,8 @@ this.BX.Up = this.BX.Up || {};
 	      var url = window.location.pathname;
 	      if (url.length === 0) {
 	        return {
-	          'entityId': null,
-	          'entity': null
+	          'entityId': 0,
+	          'entity': this.defaultEntity
 	        };
 	      }
 	      var addresses = url.split('/');
@@ -49,35 +50,46 @@ this.BX.Up = this.BX.Up || {};
 	        var needles = ['group', 'teacher', 'audience'];
 	        return needles.includes(element);
 	      });
-	      var entityIdIndex = entityIndex + 1;
 	      var entity = addresses[entityIndex];
+	      var entityIdIndex = entityIndex + 1;
 	      var entityId = addresses[entityIdIndex];
 	      this.entityId = typeof Number(entityId) === 'number' ? entityId : undefined;
-	      this.entity = typeof entity === 'string' ? entity : undefined;
+	      this.entity = typeof entity === 'string' ? entity : this.defaultEntity;
 	      return {
 	        'entityId': this.entityId,
 	        'entity': this.entity
 	      };
 	    }
 	  }, {
+	    key: "checkRole",
+	    value: function checkRole() {
+	      var _this = this;
+	      BX.ajax.runAction('up:schedule.api.userRole.isAdmin', {}).then(function (response) {
+	        _this.isAdmin = response.data;
+	        _this.reload();
+	      })["catch"](function (error) {
+	        console.error(error);
+	      });
+	    }
+	  }, {
 	    key: "reload",
 	    value: function reload() {
-	      var _this = this;
+	      var _this2 = this;
 	      this.loadList().then(function (coupleList) {
-	        _this.coupleList = coupleList;
-	        _this.render();
+	        _this2.coupleList = coupleList;
+	        _this2.render();
 	      });
 	    }
 	  }, {
 	    key: "loadList",
 	    value: function loadList() {
-	      var _this2 = this;
+	      var _this3 = this;
 	      return new Promise(function (resolve, reject) {
-	        var _this2$entity;
+	        var _this3$entity;
 	        BX.ajax.runAction('up:schedule.api.couplesList.getCouplesList', {
 	          data: {
-	            entity: (_this2$entity = _this2.entity) !== null && _this2$entity !== void 0 ? _this2$entity : _this2.defaultEntity,
-	            id: Number(_this2.entityId)
+	            entity: (_this3$entity = _this3.entity) !== null && _this3$entity !== void 0 ? _this3$entity : _this3.defaultEntity,
+	            id: Number(_this3.entityId)
 	          }
 	        }).then(function (response) {
 	          var coupleList = response.data.couples;
@@ -90,10 +102,10 @@ this.BX.Up = this.BX.Up || {};
 	  }, {
 	    key: "render",
 	    value: function render() {
-	      var _this3 = this;
+	      var _this4 = this;
 	      this.rootNode.innerHTML = '';
 	      var _loop = function _loop(day) {
-	        var dayTitleContainer = main_core.Tag.render(_templateObject || (_templateObject = babelHelpers.taggedTemplateLiteral(["\n\t\t\t\t<div class=\"box day-of-week m-0 is-60-height is-flex is-align-items-center is-justify-content-center\">\n\t\t\t\t\t", "\n\t\t\t\t</div>\n\t\t\t"])), _this3.daysOfWeek[day]);
+	        var dayTitleContainer = main_core.Tag.render(_templateObject || (_templateObject = babelHelpers.taggedTemplateLiteral(["\n\t\t\t\t<div class=\"box day-of-week m-0 is-60-height is-flex is-align-items-center is-justify-content-center\">\n\t\t\t\t\t", "\n\t\t\t\t</div>\n\t\t\t"])), _this4.daysOfWeek[day]);
 	        var dayColumnContainer = document.createElement('div');
 	        dayColumnContainer.className = 'column is-2';
 	        var dayContainer = document.createElement('div');
@@ -102,47 +114,51 @@ this.BX.Up = this.BX.Up || {};
 	        var _loop2 = function _loop2(i) {
 	          var coupleTextContainer = main_core.Tag.render(_templateObject2 || (_templateObject2 = babelHelpers.taggedTemplateLiteral(["<br>"])));
 	          var dropdownContent = main_core.Tag.render(_templateObject3 || (_templateObject3 = babelHelpers.taggedTemplateLiteral(["<div class=\"dropdown-content\"></div>"])));
-	          if (typeof _this3.coupleList[day] !== 'undefined' && typeof _this3.coupleList[day][i] !== 'undefined') {
-	            console.log(_this3.coupleList);
-	            coupleTextContainer = main_core.Tag.render(_templateObject4 || (_templateObject4 = babelHelpers.taggedTemplateLiteral(["\n\t\t\t\t\t\t<div class=\"couple-text\">\n\t\t\t\t\t\t\t", "\n\t\t\t\t\t\t\t<br>\n\t\t\t\t\t\t\t", "\n\t\t\t\t\t\t\t<br>\n\t\t\t\t\t\t\t", "\n\t\t\t\t\t\t\t<br>\n\t\t\t\t\t\t\t", " ", "\n\t\t\t\t\t\t</div>\n\t\t\t\t\t"])), _this3.coupleList[day][i].UP_SCHEDULE_MODEL_COUPLE_SUBJECT_TITLE, _this3.coupleList[day][i].UP_SCHEDULE_MODEL_COUPLE_AUDIENCE_NUMBER, _this3.coupleList[day][i].UP_SCHEDULE_MODEL_COUPLE_GROUP_TITLE, _this3.coupleList[day][i].UP_SCHEDULE_MODEL_COUPLE_TEACHER_NAME, _this3.coupleList[day][i].UP_SCHEDULE_MODEL_COUPLE_TEACHER_LAST_NAME);
-	            var removeCoupleButton = main_core.Tag.render(_templateObject5 || (_templateObject5 = babelHelpers.taggedTemplateLiteral(["\n\t\t\t\t\t\t<button \n\t\t\t\t\t\tdata-target=\"modal-js-example\" type=\"button\" id=\"button-remove-", "-", "\" class=\"js-modal-trigger dropdown-item btn-remove-couple button is-clickable is-small is-primary is-light\">\n\t\t\t\t\t\t\t\u0423\u0434\u0430\u043B\u0438\u0442\u044C\n\t\t\t\t\t\t</button>\n\t\t\t\t\t"])), day, i);
-	            removeCoupleButton.addEventListener('click', function () {
-	              _this3.handleRemoveCoupleButtonClick();
-	            });
-	            var editCoupleButton = main_core.Tag.render(_templateObject6 || (_templateObject6 = babelHelpers.taggedTemplateLiteral(["\n\t\t\t\t\t\t<button \n\t\t\t\t\t\tdata-target=\"modal-js-example\" type=\"button\" id=\"button-edit-", "-", "\" class=\"js-modal-trigger dropdown-item btn-edit-couple button is-clickable is-small is-primary is-light mb-1\">\n\t\t\t\t\t\t\t\u0418\u0437\u043C\u0435\u043D\u0438\u0442\u044C\n\t\t\t\t\t\t</button>\n\t\t\t\t\t"])), day, i);
-	            editCoupleButton.addEventListener('click', function () {
-	              _this3.handleEditCoupleButtonClick();
-	            });
-	            dropdownContent.appendChild(editCoupleButton);
-	            dropdownContent.appendChild(removeCoupleButton);
+	          if (typeof _this4.coupleList[day] !== 'undefined' && typeof _this4.coupleList[day][i] !== 'undefined') {
+	            console.log(_this4.coupleList);
+	            coupleTextContainer = main_core.Tag.render(_templateObject4 || (_templateObject4 = babelHelpers.taggedTemplateLiteral(["\n\t\t\t\t\t\t<div class=\"couple-text\">\n\t\t\t\t\t\t\t", "\n\t\t\t\t\t\t\t<br>\n\t\t\t\t\t\t\t", "\n\t\t\t\t\t\t\t<br>\n\t\t\t\t\t\t\t", "\n\t\t\t\t\t\t\t<br>\n\t\t\t\t\t\t\t", " ", "\n\t\t\t\t\t\t</div>\n\t\t\t\t\t"])), _this4.coupleList[day][i].UP_SCHEDULE_MODEL_COUPLE_SUBJECT_TITLE, _this4.coupleList[day][i].UP_SCHEDULE_MODEL_COUPLE_AUDIENCE_NUMBER, _this4.coupleList[day][i].UP_SCHEDULE_MODEL_COUPLE_GROUP_TITLE, _this4.coupleList[day][i].UP_SCHEDULE_MODEL_COUPLE_TEACHER_NAME, _this4.coupleList[day][i].UP_SCHEDULE_MODEL_COUPLE_TEACHER_LAST_NAME);
+	            if (_this4.isAdmin === true) {
+	              var removeCoupleButton = main_core.Tag.render(_templateObject5 || (_templateObject5 = babelHelpers.taggedTemplateLiteral(["\n\t\t\t\t\t\t<button \n\t\t\t\t\t\tdata-target=\"modal-js-example\" type=\"button\" id=\"button-remove-", "-", "\" class=\"js-modal-trigger dropdown-item btn-remove-couple button is-clickable is-small is-primary is-light\">\n\t\t\t\t\t\t\t\u0423\u0434\u0430\u043B\u0438\u0442\u044C\n\t\t\t\t\t\t</button>\n\t\t\t\t\t"])), day, i);
+	              removeCoupleButton.addEventListener('click', function () {
+	                _this4.handleRemoveCoupleButtonClick();
+	              });
+	              var editCoupleButton = main_core.Tag.render(_templateObject6 || (_templateObject6 = babelHelpers.taggedTemplateLiteral(["\n\t\t\t\t\t\t<button \n\t\t\t\t\t\tdata-target=\"modal-js-example\" type=\"button\" id=\"button-edit-", "-", "\" class=\"js-modal-trigger dropdown-item btn-edit-couple button is-clickable is-small is-primary is-light mb-1\">\n\t\t\t\t\t\t\t\u0418\u0437\u043C\u0435\u043D\u0438\u0442\u044C\n\t\t\t\t\t\t</button>\n\t\t\t\t\t"])), day, i);
+	              editCoupleButton.addEventListener('click', function () {
+	                _this4.handleEditCoupleButtonClick();
+	              });
+	              dropdownContent.appendChild(editCoupleButton);
+	              dropdownContent.appendChild(removeCoupleButton);
+	            }
 	          } else {
 	            var addCoupleButton = main_core.Tag.render(_templateObject7 || (_templateObject7 = babelHelpers.taggedTemplateLiteral(["\n\t\t\t\t\t\t<button \n\t\t\t\t\t\tdata-target=\"modal-js-example\" type=\"button\" id=\"button-add-", "-", "\" class=\"js-modal-trigger dropdown-item btn-add-couple button is-clickable is-small is-primary is-light\">\n\t\t\t\t\t\t\t\u0414\u043E\u0431\u0430\u0432\u0438\u0442\u044C\n\t\t\t\t\t\t</button>\n\t\t\t\t\t"])), day, i);
-	            addCoupleButton.addEventListener('click', function () {
-	              _this3.handleAddCoupleButtonClick(day, i);
-	            });
-	            dropdownContent.appendChild(addCoupleButton);
+	            if (_this4.isAdmin === true) {
+	              addCoupleButton.addEventListener('click', function () {
+	                _this4.handleAddCoupleButtonClick(day, i);
+	              });
+	              dropdownContent.appendChild(addCoupleButton);
+	            }
 	          }
 	          var coupleContainer = document.createElement('div');
 	          coupleContainer.className = 'box is-clickable couple m-0';
+	          if (_this4.isAdmin) {
+	            var dropdownTrigger = main_core.Tag.render(_templateObject8 || (_templateObject8 = babelHelpers.taggedTemplateLiteral(["<div class=\"dropdown-trigger\"></div>"])));
+	            var button = main_core.Tag.render(_templateObject9 || (_templateObject9 = babelHelpers.taggedTemplateLiteral(["\n\t\t\t\t\t<button type=\"button\" aria-haspopup=\"true\" aria-controls=\"dropdown-menu\" id=\"button-", "-", "\" class=\"btn-dropdown-couple button is-clickable is-small is-ghost\">\n\t\t\t\t\t\t...\n\t\t\t\t\t</button>\n\t\t\t\t"])), day, i);
+	            button.addEventListener('click', function () {
+	              _this4.handleOpenDropdownCoupleButtonClick(day, i);
+	            }, {
+	              once: true
+	            });
+	            dropdownTrigger.appendChild(button);
+	            var btnContainer = main_core.Tag.render(_templateObject10 || (_templateObject10 = babelHelpers.taggedTemplateLiteral(["\n\t\t\t\t\t<div id=\"dropdown-", "-", "\" class=\"btn-edit-couple-container dropdown\"></div>"])), day, i);
+	            var dropdownMenu = main_core.Tag.render(_templateObject11 || (_templateObject11 = babelHelpers.taggedTemplateLiteral(["<div class=\"dropdown-menu\" id=\"dropdown-menu\" role=\"menu\"></div>"])));
+	            dropdownMenu.appendChild(dropdownContent);
+	            btnContainer.appendChild(dropdownTrigger);
+	            btnContainer.appendChild(dropdownMenu);
 
-	          //КНОПКА
-	          var dropdownTrigger = main_core.Tag.render(_templateObject8 || (_templateObject8 = babelHelpers.taggedTemplateLiteral(["<div class=\"dropdown-trigger\"></div>"])));
-	          var button = main_core.Tag.render(_templateObject9 || (_templateObject9 = babelHelpers.taggedTemplateLiteral(["\n\t\t\t\t\t<button type=\"button\" aria-haspopup=\"true\" aria-controls=\"dropdown-menu\" id=\"button-", "-", "\" class=\"btn-dropdown-couple button is-clickable is-small is-ghost\">\n\t\t\t\t\t\t...\n\t\t\t\t\t</button>\n\t\t\t\t"])), day, i);
-	          button.addEventListener('click', function () {
-	            _this3.handleOpenDropdownCoupleButtonClick(day, i);
-	          }, {
-	            once: true
-	          });
-	          dropdownTrigger.appendChild(button);
-	          var btnContainer = main_core.Tag.render(_templateObject10 || (_templateObject10 = babelHelpers.taggedTemplateLiteral(["\n\t\t\t\t\t<div id=\"dropdown-", "-", "\" class=\"btn-edit-couple-container dropdown\"></div>"])), day, i);
-	          var dropdownMenu = main_core.Tag.render(_templateObject11 || (_templateObject11 = babelHelpers.taggedTemplateLiteral(["<div class=\"dropdown-menu\" id=\"dropdown-menu\" role=\"menu\"></div>"])));
-	          dropdownMenu.appendChild(dropdownContent);
-	          btnContainer.appendChild(dropdownTrigger);
-	          btnContainer.appendChild(dropdownMenu);
+	            //coupleContainer.appendChild(some);
 
-	          //coupleContainer.appendChild(some);
-
-	          coupleContainer.appendChild(btnContainer);
+	            coupleContainer.appendChild(btnContainer);
+	          }
 	          coupleContainer.appendChild(coupleTextContainer);
 	          dayContainer.appendChild(coupleContainer);
 	        };
@@ -150,7 +166,7 @@ this.BX.Up = this.BX.Up || {};
 	          _loop2(i);
 	        }
 	        dayColumnContainer.appendChild(dayContainer);
-	        _this3.rootNode.appendChild(dayColumnContainer);
+	        _this4.rootNode.appendChild(dayColumnContainer);
 	      };
 	      for (var day in this.daysOfWeek) {
 	        _loop(day);
@@ -159,7 +175,7 @@ this.BX.Up = this.BX.Up || {};
 	  }, {
 	    key: "handleOpenDropdownCoupleButtonClick",
 	    value: function handleOpenDropdownCoupleButtonClick(numberOfDay, numberOfCouple) {
-	      var _this4 = this;
+	      var _this5 = this;
 	      console.log('open');
 	      var modals = document.querySelectorAll('.dropdown');
 	      modals.forEach(function (modalWindow) {
@@ -169,7 +185,7 @@ this.BX.Up = this.BX.Up || {};
 	      dropdown.className = 'btn-edit-couple-container dropdown is-active';
 	      var button = document.getElementById("button-".concat(numberOfDay, "-").concat(numberOfCouple));
 	      button.addEventListener('click', function () {
-	        _this4.handleCloseDropdownCoupleButtonClick(numberOfDay, numberOfCouple);
+	        _this5.handleCloseDropdownCoupleButtonClick(numberOfDay, numberOfCouple);
 	      }, {
 	        once: true
 	      });
@@ -177,13 +193,13 @@ this.BX.Up = this.BX.Up || {};
 	  }, {
 	    key: "handleCloseDropdownCoupleButtonClick",
 	    value: function handleCloseDropdownCoupleButtonClick(numberOfDay, numberOfCouple) {
-	      var _this5 = this;
+	      var _this6 = this;
 	      console.log('close');
 	      var dropdown = document.getElementById("dropdown-".concat(numberOfDay, "-").concat(numberOfCouple));
 	      dropdown.className = 'btn-edit-couple-container dropdown';
 	      var button = document.getElementById("button-".concat(numberOfDay, "-").concat(numberOfCouple));
 	      button.addEventListener('click', function () {
-	        _this5.handleOpenDropdownCoupleButtonClick(numberOfDay, numberOfCouple);
+	        _this6.handleOpenDropdownCoupleButtonClick(numberOfDay, numberOfCouple);
 	      }, {
 	        once: true
 	      });
@@ -212,37 +228,37 @@ this.BX.Up = this.BX.Up || {};
 	  }, {
 	    key: "openCoupleModal",
 	    value: function openCoupleModal() {
-	      var _this6 = this;
+	      var _this7 = this;
 	      var modal = document.getElementById('coupleModal');
 	      modal.classList.add('is-active');
 	      document.addEventListener('keydown', function (event) {
 	        if (event.key === 'Escape') {
-	          _this6.closeCoupleModal();
+	          _this7.closeCoupleModal();
 	        }
 	      });
 	      var closeButton = document.getElementById('button-close-modal');
 	      closeButton.addEventListener('click', function () {
-	        _this6.closeCoupleModal();
+	        _this7.closeCoupleModal();
 	      });
 	    }
 	  }, {
 	    key: "createAddForm",
 	    value: function createAddForm(numberOfDay, numberOfCouple) {
-	      var _this7 = this;
+	      var _this8 = this;
 	      this.fetchSubjectsForAddForm().then(function (subjectsList) {
-	        _this7.insertSubjectsDataForAddForm(subjectsList);
+	        _this8.insertSubjectsDataForAddForm(subjectsList);
 	      });
 	      console.log(numberOfDay + ' ' + numberOfCouple);
 	      var submitButton = document.getElementById('submit-form-button');
 	      var cancelButton = document.getElementById('cancel-form-button');
 	      submitButton.addEventListener('click', function () {
 	        //console.log(numberOfDay);
-	        _this7.sendForm(numberOfDay, numberOfCouple);
+	        _this8.sendForm(numberOfDay, numberOfCouple);
 	      }, {
 	        once: true
 	      });
 	      cancelButton.addEventListener('click', function () {
-	        _this7.closeCoupleModal();
+	        _this8.closeCoupleModal();
 	      }, {
 	        once: true
 	      });
@@ -272,7 +288,7 @@ this.BX.Up = this.BX.Up || {};
 	  }, {
 	    key: "sendForm",
 	    value: function sendForm(numberOfDay, numberOfCouple) {
-	      var _this8 = this;
+	      var _this9 = this;
 	      var subjectInput = document.getElementById('subject-select');
 	      var teacherInput = document.getElementById('teacher-select');
 	      var audienceInput = document.getElementById('audience-select');
@@ -293,8 +309,8 @@ this.BX.Up = this.BX.Up || {};
 	          }
 	        }).then(function (response) {
 	          console.log(response);
-	          _this8.closeCoupleModal();
-	          _this8.reload();
+	          _this9.closeCoupleModal();
+	          _this9.reload();
 	        })["catch"](function (error) {
 	          console.error(error);
 	        });
@@ -303,7 +319,7 @@ this.BX.Up = this.BX.Up || {};
 	  }, {
 	    key: "insertSubjectsDataForAddForm",
 	    value: function insertSubjectsDataForAddForm(subjectsList) {
-	      var _this9 = this;
+	      var _this10 = this;
 	      var form;
 	      var modalBody = document.getElementById('modal-body');
 	      if (document.getElementById('add-edit-form')) {
@@ -343,9 +359,9 @@ this.BX.Up = this.BX.Up || {};
 	      modalBody.appendChild(form);
 	      var select = document.getElementById('subject-select');
 	      select.addEventListener('change', function () {
-	        _this9.insertAudiencesDataForForm(select.value);
-	        _this9.insertGroupsDataForForm(select.value);
-	        _this9.insertTeachersDataForForm(select.value);
+	        _this10.insertAudiencesDataForForm(select.value);
+	        _this10.insertGroupsDataForForm(select.value);
+	        _this10.insertTeachersDataForForm(select.value);
 	      });
 	    }
 	  }, {
@@ -436,13 +452,13 @@ this.BX.Up = this.BX.Up || {};
 	  }, {
 	    key: "fetchSubjectsForAddForm",
 	    value: function fetchSubjectsForAddForm(numberOfDay, numberOfCouple) {
-	      var _this10 = this;
+	      var _this11 = this;
 	      this.extractEntityFromUrl();
 	      return new Promise(function (resolve, reject) {
 	        BX.ajax.runAction('up:schedule.api.couplesList.fetchAddCoupleData', {
 	          data: {
-	            entity: _this10.entity,
-	            id: _this10.entityId
+	            entity: _this11.entity,
+	            id: _this11.entityId
 	            // numberOfDay: numberOfDay,
 	            // numberOfCouple: numberOfCouple,
 	          }
