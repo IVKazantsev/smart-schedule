@@ -20,6 +20,7 @@ this.BX.Up = this.BX.Up || {};
 	    });
 	    babelHelpers.defineProperty(this, "entityId", undefined);
 	    babelHelpers.defineProperty(this, "entity", undefined);
+	    babelHelpers.defineProperty(this, "defaultEntity", 'group');
 	    if (main_core.Type.isStringFilled(options.rootNodeId)) {
 	      this.rootNodeId = options.rootNodeId;
 	    } else {
@@ -72,10 +73,11 @@ this.BX.Up = this.BX.Up || {};
 	    value: function loadList() {
 	      var _this2 = this;
 	      return new Promise(function (resolve, reject) {
+	        var _this2$entity;
 	        BX.ajax.runAction('up:schedule.api.couplesList.getCouplesList', {
 	          data: {
-	            entity: _this2.entity,
-	            id: _this2.entityId
+	            entity: (_this2$entity = _this2.entity) !== null && _this2$entity !== void 0 ? _this2$entity : _this2.defaultEntity,
+	            id: Number(_this2.entityId)
 	          }
 	        }).then(function (response) {
 	          var coupleList = response.data.couples;

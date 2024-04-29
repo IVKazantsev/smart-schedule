@@ -2,6 +2,9 @@
 
 namespace Up\Schedule\Controller;
 
+use Bitrix\Main\Engine\ActionFilter\Authentication;
+use Bitrix\Main\Engine\ActionFilter\Csrf;
+use Bitrix\Main\Engine\ActionFilter\HttpMethod;
 use Bitrix\Main\Engine\Controller;
 use Up\Schedule\Service\EntityService;
 
@@ -12,6 +15,20 @@ class DisplayEntitiesList extends Controller
 		'audience',
 		'teacher',
 	];
+
+	/**
+	 * Returns default pre-filters for action.
+	 * @return array
+	 */
+	protected function getDefaultPreFilters(): array
+	{
+		return [
+			new HttpMethod(
+				[HttpMethod::METHOD_GET, HttpMethod::METHOD_POST]
+			),
+			new Csrf(),
+		];
+	}
 
 	public function getDisplayEntitiesListAction(string $entity = '', int $id = 0): array
 	{

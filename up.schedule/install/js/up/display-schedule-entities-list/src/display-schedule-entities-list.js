@@ -6,6 +6,7 @@ export class DisplayScheduleEntitiesList
 	entity = undefined;
 	entityId = undefined;
 	currentEntity = undefined;
+	defaultEntity = 'group';
 
 	constructor(options = {})
 	{
@@ -62,8 +63,8 @@ export class DisplayScheduleEntitiesList
 				{
 					data:
 						{
-							entity: this.entity,
-							id: this.entityId,
+							entity: (this.entity) ?? this.defaultEntity,
+							id: Number(this.entityId),
 						},
 				},
 			).then((response) => {

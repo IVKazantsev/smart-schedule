@@ -13,6 +13,7 @@ export class CouplesList
 	};
 	entityId = undefined;
 	entity = undefined;
+	defaultEntity = 'group';
 
 	constructor(options = {})
 	{
@@ -90,8 +91,8 @@ export class CouplesList
 				{
 					data:
 						{
-							entity: this.entity,
-							id: this.entityId,
+							entity: (this.entity) ?? this.defaultEntity,
+							id: Number(this.entityId),
 						},
 				},
 			).then((response) => {

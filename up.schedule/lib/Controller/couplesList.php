@@ -2,20 +2,28 @@
 
 namespace Up\Schedule\Controller;
 
+use Bitrix\Main\Engine\ActionFilter\Csrf;
+use Bitrix\Main\Engine\ActionFilter\HttpMethod;
 use Bitrix\Main\Engine\Controller;
-use Bitrix\Main\Entity\Query;
-use Up\Schedule\Model\EO_Couple_Collection;
-use Up\Schedule\Model\EO_Subject;
 use Up\Schedule\Repository\AudienceRepository;
 use Up\Schedule\Repository\CoupleRepository;
 use Up\Schedule\Repository\GroupRepository;
 use Up\Schedule\Repository\SubjectRepository;
 use Up\Schedule\Repository\UserRepository;
-use Up\Schedule\Service\CoupleService;
+use Bitrix\Main\Engine\ActionFilter\Authentication;
 
 class CouplesList extends Controller
 {
 	private array $couples = [];
+
+	protected function init(): void
+	{
+		$this->setActionConfig('getCouplesList', [
+			'-prefilters' => [
+				Authentication::class
+                ],
+		]);
+	}
 
 	public function getCouplesListAction(string $entity, int $id): array
 	{
