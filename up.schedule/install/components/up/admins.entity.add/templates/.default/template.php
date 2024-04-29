@@ -98,42 +98,12 @@ use Bitrix\Main\Application;
 		<div class="columns">
 			<div class="column is-flex is-justify-content-center">
 				<button class="button" type="submit" formaction="<?= $APPLICATION->GetCurUri() ?>">
-					<?= GetMessage('SAVE') ?>
+					<?= GetMessage('ADD') ?>
 				</button>
-			</div>
-		</div>
-
-		<div id="modal" class="box">
-			<div class="column">
-				<div class="is-size-4"><?= GetMessage('DELETION_CONFIRM_HELPER') ?></div>
-				<?php if (!empty($arResult['RELATED_ENTITIES'])): ?>
-					<div class="mt-3 mb-2 has-text-danger"><?= GetMessage('FIELDS_BEING_REMOVED_WARNING') ?>:</div>
-						<div class="related-entities">
-							<?php foreach ($arResult['RELATED_ENTITIES'] as $key => $entity): ?>
-								<strong><?= GetMessage($key) ?></strong>
-								<?php foreach ($entity as $exemplar): ?>
-									<div class="box edit-fields mb-1">
-										<?php foreach ($exemplar as $field): ?>
-										<?= $field ?>
-										<?php endforeach; ?>
-									</div>
-								<?php endforeach; ?>
-							<?php endforeach; ?>
-						</div>
-				<?php endif; ?>
-				<div class="is-flex is-align-items-center is-justify-content-center mt-2">
-					<button id="delete-button" class="button is-danger" type="submit" formaction="<?=
-					str_replace('edit', 'delete', $APPLICATION->GetCurUri()) ?>"
-					>
-						<?= GetMessage('DELETE') ?></button>
-					<button id="close-modal-button" class="button ml-2" type="button"><?= GetMessage('CANCEL') ?></button>
-				</div>
 			</div>
 		</div>
 	</form>
 </div>
-
-<div id="overlay"></div>
 
 <script>
 	const addSubjectButton = document.querySelector('#addSubject');
@@ -153,62 +123,5 @@ use Bitrix\Main\Application;
 			document.querySelector('#subjectContainer').appendChild(newListItem);
 			i++;
 		});
-	}
-	const buttons = document.querySelectorAll('.btnDelete');
-
-	function handleDeleteClick(e)
-	{
-		const elementId = e.target.id;
-		const lengthOfSubstr = 'delete_subject_'.length;
-		const itemId = elementId.slice(lengthOfSubstr, elementId.length);
-		const currentSubject = document.getElementById('current_subject_' + itemId);
-		const hiddenInput = document.getElementsByName('current_subject_' + itemId);
-		hiddenInput.item(0).name = 'delete_subject_' + itemId;
-		currentSubject.id = 'delete_subject_' + itemId;
-		currentSubject.style.display = 'none';
-	}
-
-	buttons.forEach((button) => {
-		button.addEventListener('click', handleDeleteClick);
-	});
-
-</script>
-
-<script>
-	const openModalButton = document.getElementById('open-modal-button');
-	const closeModalButton = document.getElementById('close-modal-button');
-	const overlay = document.getElementById('overlay');
-	const modal = document.getElementById('modal');
-
-	openModalButton.addEventListener('click', () => {
-		openModal(modal);
-	});
-
-	overlay.addEventListener('click', () => {
-		closeModal(modal);
-	});
-
-	closeModalButton.addEventListener('click', () => {
-		closeModal(modal);
-	});
-
-	function openModal(modal)
-	{
-		if (modal === null)
-		{
-			return;
-		}
-		modal.classList.add('active');
-		overlay.classList.add('active');
-	}
-
-	function closeModal(modal)
-	{
-		if (modal === null)
-		{
-			return;
-		}
-		modal.classList.remove('active');
-		overlay.classList.remove('active');
 	}
 </script>
