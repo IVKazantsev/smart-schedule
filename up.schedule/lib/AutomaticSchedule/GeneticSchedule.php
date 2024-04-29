@@ -351,6 +351,39 @@ class GeneticSchedule
 		// Вернуть измененное расписание
 	}
 
+	public function doIterations(array $population, int $amountOfIterations): array
+	{
+		for ($i = 0; $i < $amountOfIterations; $i++)
+		{
+			// Оценить приспособленность каждого расписания
+			array_map([$this, 'fitness'], $population);
+
+			// Выбрать лучшие индивиды (отбор)
+
+			$selectedSchedules = $this->selection($population);
+			if (count($selectedSchedules) === 1)
+			{
+				echo $selectedSchedules[0]->getFitness();
+				return $selectedSchedules[0];
+			}
+			// Скрещивание
+			$newPopulation = $selectedSchedules;
+			while (count($newPopulation) < $this->populationSize)
+			{
+				$parent1 = $population[array_rand($selectedSchedules)]; //TODO: предусмотреть фиксированный маскимум детей
+				$parent2 = $population[array_rand($selectedSchedules)];
+
+
+				$child = $this->crossover($parent1, $parent2);
+				$newPopulation[] = $child;
+			}
+
+			// Замена старой популяции новой
+			$population = $newPopulation;
+		}
+		return $population;
+	}
+
 	// Генетический алгоритм для составления расписания
 	public function geneticAlgorithm($generations)
 	{
