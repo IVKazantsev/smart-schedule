@@ -16,7 +16,7 @@ Extension::load('up.couples-list');
 
 <div class="column">
 	<div class="columns">
-		<div class="column is-11">
+		<div class="column">
 			<div class="box is-60-height">
 				<div id="entity-selection" class="dropdown entity-selection is-60-height-child">
 					<div class="dropdown-trigger entity-selection-trigger is-60-height-child">
@@ -33,9 +33,6 @@ Extension::load('up.couples-list');
 					</div>
 				</div>
 			</div>
-		</div>
-		<div class="column is-1">
-			<a href="/add/couple/select/group/" class="box has-text-centered is-size-4 is-60-height add-couple-button">+</a>
 		</div>
 	</div>
 	<div id="couples-container" class="columns">
