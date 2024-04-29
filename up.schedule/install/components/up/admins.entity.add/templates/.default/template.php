@@ -100,9 +100,6 @@ use Bitrix\Main\Application;
 				<button class="button" type="submit" formaction="<?= $APPLICATION->GetCurUri() ?>">
 					<?= GetMessage('SAVE') ?>
 				</button>
-				<button data-modal-target="#modal" class="button ml-2 is-danger" id="open-modal-button" type="button">
-					<?= GetMessage('DELETE') ?>
-				</button>
 			</div>
 		</div>
 
