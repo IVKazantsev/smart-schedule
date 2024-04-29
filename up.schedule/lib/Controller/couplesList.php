@@ -2,15 +2,17 @@
 
 namespace Up\Schedule\Controller;
 
-use Bitrix\Main\Engine\ActionFilter\Csrf;
-use Bitrix\Main\Engine\ActionFilter\HttpMethod;
+use Bitrix\Main\Engine\ActionFilter\Authentication;
 use Bitrix\Main\Engine\Controller;
+use Bitrix\Main\Entity\Query;
+use Up\Schedule\Model\EO_Couple_Collection;
+use Up\Schedule\Model\EO_Subject;
 use Up\Schedule\Repository\AudienceRepository;
 use Up\Schedule\Repository\CoupleRepository;
 use Up\Schedule\Repository\GroupRepository;
 use Up\Schedule\Repository\SubjectRepository;
 use Up\Schedule\Repository\UserRepository;
-use Bitrix\Main\Engine\ActionFilter\Authentication;
+use Up\Schedule\Service\CoupleService;
 
 class CouplesList extends Controller
 {
@@ -32,6 +34,18 @@ class CouplesList extends Controller
 		return [
 			'couples' => $this->couples,
 		];
+	}
+
+	public function deleteCoupleAction(array $coupleInfo): array
+	{
+		try {
+			CoupleRepository::deleteCouple($coupleInfo);
+			return ['result' => true];
+		}
+		catch (\Exception)
+		{
+			return ['result' => false];
+		}
 	}
 
 	public function addCoupleAction(array $coupleInfo): array

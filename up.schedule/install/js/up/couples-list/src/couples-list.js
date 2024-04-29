@@ -1,7 +1,6 @@
 import { Tag, Type } from 'main.core';
 
-export class CouplesList
-{
+export class CouplesList {
 	formData = {};
 	daysOfWeek = {
 		1: 'Понедельник',
@@ -38,8 +37,7 @@ export class CouplesList
 		this.checkRole();
 	}
 
-	extractEntityFromUrl()
-	{
+	extractEntityFromUrl() {
 		const url = window.location.pathname;
 		if (url.length === 0)
 		{
@@ -110,9 +108,9 @@ export class CouplesList
 						},
 				},
 			).then((response) => {
-					const coupleList = response.data.couples;
-					resolve(coupleList);
-				})
+				const coupleList = response.data.couples;
+				resolve(coupleList);
+			})
 				.catch((error) => {
 					reject(error);
 				});
@@ -149,13 +147,14 @@ export class CouplesList
 					console.log(this.coupleList);
 					coupleTextContainer = Tag.render`
 						<div class="couple-text">
-							${this.coupleList[day][i].UP_SCHEDULE_MODEL_COUPLE_SUBJECT_TITLE}
-							<br>
-							${this.coupleList[day][i].UP_SCHEDULE_MODEL_COUPLE_AUDIENCE_NUMBER}
-							<br>
-							${this.coupleList[day][i].UP_SCHEDULE_MODEL_COUPLE_GROUP_TITLE}
-							<br>
-							${this.coupleList[day][i].UP_SCHEDULE_MODEL_COUPLE_TEACHER_NAME} ${this.coupleList[day][i].UP_SCHEDULE_MODEL_COUPLE_TEACHER_LAST_NAME}
+							<p>${this.coupleList[day][i].UP_SCHEDULE_MODEL_COUPLE_SUBJECT_TITLE}</p>
+							<p hidden id="subjectId-${day}-${i}">${this.coupleList[day][i].UP_SCHEDULE_MODEL_COUPLE_SUBJECT_ID}</p>
+							<p>${this.coupleList[day][i].UP_SCHEDULE_MODEL_COUPLE_AUDIENCE_NUMBER}</p>
+							<p hidden id="audienceId-${day}-${i}">${this.coupleList[day][i].UP_SCHEDULE_MODEL_COUPLE_AUDIENCE_ID}</p>
+							<p>${this.coupleList[day][i].UP_SCHEDULE_MODEL_COUPLE_GROUP_TITLE}</p>
+							<p hidden id="groupId-${day}-${i}">${this.coupleList[day][i].UP_SCHEDULE_MODEL_COUPLE_GROUP_ID}</p>
+							<p>${this.coupleList[day][i].UP_SCHEDULE_MODEL_COUPLE_TEACHER_NAME} ${this.coupleList[day][i].UP_SCHEDULE_MODEL_COUPLE_TEACHER_LAST_NAME}</p>
+							<p hidden id="teacherId-${day}-${i}">${this.coupleList[day][i].UP_SCHEDULE_MODEL_COUPLE_TEACHER_ID}</p>
 						</div>
 					`;
 
@@ -167,19 +166,19 @@ export class CouplesList
 							Удалить
 						</button>
 					`;
-						removeCoupleButton.addEventListener('click', () => {
-							this.handleRemoveCoupleButtonClick();
-						});
+					removeCoupleButton.addEventListener('click', () => {
+						this.handleRemoveCoupleButtonClick(day, i);
+					});
 
-						const editCoupleButton = Tag.render`
+					const editCoupleButton = Tag.render`
 						<button 
 						data-target="modal-js-example" type="button" id="button-edit-${day}-${i}" class="js-modal-trigger dropdown-item btn-edit-couple button is-clickable is-small is-primary is-light mb-1">
 							Изменить
 						</button>
 					`;
-						editCoupleButton.addEventListener('click', () => {
-							this.handleEditCoupleButtonClick();
-						});
+					editCoupleButton.addEventListener('click', () => {
+						this.handleEditCoupleButtonClick();
+					});
 
 						dropdownContent.appendChild(editCoupleButton);
 						dropdownContent.appendChild(removeCoupleButton);
@@ -280,14 +279,12 @@ export class CouplesList
 		console.log('add');
 	}
 
-	handleRemoveCoupleButtonClick(numberOfDay, numberOfCouple)
-	{
-		this.openCoupleModal();
+	handleRemoveCoupleButtonClick(numberOfDay, numberOfCouple) {
+		this.removeCouple(numberOfDay, numberOfCouple);
 		console.log('remove');
 	}
 
-	handleEditCoupleButtonClick(numberOfDay, numberOfCouple)
-	{
+	handleEditCoupleButtonClick(numberOfDay, numberOfCouple) {
 		this.openCoupleModal();
 		console.log('edit');
 	}
@@ -321,7 +318,7 @@ export class CouplesList
 		const cancelButton = document.getElementById('cancel-form-button');
 		submitButton.addEventListener('click', () => {
 			//console.log(numberOfDay);
-			this.sendForm(numberOfDay, numberOfCouple);
+			this.sendForm(numberOfDay, numberOfCouple, 'add');
 		}, { once: true });
 
 		cancelButton.addEventListener('click', () => {
@@ -351,7 +348,7 @@ export class CouplesList
 // \t\t</div>`
 	}
 
-	sendForm(numberOfDay, numberOfCouple)
+	sendForm(numberOfDay, numberOfCouple, typeOfRequest)
 	{
 		const subjectInput = document.getElementById('subject-select');
 		const teacherInput = document.getElementById('teacher-select');
@@ -370,7 +367,7 @@ export class CouplesList
 				'NUMBER_IN_DAY': numberOfCouple,
 			};
 			BX.ajax.runAction(
-				'up:schedule.api.couplesList.addCouple',
+				'up:schedule.api.couplesList.'+ typeOfRequest +'Couple',
 				{
 					data:
 						{
@@ -382,6 +379,42 @@ export class CouplesList
 					this.closeCoupleModal();
 					this.reload();
 				})
+				.catch((error) => {
+					console.error(error);
+				});
+		}
+	}
+
+	removeCouple(numberOfDay, numberOfCouple)
+	{
+		console.log(numberOfDay, numberOfCouple)
+		const subject = document.getElementById(`subjectId-${numberOfDay}-${numberOfCouple}`).innerText;
+		const teacher = document.getElementById(`teacherId-${numberOfDay}-${numberOfCouple}`).innerText;
+		const audience = document.getElementById(`audienceId-${numberOfDay}-${numberOfCouple}`).innerText;
+		const group = document.getElementById(`groupId-${numberOfDay}-${numberOfCouple}`).innerText;
+
+		if (subject && teacher && audience && group)
+		{
+			const coupleInfo = {
+				'GROUP_ID': group,
+				'SUBJECT_ID': subject,
+				'TEACHER_ID': teacher,
+				'AUDIENCE_ID': audience,
+				'DAY_OF_WEEK': numberOfDay,
+				'NUMBER_IN_DAY': numberOfCouple,
+			};
+			BX.ajax.runAction(
+				'up:schedule.api.couplesList.deleteCouple',
+				{
+					data:
+						{
+							coupleInfo: coupleInfo,
+						},
+				},
+			).then((response) => {
+				console.log(response);
+				this.reload();
+			})
 				.catch((error) => {
 					console.error(error);
 				});

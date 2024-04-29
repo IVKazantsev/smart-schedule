@@ -116,11 +116,11 @@ this.BX.Up = this.BX.Up || {};
 	          var dropdownContent = main_core.Tag.render(_templateObject3 || (_templateObject3 = babelHelpers.taggedTemplateLiteral(["<div class=\"dropdown-content\"></div>"])));
 	          if (typeof _this4.coupleList[day] !== 'undefined' && typeof _this4.coupleList[day][i] !== 'undefined') {
 	            console.log(_this4.coupleList);
-	            coupleTextContainer = main_core.Tag.render(_templateObject4 || (_templateObject4 = babelHelpers.taggedTemplateLiteral(["\n\t\t\t\t\t\t<div class=\"couple-text\">\n\t\t\t\t\t\t\t", "\n\t\t\t\t\t\t\t<br>\n\t\t\t\t\t\t\t", "\n\t\t\t\t\t\t\t<br>\n\t\t\t\t\t\t\t", "\n\t\t\t\t\t\t\t<br>\n\t\t\t\t\t\t\t", " ", "\n\t\t\t\t\t\t</div>\n\t\t\t\t\t"])), _this4.coupleList[day][i].UP_SCHEDULE_MODEL_COUPLE_SUBJECT_TITLE, _this4.coupleList[day][i].UP_SCHEDULE_MODEL_COUPLE_AUDIENCE_NUMBER, _this4.coupleList[day][i].UP_SCHEDULE_MODEL_COUPLE_GROUP_TITLE, _this4.coupleList[day][i].UP_SCHEDULE_MODEL_COUPLE_TEACHER_NAME, _this4.coupleList[day][i].UP_SCHEDULE_MODEL_COUPLE_TEACHER_LAST_NAME);
+	            coupleTextContainer = main_core.Tag.render(_templateObject4 || (_templateObject4 = babelHelpers.taggedTemplateLiteral(["\n\t\t\t\t\t\t<div class=\"couple-text\">\n\t\t\t\t\t\t\t<p>", "</p>\n\t\t\t\t\t\t\t<p hidden id=\"subjectId-", "-", "\">", "</p>\n\t\t\t\t\t\t\t<p>", "</p>\n\t\t\t\t\t\t\t<p hidden id=\"audienceId-", "-", "\">", "</p>\n\t\t\t\t\t\t\t<p>", "</p>\n\t\t\t\t\t\t\t<p hidden id=\"groupId-", "-", "\">", "</p>\n\t\t\t\t\t\t\t<p>", " ", "</p>\n\t\t\t\t\t\t\t<p hidden id=\"teacherId-", "-", "\">", "</p>\n\t\t\t\t\t\t</div>\n\t\t\t\t\t"])), _this4.coupleList[day][i].UP_SCHEDULE_MODEL_COUPLE_SUBJECT_TITLE, day, i, _this4.coupleList[day][i].UP_SCHEDULE_MODEL_COUPLE_SUBJECT_ID, _this4.coupleList[day][i].UP_SCHEDULE_MODEL_COUPLE_AUDIENCE_NUMBER, day, i, _this4.coupleList[day][i].UP_SCHEDULE_MODEL_COUPLE_AUDIENCE_ID, _this4.coupleList[day][i].UP_SCHEDULE_MODEL_COUPLE_GROUP_TITLE, day, i, _this4.coupleList[day][i].UP_SCHEDULE_MODEL_COUPLE_GROUP_ID, _this4.coupleList[day][i].UP_SCHEDULE_MODEL_COUPLE_TEACHER_NAME, _this4.coupleList[day][i].UP_SCHEDULE_MODEL_COUPLE_TEACHER_LAST_NAME, day, i, _this4.coupleList[day][i].UP_SCHEDULE_MODEL_COUPLE_TEACHER_ID);
 	            if (_this4.isAdmin === true) {
 	              var removeCoupleButton = main_core.Tag.render(_templateObject5 || (_templateObject5 = babelHelpers.taggedTemplateLiteral(["\n\t\t\t\t\t\t<button \n\t\t\t\t\t\tdata-target=\"modal-js-example\" type=\"button\" id=\"button-remove-", "-", "\" class=\"js-modal-trigger dropdown-item btn-remove-couple button is-clickable is-small is-primary is-light\">\n\t\t\t\t\t\t\t\u0423\u0434\u0430\u043B\u0438\u0442\u044C\n\t\t\t\t\t\t</button>\n\t\t\t\t\t"])), day, i);
 	              removeCoupleButton.addEventListener('click', function () {
-	                _this4.handleRemoveCoupleButtonClick();
+	                _this4.handleRemoveCoupleButtonClick(day, i);
 	              });
 	              var editCoupleButton = main_core.Tag.render(_templateObject6 || (_templateObject6 = babelHelpers.taggedTemplateLiteral(["\n\t\t\t\t\t\t<button \n\t\t\t\t\t\tdata-target=\"modal-js-example\" type=\"button\" id=\"button-edit-", "-", "\" class=\"js-modal-trigger dropdown-item btn-edit-couple button is-clickable is-small is-primary is-light mb-1\">\n\t\t\t\t\t\t\t\u0418\u0437\u043C\u0435\u043D\u0438\u0442\u044C\n\t\t\t\t\t\t</button>\n\t\t\t\t\t"])), day, i);
 	              editCoupleButton.addEventListener('click', function () {
@@ -216,7 +216,7 @@ this.BX.Up = this.BX.Up || {};
 	  }, {
 	    key: "handleRemoveCoupleButtonClick",
 	    value: function handleRemoveCoupleButtonClick(numberOfDay, numberOfCouple) {
-	      this.openCoupleModal();
+	      this.removeCouple(numberOfDay, numberOfCouple);
 	      console.log('remove');
 	    }
 	  }, {
@@ -253,7 +253,7 @@ this.BX.Up = this.BX.Up || {};
 	      var cancelButton = document.getElementById('cancel-form-button');
 	      submitButton.addEventListener('click', function () {
 	        //console.log(numberOfDay);
-	        _this8.sendForm(numberOfDay, numberOfCouple);
+	        _this8.sendForm(numberOfDay, numberOfCouple, 'add');
 	      }, {
 	        once: true
 	      });
@@ -287,7 +287,7 @@ this.BX.Up = this.BX.Up || {};
 	    }
 	  }, {
 	    key: "sendForm",
-	    value: function sendForm(numberOfDay, numberOfCouple) {
+	    value: function sendForm(numberOfDay, numberOfCouple, typeOfRequest) {
 	      var _this9 = this;
 	      var subjectInput = document.getElementById('subject-select');
 	      var teacherInput = document.getElementById('teacher-select');
@@ -303,7 +303,7 @@ this.BX.Up = this.BX.Up || {};
 	          'DAY_OF_WEEK': numberOfDay,
 	          'NUMBER_IN_DAY': numberOfCouple
 	        };
-	        BX.ajax.runAction('up:schedule.api.couplesList.addCouple', {
+	        BX.ajax.runAction('up:schedule.api.couplesList.' + typeOfRequest + 'Couple', {
 	          data: {
 	            coupleInfo: coupleInfo
 	          }
@@ -317,9 +317,39 @@ this.BX.Up = this.BX.Up || {};
 	      }
 	    }
 	  }, {
+	    key: "removeCouple",
+	    value: function removeCouple(numberOfDay, numberOfCouple) {
+	      var _this10 = this;
+	      console.log(numberOfDay, numberOfCouple);
+	      var subject = document.getElementById("subjectId-".concat(numberOfDay, "-").concat(numberOfCouple)).innerText;
+	      var teacher = document.getElementById("teacherId-".concat(numberOfDay, "-").concat(numberOfCouple)).innerText;
+	      var audience = document.getElementById("audienceId-".concat(numberOfDay, "-").concat(numberOfCouple)).innerText;
+	      var group = document.getElementById("groupId-".concat(numberOfDay, "-").concat(numberOfCouple)).innerText;
+	      if (subject && teacher && audience && group) {
+	        var coupleInfo = {
+	          'GROUP_ID': group,
+	          'SUBJECT_ID': subject,
+	          'TEACHER_ID': teacher,
+	          'AUDIENCE_ID': audience,
+	          'DAY_OF_WEEK': numberOfDay,
+	          'NUMBER_IN_DAY': numberOfCouple
+	        };
+	        BX.ajax.runAction('up:schedule.api.couplesList.deleteCouple', {
+	          data: {
+	            coupleInfo: coupleInfo
+	          }
+	        }).then(function (response) {
+	          console.log(response);
+	          _this10.reload();
+	        })["catch"](function (error) {
+	          console.error(error);
+	        });
+	      }
+	    }
+	  }, {
 	    key: "insertSubjectsDataForAddForm",
 	    value: function insertSubjectsDataForAddForm(subjectsList) {
-	      var _this10 = this;
+	      var _this11 = this;
 	      var form;
 	      var modalBody = document.getElementById('modal-body');
 	      if (document.getElementById('add-edit-form')) {
@@ -359,9 +389,9 @@ this.BX.Up = this.BX.Up || {};
 	      modalBody.appendChild(form);
 	      var select = document.getElementById('subject-select');
 	      select.addEventListener('change', function () {
-	        _this10.insertAudiencesDataForForm(select.value);
-	        _this10.insertGroupsDataForForm(select.value);
-	        _this10.insertTeachersDataForForm(select.value);
+	        _this11.insertAudiencesDataForForm(select.value);
+	        _this11.insertGroupsDataForForm(select.value);
+	        _this11.insertTeachersDataForForm(select.value);
 	      });
 	    }
 	  }, {
@@ -452,13 +482,13 @@ this.BX.Up = this.BX.Up || {};
 	  }, {
 	    key: "fetchSubjectsForAddForm",
 	    value: function fetchSubjectsForAddForm(numberOfDay, numberOfCouple) {
-	      var _this11 = this;
+	      var _this12 = this;
 	      this.extractEntityFromUrl();
 	      return new Promise(function (resolve, reject) {
 	        BX.ajax.runAction('up:schedule.api.couplesList.fetchAddCoupleData', {
 	          data: {
-	            entity: _this11.entity,
-	            id: _this11.entityId
+	            entity: _this12.entity,
+	            id: _this12.entityId
 	            // numberOfDay: numberOfDay,
 	            // numberOfCouple: numberOfCouple,
 	          }
