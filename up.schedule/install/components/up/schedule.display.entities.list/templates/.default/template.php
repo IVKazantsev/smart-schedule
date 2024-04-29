@@ -20,12 +20,11 @@ Extension::load('up.couples-list');
 			<div class="box is-60-height">
 				<div id="entity-selection" class="dropdown entity-selection is-60-height-child">
 					<div class="dropdown-trigger entity-selection-trigger is-60-height-child">
-						<button id="entity-selection-button" class="button is-fullwidth is-60-height-child" aria-haspopup="true" aria-controls="dropdown-menu">
-							<span id="current-entity">
-								<?= ($arResult['CURRENT_ENTITY'])
-									? GetMessage($arResult['LOC_ENTITY']) . ' ' . htmlspecialcharsbx($arResult['CURRENT_ENTITY_NAME']) : GetMessage("SELECT_{$arResult['LOC_ENTITY']}") ?>
-							</span>
-						</button>
+						<input id="entity-selection-button" class="button is-fullwidth is-60-height-child" aria-haspopup="true" aria-controls="dropdown-menu"
+								placeholder="<?= ($arResult['CURRENT_ENTITY'])
+									? GetMessage($arResult['LOC_ENTITY']) . ' ' . htmlspecialcharsbx($arResult['CURRENT_ENTITY_NAME'])
+									: GetMessage("SELECT_{$arResult['LOC_ENTITY']}") ?>"
+						>
 					</div>
 					<div class="dropdown-menu" id="dropdown-menu" role="menu">
 						<div id="dropdown-menu-container" class="dropdown-content">
@@ -105,4 +104,12 @@ Extension::load('up.couples-list');
 			})
 		})
 	});
+
+	const dropdown = document.querySelector('.dropdown');
+	const entitySelectionInput = document.getElementById('entity-selection-button');
+	entitySelectionInput.addEventListener('input', () => {
+		// console.log(entitySelectionInput.value);
+		window.DisplayEntitiesList.reload([], entitySelectionInput.value);
+		dropdown.classList.add('is-active');
+	})
 </script>

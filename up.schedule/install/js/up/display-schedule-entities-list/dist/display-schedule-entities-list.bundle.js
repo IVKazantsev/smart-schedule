@@ -4,13 +4,14 @@ this.BX.Up = this.BX.Up || {};
 (function (exports,main_core) {
 	'use strict';
 
-	var _templateObject, _templateObject2;
+	var _templateObject, _templateObject2, _templateObject3;
 	var DisplayScheduleEntitiesList = /*#__PURE__*/function () {
 	  function DisplayScheduleEntitiesList() {
 	    var options = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
 	    babelHelpers.classCallCheck(this, DisplayScheduleEntitiesList);
-	    babelHelpers.defineProperty(this, "entitiesList", []);
+	    babelHelpers.defineProperty(this, "entityList", []);
 	    babelHelpers.defineProperty(this, "entity", undefined);
+	    babelHelpers.defineProperty(this, "suitableEntityList", undefined);
 	    babelHelpers.defineProperty(this, "entityId", undefined);
 	    babelHelpers.defineProperty(this, "currentEntity", undefined);
 	    babelHelpers.defineProperty(this, "defaultEntity", 'group');
@@ -29,7 +30,8 @@ this.BX.Up = this.BX.Up || {};
 	    if (!this.rootNode) {
 	      throw new Error("CouplesList: element with id = \"".concat(this.rootNodeId, "\" not found"));
 	    }
-	    this.entitiesList = [];
+	    this.entityList = [];
+	    this.suitableEntityList = [];
 	    this.reload();
 	  }
 	  babelHelpers.createClass(DisplayScheduleEntitiesList, [{
@@ -37,16 +39,36 @@ this.BX.Up = this.BX.Up || {};
 	    value: function reload() {
 	      var _this = this;
 	      var entityInfo = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : [];
+	      var searchInput = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : '';
 	      if (entityInfo.length !== 0) {
 	        this.entity = entityInfo.entity;
 	        this.entityId = entityInfo.entityId;
 	      }
+	      if (searchInput.length !== 0) {
+	        this.searchInList(searchInput);
+	        this.render(false);
+	        return;
+	      }
 	      this.loadList().then(function (data) {
 	        _this.entityList = data.entities;
+	        _this.suitableEntityList = data.entities;
 	        _this.currentEntity = data.currentEntity;
 	        _this.locEntity = data.locEntity;
 	        _this.render();
 	      });
+	    }
+	  }, {
+	    key: "searchInList",
+	    value: function searchInList(searchInput) {
+	      var suitableEntityList = [];
+	      this.entityList.forEach(function (entity) {
+	        if (entity['NAMING'].toLowerCase().includes(searchInput.toLowerCase())) {
+	          suitableEntityList.push(entity);
+	        }
+	      });
+	      this.suitableEntityList = suitableEntityList;
+	      console.log(this.entityList);
+	      console.log(this.suitableEntityList);
 	    }
 	  }, {
 	    key: "loadList",
@@ -72,14 +94,23 @@ this.BX.Up = this.BX.Up || {};
 	    key: "render",
 	    value: function render() {
 	      var _this3 = this;
+	      var needToChangeInputValue = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : true;
 	      this.rootNode.innerHTML = '';
-	      this.entityList.forEach(function (entity) {
+	      if (this.suitableEntityList.length === 0) {
+	        var message = main_core.Tag.render(_templateObject || (_templateObject = babelHelpers.taggedTemplateLiteral(["\n\t\t\t\t<div class=\"dropdown-item\">\n\t\t\t\t\t", "\n\t\t\t\t</div>\n\t\t\t"])), main_core.Loc.getMessage('EMPTY_ENTITY_LIST'));
+	        this.rootNode.appendChild(message);
+	        return;
+	      }
+	      this.suitableEntityList.forEach(function (entity) {
 	        var entityLink;
 	        if (_this3.currentEntity) {
-	          entityLink = main_core.Tag.render(_templateObject || (_templateObject = babelHelpers.taggedTemplateLiteral(["\n\t\t\t\t<a href=\"/", "/", "/\"\n\t\t\t\tclass=\"dropdown-item ", "\">\n\t\t\t\t", " ", "\n\t\t\t\t</a>\n\t\t\t"])), _this3.entity, entity['ID'], entity['ID'] === _this3.currentEntity['ID'] ? 'is-active' : '', main_core.Loc.getMessage(_this3.locEntity), entity['NAMING']);
+	          entityLink = main_core.Tag.render(_templateObject2 || (_templateObject2 = babelHelpers.taggedTemplateLiteral(["\n\t\t\t\t<a href=\"/", "/", "/\"\n\t\t\t\tclass=\"dropdown-item ", "\">\n\t\t\t\t", "\n\t\t\t\t</a>\n\t\t\t"])), _this3.entity, entity['ID'], entity['ID'] === _this3.currentEntity['ID'] ? 'is-active' : '', entity['NAMING']);
 	        } else {
-	          document.getElementById('current-entity').textContent = main_core.Loc.getMessage('SELECT_' + _this3.locEntity);
-	          entityLink = main_core.Tag.render(_templateObject2 || (_templateObject2 = babelHelpers.taggedTemplateLiteral(["\n\t\t\t\t<a href=\"/", "/", "/\"\n\t\t\t\tclass=\"dropdown-item\">\n\t\t\t\t", " ", "\n\t\t\t\t</a>\n\t\t\t"])), _this3.entity, entity['ID'], main_core.Loc.getMessage(_this3.locEntity), entity['NAMING']);
+	          if (needToChangeInputValue) {
+	            document.getElementById('entity-selection-button').placeholder = main_core.Loc.getMessage('SELECT_' + _this3.locEntity);
+	            document.getElementById('entity-selection-button').value = '';
+	          }
+	          entityLink = main_core.Tag.render(_templateObject3 || (_templateObject3 = babelHelpers.taggedTemplateLiteral(["\n\t\t\t\t<a href=\"/", "/", "/\"\n\t\t\t\tclass=\"dropdown-item\">", "\n\t\t\t\t</a>\n\t\t\t"])), _this3.entity, entity['ID'], entity['NAMING']);
 	        }
 	        _this3.rootNode.appendChild(entityLink);
 	        _this3.dropdownsListeners();
@@ -90,7 +121,10 @@ this.BX.Up = this.BX.Up || {};
 	            dropdown.classList.remove('is-active');
 	          });
 	          entityLink.classList.add('is-active');
-	          document.getElementById('current-entity').textContent = entityLink.textContent;
+	          if (needToChangeInputValue) {
+	            document.getElementById('entity-selection-button').placeholder = main_core.Loc.getMessage(_this3.locEntity) + ' ' + entityLink.textContent;
+	            document.getElementById('entity-selection-button').value = '';
+	          }
 	          if (history.pushState) {
 	            var newUrl = entityLink.href;
 	            window.history.pushState({
@@ -105,6 +139,7 @@ this.BX.Up = this.BX.Up || {};
 	  }, {
 	    key: "dropdownsListeners",
 	    value: function dropdownsListeners() {
+	      var _this4 = this;
 	      var dropdowns = document.querySelectorAll('.dropdown-item');
 	      dropdowns.forEach(function (dropdown) {
 	        dropdown.addEventListener('click', function (event) {
@@ -113,7 +148,8 @@ this.BX.Up = this.BX.Up || {};
 	            dropdown.classList.remove('is-active');
 	          });
 	          dropdown.classList.add('is-active');
-	          document.getElementById('current-entity').textContent = dropdown.textContent;
+	          document.getElementById('entity-selection-button').placeholder = main_core.Loc.getMessage(_this4.locEntity) + ' ' + dropdown.textContent;
+	          document.getElementById('entity-selection-button').value = '';
 	          if (history.pushState) {
 	            var newUrl = dropdown.href;
 	            window.history.pushState({

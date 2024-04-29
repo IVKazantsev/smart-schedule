@@ -240,8 +240,13 @@ a:hover {
 	width: 100%;
 }
 
-#current-entity {
+#entity-selection-button {
 	text-overflow: ellipsis;
 	overflow: hidden;
 	white-space: nowrap;
 }
+
+/*#current-entity:focus::-webkit-input-placeholder { color:transparent; }*/
+/*#current-entity:focus:-moz-placeholder { color:transparent; } !* FF 4-18 *!*/
+/*#current-entity:focus::-moz-placeholder { color:transparent; } !* FF 19+ *!*/
+/*#current-entity:focus:-ms-input-placeholder { color:transparent; } !* IE 10+ *!*/

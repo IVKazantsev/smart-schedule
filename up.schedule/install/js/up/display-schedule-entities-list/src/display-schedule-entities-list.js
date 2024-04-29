@@ -2,8 +2,9 @@ import { Tag, Type, Loc } from 'main.core';
 
 export class DisplayScheduleEntitiesList
 {
-	entitiesList = [];
+	entityList = [];
 	entity = undefined;
+	suitableEntityList = undefined;
 	entityId = undefined;
 	currentEntity = undefined;
 	defaultEntity = 'group';
@@ -35,24 +36,48 @@ export class DisplayScheduleEntitiesList
 			throw new Error(`CouplesList: element with id = "${this.rootNodeId}" not found`);
 		}
 
-		this.entitiesList = [];
+		this.entityList = [];
+		this.suitableEntityList = [];
 		this.reload();
 	}
 
-	reload(entityInfo = [])
+	reload(entityInfo = [], searchInput = '')
 	{
-		if(entityInfo.length !== 0)
+		if (entityInfo.length !== 0)
 		{
 			this.entity = entityInfo.entity;
 			this.entityId = entityInfo.entityId;
 		}
+		if (searchInput.length !== 0)
+		{
+			this.searchInList(searchInput);
+			this.render(false);
+			return;
+		}
 		this.loadList()
 			.then((data) => {
 				this.entityList = data.entities;
+				this.suitableEntityList = data.entities;
+
 				this.currentEntity = data.currentEntity;
 				this.locEntity = data.locEntity;
 				this.render();
 			});
+	}
+
+	searchInList(searchInput)
+	{
+		let suitableEntityList = [];
+		this.entityList.forEach((entity) => {
+			if (entity['NAMING'].toLowerCase().includes(searchInput.toLowerCase()))
+			{
+				suitableEntityList.push(entity);
+			}
+		});
+
+		this.suitableEntityList = suitableEntityList;
+		console.log(this.entityList)
+		console.log(this.suitableEntityList)
 	}
 
 	loadList()
@@ -79,27 +104,42 @@ export class DisplayScheduleEntitiesList
 		});
 	}
 
-	render()
+	render(needToChangeInputValue = true)
 	{
 		this.rootNode.innerHTML = '';
-		this.entityList.forEach((entity) => {
+		if(this.suitableEntityList.length === 0)
+		{
+			const message = Tag.render`
+				<div class="dropdown-item">
+					${Loc.getMessage('EMPTY_ENTITY_LIST')}
+				</div>
+			`;
+			this.rootNode.appendChild(message);
+
+			return;
+		}
+
+		this.suitableEntityList.forEach((entity) => {
 			let entityLink;
-			if(this.currentEntity)
+			if (this.currentEntity)
 			{
 				entityLink = Tag.render`
 				<a href="/${this.entity}/${entity['ID']}/"
 				class="dropdown-item ${(entity['ID'] === this.currentEntity['ID']) ? 'is-active' : ''}">
-				${Loc.getMessage(this.locEntity)} ${entity['NAMING']}
+				${entity['NAMING']}
 				</a>
 			`;
 			}
 			else
 			{
-				document.getElementById('current-entity').textContent = Loc.getMessage('SELECT_' + this.locEntity);
+				if (needToChangeInputValue)
+				{
+					document.getElementById('entity-selection-button').placeholder = Loc.getMessage('SELECT_' + this.locEntity);
+					document.getElementById('entity-selection-button').value = '';
+				}
 				entityLink = Tag.render`
 				<a href="/${this.entity}/${entity['ID']}/"
-				class="dropdown-item">
-				${Loc.getMessage(this.locEntity)} ${entity['NAMING']}
+				class="dropdown-item">${entity['NAMING']}
 				</a>
 			`;
 			}
@@ -114,14 +154,19 @@ export class DisplayScheduleEntitiesList
 					dropdown.classList.remove('is-active');
 				});
 				entityLink.classList.add('is-active');
-				document.getElementById('current-entity').textContent=entityLink.textContent;
-				if (history.pushState) {
+				if (needToChangeInputValue)
+				{
+					document.getElementById('entity-selection-button').placeholder = Loc.getMessage(this.locEntity) + ' ' + entityLink.textContent;
+					document.getElementById('entity-selection-button').value = '';
+				}
+				if (history.pushState)
+				{
 					const newUrl = entityLink.href;
-					window.history.pushState({path:newUrl},'',newUrl);
+					window.history.pushState({ path: newUrl }, '', newUrl);
 				}
 				window.ScheduleCouplesList.extractEntityFromUrl();
 				window.ScheduleCouplesList.reload();
-			})
+			});
 		});
 	}
 
@@ -135,14 +180,16 @@ export class DisplayScheduleEntitiesList
 					dropdown.classList.remove('is-active');
 				});
 				dropdown.classList.add('is-active');
-				document.getElementById('current-entity').textContent=dropdown.textContent;
-				if (history.pushState) {
+				document.getElementById('entity-selection-button').placeholder = Loc.getMessage(this.locEntity) + ' ' + dropdown.textContent;
+				document.getElementById('entity-selection-button').value = '';
+				if (history.pushState)
+				{
 					const newUrl = dropdown.href;
-					window.history.pushState({path:newUrl},'',newUrl);
+					window.history.pushState({ path: newUrl }, '', newUrl);
 				}
 				window.ScheduleCouplesList.extractEntityFromUrl();
 				window.ScheduleCouplesList.reload();
-			})
+			});
 		});
 	}
 }
