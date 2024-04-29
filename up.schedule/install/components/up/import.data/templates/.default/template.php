@@ -5,9 +5,11 @@
  * @var array $arResult
  */
 
+use Bitrix\Main\Context;
+
 ?>
 
-<?php if(\Bitrix\Main\Context::getCurrent()->getRequest()->isPost()): ?>
+<?php if(Context::getCurrent()->getRequest()->isPost()): ?>
 	<?php if(isset($arResult['ERRORS'])): ?>
 		<div class="box errors active" id="errors">
 			<div class="error-title has-background-danger has-text-white is-size-4 p-3 is-flex is-justify-content-center">
