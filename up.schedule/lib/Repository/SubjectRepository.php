@@ -23,9 +23,32 @@ class SubjectRepository
 		return SubjectTable::query()->setSelect(['ID', 'TITLE'])->fetchCollection();
 	}
 
-	public static function getAllArray(): ?array
+	public static function getAllArray(): array
 	{
 		return SubjectTable::query()->setSelect(['ID', 'TITLE'])->fetchAll();
+	}
+
+	public static function getPageWithArrays(int $entityPerPage, int $pageNumber): array
+	{
+		$offset = 0;
+		if ($pageNumber > 1)
+		{
+			$offset = ($entityPerPage * ($pageNumber - 1));
+		}
+
+		return SubjectTable::query()->setSelect(['ID', 'TITLE'])
+						->setLimit($entityPerPage + 1)
+						->setOffset($offset)
+						->setOrder('ID')
+						->fetchAll();
+	}
+
+	public static function getCountOfEntities(): int
+	{
+		$result = SubjectTable::query()
+							->addSelect(Query::expr()->count('ID'), 'CNT')
+							->exec();
+		return $result->fetch()['CNT'];
 	}
 
 	public static function getArrayById(int $id): array|false

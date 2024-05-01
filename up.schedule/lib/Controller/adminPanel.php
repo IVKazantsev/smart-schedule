@@ -3,51 +3,48 @@
 namespace Up\Schedule\Controller;
 
 use Bitrix\Main\Engine\Controller;
+use Bitrix\Main\Error;
 use Up\Schedule\Repository\AudienceRepository;
 use Up\Schedule\Repository\AudienceTypeRepository;
 use Up\Schedule\Repository\GroupRepository;
 use Up\Schedule\Repository\SubjectRepository;
 use Up\Schedule\Repository\UserRepository;
+use Up\Schedule\Service\EntityService;
 
 class AdminPanel extends Controller
 {
-	public function getSubjectListAction(): ?array
-	{
-		$entityList = SubjectRepository::getAllArray();
-		return [
-			'entityList' => $entityList,
-		];
-	}
+	private const ENTITY_PER_PAGE = 5;
 
-	public function getUserListAction(): ?array
+	public function getEntityListAction(string $entityName, int $pageNumber = 1): array
 	{
-		$entityList = UserRepository::getAllArray();
-		return [
-			'entityList' => $entityList,
-		];
-	}
+		if($pageNumber < 1)
+		{
+			$pageNumber = 1;
+		}
 
-	public function getGroupListAction(): ?array
-	{
-		$entityList = GroupRepository::getAllArray();
-		return [
-			'entityList' => $entityList,
-		];
-	}
+		$repository = EntityService::getEntityRepositoryName($entityName);
 
-	public function getAudienceListAction(): ?array
-	{
-		$entityList = AudienceRepository::getAllArray();
-		return [
-			'entityList' => $entityList,
-		];
-	}
+		if($repository === null)
+		{
+			$this->addError(new Error('entity must exist and be allowed', 'invalid_entity_name'));
+		}
 
-	public function getAudienceTypeListAction(): ?array
-	{
-		$entityList = AudienceTypeRepository::getAllArray();
+		$entityList = $repository::getPageWithArrays(self::ENTITY_PER_PAGE, $pageNumber);
+		$countOfEntities = $repository::getCountOfEntities();
+
+		$doesNextPageExist = false;
+		if(array_key_exists(self::ENTITY_PER_PAGE, $entityList))
+		{
+			$doesNextPageExist = true;
+			unset($entityList[self::ENTITY_PER_PAGE]);
+		}
+
 		return [
+			'pageNumber' => $pageNumber,
 			'entityList' => $entityList,
+			'doesNextPageExist' => $doesNextPageExist,
+			'countOfEntities' => $countOfEntities,
+			'entityPerPage' => self::ENTITY_PER_PAGE,
 		];
 	}
 }

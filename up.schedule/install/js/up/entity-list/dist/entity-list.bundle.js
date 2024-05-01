@@ -4,11 +4,49 @@ this.BX.Up = this.BX.Up || {};
 (function (exports,main_core) {
 	'use strict';
 
-	var _templateObject, _templateObject2;
+	var _templateObject, _templateObject2, _templateObject3, _templateObject4, _templateObject5, _templateObject6, _templateObject7, _templateObject8, _templateObject9, _templateObject10, _templateObject11, _templateObject12, _templateObject13, _templateObject14, _templateObject15, _templateObject16, _templateObject17, _templateObject18, _templateObject19, _templateObject20, _templateObject21, _templateObject22, _templateObject23, _templateObject24, _templateObject25;
 	var EntityList = /*#__PURE__*/function () {
 	  function EntityList() {
 	    var options = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
 	    babelHelpers.classCallCheck(this, EntityList);
+	    babelHelpers.defineProperty(this, "entityNode", {
+	      'subject': {
+	        'header': main_core.Tag.render(_templateObject || (_templateObject = babelHelpers.taggedTemplateLiteral(["\n\t\t\t\t\t<div class=\"column is-11 is-60-height\">\n\t\t\t\t\t\t", "\n\t\t\t\t\t</div>\n\t\t\t\t\t"])), main_core.Loc.getMessage('TITLE')),
+	        'content': function content(entityData) {
+	          return main_core.Tag.render(_templateObject2 || (_templateObject2 = babelHelpers.taggedTemplateLiteral(["\n\t\t\t\t\t\t\t<div class=\"column is-1 admin-entity-list-item\">\n\t\t\t\t\t\t\t", "\n\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t\t<div class=\"column is-11 admin-entity-list-item\">\n\t\t\t\t\t\t\t\t", "\n\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t"])), entityData.ID, entityData.TITLE);
+	        }
+	      },
+	      'user': {
+	        'header': main_core.Tag.render(_templateObject3 || (_templateObject3 = babelHelpers.taggedTemplateLiteral(["\n\t\t\t\t\t<div class=\"column is-4 is-60-height\">\n\t\t\t\t\t\t", "\n\t\t\t\t\t</div>\n\t\t\t\t\t<div class=\"column is-4 is-60-height\">\n\t\t\t\t\t\t", "\n\t\t\t\t\t</div>\n\t\t\t\t\t<div class=\"column is-3 is-60-height\">\n\t\t\t\t\t\t", "\n\t\t\t\t\t</div>\n\t\t\t\t\t"])), main_core.Loc.getMessage('NAME'), main_core.Loc.getMessage('EMAIL'), main_core.Loc.getMessage('ROLE')),
+	        'content': function content(entityData) {
+	          return main_core.Tag.render(_templateObject4 || (_templateObject4 = babelHelpers.taggedTemplateLiteral(["\n\t\t\t\t\t\t\t<div class=\"column is-1 admin-entity-list-item\">\n\t\t\t\t\t\t\t", "\n\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t\t<div class=\"column is-4 admin-entity-list-item\">\n\t\t\t\t\t\t\t\t", " ", "\n\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t\t<div class=\"column is-4 admin-entity-list-item\">\n\t\t\t\t\t\t\t\t", "\n\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t\t<div class=\"column is-3 admin-entity-list-item\">\n\t\t\t\t\t\t\t\t", "\n\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t"])), entityData.ID, entityData.NAME, entityData.LAST_NAME, entityData.EMAIL ? entityData.EMAIL : 'Отсутствует', entityData.ROLE);
+	        }
+	      },
+	      'group': {
+	        'header': main_core.Tag.render(_templateObject5 || (_templateObject5 = babelHelpers.taggedTemplateLiteral(["\n\t\t\t\t\t<div class=\"column is-60-height\">\n\t\t\t\t\t\t", "\n\t\t\t\t\t</div>\n\t\t\t\t\t"])), main_core.Loc.getMessage('TITLE')),
+	        'content': function content(entityData) {
+	          return main_core.Tag.render(_templateObject6 || (_templateObject6 = babelHelpers.taggedTemplateLiteral(["\n\t\t\t\t\t\t\t<div class=\"column is-1 admin-entity-list-item\">\n\t\t\t\t\t\t\t", "\n\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t\t<div class=\"column admin-entity-list-item\">\n\t\t\t\t\t\t\t\t", "\n\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t"])), entityData.ID, entityData.TITLE);
+	        }
+	      },
+	      'audience': {
+	        'header': main_core.Tag.render(_templateObject7 || (_templateObject7 = babelHelpers.taggedTemplateLiteral(["\n\t\t\t\t\t<div class=\"column is-60-height\">\n\t\t\t\t\t\t", "\n\t\t\t\t\t</div>\n\t\t\t\t\t<div class=\"column is-60-height\">\n\t\t\t\t\t\t", "\n\t\t\t\t\t</div>\n\t\t\t\t\t"])), main_core.Loc.getMessage('NUMBER'), main_core.Loc.getMessage('TYPE')),
+	        'content': function content(entityData) {
+	          return main_core.Tag.render(_templateObject8 || (_templateObject8 = babelHelpers.taggedTemplateLiteral(["\n\t\t\t\t\t\t\t<div class=\"column is-1 admin-entity-list-item\">\n\t\t\t\t\t\t\t", "\n\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t\t<div class=\"column admin-entity-list-item\">\n\t\t\t\t\t\t\t\t", "\n\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t\t<div class=\"column admin-entity-list-item\">\n\t\t\t\t\t\t\t\t", "\n\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t"])), entityData.ID, entityData.NUMBER, entityData.UP_SCHEDULE_MODEL_AUDIENCE_AUDIENCE_TYPE_TITLE);
+	        }
+	      },
+	      'audienceType': {
+	        'header': main_core.Tag.render(_templateObject9 || (_templateObject9 = babelHelpers.taggedTemplateLiteral(["\n\t\t\t\t\t<div class=\"column is-60-height\">\n\t\t\t\t\t\t", "\n\t\t\t\t\t</div>\n\t\t\t\t\t"])), main_core.Loc.getMessage('TITLE')),
+	        'content': function content(entityData) {
+	          return main_core.Tag.render(_templateObject10 || (_templateObject10 = babelHelpers.taggedTemplateLiteral(["\n\t\t\t\t\t\t\t<div class=\"column is-1 admin-entity-list-item\">\n\t\t\t\t\t\t\t", "\n\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t\t<div class=\"column admin-entity-list-item\">\n\t\t\t\t\t\t\t\t", "\n\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t"])), entityData.ID, entityData.TITLE);
+	        }
+	      }
+	    });
+	    babelHelpers.defineProperty(this, "entity", undefined);
+	    babelHelpers.defineProperty(this, "rootNodeId", undefined);
+	    babelHelpers.defineProperty(this, "rootNode", undefined);
+	    babelHelpers.defineProperty(this, "entityList", undefined);
+	    babelHelpers.defineProperty(this, "pageNumber", undefined);
+	    babelHelpers.defineProperty(this, "doesNextPageExist", undefined);
 	    if (main_core.Type.isStringFilled(options.rootNodeId)) {
 	      this.rootNodeId = options.rootNodeId;
 	    } else {
@@ -30,8 +68,13 @@ this.BX.Up = this.BX.Up || {};
 	    key: "reload",
 	    value: function reload() {
 	      var _this = this;
-	      this.loadList().then(function (entityList) {
-	        _this.entityList = entityList;
+	      var pageNumber = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 1;
+	      this.loadList(pageNumber).then(function (data) {
+	        _this.entityList = data.entityList;
+	        _this.pageNumber = data.pageNumber;
+	        _this.doesNextPageExist = data.doesNextPageExist;
+	        _this.countOfEntities = data.countOfEntities;
+	        _this.entityPerPage = data.entityPerPage;
 	        _this.render();
 	      });
 	    }
@@ -39,12 +82,16 @@ this.BX.Up = this.BX.Up || {};
 	    key: "loadList",
 	    value: function loadList() {
 	      var _this2 = this;
+	      var pageNumber = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 1;
 	      return new Promise(function (resolve, reject) {
-	        BX.ajax.runAction('up:schedule.api.adminPanel.get' + _this2.entity + 'List', {
-	          data: {}
+	        BX.ajax.runAction('up:schedule.api.adminPanel.getEntityList', {
+	          data: {
+	            entityName: _this2.entity,
+	            pageNumber: pageNumber
+	          }
 	        }).then(function (response) {
-	          var entityList = response.data.entityList;
-	          resolve(entityList);
+	          var data = response.data;
+	          resolve(data);
 	        })["catch"](function (error) {
 	          reject(error);
 	        });
@@ -55,45 +102,55 @@ this.BX.Up = this.BX.Up || {};
 	    value: function render() {
 	      var _this3 = this;
 	      this.rootNode.innerHTML = '';
-	      var containerContent;
-	      switch (this.entity) {
-	        case 'subject':
-	          containerContent = "\n\t\t\t\t\t<div class=\"column is-11 is-60-height\">\n\t\t\t\t\t\t\u041D\u0430\u0437\u0432\u0430\u043D\u0438\u0435\n\t\t\t\t\t</div>\n\t\t\t\t";
-	          break;
-	        case 'user':
-	          containerContent = "\n\t\t\t\t\t<div class=\"column is-4 is-60-height\">\n\t\t\t\t\t\t\u0418\u043C\u044F\n\t\t\t\t\t</div>\n\t\t\t\t\t<div class=\"column is-4 is-60-height\">\n\t\t\t\t\t\t\u041F\u043E\u0447\u0442\u0430\n\t\t\t\t\t</div>\n\t\t\t\t\t<div class=\"column is-3 is-60-height\">\n\t\t\t\t\t\t\u0420\u043E\u043B\u044C\n\t\t\t\t\t</div>\n\t\t\t\t";
-	          break;
-	        case 'group':
-	          containerContent = "\n\t\t\t\t\t<div class=\"column is-60-height\">\n\t\t\t\t\t\t\u041D\u0430\u0437\u0432\u0430\u043D\u0438\u0435\n\t\t\t\t\t</div>\n\t\t\t\t";
-	          break;
-	        case 'audience':
-	          containerContent = "\n\t\t\t\t\t<div class=\"column is-60-height\">\n\t\t\t\t\t\t\u041D\u043E\u043C\u0435\u0440\n\t\t\t\t\t</div>\n\t\t\t\t\t<div class=\"column is-60-height\">\n\t\t\t\t\t\t\u0422\u0438\u043F\n\t\t\t\t\t</div>\n\t\t\t\t";
-	          break;
-	        case 'audienceType':
-	          containerContent = "\n\t\t\t\t\t<div class=\"column is-60-height\">\n\t\t\t\t\t\t\u041D\u0430\u0437\u0432\u0430\u043D\u0438\u0435\n\t\t\t\t\t</div>\n\t\t\t\t";
-	      }
-	      var entitiesContainerNode = main_core.Tag.render(_templateObject || (_templateObject = babelHelpers.taggedTemplateLiteral(["\n\t\t\t<div class=\"box is-flex is-align-items-center is-flex-direction-column\">\n\t\t\t\t<div class=\"columns is-60-height is-fullwidth title-of-table\">\n\t\t\t\t\t<div class=\"column is-60-height is-1\">\n\t\t\t\t\t\tID\n\t\t\t\t\t</div>\n\t\t\t\t\t", "\n\t\t\t\t</div>\n\t\t\t</div>\n\t\t"])), containerContent);
+	      var containerContent = this.entityNode[this.entity]['header'];
+	      var entitiesContainerNode = main_core.Tag.render(_templateObject11 || (_templateObject11 = babelHelpers.taggedTemplateLiteral(["\n\t\t\t<div class=\"box is-flex is-align-items-center is-flex-direction-column\">\n\t\t\t\t<div class=\"columns is-60-height is-fullwidth title-of-table\">\n\t\t\t\t\t<div class=\"column is-60-height is-1\">\n\t\t\t\t\t\tID\n\t\t\t\t\t</div>\n\t\t\t\t\t", "\n\t\t\t\t</div>\n\t\t\t</div>\n\t\t"])), containerContent);
 	      this.entityList.forEach(function (entityData) {
-	        var entityNode = main_core.Tag.render(_templateObject2 || (_templateObject2 = babelHelpers.taggedTemplateLiteral(["\n\t\t\t\t<a class=\"columns is-fullwidth is-60-height button has-text-left\" href=\"/admin/edit/", "/", "/\">\n\t\t\t\t\t", "\n\t\t\t\t</a>\n\t\t\t"])), _this3.entity, entityData.ID, _this3.getEntityNodeContent(entityData));
+	        var entityNode = main_core.Tag.render(_templateObject12 || (_templateObject12 = babelHelpers.taggedTemplateLiteral(["\n\t\t\t\t<a class=\"columns is-fullwidth is-60-height button has-text-left\" href=\"/admin/edit/", "/", "/\">\n\t\t\t\t\t", "\n\t\t\t\t</a>\n\t\t\t"])), _this3.entity, entityData.ID, _this3.entityNode[_this3.entity]['content'](entityData));
 	        entitiesContainerNode.appendChild(entityNode);
 	      });
 	      this.rootNode.appendChild(entitiesContainerNode);
-	    }
-	  }, {
-	    key: "getEntityNodeContent",
-	    value: function getEntityNodeContent(entityData) {
-	      switch (this.entity) {
-	        case 'subject':
-	          return "\n\t\t\t\t\t<div class=\"column is-1 admin-entity-list-item\">\n\t\t\t\t\t\t".concat(entityData.ID, "\n\t\t\t\t\t</div>\n\t\t\t\t\t<div class=\"column is-11 admin-entity-list-item\">\n\t\t\t\t\t\t").concat(entityData.TITLE, "\n\t\t\t\t\t</div>\n\t\t\t\t");
-	        case 'user':
-	          return "\n\t\t\t\t\t<div class=\"column is-1 admin-entity-list-item\">\n\t\t\t\t\t\t".concat(entityData.ID, "\n\t\t\t\t\t</div>\n\t\t\t\t\t<div class=\"column is-4 admin-entity-list-item\">\n\t\t\t\t\t\t").concat(entityData.NAME, " ").concat(entityData.LAST_NAME, "\n\t\t\t\t\t</div>\n\t\t\t\t\t<div class=\"column is-4 admin-entity-list-item\">\n\t\t\t\t\t\t").concat(entityData.EMAIL ? entityData.EMAIL : 'Отсутствует', "\n\t\t\t\t\t</div>\n\t\t\t\t\t<div class=\"column is-3 admin-entity-list-item\">\n\t\t\t\t\t\t").concat(entityData.ROLE, "\n\t\t\t\t\t</div>\n\t\t\t\t");
-	        case 'group':
-	          return "\n\t\t\t\t\t<div class=\"column is-1 admin-entity-list-item\">\n\t\t\t\t\t\t".concat(entityData.ID, "\n\t\t\t\t\t</div>\n\t\t\t\t\t<div class=\"column admin-entity-list-item\">\n\t\t\t\t\t\t").concat(entityData.TITLE, "\n\t\t\t\t\t</div>\n\t\t\t\t");
-	        case 'audience':
-	          return "\n\t\t\t\t\t<div class=\"column is-1 admin-entity-list-item\">\n\t\t\t\t\t\t".concat(entityData.ID, "\n\t\t\t\t\t</div>\n\t\t\t\t\t<div class=\"column admin-entity-list-item\">\n\t\t\t\t\t\t").concat(entityData.NUMBER, "\n\t\t\t\t\t</div>\n\t\t\t\t\t<div class=\"column admin-entity-list-item\">\n\t\t\t\t\t\t").concat(entityData.UP_SCHEDULE_MODEL_AUDIENCE_AUDIENCE_TYPE_TITLE, "\n\t\t\t\t\t</div>\n\t\t\t\t");
-	        case 'audienceType':
-	          return "\n\t\t\t\t\t<div class=\"column is-1 admin-entity-list-item\">\n\t\t\t\t\t\t".concat(entityData.ID, "\n\t\t\t\t\t</div>\n\t\t\t\t\t<div class=\"column admin-entity-list-item\">\n\t\t\t\t\t\t").concat(entityData.TITLE, "\n\t\t\t\t\t</div>\n\t\t\t\t");
+
+	      // Пагинация
+
+	      var previousPageButton = main_core.Tag.render(_templateObject13 || (_templateObject13 = babelHelpers.taggedTemplateLiteral(["\n\t\t\t<button class=\"pagination-previous ", "\">&#60;</button>\n\t\t"])), this.pageNumber > 1 ? '' : 'is-disabled');
+	      var nextPageButton = main_core.Tag.render(_templateObject14 || (_templateObject14 = babelHelpers.taggedTemplateLiteral(["\n\t\t\t<button class=\"pagination-next ", "\">&#62;</button>\n\t\t"])), this.doesNextPageExist === true ? '' : 'is-disabled');
+	      var firstPageButton = '';
+	      if (this.pageNumber > 2) {
+	        firstPageButton = main_core.Tag.render(_templateObject15 || (_templateObject15 = babelHelpers.taggedTemplateLiteral(["<button class=\"pagination-link\">1</button>"])));
+	        firstPageButton.addEventListener('click', function () {
+	          _this3.reload(1);
+	        });
 	      }
+	      var previousPageWithNumber = '';
+	      if (this.pageNumber > 1) {
+	        previousPageWithNumber = main_core.Tag.render(_templateObject16 || (_templateObject16 = babelHelpers.taggedTemplateLiteral(["<button class=\"pagination-link\">", "</button>"])), this.pageNumber - 1);
+	        previousPageButton.addEventListener('click', function () {
+	          _this3.reload(_this3.pageNumber - 1);
+	        });
+	        previousPageWithNumber.addEventListener('click', function () {
+	          _this3.reload(_this3.pageNumber - 1);
+	        });
+	      }
+	      var nextPageWithNumber = '';
+	      if (this.doesNextPageExist === true) {
+	        nextPageWithNumber = main_core.Tag.render(_templateObject17 || (_templateObject17 = babelHelpers.taggedTemplateLiteral(["<button class=\"pagination-link\">", "</button>"])), this.pageNumber + 1);
+	        nextPageButton.addEventListener('click', function () {
+	          _this3.reload(_this3.pageNumber + 1);
+	        });
+	        nextPageWithNumber.addEventListener('click', function () {
+	          _this3.reload(_this3.pageNumber + 1);
+	        });
+	      }
+	      var countOfPages = Math.ceil(this.countOfEntities / this.entityPerPage);
+	      var lastPageButton = '';
+	      if (this.pageNumber + 1 < countOfPages) {
+	        lastPageButton = main_core.Tag.render(_templateObject18 || (_templateObject18 = babelHelpers.taggedTemplateLiteral(["<button class=\"pagination-link\">", "</button>"])), countOfPages);
+	        lastPageButton.addEventListener('click', function () {
+	          _this3.reload(countOfPages);
+	        });
+	      }
+	      var paginationContainer = main_core.Tag.render(_templateObject19 || (_templateObject19 = babelHelpers.taggedTemplateLiteral(["\n\t\t\t<nav class=\"pagination\" role=\"navigation\" aria-label=\"pagination\">\n\t\t\t\t", "\n\t\t\t\t", "\n\t\t\t\t<ul class=\"pagination-list\">\n\t\t\t\t\t", "\n\t\t\t\t\t\n\t\t\t\t\t", "\n\t\t\t\t\t\n\t\t\t\t\t", "\n\t\t\t\t\t\n\t\t\t\t\t<li>\n\t\t\t\t\t\t<div class=\"pagination-link is-current\" aria-current=\"page\">", "</div>\n\t\t\t\t\t</li>\n\t\t\t\t\t\n\t\t\t\t\t", "\n\t\t\t\t\t\n\t\t\t\t\t", "\n\t\t\t\t\t\n\t\t\t\t\t", "\n\t\t\t\t</ul>\n\t\t\t</nav>\n\t\t"])), previousPageButton, nextPageButton, firstPageButton !== '' ? main_core.Tag.render(_templateObject20 || (_templateObject20 = babelHelpers.taggedTemplateLiteral(["\n\t\t\t\t\t\t<li>\n\t\t\t\t\t\t\t", "\n\t\t\t\t\t\t</li>"])), firstPageButton) : '', this.pageNumber > 3 ? main_core.Tag.render(_templateObject21 || (_templateObject21 = babelHelpers.taggedTemplateLiteral(["\n\t\t\t\t\t\t<li>\n\t\t\t\t\t\t\t<span class=\"pagination-ellipsis\">&hellip;</span>\n\t\t\t\t\t\t</li>"]))) : '', previousPageWithNumber !== '' ? main_core.Tag.render(_templateObject22 || (_templateObject22 = babelHelpers.taggedTemplateLiteral(["\n\t\t\t\t\t\t<li>\n\t\t\t\t\t\t\t", "\n\t\t\t\t\t\t</li>"])), previousPageWithNumber) : '', this.pageNumber, nextPageWithNumber !== '' ? main_core.Tag.render(_templateObject23 || (_templateObject23 = babelHelpers.taggedTemplateLiteral(["\n\t\t\t\t\t\t<li>\n\t\t\t\t\t\t", "\n\t\t\t\t\t\t</li>"])), nextPageWithNumber) : '', this.pageNumber + 2 < countOfPages ? main_core.Tag.render(_templateObject24 || (_templateObject24 = babelHelpers.taggedTemplateLiteral(["<li>\n\t\t\t\t\t\t<span class=\"pagination-ellipsis\">&hellip;</span>\n\t\t\t\t\t</li>"]))) : '', lastPageButton !== '' ? main_core.Tag.render(_templateObject25 || (_templateObject25 = babelHelpers.taggedTemplateLiteral(["\n\t\t\t\t\t\t<li>\n\t\t\t\t\t\t\t", "\n\t\t\t\t\t\t</li>"])), lastPageButton) : '');
+	      this.rootNode.appendChild(paginationContainer);
 	    }
 	  }]);
 	  return EntityList;

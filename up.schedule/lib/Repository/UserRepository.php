@@ -42,7 +42,7 @@ class UserRepository
 		)->fetchCollection();
 	}
 
-	public static function getAllArray(): ?array
+	public static function getAllArray(): array
 	{
 		return UserTable::query()->setSelect([
 												 'ID',
@@ -60,6 +60,41 @@ class UserRepository
 				'UP_SCHEDULE_GROUP', GroupTable::class, Join::on('this.UF_GROUP_ID', 'ref.ID')
 			))
 		)->fetchAll();
+	}
+
+	public static function getPageWithArrays(int $entityPerPage, int $pageNumber): array
+	{
+		$offset = 0;
+		if ($pageNumber > 1)
+		{
+			$offset = $entityPerPage * ($pageNumber - 1);
+		}
+
+		return UserTable::query()->setSelect([
+												'ID',
+												 'NAME',
+												 'LAST_NAME',
+												 'EMAIL',
+												 'ROLE' => 'UP_SCHEDULE_ROLE.TITLE',
+											 ])
+								 ->registerRuntimeField(
+									 (new Reference(
+										 'UP_SCHEDULE_ROLE',
+										 RoleTable::class,
+										 Join::on('this.UF_ROLE_ID', 'ref.ID')
+									 )))
+								 ->setLimit($entityPerPage + 1)
+								 ->setOffset($offset)
+								 ->setOrder('ID')
+								 ->fetchAll();
+	}
+
+	public static function getCountOfEntities(): int
+	{
+		$result = UserTable::query()
+							  ->addSelect(Query::expr()->count('ID'), 'CNT')
+							  ->exec();
+		return $result->fetch()['CNT'];
 	}
 
 	public static function getById(int $id): ?EO_User
@@ -151,14 +186,14 @@ class UserRepository
 												  'ROLE' => 'UP_SCHEDULE_ROLE.TITLE',
 												  'GROUP' => 'UP_SCHEDULE_GROUP.TITLE',
 											  ])->registerRuntimeField(
-				(new Reference(
-					'UP_SCHEDULE_ROLE', RoleTable::class, Join::on('this.UF_ROLE_ID', 'ref.ID')
-				))
-			)->registerRuntimeField(
-				(new Reference(
-					'UP_SCHEDULE_GROUP', GroupTable::class, Join::on('this.UF_GROUP_ID', 'ref.ID')
-				))
-			)->where('ID', $id)->fetch();
+			(new Reference(
+				'UP_SCHEDULE_ROLE', RoleTable::class, Join::on('this.UF_ROLE_ID', 'ref.ID')
+			))
+		)->registerRuntimeField(
+			(new Reference(
+				'UP_SCHEDULE_GROUP', GroupTable::class, Join::on('this.UF_GROUP_ID', 'ref.ID')
+			))
+		)->where('ID', $id)->fetch();
 
 		$roles = RoleTable::query()->setSelect(['ID', 'TITLE',])->fetchAll();
 
@@ -184,13 +219,13 @@ class UserRepository
 				$user['SUBJECTS']['ALL_SUBJECTS'][$subject->getId()] = $subject->getTitle();
 			}
 			$subjects = SubjectTeacherTable::query()->setSelect(['SUBJECTS' => 'UP_SCHEDULE_SUBJECT'])->where(
-					'TEACHER_ID',
-					$id
-				)->registerRuntimeField(
-					(new Reference(
-						'UP_SCHEDULE_SUBJECT', SubjectTable::class, Join::on('this.SUBJECT_ID', 'ref.ID')
-					))
-				)->fetchAll();
+				'TEACHER_ID',
+				$id
+			)->registerRuntimeField(
+				(new Reference(
+					'UP_SCHEDULE_SUBJECT', SubjectTable::class, Join::on('this.SUBJECT_ID', 'ref.ID')
+				))
+			)->fetchAll();
 			foreach ($subjects as $subject)
 			{
 				$user['SUBJECTS']['CURRENT_SUBJECTS'][$subject['SUBJECTSID']] = $subject['SUBJECTSTITLE'];
@@ -368,9 +403,9 @@ class UserRepository
 												 'NAME',
 												 'LAST_NAME',
 											 ])->where('UF_ROLE_ID', 2)->where('NAME', $name)->where(
-				'LAST_NAME',
-				$lastName
-			)->fetchObject();
+			'LAST_NAME',
+			$lastName
+		)->fetchObject();
 	}
 
 	public static function editById(int $id, array $data): void
@@ -432,8 +467,8 @@ class UserRepository
 	{
 		$relatedEntities = [];
 		$relatedCouples = CoupleTable::query()->setSelect(
-				['SUBJECT.TITLE', 'AUDIENCE.NUMBER', 'GROUP.TITLE', 'TEACHER.NAME', 'TEACHER.LAST_NAME']
-			)->where('TEACHER_ID', $id)->fetchAll();
+			['SUBJECT.TITLE', 'AUDIENCE.NUMBER', 'GROUP.TITLE', 'TEACHER.NAME', 'TEACHER.LAST_NAME']
+		)->where('TEACHER_ID', $id)->fetchAll();
 		if (!empty($relatedCouples))
 		{
 			$relatedEntities['COUPLES'] = $relatedCouples;
@@ -451,8 +486,8 @@ class UserRepository
 												   'NAME',
 												   'LAST_NAME',
 											   ])->whereNot('UF_ROLE_ID', 1)->where(
-				Query::filter()->logic('or')->whereNotNull('UF_ROLE_ID')->whereNotNull('UF_GROUP_ID')
-			)->fetchCollection();
+			Query::filter()->logic('or')->whereNotNull('UF_ROLE_ID')->whereNotNull('UF_GROUP_ID')
+		)->fetchCollection();
 
 		foreach ($users as $user)
 		{

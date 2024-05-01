@@ -22,35 +22,51 @@ if (!defined("B_PROLOG_INCLUDED") || B_PROLOG_INCLUDED !== true)
 
 	<div class="columns tabs is-active">
 		<div class="column">
-			<a class="is-60-height box is-flex is-align-items-center is-justify-content-center" href="/admin/#subject"><?= GetMessage('SUBJECTS') ?></a>
+			<a class="is-60-height box is-flex is-align-items-center is-justify-content-center" href="/admin/#subject"><?= GetMessage(
+					'SUBJECTS'
+				) ?></a>
 		</div>
 		<div class="column">
-			<a class="is-60-height box is-flex is-align-items-center is-justify-content-center" href="/admin/#user"><?= GetMessage('USERS') ?></a>
-		</div>
-	</div>
-	<div class="columns tabs is-active">
-		<div class="column">
-			<a class="is-60-height box is-flex is-align-items-center is-justify-content-center" href="/admin/#group"><?= GetMessage('GROUPS') ?></a>
-		</div>
-		<div class="column">
-			<a class="is-60-height box is-flex is-align-items-center is-justify-content-center" href="/admin/#audience"><?= GetMessage('AUDIENCES') ?></a>
+			<a class="is-60-height box is-flex is-align-items-center is-justify-content-center" href="/admin/#user"><?= GetMessage(
+					'USERS'
+				) ?></a>
 		</div>
 	</div>
 	<div class="columns tabs is-active">
 		<div class="column">
-			<a class="is-60-height box is-flex is-align-items-center is-justify-content-center" href="/admin/#audienceType"><?= GetMessage('AUDIENCE_TYPE') ?></a>
+			<a class="is-60-height box is-flex is-align-items-center is-justify-content-center" href="/admin/#group"><?= GetMessage(
+					'GROUPS'
+				) ?></a>
+		</div>
+		<div class="column">
+			<a class="is-60-height box is-flex is-align-items-center is-justify-content-center" href="/admin/#audience"><?= GetMessage(
+					'AUDIENCES'
+				) ?></a>
+		</div>
+	</div>
+	<div class="columns tabs is-active">
+		<div class="column">
+			<a class="is-60-height box is-flex is-align-items-center is-justify-content-center" href="/admin/#audienceType"><?= GetMessage(
+					'AUDIENCE_TYPE'
+				) ?></a>
 		</div>
 	</div>
 
 	<div class="columns tabs-content">
 		<div class="column" id="main-content-of-admin-panel">
 			<div id="back-button-container" class="mb-2">
-				<a id ="back-button" class="column is-1 is-offset-0 buttonLink is-60-height mb-5 box is-flex is-align-items-center is-justify-content-center" href="/admin/"><?= GetMessage('BACK') ?></a>
-				<a id ="add-button" class="column is-offset-10 is-1 buttonLink is-60-height mb-5 box is-flex is-align-items-center is-justify-content-center" onclick="location.href=getEntityAddUrl()"><?= GetMessage('ADD') ?></a>
+				<a id="back-button" class="column is-1 is-offset-0 buttonLink is-60-height mb-5 box is-flex is-align-items-center is-justify-content-center" href="/admin/"><?= GetMessage(
+						'BACK'
+					) ?></a>
+				<a id="add-button" class="column is-offset-10 is-1 buttonLink is-60-height mb-5 box is-flex is-align-items-center is-justify-content-center" onclick="location.href=getEntityAddUrl()"><?= GetMessage(
+						'ADD'
+					) ?></a>
 				<!--<div class="column is-full p-0">
 					<div id="buttonsLinkContainer" class="columns">
-						<a id ="back-button" class="column is-1 is-offset-1 buttonLink is-60-height mb-5 box is-flex is-align-items-center is-justify-content-center" href="/admin/"><?php /*= GetMessage('BACK') */?></a>
-						<a id ="add-button" class="column is-offset-8 is-1 buttonLink is-60-height mb-5 box is-flex is-align-items-center is-justify-content-center" onclick="location.href=getEntityAddUrl()"><?php /*= GetMessage('ADD') */?></a>
+						<a id ="back-button" class="column is-1 is-offset-1 buttonLink is-60-height mb-5 box is-flex is-align-items-center is-justify-content-center" href="/admin/"><?php
+				/*= GetMessage('BACK') */ ?></a>
+						<a id ="add-button" class="column is-offset-8 is-1 buttonLink is-60-height mb-5 box is-flex is-align-items-center is-justify-content-center" onclick="location.href=getEntityAddUrl()"><?php
+				/*= GetMessage('ADD') */ ?></a>
 					</div>
 				</div>-->
 			</div>
@@ -80,7 +96,8 @@ if (!defined("B_PROLOG_INCLUDED") || B_PROLOG_INCLUDED !== true)
 		const observer = new MutationObserver(mutations => {
 			mutations.forEach(mutation => {
 				mutation.addedNodes.forEach(node => {
-					if (node.matches && node.matches(selector)) {
+					if (node.matches && node.matches(selector))
+					{
 						callback(node);
 					}
 				});
@@ -96,6 +113,6 @@ if (!defined("B_PROLOG_INCLUDED") || B_PROLOG_INCLUDED !== true)
 				rootNodeId: 'entity-list-app',
 				entity: document.getElementById('entity-list-app').parentElement.id,
 			});
-		})
+		});
 	});
 </script>

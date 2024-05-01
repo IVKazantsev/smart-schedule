@@ -6,6 +6,7 @@ use Bitrix\Main\ArgumentException;
 use Bitrix\Main\ObjectPropertyException;
 use Bitrix\Main\ORM\Fields\Relations\Reference;
 use Bitrix\Main\ORM\Query\Join;
+use Bitrix\Main\ORM\Query\Query;
 use Bitrix\Main\SystemException;
 use Up\Schedule\Model\AudienceTable;
 use Up\Schedule\Model\AudienceTypeTable;
@@ -23,9 +24,33 @@ class AudienceRepository
 		return AudienceTable::query()->setSelect(['ID', 'NUMBER', 'AUDIENCE_TYPE'])->fetchCollection();
 	}
 
-	public static function getAllArray(): ?array
+	public static function getAllArray(): array
 	{
 		return AudienceTable::query()->setSelect(['ID', 'NUMBER', 'AUDIENCE_TYPE'])->fetchAll();
+	}
+
+	public static function getPageWithArrays(int $entityPerPage, int $pageNumber): array
+	{
+		$offset = 0;
+		if ($pageNumber > 1)
+		{
+			$offset = $entityPerPage * ($pageNumber - 1);
+		}
+
+		return AudienceTable::query()
+							->setSelect(['ID', 'NUMBER', 'AUDIENCE_TYPE'])
+							->setLimit($entityPerPage + 1)
+							->setOffset($offset)
+							->setOrder('ID')
+							->fetchAll();
+	}
+
+	public static function getCountOfEntities(): int
+	{
+		$result = AudienceTable::query()
+							->addSelect(Query::expr()->count('ID'), 'CNT')
+							->exec();
+		return $result->fetch()['CNT'];
 	}
 
 	public static function getById(int $id): ?EO_Audience
@@ -66,10 +91,7 @@ class AudienceRepository
 		if (($number = $data['NUMBER']) !== null && ($type = $data['TYPE']) !== null)
 		{
 			$audience->setNumber($number);
-			$typeEntityObject = AudienceTypeTable::query()
-				->setSelect(['ID'])
-				->where('TITLE', $type)
-				->fetchObject();
+			$typeEntityObject = AudienceTypeTable::query()->setSelect(['ID'])->where('TITLE', $type)->fetchObject();
 			$audience->setAudienceType($typeEntityObject);
 			$audience->save();
 		}
@@ -84,6 +106,7 @@ class AudienceRepository
 		$result = [];
 		$result['NUMBER'] = '';
 		$result['TYPE'] = array_column(AudienceTypeRepository::getAllArray(), 'TITLE');
+
 		return $result;
 	}
 
@@ -118,8 +141,8 @@ class AudienceRepository
 	{
 		$relatedEntities = [];
 		$relatedCouples = CoupleTable::query()->setSelect(
-				['SUBJECT.TITLE', 'AUDIENCE.NUMBER', 'GROUP.TITLE', 'TEACHER.NAME', 'TEACHER.LAST_NAME']
-			)->where('AUDIENCE_ID', $id)->fetchAll();
+			['SUBJECT.TITLE', 'AUDIENCE.NUMBER', 'GROUP.TITLE', 'TEACHER.NAME', 'TEACHER.LAST_NAME']
+		)->where('AUDIENCE_ID', $id)->fetchAll();
 		if (!empty($relatedCouples))
 		{
 			$relatedEntities['COUPLES'] = $relatedCouples;
@@ -135,20 +158,18 @@ class AudienceRepository
 		$audienceTypeId = $subject['AUDIENCE_TYPE_ID'];
 
 		return AudienceTable::query()->setSelect(['ID', 'NUMBER', 'TYPE' => 'UP_SCHEDULE_AUDIENCE_TYPE'])->where(
-				'AUDIENCE_TYPE_ID',
-				$audienceTypeId
-			)->registerRuntimeField(
-				(new Reference(
-					'UP_SCHEDULE_AUDIENCE_TYPE', AudienceTypeTable::class, Join::on('this.AUDIENCE_TYPE_ID', 'ref.ID')
-				))
-			)->fetchCollection();
+			'AUDIENCE_TYPE_ID',
+			$audienceTypeId
+		)->registerRuntimeField(
+			(new Reference(
+				'UP_SCHEDULE_AUDIENCE_TYPE', AudienceTypeTable::class, Join::on('this.AUDIENCE_TYPE_ID', 'ref.ID')
+			))
+		)->fetchCollection();
 	}
 
 	public static function getByNumber(string $number): ?EO_Audience
 	{
-		return AudienceTable::query()
-							->setSelect(['ID', 'NUMBER', 'AUDIENCE_TYPE.TITLE'])
-							->where('NUMBER', $number)
+		return AudienceTable::query()->setSelect(['ID', 'NUMBER', 'AUDIENCE_TYPE.TITLE'])->where('NUMBER', $number)
 							->fetchObject();
 	}
 
@@ -156,30 +177,31 @@ class AudienceRepository
 	{
 		$subject = SubjectRepository::getArrayById($id);
 		$audienceTypeId = $subject['AUDIENCE_TYPE_ID'];
-		return AudienceTable::query()
-			->setSelect(['ID', 'NUMBER', 'TYPE' => 'UP_SCHEDULE_AUDIENCE_TYPE'])
-			->where('AUDIENCE_TYPE_ID', $audienceTypeId)
-			->registerRuntimeField(
+
+		return AudienceTable::query()->setSelect(['ID', 'NUMBER', 'TYPE' => 'UP_SCHEDULE_AUDIENCE_TYPE'])->where(
+				'AUDIENCE_TYPE_ID',
+				$audienceTypeId
+			)->registerRuntimeField(
 				(new Reference(
 					'UP_SCHEDULE_AUDIENCE_TYPE', AudienceTypeTable::class, Join::on('this.AUDIENCE_TYPE_ID', 'ref.ID')
-				)))
-			->fetchAll();
+				))
+			)->fetchAll();
 	}
-//	public static function getArrayOfAudiencesBySubjectsId(array $id): ?array
-//	{
-//		$subjects = SubjectRepository::getArrayByIds($id);
-//
-//		/*$audiencesTypeId = $subject['AUDIENCE_TYPE_ID'];*/
-//		return AudienceTable::query()
-//			->setSelect(['ID', 'NUMBER', 'TYPE' => 'UP_SCHEDULE_AUDIENCE_TYPE'])
-//			->setGroup([''])
-//			->whereIn('AUDIENCE_TYPE_ID', $audiencesTypeId)
-//			->registerRuntimeField(
-//				(new Reference(
-//					'UP_SCHEDULE_AUDIENCE_TYPE', AudienceTypeTable::class, Join::on('this.AUDIENCE_TYPE_ID', 'ref.ID')
-//				)))
-//			->fetchAll();
-//	}
+	//	public static function getArrayOfAudiencesBySubjectsId(array $id): ?array
+	//	{
+	//		$subjects = SubjectRepository::getArrayByIds($id);
+	//
+	//		/*$audiencesTypeId = $subject['AUDIENCE_TYPE_ID'];*/
+	//		return AudienceTable::query()
+	//			->setSelect(['ID', 'NUMBER', 'TYPE' => 'UP_SCHEDULE_AUDIENCE_TYPE'])
+	//			->setGroup([''])
+	//			->whereIn('AUDIENCE_TYPE_ID', $audiencesTypeId)
+	//			->registerRuntimeField(
+	//				(new Reference(
+	//					'UP_SCHEDULE_AUDIENCE_TYPE', AudienceTypeTable::class, Join::on('this.AUDIENCE_TYPE_ID', 'ref.ID')
+	//				)))
+	//			->fetchAll();
+	//	}
 
 	public static function deleteAllFromDB(): string
 	{

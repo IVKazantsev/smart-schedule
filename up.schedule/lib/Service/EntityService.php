@@ -56,14 +56,6 @@ class EntityService
 		'Воскресенье',
 	];
 
-	// public static function getRoleStringOfCurrentUser(): string
-	// {
-	// 	$user = CurrentUser::get();
-	// 	$role = RoleRepository::getRoleByUserId($user->getId());
-	//
-	// 	return $role;
-	// }
-
 	public static function getEntityById(string $entityName, int $entityId): ?array
 	{
 		try

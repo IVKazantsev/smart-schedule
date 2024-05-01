@@ -217,7 +217,7 @@ a:hover {
 	position: absolute;
 	background-color: rgba(0, 0, 0, 0.3);
 	border-radius: 6px;
-	transition: top 1s ease;
+	transition: top 0.5s ease;
 }
 
 #main-content-of-admin-panel {
@@ -244,6 +244,14 @@ a:hover {
 	text-overflow: ellipsis;
 	overflow: hidden;
 	white-space: nowrap;
+}
+
+.pagination-link, .pagination-previous , .pagination-next {
+	background-color: white !important;
+}
+
+.pagination-link.is-current {
+	background-color: #485fc7 !important;
 }
 
 /*#current-entity:focus::-webkit-input-placeholder { color:transparent; }*/
