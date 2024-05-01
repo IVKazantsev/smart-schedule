@@ -102,7 +102,7 @@ class AudienceTypeRepository
 			->fetchAll();
 	}
 
-	public static function getPageWithArrays(int $entityPerPage, int $pageNumber): array
+	public static function getPageWithArrays(int $entityPerPage, int $pageNumber, string $searchInput): array
 	{
 		$offset = 0;
 		if($pageNumber > 1)
@@ -112,16 +112,18 @@ class AudienceTypeRepository
 
 		return AudienceTypeTable::query()
 			->setSelect(['ID', 'TITLE'])
+			->whereLike('TITLE', "%$searchInput%")
 			->setLimit($entityPerPage + 1)
 			->setOffset($offset)
 			->setOrder('ID')
 			->fetchAll();
 	}
 
-	public static function getCountOfEntities(): int
+	public static function getCountOfEntities(string $searchInput): int
 	{
 		$result = AudienceTypeTable::query()
 							   ->addSelect(Query::expr()->count('ID'), 'CNT')
+							   ->whereLike('TITLE', "%$searchInput%")
 							   ->exec();
 		return $result->fetch()['CNT'];
 	}

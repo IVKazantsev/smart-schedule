@@ -15,7 +15,7 @@ class AdminPanel extends Controller
 {
 	private const ENTITY_PER_PAGE = 5;
 
-	public function getEntityListAction(string $entityName, int $pageNumber = 1): array
+	public function getEntityListAction(string $entityName, int $pageNumber = 1, string $searchInput = ''): array
 	{
 		if($pageNumber < 1)
 		{
@@ -29,8 +29,8 @@ class AdminPanel extends Controller
 			$this->addError(new Error('entity must exist and be allowed', 'invalid_entity_name'));
 		}
 
-		$entityList = $repository::getPageWithArrays(self::ENTITY_PER_PAGE, $pageNumber);
-		$countOfEntities = $repository::getCountOfEntities();
+		$entityList = $repository::getPageWithArrays(self::ENTITY_PER_PAGE, $pageNumber, $searchInput);
+		$countOfEntities = $repository::getCountOfEntities($searchInput);
 
 		$doesNextPageExist = false;
 		if(array_key_exists(self::ENTITY_PER_PAGE, $entityList))

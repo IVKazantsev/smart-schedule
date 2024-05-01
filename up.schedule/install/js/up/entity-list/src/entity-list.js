@@ -165,9 +165,9 @@ export class EntityList
 		this.reload();
 	}
 
-	reload(pageNumber = 1)
+	reload(pageNumber = 1, searchInput = '')
 	{
-		this.loadList(pageNumber)
+		this.loadList(pageNumber, searchInput)
 			.then((data) => {
 				this.entityList = data.entityList;
 				this.pageNumber = data.pageNumber;
@@ -179,7 +179,7 @@ export class EntityList
 			});
 	}
 
-	loadList(pageNumber = 1)
+	loadList(pageNumber = 1, searchInput = '')
 	{
 		return new Promise((resolve, reject) => {
 			BX.ajax.runAction(
@@ -189,11 +189,12 @@ export class EntityList
 						{
 							entityName: this.entity,
 							pageNumber: pageNumber,
+							searchInput: searchInput,
 						},
 				},
 			).then((response) => {
 					const data = response.data;
-
+console.log(data);
 					resolve(data);
 				})
 				.catch((error) => {

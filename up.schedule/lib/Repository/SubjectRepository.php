@@ -28,7 +28,7 @@ class SubjectRepository
 		return SubjectTable::query()->setSelect(['ID', 'TITLE'])->fetchAll();
 	}
 
-	public static function getPageWithArrays(int $entityPerPage, int $pageNumber): array
+	public static function getPageWithArrays(int $entityPerPage, int $pageNumber, string $searchInput): array
 	{
 		$offset = 0;
 		if ($pageNumber > 1)
@@ -37,16 +37,18 @@ class SubjectRepository
 		}
 
 		return SubjectTable::query()->setSelect(['ID', 'TITLE'])
+						->whereLike('TITLE', "%$searchInput%")
 						->setLimit($entityPerPage + 1)
 						->setOffset($offset)
 						->setOrder('ID')
 						->fetchAll();
 	}
 
-	public static function getCountOfEntities(): int
+	public static function getCountOfEntities(string $searchInput): int
 	{
 		$result = SubjectTable::query()
 							->addSelect(Query::expr()->count('ID'), 'CNT')
+							->whereLike('TITLE', "%$searchInput%")
 							->exec();
 		return $result->fetch()['CNT'];
 	}

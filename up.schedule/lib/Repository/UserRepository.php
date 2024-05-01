@@ -62,7 +62,7 @@ class UserRepository
 		)->fetchAll();
 	}
 
-	public static function getPageWithArrays(int $entityPerPage, int $pageNumber): array
+	public static function getPageWithArrays(int $entityPerPage, int $pageNumber, string $searchInput): array
 	{
 		$offset = 0;
 		if ($pageNumber > 1)
@@ -77,6 +77,11 @@ class UserRepository
 												 'EMAIL',
 												 'ROLE' => 'UP_SCHEDULE_ROLE.TITLE',
 											 ])
+								 ->where(Query::filter()
+											  ->logic('or')
+											  ->whereLike('NAME', "%$searchInput%")
+											  ->whereLike('LAST_NAME', "%$searchInput%")
+								 )
 								 ->registerRuntimeField(
 									 (new Reference(
 										 'UP_SCHEDULE_ROLE',
@@ -89,11 +94,16 @@ class UserRepository
 								 ->fetchAll();
 	}
 
-	public static function getCountOfEntities(): int
+	public static function getCountOfEntities(string $searchInput): int
 	{
 		$result = UserTable::query()
-							  ->addSelect(Query::expr()->count('ID'), 'CNT')
-							  ->exec();
+						   ->addSelect(Query::expr()->count('ID'), 'CNT')
+						   ->where(Query::filter()
+										->logic('or')
+										->whereLike('NAME', "%$searchInput%")
+										->whereLike('LAST_NAME', "%$searchInput%")
+						   )
+						   ->exec();
 		return $result->fetch()['CNT'];
 	}
 

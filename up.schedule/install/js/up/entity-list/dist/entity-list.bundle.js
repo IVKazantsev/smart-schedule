@@ -69,7 +69,8 @@ this.BX.Up = this.BX.Up || {};
 	    value: function reload() {
 	      var _this = this;
 	      var pageNumber = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 1;
-	      this.loadList(pageNumber).then(function (data) {
+	      var searchInput = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : '';
+	      this.loadList(pageNumber, searchInput).then(function (data) {
 	        _this.entityList = data.entityList;
 	        _this.pageNumber = data.pageNumber;
 	        _this.doesNextPageExist = data.doesNextPageExist;
@@ -83,14 +84,17 @@ this.BX.Up = this.BX.Up || {};
 	    value: function loadList() {
 	      var _this2 = this;
 	      var pageNumber = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 1;
+	      var searchInput = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : '';
 	      return new Promise(function (resolve, reject) {
 	        BX.ajax.runAction('up:schedule.api.adminPanel.getEntityList', {
 	          data: {
 	            entityName: _this2.entity,
-	            pageNumber: pageNumber
+	            pageNumber: pageNumber,
+	            searchInput: searchInput
 	          }
 	        }).then(function (response) {
 	          var data = response.data;
+	          console.log(data);
 	          resolve(data);
 	        })["catch"](function (error) {
 	          reject(error);
