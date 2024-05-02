@@ -37,6 +37,9 @@ use Bitrix\Main\Application;
 				<?php
 				if (is_array($field)): ?>
 					<label class="label"><?= GetMessage($key) ?></label>
+					<?php if(GetMessage('CHANGE_' . $key . '_WARNING')): ?>
+						<div class="has-text-danger"><?= GetMessage('CHANGE_' . $key . '_WARNING') ?></div>
+					<?php endif; ?>
 					<?php
 					if ($key === 'SUBJECTS'): ?>
 						<?php

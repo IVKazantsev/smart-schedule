@@ -210,6 +210,10 @@ class SubjectRepository
 		{
 			$subject->setTitle($data['TITLE']);
 		}
+		if($subject->getAudienceTypeId() !== $type->getId())
+		{
+			CoupleTable::deleteByFilter(['SUBJECT_ID' => $id]);
+		}
 		$subject->setAudienceType($type)->save();
 		// TODO: handle exceptions
 	}

@@ -120,7 +120,12 @@ class AudienceRepository
 		{
 			$audience->setNumber($data['NUMBER']);
 		}
-		$audience->setAudienceType($type);
+
+		if($audience->getAudienceTypeId() !== $type->getId())
+		{
+			CoupleTable::deleteByFilter(['AUDIENCE_ID' => $id]);
+			$audience->setAudienceType($type);
+		}
 		$audience->save();
 		// TODO: handle exceptions
 	}
