@@ -8,7 +8,7 @@ export class DisplayScheduleEntitiesList
 	currentEntity = undefined;
 	defaultEntity = 'group';
 
-	constructor(options = {})
+	constructor(options = {}, dataSourceIsDb = true)
 	{
 		if (Type.isStringFilled(options.rootNodeId))
 		{
@@ -34,7 +34,7 @@ export class DisplayScheduleEntitiesList
 		{
 			throw new Error(`CouplesList: element with id = "${this.rootNodeId}" not found`);
 		}
-
+		this.dataSourceIsDb = dataSourceIsDb;
 		this.entitiesList = [];
 		this.reload();
 	}
@@ -84,10 +84,15 @@ export class DisplayScheduleEntitiesList
 		this.rootNode.innerHTML = '';
 		this.entityList.forEach((entity) => {
 			let entityLink;
+			let linkPrefix = '';
+			if (!this.dataSourceIsDb)
+			{
+				linkPrefix = '/scheduling/preview';
+			}
 			if(this.currentEntity)
 			{
 				entityLink = Tag.render`
-				<a href="/${this.entity}/${entity['ID']}/"
+				<a href="${linkPrefix}/${this.entity}/${entity['ID']}/"
 				class="dropdown-item ${(entity['ID'] === this.currentEntity['ID']) ? 'is-active' : ''}">
 				${Loc.getMessage(this.locEntity)} ${entity['NAMING']}
 				</a>
@@ -97,7 +102,7 @@ export class DisplayScheduleEntitiesList
 			{
 				document.getElementById('current-entity').textContent = Loc.getMessage('SELECT_' + this.locEntity);
 				entityLink = Tag.render`
-				<a href="/${this.entity}/${entity['ID']}/"
+				<a href="${linkPrefix}/${this.entity}/${entity['ID']}/"
 				class="dropdown-item">
 				${Loc.getMessage(this.locEntity)} ${entity['NAMING']}
 				</a>

@@ -4,6 +4,7 @@ namespace Up\Schedule\AutomaticSchedule;
 
 use Bitrix\Main\EO_User;
 use Bitrix\Main\EO_User_Collection;
+use Up\Schedule\Model\CoupleTable;
 use Up\Schedule\Model\EO_Audience;
 use Up\Schedule\Model\EO_Audience_Collection;
 use Up\Schedule\Model\EO_Couple;
@@ -16,13 +17,64 @@ use Up\Schedule\Repository\UserRepository;
 //TODO:Исправить возможность создания с накладками по парам у групп
 class GeneticPerson
 {
-	private int $fitness;
+	private int $fitness = PHP_INT_MAX;
 
 	// Группы с неполным расписанием
 	private EO_Group_Collection $groups;
 
 	// Коллекция всех расставленных пар
 	public EO_Couple_Collection $couples;
+
+	public function __serialize(): array
+	{
+
+		return [
+			'couples' => self::coupleCollectionToArray($this->couples),
+			'fitness' => $this->fitness,
+		];
+	}
+	public function __unserialize(array $data): void
+	{
+		$this->couples = self::coupleArrayToCollection($data['couples']);
+		$this->fitness = $data['fitness'];
+	}
+
+	public static function coupleCollectionToArray(EO_Couple_Collection $collectionOfCouples): array
+	{
+		$result = [];
+		foreach ($collectionOfCouples as $item)
+		{
+			$values = $item->collectValues();
+			$result[] = [
+				'COUPLE_NUMBER_IN_DAY' => $values['COUPLE_NUMBER_IN_DAY'],
+				'AUDIENCE_ID' => $values['AUDIENCE_ID'],
+				'AUDIENCE' => $values['AUDIENCE']->collectValues(),
+				'GROUP_ID' => $values['GROUP_ID'],
+				'GROUP' => $values['GROUP']->collectValues(),
+				'SUBJECT_ID' => $values['SUBJECT_ID'],
+				'SUBJECT' => $values['SUBJECT']->collectValues(),
+				'TEACHER_ID' => $values['TEACHER_ID'],
+				'TEACHER' => $values['TEACHER']->collectValues(),
+				'WEEK_DAY' => $values['WEEK_DAY']
+			];
+			/*$result[] = [
+				'COUPLE_NUMBER_IN_DAY' => $values['COUPLE_NUMBER_IN_DAY'],
+				'AUDIENCE_ID' => $values['AUDIENCE_ID'],
+				'GROUP_ID' => $values['GROUP_ID'],
+				'SUBJECT_ID' => $values['SUBJECT_ID'],
+				'TEACHER_ID' => $values['TEACHER_ID'],
+				'WEEK_DAY' => $values['WEEK_DAY']
+			];*/
+		}
+		return $result;
+	}
+
+	private static function coupleArrayToCollection(array $arrayOfCouples): EO_Couple_Collection
+	{
+		$result = [];
+
+		return CoupleTable::wakeUpCollection($arrayOfCouples);
+	}
 
 	public function setCouples(EO_Couple_Collection $couples): void
 	{
@@ -90,9 +142,23 @@ class GeneticPerson
 					$couple->getSubject()->getId()
 				);
 
-			$this->freeCouplesForGroups[$couple->getGroup()->getId()]
+			/*$this->freeCouplesForGroups[$couple->getGroup()->getId()]
 			[$couple->getWeekDay()]
-			[$couple->getCoupleNumberInDay()]?->removeByPrimary($couple->getSubject()->getId());
+			[$couple->getCoupleNumberInDay()]?->removeByPrimary($couple->getSubject()->getId());*/
+			foreach ($this->freeCouplesForGroups[$couple->getGroupId()] as $dayKey => $day)
+			{
+				foreach ($day as $coupleKey => $subjectCollection)
+				{
+					/*if ($subjectCollection->hasByPrimary($couple->getSubjectId()))
+					{*/
+						$this->freeCouplesForGroups[$couple->getGroupId()][$dayKey][$coupleKey]?->removeByPrimary(
+							$couple->getSubjectId()
+						);
+					/*}*/
+				}
+			}
+			unset($this->freeCouplesForGroups[$couple->getGroupId()][$couple->getWeekDay()][$couple->getCoupleNumberInDay()]);
+
 
 			$this->freeTeachersInCouple[$couple->getWeekDay()]
 			[$couple->getCoupleNumberInDay()]?->removeByPrimary($couple->getTeacher()->getId());
@@ -216,6 +282,19 @@ class GeneticPerson
 				continue;
 			}
 			$randTeacher = $this->getRandEntityFromCollection($suitableTeachers);
+			/*foreach ($this->freeCouplesForGroups[$randGroup->getId()] as $dayKey => $day)
+			{
+				foreach ($day as $coupleKey => $subjectCollection)
+				{
+					if ($subjectCollection->hasByPrimary($randSubject->getId()))
+					{
+						$this->freeCouplesForGroups[$randGroup->getId()][$dayKey][$coupleKey]?->removeByPrimary(
+							$randSubject->getId()
+						);
+					}
+				}
+			}*/
+
 			break;
 		}
 

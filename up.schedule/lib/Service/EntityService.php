@@ -508,7 +508,7 @@ class EntityService
 		return '';
 	}
 
-	private static function addCouplesToDB(array $couples): string
+	public static function addCouplesToDB(array $couples): string
 	{
 		$couplesCollection = new EO_Couple_Collection();
 		foreach ($couples as $couple)
@@ -545,8 +545,13 @@ class EntityService
 			$couple->setSubject($subject);
 			$couple->setAudience($audience);
 			$couple->setTeacher($teacher);
-			$dayNumberOfWeek = array_search($dayOfWeek, self::$daysOfWeek, true);
-			$couple->setWeekDay($dayNumberOfWeek);
+
+			if (is_string($dayOfWeek))
+			{
+				$dayOfWeek = array_search($dayOfWeek, self::$daysOfWeek, true);
+			}
+
+			$couple->setWeekDay($dayOfWeek);
 			$couple->setCoupleNumberInDay($numberOfCoupleInDay);
 
 			$couplesCollection->add($couple);

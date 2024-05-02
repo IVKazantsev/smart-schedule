@@ -30,9 +30,15 @@ return static function(RoutingConfigurator $routes) {
 
 	$routes->get('/profile/', new PublicPageController('/local/modules/up.schedule/views/profile.php'));
 	$routes->get('/admin/', new PublicPageController('/local/modules/up.schedule/views/admin.php'));
-	$routes->get('/scheduling/', new PublicPageController('/local/modules/up.schedule/views/scheduling.php'));
 	$routes->get('/optimize/', new PublicPageController('/local/modules/up.schedule/views/optimize.php'));
 	$routes->get('/statistics/', new PublicPageController('/local/modules/up.schedule/views/statistics.php'));
+
+	$routes->get('/scheduling/', new PublicPageController('/local/modules/up.schedule/views/scheduling.php'));
+	$routes->get('/scheduling/preview/', new PublicPageController('/local/modules/up.schedule/views/scheduling-preview.php'));
+	$routes->get('/scheduling/preview/{entity}/{id}/', new PublicPageController('/local/modules/up.schedule/views/scheduling-preview.php'))
+		->where('entity', '[a-zA-Z]+')
+		->where('id', '[0-9]+')
+	;
 
 	$routes
 		->where('entity', '[a-zA-Z]+')

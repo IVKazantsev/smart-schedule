@@ -8,6 +8,7 @@ this.BX.Up = this.BX.Up || {};
 	var DisplayScheduleEntitiesList = /*#__PURE__*/function () {
 	  function DisplayScheduleEntitiesList() {
 	    var options = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+	    var dataSourceIsDb = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : true;
 	    babelHelpers.classCallCheck(this, DisplayScheduleEntitiesList);
 	    babelHelpers.defineProperty(this, "entitiesList", []);
 	    babelHelpers.defineProperty(this, "entity", undefined);
@@ -29,6 +30,7 @@ this.BX.Up = this.BX.Up || {};
 	    if (!this.rootNode) {
 	      throw new Error("CouplesList: element with id = \"".concat(this.rootNodeId, "\" not found"));
 	    }
+	    this.dataSourceIsDb = dataSourceIsDb;
 	    this.entitiesList = [];
 	    this.reload();
 	  }
@@ -75,11 +77,15 @@ this.BX.Up = this.BX.Up || {};
 	      this.rootNode.innerHTML = '';
 	      this.entityList.forEach(function (entity) {
 	        var entityLink;
+	        var linkPrefix = '';
+	        if (!_this3.dataSourceIsDb) {
+	          linkPrefix = '/scheduling/preview';
+	        }
 	        if (_this3.currentEntity) {
-	          entityLink = main_core.Tag.render(_templateObject || (_templateObject = babelHelpers.taggedTemplateLiteral(["\n\t\t\t\t<a href=\"/", "/", "/\"\n\t\t\t\tclass=\"dropdown-item ", "\">\n\t\t\t\t", " ", "\n\t\t\t\t</a>\n\t\t\t"])), _this3.entity, entity['ID'], entity['ID'] === _this3.currentEntity['ID'] ? 'is-active' : '', main_core.Loc.getMessage(_this3.locEntity), entity['NAMING']);
+	          entityLink = main_core.Tag.render(_templateObject || (_templateObject = babelHelpers.taggedTemplateLiteral(["\n\t\t\t\t<a href=\"", "/", "/", "/\"\n\t\t\t\tclass=\"dropdown-item ", "\">\n\t\t\t\t", " ", "\n\t\t\t\t</a>\n\t\t\t"])), linkPrefix, _this3.entity, entity['ID'], entity['ID'] === _this3.currentEntity['ID'] ? 'is-active' : '', main_core.Loc.getMessage(_this3.locEntity), entity['NAMING']);
 	        } else {
 	          document.getElementById('current-entity').textContent = main_core.Loc.getMessage('SELECT_' + _this3.locEntity);
-	          entityLink = main_core.Tag.render(_templateObject2 || (_templateObject2 = babelHelpers.taggedTemplateLiteral(["\n\t\t\t\t<a href=\"/", "/", "/\"\n\t\t\t\tclass=\"dropdown-item\">\n\t\t\t\t", " ", "\n\t\t\t\t</a>\n\t\t\t"])), _this3.entity, entity['ID'], main_core.Loc.getMessage(_this3.locEntity), entity['NAMING']);
+	          entityLink = main_core.Tag.render(_templateObject2 || (_templateObject2 = babelHelpers.taggedTemplateLiteral(["\n\t\t\t\t<a href=\"", "/", "/", "/\"\n\t\t\t\tclass=\"dropdown-item\">\n\t\t\t\t", " ", "\n\t\t\t\t</a>\n\t\t\t"])), linkPrefix, _this3.entity, entity['ID'], main_core.Loc.getMessage(_this3.locEntity), entity['NAMING']);
 	        }
 	        _this3.rootNode.appendChild(entityLink);
 	        _this3.dropdownsListeners();
