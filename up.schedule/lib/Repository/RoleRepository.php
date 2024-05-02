@@ -25,15 +25,15 @@ class RoleRepository
 			->fetchAll();
 	}
 
-	// public static function getRoleByUserId(int $id): ?string
-	// {
-	// 	return RoleTable::query()->setSelect([
-	// 									  'ID',
-	// 									  'TITLE',
-	// 								  ])->registerRuntimeField(
-	// 		(new Reference(
-	// 			'b_uts_user', UserTable::class, Join::on('this.ID', 'ref.UF_ROLE_ID')
-	// 		))
-	// 	)->where('b_uts_user.VALUE_ID', $id)->getQuery();
-	// }
+	public static function getRoleByUserId(int $id): ?string
+	{
+		return RoleTable::query()->setSelect([
+										  'ID',
+										  'TITLE',
+									  ])->registerRuntimeField(
+			(new Reference(
+				'b_uts_user', UserTable::class, Join::on('this.ID', 'ref.UF_ROLE_ID')
+			))
+		)->where('b_uts_user.VALUE_ID', $id)->getQuery();
+	}
 }

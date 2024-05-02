@@ -577,4 +577,9 @@ class EntityService
 
 		return '';
 	}
+
+	public static function isCurrentUserAdmin(): bool
+	{
+		return CurrentUser::get()->isAdmin();
+	}
 }
