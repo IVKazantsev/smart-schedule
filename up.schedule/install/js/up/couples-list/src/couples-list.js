@@ -1,14 +1,15 @@
-import { Tag, Type } from 'main.core';
+import { Tag, Type, Loc } from 'main.core';
+import { Validator } from '../../validator/src/validator';
 
 export class CouplesList {
 	formData = {};
 	daysOfWeek = {
-		1: 'Понедельник',
-		2: 'Вторник',
-		3: 'Среда',
-		4: 'Четверг',
-		5: 'Пятница',
-		6: 'Суббота',
+		1: Loc.getMessage('DAY_1_OF_WEEK'),
+		2: Loc.getMessage('DAY_2_OF_WEEK'),
+		3: Loc.getMessage('DAY_3_OF_WEEK'),
+		4: Loc.getMessage('DAY_4_OF_WEEK'),
+		5: Loc.getMessage('DAY_5_OF_WEEK'),
+		6: Loc.getMessage('DAY_6_OF_WEEK'),
 	};
 	entityId = undefined;
 	entity = undefined;
@@ -146,13 +147,14 @@ export class CouplesList {
 				{
 					coupleTextContainer = Tag.render`
 						<div class="couple-text">
-							<p>${this.coupleList[day][i].UP_SCHEDULE_MODEL_COUPLE_SUBJECT_TITLE}</p>
+							<p>${Validator.escapeHTML(this.coupleList[day][i].UP_SCHEDULE_MODEL_COUPLE_SUBJECT_TITLE)}</p>
 							<p hidden id="subjectId-${day}-${i}">${this.coupleList[day][i].UP_SCHEDULE_MODEL_COUPLE_SUBJECT_ID}</p>
-							<p>${this.coupleList[day][i].UP_SCHEDULE_MODEL_COUPLE_AUDIENCE_NUMBER}</p>
+							<p>${Validator.escapeHTML(this.coupleList[day][i].UP_SCHEDULE_MODEL_COUPLE_AUDIENCE_NUMBER)}</p>
 							<p hidden id="audienceId-${day}-${i}">${this.coupleList[day][i].UP_SCHEDULE_MODEL_COUPLE_AUDIENCE_ID}</p>
-							<p>${this.coupleList[day][i].UP_SCHEDULE_MODEL_COUPLE_GROUP_TITLE}</p>
+							<p>${Validator.escapeHTML(this.coupleList[day][i].UP_SCHEDULE_MODEL_COUPLE_GROUP_TITLE)}</p>
 							<p hidden id="groupId-${day}-${i}">${this.coupleList[day][i].UP_SCHEDULE_MODEL_COUPLE_GROUP_ID}</p>
-							<p>${this.coupleList[day][i].UP_SCHEDULE_MODEL_COUPLE_TEACHER_NAME} ${this.coupleList[day][i].UP_SCHEDULE_MODEL_COUPLE_TEACHER_LAST_NAME}</p>
+							<p>${Validator.escapeHTML(this.coupleList[day][i].UP_SCHEDULE_MODEL_COUPLE_TEACHER_NAME)}
+							   ${Validator.escapeHTML(this.coupleList[day][i].UP_SCHEDULE_MODEL_COUPLE_TEACHER_LAST_NAME)}</p>
 							<p hidden id="teacherId-${day}-${i}">${this.coupleList[day][i].UP_SCHEDULE_MODEL_COUPLE_TEACHER_ID}</p>
 						</div>
 					`;
@@ -162,7 +164,7 @@ export class CouplesList {
 						const removeCoupleButton = Tag.render`
 						<button 
 						data-target="modal-js-example" type="button" id="button-remove-${day}-${i}" class="js-modal-trigger dropdown-item btn-remove-couple button is-clickable is-small is-primary is-light">
-							Удалить
+							${Loc.getMessage('DELETE')}
 						</button>
 					`;
 					removeCoupleButton.addEventListener('click', () => {
@@ -172,7 +174,7 @@ export class CouplesList {
 					const editCoupleButton = Tag.render`
 						<button 
 						data-target="modal-js-example" type="button" id="button-edit-${day}-${i}" class="js-modal-trigger dropdown-item btn-edit-couple button is-clickable is-small is-primary is-light mb-1">
-							Изменить
+							${Loc.getMessage('EDIT')}
 						</button>
 					`;
 					editCoupleButton.addEventListener('click', () => {
@@ -188,7 +190,7 @@ export class CouplesList {
 					const addCoupleButton = Tag.render`
 						<button 
 						data-target="modal-js-example" type="button" id="button-add-${day}-${i}" class="js-modal-trigger dropdown-item btn-add-couple button is-clickable is-small is-primary is-light">
-							Добавить
+							${Loc.getMessage('ADD')}
 						</button>
 					`;
 
@@ -228,8 +230,6 @@ export class CouplesList {
 
 				btnContainer.appendChild(dropdownTrigger);
 				btnContainer.appendChild(dropdownMenu);
-
-				//coupleContainer.appendChild(some);
 
 				coupleContainer.appendChild(btnContainer);
 			}
@@ -313,28 +313,6 @@ export class CouplesList {
 		cancelButton.addEventListener('click', () => {
 			this.closeCoupleModal();
 		}, { once: true });
-
-		/*const form = document.getElementById('add-edit-form');*/
-
-// 		`<div class="is-60-height box edit-fields">
-// \t\t\t<?php if (is_array($field)): ?>
-// \t\t\t\t<label class="label"><?= GetMessage($key) ?></label>
-// \t\t\t\t\t<div class="control">
-// \t\t\t\t\t\t<div class="select">
-// \t\t\t\t\t\t\t<label>
-// \t\t\t\t\t\t\t\t<select name="<?= $key ?>">
-// \t\t\t\t\t\t\t\t\t<?php foreach ($field as $keyOfField => $subfield): ?>
-// \t\t\t\t\t\t\t\t\t\t<option value="<?=$subfield['ID']?>">
-// \t\t\t\t\t\t\t\t\t\t\t<?=$subfield['TITLE']?>
-// \t\t\t\t\t\t\t\t\t\t</option>
-// \t\t\t\t\t\t\t\t\t<?php
-// \t\t\t\t\t\t\t\t\tendforeach; ?>
-// \t\t\t\t\t\t\t\t</select>
-// \t\t\t\t\t\t\t</label>
-// \t\t\t\t\t\t</div>
-// \t\t\t\t\t</div>
-// \t\t\t<?php endif; ?>
-// \t\t</div>`
 	}
 
 	sendForm(numberOfDay, numberOfCouple, typeOfRequest)
@@ -427,7 +405,7 @@ export class CouplesList {
 			}
 
 			const emptyForm = Tag.render`
-				<div id="empty-form">Добавлять больше нечего</div>
+				<div id="empty-form">${Loc.getMessage('EMPTY_ADD_MESSAGE')}</div>
 			`;
 
 			modalBody.appendChild(emptyForm);
@@ -444,7 +422,7 @@ export class CouplesList {
 		subjectsList.forEach((subject) => {
 			const option = Tag.render`
 				<option value="${subject.subject.ID}">
-					${subject.subject.TITLE}
+					${Validator.escapeHTML(subject.subject.TITLE)}
 				</option>
 			`;
 			selectContainer.appendChild(option);
@@ -452,7 +430,7 @@ export class CouplesList {
 
 		const container = Tag.render`<div class="is-60-height box edit-fields"></div>`;
 
-		const label = Tag.render`<label class="label">Предмет</label>`;
+		const label = Tag.render`<label class="label">${Loc.getMessage('SUBJECT')}</label>`;
 		const divControl = Tag.render`<div class="control"></div>`;
 		const divSelect = Tag.render`<div class="select"></div>`;
 		const underLabel = Tag.render`<label></label>`;
@@ -491,7 +469,7 @@ export class CouplesList {
 				subject.audiences.forEach((audience) => {
 					const option = Tag.render`
 						<option value="${audience.ID}">
-							${audience.NUMBER}
+							${Validator.escapeHTML(audience.NUMBER)}
 						</option>
 					`;
 					selectContainer.appendChild(option);
@@ -501,7 +479,7 @@ export class CouplesList {
 
 		const container = Tag.render`<div id="audience-container" class="is-60-height box edit-fields"></div>`;
 
-		const label = Tag.render`<label class="label">Аудитория</label>`;
+		const label = Tag.render`<label class="label">${Loc.getMessage('AUDIENCE')}</label>`;
 		const divControl = Tag.render`<div class="control"></div>`;
 		const divSelect = Tag.render`<div class="select"></div>`;
 		const underLabel = Tag.render`<label></label>`;
@@ -532,7 +510,7 @@ export class CouplesList {
 				subject.groups.forEach((group) => {
 					const option = Tag.render`
 						<option value="${group.ID}">
-							${group.TITLE}
+							${Validator.escapeHTML(group.TITLE)}
 						</option>
 					`;
 					selectContainer.appendChild(option);
@@ -542,7 +520,7 @@ export class CouplesList {
 
 		const container = Tag.render`<div id="group-container" class="is-60-height box edit-fields"></div>`;
 
-		const label = Tag.render`<label class="label">Группа</label>`;
+		const label = Tag.render`<label class="label">${Loc.getMessage('GROUP')}</label>`;
 		const divControl = Tag.render`<div class="control"></div>`;
 		const divSelect = Tag.render`<div class="select"></div>`;
 		const underLabel = Tag.render`<label></label>`;
@@ -573,7 +551,7 @@ export class CouplesList {
 				subject.teachers.forEach((teacher) => {
 					const option = Tag.render`
 						<option value="${teacher.ID}">
-							${teacher.NAME} ${teacher.LAST_NAME}
+							${Validator.escapeHTML(teacher.NAME)} ${Validator.escapeHTML(teacher.LAST_NAME)}
 						</option>
 					`;
 					selectContainer.appendChild(option);
@@ -583,7 +561,7 @@ export class CouplesList {
 
 		const container = Tag.render`<div id="teacher-container" class="is-60-height box edit-fields"></div>`;
 
-		const label = Tag.render`<label class="label">Преподаватели</label>`;
+		const label = Tag.render`<label class="label">${Loc.getMessage('TEACHERS')}</label>`;
 		const divControl = Tag.render`<div class="control"></div>`;
 		const divSelect = Tag.render`<div class="select"></div>`;
 		const underLabel = Tag.render`<label></label>`;

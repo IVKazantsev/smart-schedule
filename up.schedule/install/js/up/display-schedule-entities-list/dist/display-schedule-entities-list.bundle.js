@@ -4,6 +4,19 @@ this.BX.Up = this.BX.Up || {};
 (function (exports,main_core) {
 	'use strict';
 
+	var Validator = /*#__PURE__*/function () {
+	  function Validator() {
+	    babelHelpers.classCallCheck(this, Validator);
+	  }
+	  babelHelpers.createClass(Validator, null, [{
+	    key: "escapeHTML",
+	    value: function escapeHTML(text) {
+	      return text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
+	    }
+	  }]);
+	  return Validator;
+	}();
+
 	var _templateObject, _templateObject2, _templateObject3;
 	var DisplayScheduleEntitiesList = /*#__PURE__*/function () {
 	  function DisplayScheduleEntitiesList() {
@@ -52,7 +65,6 @@ this.BX.Up = this.BX.Up || {};
 	      this.loadList().then(function (data) {
 	        _this.entityList = data.entities;
 	        _this.suitableEntityList = data.entities;
-	        console.log(data);
 	        _this.currentEntity = data.currentEntity;
 	        _this.locEntity = data.locEntity;
 	        _this.render();
@@ -107,13 +119,13 @@ this.BX.Up = this.BX.Up || {};
 	      this.suitableEntityList.forEach(function (entity) {
 	        var entityLink;
 	        if (_this3.currentEntity) {
-	          entityLink = main_core.Tag.render(_templateObject2 || (_templateObject2 = babelHelpers.taggedTemplateLiteral(["\n\t\t\t\t<a href=\"/", "/", "/\"\n\t\t\t\tclass=\"dropdown-item ", "\">\n\t\t\t\t", "\n\t\t\t\t</a>\n\t\t\t"])), _this3.entity, entity['ID'], entity['ID'] === _this3.currentEntity['ID'] ? 'is-active' : '', entity['NAMING']);
+	          entityLink = main_core.Tag.render(_templateObject2 || (_templateObject2 = babelHelpers.taggedTemplateLiteral(["\n\t\t\t\t<a href=\"/", "/", "/\"\n\t\t\t\tclass=\"dropdown-item ", "\">\n\t\t\t\t", "\n\t\t\t\t</a>\n\t\t\t"])), _this3.entity, entity['ID'], entity['ID'] === _this3.currentEntity['ID'] ? 'is-active' : '', Validator.escapeHTML(entity['NAMING']));
 	        } else {
 	          if (isStateChanged) {
 	            document.getElementById('entity-selection-button').placeholder = main_core.Loc.getMessage('SELECT_' + _this3.locEntity);
 	            document.getElementById('entity-selection-button').value = '';
 	          }
-	          entityLink = main_core.Tag.render(_templateObject3 || (_templateObject3 = babelHelpers.taggedTemplateLiteral(["\n\t\t\t\t<a href=\"/", "/", "/\"\n\t\t\t\tclass=\"dropdown-item\">", "\n\t\t\t\t</a>\n\t\t\t"])), _this3.entity, entity['ID'], entity['NAMING']);
+	          entityLink = main_core.Tag.render(_templateObject3 || (_templateObject3 = babelHelpers.taggedTemplateLiteral(["\n\t\t\t\t<a href=\"/", "/", "/\"\n\t\t\t\tclass=\"dropdown-item\">", "\n\t\t\t\t</a>\n\t\t\t"])), Validator.escapeHTML(_this3.entity), entity['ID'], Validator.escapeHTML(entity['NAMING']));
 	        }
 	        _this3.rootNode.appendChild(entityLink);
 	        entityLink.addEventListener('click', function (event) {
@@ -130,7 +142,7 @@ this.BX.Up = this.BX.Up || {};
 	            dropdown.classList.remove('is-active');
 	          });
 	          entityLink.classList.add('is-active');
-	          document.getElementById('entity-selection-button').placeholder = main_core.Loc.getMessage(_this3.locEntity) + ' ' + entityLink.textContent;
+	          document.getElementById('entity-selection-button').placeholder = main_core.Loc.getMessage(_this3.locEntity) + ' ' + Validator.escapeHTML(entityLink.textContent);
 	          document.getElementById('entity-selection-button').value = '';
 	          if (history.pushState) {
 	            var newUrl = entityLink.href;

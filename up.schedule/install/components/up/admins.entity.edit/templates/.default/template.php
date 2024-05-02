@@ -20,7 +20,11 @@ use Bitrix\Main\Application;
 
 	<div id="back-button-container" class="mb-4">
 		<div class="column is-1 p-0">
-			<a id ="back-button" class="is-60-height box is-flex is-align-items-center is-justify-content-center" href="/admin/#<?= $arResult['ENTITY_NAME'] ?>"><?= GetMessage('BACK') ?></a>
+			<a id ="back-button"
+			   class="is-60-height box is-flex is-align-items-center is-justify-content-center"
+			   href="/admin/#<?= $arResult['ENTITY_NAME'] ?>">
+				<?= GetMessage('BACK') ?>
+			</a>
 		</div>
 	</div>
 
@@ -39,7 +43,7 @@ use Bitrix\Main\Application;
 						$allSubjectsString = '';
 						foreach ($field['ALL_SUBJECTS'] as $subjectId => $subjectTitle)
 						{
-							$allSubjectsString .= "<option value='$subjectId'> $subjectTitle</option>";
+							$allSubjectsString .= "<option value='$subjectId'> " . htmlspecialcharsbx($subjectTitle). "</option>";
 						}
 						?>
 						<div id="subjectContainer">
@@ -52,21 +56,17 @@ use Bitrix\Main\Application;
 										<div class="p-1 is-flex is-justify-content-space-between is-flex-wrap-nowrap is-align-items-center">
 											<div class="mb-2">
 												<input name="current_subject_<?=$subjectId?>" type="hidden">
-												<?=$subjectTitle?>
+												<?= htmlspecialcharsbx($subjectTitle) ?>
 											</div>
-											<!--<select class="mb-1" name="<?php /*= 'current_subject_' . $subjectId */?>">
-												<option><?php /*= $subjectTitle */?></option>
-												<?php /*= $allSubjectsString */?>
-											</select>-->
 											<button class="btnDelete delete is-medium" type="button" id="delete_subject_<?=$subjectId?>"></button>
 										</div>
 									</div>
 								</div>
 							<?php endforeach; ?>
 						</div>
-						<button class="button is-primary is-dark are-small" type="button" id="addSubject"><?= GetMessage('ADD') ?> <?= mb_strtolower(
-								GetMessage($key)
-							) ?></button>
+						<button class="button is-primary is-dark are-small" type="button" id="addSubject">
+							<?= GetMessage('ADD') ?> <?= mb_strtolower(GetMessage($key)) ?>
+						</button>
 					<?php
 					else: ?>
 						<div class="control">
@@ -75,7 +75,7 @@ use Bitrix\Main\Application;
 									<select name="<?= $key ?>">
 										<?php
 										foreach ($field as $subfield): ?>
-											<option><?= $subfield ?></option>
+											<option><?= htmlspecialcharsbx($subfield) ?></option>
 										<?php
 										endforeach; ?>
 									</select>
@@ -93,7 +93,7 @@ use Bitrix\Main\Application;
 						</div>
 						<p class="help">
 							<?= GetMessage('CURRENT_FIELD_VALUE_HELPER') ?>:
-							<strong> <?= $field ?> </strong>
+							<strong> <?= htmlspecialcharsbx($field) ?> </strong>
 						</p>
 					</div>
 				<?php
@@ -124,7 +124,7 @@ use Bitrix\Main\Application;
 								<?php foreach ($entity as $exemplar): ?>
 									<div class="box edit-fields mb-1">
 										<?php foreach ($exemplar as $field): ?>
-										<?= $field ?>
+										<?= htmlspecialcharsbx($field) ?>
 										<?php endforeach; ?>
 									</div>
 								<?php endforeach; ?>
@@ -132,11 +132,12 @@ use Bitrix\Main\Application;
 						</div>
 				<?php endif; ?>
 				<div class="is-flex is-align-items-center is-justify-content-center mt-2">
-					<button id="delete-button" class="button is-danger" type="submit" formaction="<?=
-					str_replace('edit', 'delete', $APPLICATION->GetCurUri()) ?>"
-					>
+					<button id="delete-button" class="button is-danger" type="submit" formaction="
+					<?= str_replace('edit', 'delete', $APPLICATION->GetCurUri()) ?>">
 						<?= GetMessage('DELETE') ?></button>
-					<button id="close-modal-button" class="button ml-2" type="button"><?= GetMessage('CANCEL') ?></button>
+					<button id="close-modal-button" class="button ml-2" type="button">
+						<?= GetMessage('CANCEL') ?>
+					</button>
 				</div>
 			</div>
 		</div>
@@ -156,7 +157,7 @@ use Bitrix\Main\Application;
 			newListItem.innerHTML = `<div class="select">
 										<label>
 											<select class="mb-1" name="add_subject_`+ i +`">
-													<?=$allSubjectsString?>
+													<?=htmlspecialcharsbx($allSubjectsString)?>
 											</select>
 										</label>
 									</div>`;

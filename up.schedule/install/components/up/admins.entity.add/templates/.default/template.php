@@ -20,7 +20,11 @@ use Bitrix\Main\Application;
 
 	<div id="back-button-container" class="mb-4">
 		<div class="column is-1 p-0">
-			<a id ="back-button" class="is-60-height box is-flex is-align-items-center is-justify-content-center" href="/admin/#<?= $arResult['ENTITY_NAME'] ?>"><?= GetMessage('BACK') ?></a>
+			<a id ="back-button"
+			   class="is-60-height box is-flex is-align-items-center is-justify-content-center"
+			   href="/admin/#<?= $arResult['ENTITY_NAME'] ?>">
+				<?= GetMessage('BACK') ?>
+			</a>
 		</div>
 	</div>
 

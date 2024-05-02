@@ -22,33 +22,33 @@ if (!defined("B_PROLOG_INCLUDED") || B_PROLOG_INCLUDED !== true)
 
 	<div class="columns tabs is-active">
 		<div class="column">
-			<a class="is-60-height box is-flex is-align-items-center is-justify-content-center" href="/admin/#subject"><?= GetMessage(
-					'SUBJECTS'
-				) ?></a>
+			<a class="is-60-height box is-flex is-align-items-center is-justify-content-center" href="/admin/#subject">
+				<?= GetMessage('SUBJECTS') ?>
+			</a>
 		</div>
 		<div class="column">
-			<a class="is-60-height box is-flex is-align-items-center is-justify-content-center" href="/admin/#user"><?= GetMessage(
-					'USERS'
-				) ?></a>
-		</div>
-	</div>
-	<div class="columns tabs is-active">
-		<div class="column">
-			<a class="is-60-height box is-flex is-align-items-center is-justify-content-center" href="/admin/#group"><?= GetMessage(
-					'GROUPS'
-				) ?></a>
-		</div>
-		<div class="column">
-			<a class="is-60-height box is-flex is-align-items-center is-justify-content-center" href="/admin/#audience"><?= GetMessage(
-					'AUDIENCES'
-				) ?></a>
+			<a class="is-60-height box is-flex is-align-items-center is-justify-content-center" href="/admin/#user">
+				<?= GetMessage('USERS') ?>
+			</a>
 		</div>
 	</div>
 	<div class="columns tabs is-active">
 		<div class="column">
-			<a class="is-60-height box is-flex is-align-items-center is-justify-content-center" href="/admin/#audienceType"><?= GetMessage(
-					'AUDIENCE_TYPE'
-				) ?></a>
+			<a class="is-60-height box is-flex is-align-items-center is-justify-content-center" href="/admin/#group">
+				<?= GetMessage('GROUPS') ?>
+			</a>
+		</div>
+		<div class="column">
+			<a class="is-60-height box is-flex is-align-items-center is-justify-content-center" href="/admin/#audience">
+				<?= GetMessage('AUDIENCES') ?>
+			</a>
+		</div>
+	</div>
+	<div class="columns tabs is-active">
+		<div class="column">
+			<a class="is-60-height box is-flex is-align-items-center is-justify-content-center" href="/admin/#audienceType">
+				<?= GetMessage('AUDIENCE_TYPE') ?>
+			</a>
 		</div>
 	</div>
 
@@ -61,9 +61,8 @@ if (!defined("B_PROLOG_INCLUDED") || B_PROLOG_INCLUDED !== true)
 				<a id="add-button" class="ml-2 column is-1 buttonLink is-60-height mb-5 box is-flex is-align-items-center is-justify-content-center" onclick="location.href=getEntityAddUrl()">
 					<?= GetMessage('ADD') ?>
 				</a>
-				<input id="search-input" class="input column is-60-height is-offset-4" type="text" placeholder="<?= GetMessage(
-					'SEARCH_PLACEHOLDER'
-				) ?>">
+				<input id="search-input" class="input column is-60-height is-offset-4" type="text" placeholder="
+				<?= GetMessage('SEARCH_PLACEHOLDER') ?>">
 				<a href="/admin/" id="search-button" class="column ml-2 is-1 is-offset-0 buttonLink is-60-height mb-5 box is-flex is-align-items-center is-justify-content-center">
 					<?= GetMessage('SEARCH') ?>
 				</a>

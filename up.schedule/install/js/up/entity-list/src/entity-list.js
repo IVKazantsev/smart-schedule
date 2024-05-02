@@ -1,4 +1,5 @@
 import { Type, Tag, Loc } from 'main.core';
+import { Validator } from '../../validator/src/validator';
 
 export class EntityList
 {
@@ -18,7 +19,7 @@ export class EntityList
 							${entityData.ID}
 							</div>
 							<div class="column is-11 admin-entity-list-item">
-								${entityData.TITLE}
+								${Validator.escapeHTML(entityData.TITLE)}
 							</div>
 						`;
 					},
@@ -44,10 +45,10 @@ export class EntityList
 							${entityData.ID}
 							</div>
 							<div class="column is-4 admin-entity-list-item">
-								${entityData.NAME} ${entityData.LAST_NAME}
+								${Validator.escapeHTML(entityData.NAME)} ${Validator.escapeHTML(entityData.LAST_NAME)}
 							</div>
 							<div class="column is-4 admin-entity-list-item">
-								${entityData.EMAIL ? entityData.EMAIL : 'Отсутствует'}
+								${Validator.escapeHTML(entityData.EMAIL) ? Validator.escapeHTML(entityData.EMAIL) : 'Отсутствует'}
 							</div>
 							<div class="column is-3 admin-entity-list-item">
 								${entityData.ROLE}
@@ -70,7 +71,7 @@ export class EntityList
 							${entityData.ID}
 							</div>
 							<div class="column admin-entity-list-item">
-								${entityData.TITLE}
+								${Validator.escapeHTML(entityData.TITLE)}
 							</div>
 						`;
 					},
@@ -93,10 +94,10 @@ export class EntityList
 							${entityData.ID}
 							</div>
 							<div class="column admin-entity-list-item">
-								${entityData.NUMBER}
+								${Validator.escapeHTML(entityData.NUMBER)}
 							</div>
 							<div class="column admin-entity-list-item">
-								${entityData.UP_SCHEDULE_MODEL_AUDIENCE_AUDIENCE_TYPE_TITLE}
+								${Validator.escapeHTML(entityData.UP_SCHEDULE_MODEL_AUDIENCE_AUDIENCE_TYPE_TITLE)}
 							</div>
 						`;
 					},
@@ -116,7 +117,7 @@ export class EntityList
 							${entityData.ID}
 							</div>
 							<div class="column admin-entity-list-item">
-								${entityData.TITLE}
+								${Validator.escapeHTML(entityData.TITLE)}
 							</div>
 						`;
 					},
@@ -137,6 +138,8 @@ export class EntityList
 
 	constructor(options = {})
 	{
+		const valdiator = new Validator();
+		Validator.escapeHTML('123');
 		if (Type.isStringFilled(options.rootNodeId))
 		{
 			this.rootNodeId = options.rootNodeId;
@@ -194,7 +197,7 @@ export class EntityList
 				},
 			).then((response) => {
 					const data = response.data;
-console.log(data);
+					console.log(data);
 					resolve(data);
 				})
 				.catch((error) => {
@@ -243,7 +246,7 @@ console.log(data);
 		`;
 
 		let firstPageButton = '';
-		if(this.pageNumber > 2)
+		if (this.pageNumber > 2)
 		{
 			firstPageButton = Tag.render`<button class="pagination-link">1</button>`;
 
@@ -283,7 +286,7 @@ console.log(data);
 		const countOfPages = Math.ceil(this.countOfEntities / this.entityPerPage);
 
 		let lastPageButton = '';
-		if(this.pageNumber + 1 < countOfPages)
+		if (this.pageNumber + 1 < countOfPages)
 		{
 			lastPageButton = Tag.render`<button class="pagination-link">${countOfPages}</button>`;
 
@@ -298,49 +301,49 @@ console.log(data);
 				${nextPageButton}
 				<ul class="pagination-list">
 					${(firstPageButton !== '')
-					? Tag.render`
+			? Tag.render`
 						<li>
 							${firstPageButton}
 						</li>`
-					: ''}
+			: ''}
 					
 					${(this.pageNumber > 3)
-					? Tag.render`
+			? Tag.render`
 						<li>
 							<span class="pagination-ellipsis">&hellip;</span>
 						</li>`
-					: ''}
+			: ''}
 					
 					${(previousPageWithNumber !== '')
-					? Tag.render`
+			? Tag.render`
 						<li>
 							${previousPageWithNumber}
 						</li>`
-					: ''}
+			: ''}
 					
 					<li>
 						<div class="pagination-link is-current" aria-current="page">${this.pageNumber}</div>
 					</li>
 					
 					${(nextPageWithNumber !== '')
-					? Tag.render`
+			? Tag.render`
 						<li>
 						${nextPageWithNumber}
 						</li>`
-					: ''}
+			: ''}
 					
 					${(this.pageNumber + 2 < countOfPages)
-					? Tag.render`<li>
+			? Tag.render`<li>
 						<span class="pagination-ellipsis">&hellip;</span>
 					</li>`
-					: ''}
+			: ''}
 					
 					${(lastPageButton !== '')
-					? Tag.render`
+			? Tag.render`
 						<li>
 							${lastPageButton}
 						</li>`
-					: ''}
+			: ''}
 				</ul>
 			</nav>
 		`;

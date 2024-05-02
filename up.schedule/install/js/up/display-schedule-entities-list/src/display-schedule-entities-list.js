@@ -1,4 +1,5 @@
 import { Tag, Type, Loc } from 'main.core';
+import { Validator } from '../../validator/src/validator';
 
 export class DisplayScheduleEntitiesList
 {
@@ -63,10 +64,9 @@ export class DisplayScheduleEntitiesList
 			.then((data) => {
 				this.entityList = data.entities;
 				this.suitableEntityList = data.entities;
-
-				console.log(data);
 				this.currentEntity = data.currentEntity;
 				this.locEntity = data.locEntity;
+
 				this.render();
 			});
 	}
@@ -135,7 +135,7 @@ export class DisplayScheduleEntitiesList
 				entityLink = Tag.render`
 				<a href="/${this.entity}/${entity['ID']}/"
 				class="dropdown-item ${(entity['ID'] === this.currentEntity['ID']) ? 'is-active' : ''}">
-				${entity['NAMING']}
+				${Validator.escapeHTML(entity['NAMING'])}
 				</a>
 			`;
 			}
@@ -147,8 +147,8 @@ export class DisplayScheduleEntitiesList
 					document.getElementById('entity-selection-button').value = '';
 				}
 				entityLink = Tag.render`
-				<a href="/${this.entity}/${entity['ID']}/"
-				class="dropdown-item">${entity['NAMING']}
+				<a href="/${Validator.escapeHTML(this.entity)}/${entity['ID']}/"
+				class="dropdown-item">${Validator.escapeHTML(entity['NAMING'])}
 				</a>
 			`;
 			}
@@ -174,7 +174,7 @@ export class DisplayScheduleEntitiesList
 				});
 				entityLink.classList.add('is-active');
 
-				document.getElementById('entity-selection-button').placeholder = Loc.getMessage(this.locEntity) + ' ' + entityLink.textContent;
+				document.getElementById('entity-selection-button').placeholder = Loc.getMessage(this.locEntity) + ' ' + Validator.escapeHTML(entityLink.textContent);
 				document.getElementById('entity-selection-button').value = '';
 
 				if (history.pushState)

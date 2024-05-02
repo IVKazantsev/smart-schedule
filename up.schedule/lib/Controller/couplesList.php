@@ -5,6 +5,7 @@ namespace Up\Schedule\Controller;
 use Bitrix\Main\Engine\ActionFilter\Authentication;
 use Bitrix\Main\Engine\Controller;
 use Bitrix\Main\Entity\Query;
+use Bitrix\Main\Error;
 use Up\Schedule\Model\EO_Couple_Collection;
 use Up\Schedule\Model\EO_Subject;
 use Up\Schedule\Repository\AudienceRepository;
@@ -13,6 +14,7 @@ use Up\Schedule\Repository\GroupRepository;
 use Up\Schedule\Repository\SubjectRepository;
 use Up\Schedule\Repository\UserRepository;
 use Up\Schedule\Service\CoupleService;
+use Up\Schedule\Service\EntityService;
 
 class CouplesList extends Controller
 {
@@ -38,6 +40,11 @@ class CouplesList extends Controller
 
 	public function deleteCoupleAction(array $coupleInfo): array
 	{
+		if(!EntityService::isCurrentUserAdmin())
+		{
+			$this->addError(new Error('you must be an administrator', 'inappropriate_role'));
+		}
+
 		try {
 			CoupleRepository::deleteCouple($coupleInfo);
 			return ['result' => true];
@@ -50,6 +57,11 @@ class CouplesList extends Controller
 
 	public function addCoupleAction(array $coupleInfo): array
 	{
+		if(!EntityService::isCurrentUserAdmin())
+		{
+			$this->addError(new Error('you must be an administrator', 'inappropriate_role'));
+		}
+
 		if(!check_bitrix_sessid())
 		{
 			return [
@@ -66,6 +78,11 @@ class CouplesList extends Controller
 
 	public function fetchAddCoupleDataAction(string $entity, int $id): array
 	{
+		if(!EntityService::isCurrentUserAdmin())
+		{
+			$this->addError(new Error('you must be an administrator', 'inappropriate_role'));
+		}
+
 		$result = [];
 		/*$numberOfDay = (int)request()->get('numberOfDay');
 		$numberOfCouple = (int)request()->get('numberOfCouple');*/
@@ -105,7 +122,6 @@ class CouplesList extends Controller
 
 	protected function fetchCouples(string $entity, int $id): void
 	{
-
 		$getMethodName = "getArrayBy{$entity}Id";
 		$couples = CoupleRepository::$getMethodName($id);
 		$this->couples = $this->sortCouplesByWeekDay($couples);

@@ -4,6 +4,20 @@ this.BX.Up = this.BX.Up || {};
 (function (exports,main_core) {
 	'use strict';
 
+	var Validator = /*#__PURE__*/function () {
+	  function Validator() {
+	    babelHelpers.classCallCheck(this, Validator);
+	    console.log('Validator construct');
+	  }
+	  babelHelpers.createClass(Validator, null, [{
+	    key: "escapeHTML",
+	    value: function escapeHTML(text) {
+	      return text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
+	    }
+	  }]);
+	  return Validator;
+	}();
+
 	var _templateObject, _templateObject2, _templateObject3, _templateObject4, _templateObject5, _templateObject6, _templateObject7, _templateObject8, _templateObject9, _templateObject10, _templateObject11, _templateObject12, _templateObject13, _templateObject14, _templateObject15, _templateObject16, _templateObject17, _templateObject18, _templateObject19, _templateObject20, _templateObject21, _templateObject22, _templateObject23, _templateObject24, _templateObject25;
 	var EntityList = /*#__PURE__*/function () {
 	  function EntityList() {
@@ -13,31 +27,31 @@ this.BX.Up = this.BX.Up || {};
 	      'subject': {
 	        'header': main_core.Tag.render(_templateObject || (_templateObject = babelHelpers.taggedTemplateLiteral(["\n\t\t\t\t\t<div class=\"column is-11 is-60-height\">\n\t\t\t\t\t\t", "\n\t\t\t\t\t</div>\n\t\t\t\t\t"])), main_core.Loc.getMessage('TITLE')),
 	        'content': function content(entityData) {
-	          return main_core.Tag.render(_templateObject2 || (_templateObject2 = babelHelpers.taggedTemplateLiteral(["\n\t\t\t\t\t\t\t<div class=\"column is-1 admin-entity-list-item\">\n\t\t\t\t\t\t\t", "\n\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t\t<div class=\"column is-11 admin-entity-list-item\">\n\t\t\t\t\t\t\t\t", "\n\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t"])), entityData.ID, entityData.TITLE);
+	          return main_core.Tag.render(_templateObject2 || (_templateObject2 = babelHelpers.taggedTemplateLiteral(["\n\t\t\t\t\t\t\t<div class=\"column is-1 admin-entity-list-item\">\n\t\t\t\t\t\t\t", "\n\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t\t<div class=\"column is-11 admin-entity-list-item\">\n\t\t\t\t\t\t\t\t", "\n\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t"])), entityData.ID, Validator.escapeHTML(entityData.TITLE));
 	        }
 	      },
 	      'user': {
 	        'header': main_core.Tag.render(_templateObject3 || (_templateObject3 = babelHelpers.taggedTemplateLiteral(["\n\t\t\t\t\t<div class=\"column is-4 is-60-height\">\n\t\t\t\t\t\t", "\n\t\t\t\t\t</div>\n\t\t\t\t\t<div class=\"column is-4 is-60-height\">\n\t\t\t\t\t\t", "\n\t\t\t\t\t</div>\n\t\t\t\t\t<div class=\"column is-3 is-60-height\">\n\t\t\t\t\t\t", "\n\t\t\t\t\t</div>\n\t\t\t\t\t"])), main_core.Loc.getMessage('NAME'), main_core.Loc.getMessage('EMAIL'), main_core.Loc.getMessage('ROLE')),
 	        'content': function content(entityData) {
-	          return main_core.Tag.render(_templateObject4 || (_templateObject4 = babelHelpers.taggedTemplateLiteral(["\n\t\t\t\t\t\t\t<div class=\"column is-1 admin-entity-list-item\">\n\t\t\t\t\t\t\t", "\n\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t\t<div class=\"column is-4 admin-entity-list-item\">\n\t\t\t\t\t\t\t\t", " ", "\n\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t\t<div class=\"column is-4 admin-entity-list-item\">\n\t\t\t\t\t\t\t\t", "\n\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t\t<div class=\"column is-3 admin-entity-list-item\">\n\t\t\t\t\t\t\t\t", "\n\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t"])), entityData.ID, entityData.NAME, entityData.LAST_NAME, entityData.EMAIL ? entityData.EMAIL : 'Отсутствует', entityData.ROLE);
+	          return main_core.Tag.render(_templateObject4 || (_templateObject4 = babelHelpers.taggedTemplateLiteral(["\n\t\t\t\t\t\t\t<div class=\"column is-1 admin-entity-list-item\">\n\t\t\t\t\t\t\t", "\n\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t\t<div class=\"column is-4 admin-entity-list-item\">\n\t\t\t\t\t\t\t\t", " ", "\n\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t\t<div class=\"column is-4 admin-entity-list-item\">\n\t\t\t\t\t\t\t\t", "\n\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t\t<div class=\"column is-3 admin-entity-list-item\">\n\t\t\t\t\t\t\t\t", "\n\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t"])), entityData.ID, Validator.escapeHTML(entityData.NAME), Validator.escapeHTML(entityData.LAST_NAME), Validator.escapeHTML(entityData.EMAIL) ? Validator.escapeHTML(entityData.EMAIL) : 'Отсутствует', entityData.ROLE);
 	        }
 	      },
 	      'group': {
 	        'header': main_core.Tag.render(_templateObject5 || (_templateObject5 = babelHelpers.taggedTemplateLiteral(["\n\t\t\t\t\t<div class=\"column is-60-height\">\n\t\t\t\t\t\t", "\n\t\t\t\t\t</div>\n\t\t\t\t\t"])), main_core.Loc.getMessage('TITLE')),
 	        'content': function content(entityData) {
-	          return main_core.Tag.render(_templateObject6 || (_templateObject6 = babelHelpers.taggedTemplateLiteral(["\n\t\t\t\t\t\t\t<div class=\"column is-1 admin-entity-list-item\">\n\t\t\t\t\t\t\t", "\n\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t\t<div class=\"column admin-entity-list-item\">\n\t\t\t\t\t\t\t\t", "\n\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t"])), entityData.ID, entityData.TITLE);
+	          return main_core.Tag.render(_templateObject6 || (_templateObject6 = babelHelpers.taggedTemplateLiteral(["\n\t\t\t\t\t\t\t<div class=\"column is-1 admin-entity-list-item\">\n\t\t\t\t\t\t\t", "\n\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t\t<div class=\"column admin-entity-list-item\">\n\t\t\t\t\t\t\t\t", "\n\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t"])), entityData.ID, Validator.escapeHTML(entityData.TITLE));
 	        }
 	      },
 	      'audience': {
 	        'header': main_core.Tag.render(_templateObject7 || (_templateObject7 = babelHelpers.taggedTemplateLiteral(["\n\t\t\t\t\t<div class=\"column is-60-height\">\n\t\t\t\t\t\t", "\n\t\t\t\t\t</div>\n\t\t\t\t\t<div class=\"column is-60-height\">\n\t\t\t\t\t\t", "\n\t\t\t\t\t</div>\n\t\t\t\t\t"])), main_core.Loc.getMessage('NUMBER'), main_core.Loc.getMessage('TYPE')),
 	        'content': function content(entityData) {
-	          return main_core.Tag.render(_templateObject8 || (_templateObject8 = babelHelpers.taggedTemplateLiteral(["\n\t\t\t\t\t\t\t<div class=\"column is-1 admin-entity-list-item\">\n\t\t\t\t\t\t\t", "\n\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t\t<div class=\"column admin-entity-list-item\">\n\t\t\t\t\t\t\t\t", "\n\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t\t<div class=\"column admin-entity-list-item\">\n\t\t\t\t\t\t\t\t", "\n\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t"])), entityData.ID, entityData.NUMBER, entityData.UP_SCHEDULE_MODEL_AUDIENCE_AUDIENCE_TYPE_TITLE);
+	          return main_core.Tag.render(_templateObject8 || (_templateObject8 = babelHelpers.taggedTemplateLiteral(["\n\t\t\t\t\t\t\t<div class=\"column is-1 admin-entity-list-item\">\n\t\t\t\t\t\t\t", "\n\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t\t<div class=\"column admin-entity-list-item\">\n\t\t\t\t\t\t\t\t", "\n\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t\t<div class=\"column admin-entity-list-item\">\n\t\t\t\t\t\t\t\t", "\n\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t"])), entityData.ID, Validator.escapeHTML(entityData.NUMBER), Validator.escapeHTML(entityData.UP_SCHEDULE_MODEL_AUDIENCE_AUDIENCE_TYPE_TITLE));
 	        }
 	      },
 	      'audienceType': {
 	        'header': main_core.Tag.render(_templateObject9 || (_templateObject9 = babelHelpers.taggedTemplateLiteral(["\n\t\t\t\t\t<div class=\"column is-60-height\">\n\t\t\t\t\t\t", "\n\t\t\t\t\t</div>\n\t\t\t\t\t"])), main_core.Loc.getMessage('TITLE')),
 	        'content': function content(entityData) {
-	          return main_core.Tag.render(_templateObject10 || (_templateObject10 = babelHelpers.taggedTemplateLiteral(["\n\t\t\t\t\t\t\t<div class=\"column is-1 admin-entity-list-item\">\n\t\t\t\t\t\t\t", "\n\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t\t<div class=\"column admin-entity-list-item\">\n\t\t\t\t\t\t\t\t", "\n\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t"])), entityData.ID, entityData.TITLE);
+	          return main_core.Tag.render(_templateObject10 || (_templateObject10 = babelHelpers.taggedTemplateLiteral(["\n\t\t\t\t\t\t\t<div class=\"column is-1 admin-entity-list-item\">\n\t\t\t\t\t\t\t", "\n\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t\t<div class=\"column admin-entity-list-item\">\n\t\t\t\t\t\t\t\t", "\n\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t"])), entityData.ID, Validator.escapeHTML(entityData.TITLE));
 	        }
 	      }
 	    });
@@ -47,6 +61,8 @@ this.BX.Up = this.BX.Up || {};
 	    babelHelpers.defineProperty(this, "entityList", undefined);
 	    babelHelpers.defineProperty(this, "pageNumber", undefined);
 	    babelHelpers.defineProperty(this, "doesNextPageExist", undefined);
+	    var valdiator = new Validator();
+	    Validator.escapeHTML('123');
 	    if (main_core.Type.isStringFilled(options.rootNodeId)) {
 	      this.rootNodeId = options.rootNodeId;
 	    } else {
