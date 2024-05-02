@@ -518,6 +518,9 @@ this.BX.Up = this.BX.Up || {};
 	          });
 	        }
 	      });
+	      if (!this.isValidInput) {
+	        return;
+	      }
 	      var container = main_core.Tag.render(_templateObject34 || (_templateObject34 = babelHelpers.taggedTemplateLiteral(["<div id=\"group-container\" class=\"is-60-height box edit-fields\"></div>"])));
 	      var label = main_core.Tag.render(_templateObject35 || (_templateObject35 = babelHelpers.taggedTemplateLiteral(["<label class=\"label\">", "</label>"])), main_core.Loc.getMessage('GROUP'));
 	      var divControl = main_core.Tag.render(_templateObject36 || (_templateObject36 = babelHelpers.taggedTemplateLiteral(["<div class=\"control\"></div>"])));
@@ -557,6 +560,9 @@ this.BX.Up = this.BX.Up || {};
 	          });
 	        }
 	      });
+	      if (!this.isValidInput) {
+	        return;
+	      }
 	      var container = main_core.Tag.render(_templateObject41 || (_templateObject41 = babelHelpers.taggedTemplateLiteral(["<div id=\"teacher-container\" class=\"is-60-height box edit-fields\"></div>"])));
 	      var label = main_core.Tag.render(_templateObject42 || (_templateObject42 = babelHelpers.taggedTemplateLiteral(["<label class=\"label\">", "</label>"])), main_core.Loc.getMessage('TEACHERS'));
 	      var divControl = main_core.Tag.render(_templateObject43 || (_templateObject43 = babelHelpers.taggedTemplateLiteral(["<div class=\"control\"></div>"])));
@@ -599,7 +605,7 @@ this.BX.Up = this.BX.Up || {};
 	    value: function fillEmptyForm(entity) {
 	      var modalBody = document.getElementById('modal-body');
 	      this.deleteEmptyForm();
-	      var emptyForm = main_core.Tag.render(_templateObject46 || (_templateObject46 = babelHelpers.taggedTemplateLiteral(["\n\t\t\t\t\t\t<div id=\"empty-form\">", "</div>\n\t\t\t\t\t"])), main_core.Loc.getMessage('EMPTY_' + entity + '_MESSAGE'));
+	      var emptyForm = main_core.Tag.render(_templateObject46 || (_templateObject46 = babelHelpers.taggedTemplateLiteral(["\n\t\t\t\t\t\t<div id=\"empty-form\" class=\"has-text-danger\">", "</div>\n\t\t\t\t\t"])), main_core.Loc.getMessage('EMPTY_' + entity + '_MESSAGE'));
 	      modalBody.appendChild(emptyForm);
 	    }
 	  }, {

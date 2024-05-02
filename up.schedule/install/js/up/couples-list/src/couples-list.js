@@ -695,6 +695,11 @@ export class CouplesList
 			}
 		});
 
+		if(!this.isValidInput)
+		{
+			return;
+		}
+
 		const container = Tag.render`<div id="group-container" class="is-60-height box edit-fields"></div>`;
 
 		const label = Tag.render`<label class="label">${Loc.getMessage('GROUP')}</label>`;
@@ -754,6 +759,11 @@ export class CouplesList
 			}
 		});
 
+		if(!this.isValidInput)
+		{
+			return;
+		}
+
 		const container = Tag.render`<div id="teacher-container" class="is-60-height box edit-fields"></div>`;
 
 		const label = Tag.render`<label class="label">${Loc.getMessage('TEACHERS')}</label>`;
@@ -808,7 +818,7 @@ export class CouplesList
 		this.deleteEmptyForm();
 
 		const emptyForm = Tag.render`
-						<div id="empty-form">${Loc.getMessage('EMPTY_' + entity + '_MESSAGE')}</div>
+						<div id="empty-form" class="has-text-danger">${Loc.getMessage('EMPTY_' + entity + '_MESSAGE')}</div>
 					`;
 
 		modalBody.appendChild(emptyForm);
