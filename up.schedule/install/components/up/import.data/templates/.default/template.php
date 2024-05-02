@@ -6,27 +6,18 @@
  */
 
 use Bitrix\Main\Context;
+use Bitrix\Main\UI\Extension;
+
+if (!defined("B_PROLOG_INCLUDED") || B_PROLOG_INCLUDED !== true)
+{
+	die();
+}
+
+Extension::load('up.popup-message');
 
 ?>
+<div id="messages"></div>
 
-<?php if(Context::getCurrent()->getRequest()->isPost()): ?>
-	<?php if(isset($arResult['ERRORS'])): ?>
-		<div class="box errors active" id="errors">
-			<div class="error-title has-background-danger has-text-white is-size-4 p-3 is-flex is-justify-content-center">
-				Ошибка
-			</div>
-			<div class="errors-text p-3">
-				<?= $arResult['ERRORS'] ?>
-			</div>
-		</div>
-	<?php else: ?>
-		<div class="success box active has-background-success" id="success">
-			<div class="is-60-height p-3 has-text-white is-size-4">
-				Данные успешно импортированы.
-			</div>
-		</div>
-	<?php endif; ?>
-<?php endif; ?>
 <div class="column">
 	<div class="columns">
 		<div class="column">
@@ -37,19 +28,19 @@ use Bitrix\Main\Context;
 	</div>
 
 	<div class="box edit-fields">
-		Здесь Вы можете импортировать данные о Вашей организации из Excel-файла.<br>
-		<span class="has-text-danger">Внимание: при импортировании все данные, введенные до этого, будут потеряны!</span>
+		<?= GetMessage('ORGANIZATION_DATA_IMPORT_MESSAGE') ?><br>
+		<span class="has-text-danger"><?= GetMessage('DATA_DESTRUCTION_WARNING') ?></span>
 	</div>
 
 	<div class="box edit-fields">
 		<form action="" method="post" id="send-excel-form" enctype="multipart/form-data">
 			<?= bitrix_sessid_post() ?>
-			<label class="label" for="excel-file">Вставьте сюда Excel-файл</label>
+			<label class="label" for="excel-file"><?= GetMessage('INSERT_FILE_MESSAGE') ?></label>
 			<div class="file">
 				<label class="file-label">
 					<input class="file-input" type="file" name="excel-file" id="excel-file" accept=".xls, .xlsx"/>
 					<span class="file-cta">
-						<span class="file-label"> Выберите файл для импорта </span>
+						<span class="file-label"> <?= GetMessage('CHOOSE_FILE_MESSAGE') ?> </span>
 					</span>
 				</label>
 			</div>
@@ -57,8 +48,8 @@ use Bitrix\Main\Context;
 	</div>
 
 	<div class="box edit-fields">
-		Вы можете скачать шаблон Excel-файла
-		<a href="<?= $templateFolder . '/template.xls' ?>" download class="is-underlined">здесь</a>.
+		<?= GetMessage('DOWNLOAD_TEMPLATE_MESSAGE') ?>
+		<a href="<?= $templateFolder . '/template.xls' ?>" download class="is-underlined"><?= GetMessage('HERE') ?></a>.
 	</div>
 </div>
 
@@ -66,19 +57,12 @@ use Bitrix\Main\Context;
 	document.getElementById("excel-file").onchange = function() {
 		document.getElementById("send-excel-form").submit();
 	};
-</script>
 
-<script>
-	const successMessage = document.getElementById('success');
-	const errorsMessage = document.getElementById('errors');
-
-	if(successMessage)
-	{
-		setTimeout(() => { successMessage.classList.remove('active') }, 3000);
-	}
-
-	if(errorsMessage)
-	{
-		setTimeout(() => { errorsMessage.classList.remove('active') }, 10000);
-	}
+	BX.ready(function () {
+		window.PopupMessages = new BX.Up.Schedule.PopupMessage({
+			rootNodeId: 'messages',
+			errorsMessage: '<?= $arResult['ERRORS'] ?>',
+			successMessage: '<?= $arResult['SUCCESS'] ?>',
+		});
+	});
 </script>

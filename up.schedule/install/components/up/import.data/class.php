@@ -68,6 +68,9 @@ class ImportDataComponent extends CBitrixComponent
 		if($errors !== '')
 		{
 			$this->arResult['ERRORS'] = $errors;
+			return;
 		}
+
+		$this->arResult['SUCCESS'] = GetMessage('SUCCESS_IMPORT');
 	}
 }

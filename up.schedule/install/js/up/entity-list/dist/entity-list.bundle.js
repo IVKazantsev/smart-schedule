@@ -60,8 +60,6 @@ this.BX.Up = this.BX.Up || {};
 	    babelHelpers.defineProperty(this, "entityList", undefined);
 	    babelHelpers.defineProperty(this, "pageNumber", undefined);
 	    babelHelpers.defineProperty(this, "doesNextPageExist", undefined);
-	    var valdiator = new Validator();
-	    Validator.escapeHTML('123');
 	    if (main_core.Type.isStringFilled(options.rootNodeId)) {
 	      this.rootNodeId = options.rootNodeId;
 	    } else {

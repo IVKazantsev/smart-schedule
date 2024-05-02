@@ -5,6 +5,11 @@ export class Validator
 	}
 
 	static escapeHTML(text) {
+		if(!text || text === '')
+		{
+			return '';
+		}
+
 		return text.replace(/&/g, "&amp;")
 			.replace(/</g, "&lt;")
 			.replace(/>/g, "&gt;")

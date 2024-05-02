@@ -44,15 +44,17 @@ return static function(RoutingConfigurator $routes) {
 		->where('entity', '[a-zA-Z]+')
 		->group(function (RoutingConfigurator $routes) {
 			$routes->get('/admin/add/{entity}/', new PublicPageController('/local/modules/up.schedule/views/admins-entity-add.php'));
-			$routes->post('/admin/add/{entity}/', function () {
-				$entityName = request()->get('entity');
-				if(!check_bitrix_sessid())
-				{
-					LocalRedirect("/admin/#$entityName");
-				}
-				EntityService::addEntity($entityName);
-				LocalRedirect("/admin/#$entityName");
-			});
+			$routes->post('/admin/add/{entity}/', new PublicPageController('/local/modules/up.schedule/views/admins-entity-add.php'));
+
+			// $routes->post('/admin/add/{entity}/', function () {
+			// 	$entityName = request()->get('entity');
+			// 	if(!check_bitrix_sessid())
+			// 	{
+			// 		LocalRedirect("/admin/#$entityName");
+			// 	}
+			// 	EntityService::addEntity($entityName);
+			// 	LocalRedirect("/admin/#$entityName");
+			// });
 		});
 
 	$routes->get('/import/', new PublicPageController('/local/modules/up.schedule/views/import.php'));

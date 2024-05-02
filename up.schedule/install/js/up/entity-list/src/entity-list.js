@@ -138,8 +138,6 @@ export class EntityList
 
 	constructor(options = {})
 	{
-		const valdiator = new Validator();
-		Validator.escapeHTML('123');
 		if (Type.isStringFilled(options.rootNodeId))
 		{
 			this.rootNodeId = options.rootNodeId;
