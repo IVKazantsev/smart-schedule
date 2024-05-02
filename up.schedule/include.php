@@ -1,13 +1,12 @@
 <?php
 
-use Up\Schedule\Agent\AutomaticSchedule;
 use Bitrix\Main\Application;
+use Bitrix\Main\Data\Cache;
 use Bitrix\Main\DB\Connection;
 use Bitrix\Main\Request;
 
 const COUPLES_NUMBER_PER_DAY = 7;
 
-\Bitrix\Main\Loader::autoLoad(AutomaticSchedule::class);
 
 function request(): Request
 {

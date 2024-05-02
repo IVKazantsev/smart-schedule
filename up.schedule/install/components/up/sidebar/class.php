@@ -1,5 +1,6 @@
 <?php
 
+use Bitrix\Main\Data\Cache;
 use Bitrix\Main\Engine\CurrentUser;
 use Up\Schedule\AutomaticSchedule\GeneticPerson;
 use Up\Schedule\AutomaticSchedule\GeneticSchedule;
@@ -18,6 +19,53 @@ class SidebarComponent extends CBitrixComponent
 
 	public function executeComponent(): void
 	{
+//		$algo = new GeneticSchedule();
+//		echo "<pre>";
+//		//$population = $algo->createPopulation($algo->getPopulationSize());
+//		$algo->geneticAlgorithm(100);
+//for($i = 0; $i < 15; $i++)
+//		{
+//			$population = $algo->doIterations($population, 10);
+//		}
+//		$cache = Cache::createInstance();
+//		if ($cache->initCache(3600, 'schedule', '/schedule/'))
+//		{
+//			$variables = $cache->getVars();
+//			/*return '';*/
+//			if ($variables['status'] === 'inProcess') {
+//				$population = unserialize($variables['population'], ['allowed_classes' => true]);
+//				//$result = self::doIterations($population);
+//				$newPopulation = $algo->doIterations($population, 10);
+//				$fit = $newPopulation[0]->getFitness();
+//				if (count($newPopulation) === 1) {
+//					$result = [
+//						'status' => 'finished',
+//						'schedule' => serialize($newPopulation),
+//						'progress' => $fit,
+//					];
+//					// завершить агента прогрессбара
+//				} else {
+//					$result = [
+//						'status' => 'inProcess',
+//						'population' => serialize($newPopulation),
+//						'progress' => $fit,
+//					];
+//				}
+//				/*return '';*/
+//			}
+//		}
+//		$population = $alg->createPopulation(10);
+//		$population[0]->setFitness(10);
+//		//echo implode(' ', $population[0]->couples->getGroupIdList());
+//		$serialized = serialize($population);
+//		$unserialized = unserialize($serialized, ['allowed_classes' => true]);
+//		$newPopulation = $alg->doIterations($unserialized, 3);
+//
+//		$serialized = serialize($newPopulation);
+//		$unserialized = unserialize($serialized, ['allowed_classes' => true]);
+//		$newPopulation = $alg->doIterations($unserialized, 3);
+		/*echo "<br>";
+		echo implode(' ', $unserialized[0]->couples->getGroupIdList());*/
 		$this->prepareTemplateParams();
 		$this->fetchUserInfo();
 		$this->includeComponentTemplate();

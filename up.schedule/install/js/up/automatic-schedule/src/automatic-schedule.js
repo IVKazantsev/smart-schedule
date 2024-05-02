@@ -25,10 +25,17 @@ export class AutomaticSchedule
 	reload()
 	{
 		this.loadInfo()
-			.then(currentStatus => {
-				this.status = currentStatus;
-				console.log(currentStatus);
-				this.render();
+			.then(info => {
+				this.status = info.status;
+				console.log(info.status, info.progress, info.couples);
+				/*if (info.status === 'finished' && typeof info.couples !== 'undefined')
+				{
+					this.renderPreview();
+				}
+				else
+				{*/
+					this.render();
+				/*}*/
 			});
 	}
 
@@ -44,8 +51,12 @@ export class AutomaticSchedule
 				},
 			).then((response) => {
 				const currentStatus = response.data.status;
-				console.log(response.data.progress);
-				resolve(currentStatus);
+				const progress = response.data.progress;
+				const couples = response.data.couples ?? undefined;
+
+				console.log(response.data.allFitness);
+
+				resolve({status: currentStatus, progress: progress, couples: couples});
 			})
 				.catch((error) => {
 					reject(error);
@@ -78,6 +89,20 @@ export class AutomaticSchedule
 
 			document.getElementById('button-generate-schedule').addEventListener('click', () => {
 				this.sendRequestForCancelGeneratingSchedule();
+			});
+		}
+		else if (this.status === 'finished')
+		{
+			container.innerHTML = `
+			<div class="box edit-fields">
+				<label class="label">Перейти на страницу предварительного просмотра?</label>
+				<button class="button is-danger" id="button-finished-schedule" type="button">Подтвердить</button>
+			</div>
+			`;
+
+			this.rootNode.appendChild(container);
+			document.getElementById('button-finished-schedule').addEventListener('click', () => {
+				window.location.assign('/scheduling/preview/');
 			});
 		}
 		else

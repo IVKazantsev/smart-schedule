@@ -1,7 +1,8 @@
 import { Tag, Type, Loc } from 'main.core';
 import { Validator } from '../../validator/src/validator';
 
-export class CouplesList {
+export class CouplesList
+{
 	formData = {};
 	daysOfWeek = {
 		1: Loc.getMessage('DAY_1_OF_WEEK'),
@@ -16,7 +17,9 @@ export class CouplesList {
 	defaultEntity = 'group';
 	isAdmin = false;
 
-	constructor(options = {})
+	dataSourceIsDb;
+
+	constructor(options = {}, dataSourceIsDb = true)
 	{
 		if (Type.isStringFilled(options.rootNodeId))
 		{
@@ -32,13 +35,14 @@ export class CouplesList {
 		{
 			throw new Error(`CouplesList: element with id = "${this.rootNodeId}" not found`);
 		}
-
+		this.dataSourceIsDb = dataSourceIsDb;
 		this.extractEntityFromUrl();
 		this.coupleList = [];
 		this.checkRole();
 	}
 
-	extractEntityFromUrl() {
+	extractEntityFromUrl()
+	{
 		const url = window.location.pathname;
 		if (url.length === 0)
 		{
@@ -98,30 +102,99 @@ export class CouplesList {
 
 	loadList()
 	{
-		return new Promise((resolve, reject) => {
-			BX.ajax.runAction(
-				'up:schedule.api.couplesList.getCouplesList',
-				{
-					data:
-						{
-							entity: (this.entity) ?? this.defaultEntity,
-							id: Number(this.entityId),
-						},
-				},
-			).then((response) => {
-				const coupleList = response.data.couples;
-				resolve(coupleList);
-			})
-				.catch((error) => {
-					reject(error);
-				});
-		});
+		const controllerFn = (dataSourceIsDb) => {
+			if (dataSourceIsDb)
+			{
+				return 'up:schedule.api.couplesList.getCouplesList';
+			}
+			else
+			{
+				return 'up:schedule.api.automaticSchedule.getCouplesList';
+			}
+		};
+
+		const controller = controllerFn(this.dataSourceIsDb);
+		const entity = (this.entity) ?? this.defaultEntity;
+		const entityId = Number(this.entityId);
+
+		const promise = function(controller, entity, entityId) {
+			return new Promise((resolve, reject) => {
+				BX.ajax.runAction(
+					controller,
+					{
+						data:
+							{
+								entity: entity,
+								id: entityId,
+							},
+					},
+				).then((response) => {
+						const coupleList = response.data.couples;
+						resolve(coupleList);
+					})
+					.catch((error) => {
+						reject(error);
+					});
+			});
+		};
+		return promise(controller, entity, entityId);
 	}
 
 	render()
 	{
 		this.rootNode.innerHTML = '';
 
+		if (this.isAdmin === true && !this.dataSourceIsDb)
+		{
+			//this.rootNode.classList.remove('columns');
+			this.rootNode.classList.add('is-flex', 'column', 'columns', 'is-flex-direction-column', 'is-align-items-center');
+
+			const previewMenuContainer = document.createElement('div');
+			previewMenuContainer.classList.add('box', 'columns', 'column', 'is-half', 'is-flex', 'is-flex-direction-column', 'is-align-items-center');
+			/*previewMenuContainer.style.height = '50px';*/
+			previewMenuContainer.id = 'preview-menu-container';
+
+			const buttonsPreviewContainer = document.createElement('div');
+			buttonsPreviewContainer.classList.add('is-flex', 'column', 'columns', 'is-full', 'is-justify-content-space-evenly', 'is-flex-direction-row', 'mb-2');
+			/*buttonsPreviewContainer.style.height = '50px';*/
+			buttonsPreviewContainer.id = 'buttons-preview-container';
+
+			const label = Tag.render`
+				<label class="label column m-2">Сохранить изменения?</label>
+			`;
+
+			const submitButton = Tag.render`
+							<button 
+							type="button" id="button-preview-submit" class="column  is-two-fifths button is-clickable is-medium is-primary">
+								Подвердить
+							</button>
+						`;
+			submitButton.addEventListener('click', () => {
+				this.handleSubmitScheduleButtonClick();
+			});
+
+			const separator = Tag.render`<div class="column is-fifth"> </div>`;
+
+			const cancelButton = Tag.render`
+							<button 
+							type="button" id="button-preview-cancel" class="column  is-two-fifths button is-danger is-clickable is-medium">
+								Отменить
+							</button>
+						`;
+			cancelButton.addEventListener('click', () => {
+				this.handleCancelScheduleButtonClick();
+			});
+
+			buttonsPreviewContainer.appendChild(submitButton);
+			//buttonsPreviewContainer.appendChild(separator);
+			buttonsPreviewContainer.appendChild(cancelButton);
+			previewMenuContainer.appendChild(label);
+			previewMenuContainer.appendChild(buttonsPreviewContainer);
+
+			this.rootNode.appendChild(previewMenuContainer);
+		}
+		const couplesContainer = document.createElement('div');
+		couplesContainer.className = 'column columns is-full';
 		for (let day in this.daysOfWeek)
 		{
 			const dayTitleContainer = Tag.render`
@@ -145,9 +218,15 @@ export class CouplesList {
 
 				if (typeof this.coupleList[day] !== 'undefined' && typeof this.coupleList[day][i] !== 'undefined')
 				{
+					let marginClassText = '';
+					if (!this.isAdmin || !this.dataSourceIsDb)
+					{
+						marginClassText = 'class = "mt-3"';
+					}
+					console.log(this.coupleList);
 					coupleTextContainer = Tag.render`
 						<div class="couple-text">
-							<p>${Validator.escapeHTML(this.coupleList[day][i].UP_SCHEDULE_MODEL_COUPLE_SUBJECT_TITLE)}</p>
+							<p ${Validator.escapeHTML(marginClassText)}>${Validator.escapeHTML(this.coupleList[day][i].UP_SCHEDULE_MODEL_COUPLE_SUBJECT_TITLE)}</p>
 							<p hidden id="subjectId-${day}-${i}">${this.coupleList[day][i].UP_SCHEDULE_MODEL_COUPLE_SUBJECT_ID}</p>
 							<p>${Validator.escapeHTML(this.coupleList[day][i].UP_SCHEDULE_MODEL_COUPLE_AUDIENCE_NUMBER)}</p>
 							<p hidden id="audienceId-${day}-${i}">${this.coupleList[day][i].UP_SCHEDULE_MODEL_COUPLE_AUDIENCE_ID}</p>
@@ -159,27 +238,27 @@ export class CouplesList {
 						</div>
 					`;
 
-					if (this.isAdmin === true)
+					if (this.isAdmin === true && this.dataSourceIsDb)
 					{
 						const removeCoupleButton = Tag.render`
-						<button 
-						data-target="modal-js-example" type="button" id="button-remove-${day}-${i}" class="js-modal-trigger dropdown-item btn-remove-couple button is-clickable is-small is-primary is-light">
-							${Loc.getMessage('DELETE')}
-						</button>
-					`;
-					removeCoupleButton.addEventListener('click', () => {
-						this.handleRemoveCoupleButtonClick(day, i);
-					});
+							<button 
+							data-target="modal-js-example" type="button" id="button-remove-${day}-${i}" class="js-modal-trigger dropdown-item btn-remove-couple button is-clickable is-small is-primary is-light">
+								${Loc.getMessage('DELETE')}
+							</button>
+						`;
+						removeCoupleButton.addEventListener('click', () => {
+							this.handleRemoveCoupleButtonClick(day, i);
+						});
 
-					const editCoupleButton = Tag.render`
-						<button 
-						data-target="modal-js-example" type="button" id="button-edit-${day}-${i}" class="js-modal-trigger dropdown-item btn-edit-couple button is-clickable is-small is-primary is-light mb-1">
-							${Loc.getMessage('EDIT')}
-						</button>
-					`;
-					editCoupleButton.addEventListener('click', () => {
-						this.handleEditCoupleButtonClick();
-					});
+						const editCoupleButton = Tag.render`
+							<button 
+							data-target="modal-js-example" type="button" id="button-edit-${day}-${i}" class="js-modal-trigger dropdown-item btn-edit-couple button is-clickable is-small is-primary is-light mb-1">
+								${Loc.getMessage('EDIT')}
+							</button>
+						`;
+						editCoupleButton.addEventListener('click', () => {
+							this.handleEditCoupleButtonClick();
+						});
 
 						dropdownContent.appendChild(editCoupleButton);
 						dropdownContent.appendChild(removeCoupleButton);
@@ -187,15 +266,15 @@ export class CouplesList {
 				}
 				else
 				{
-					const addCoupleButton = Tag.render`
-						<button 
-						data-target="modal-js-example" type="button" id="button-add-${day}-${i}" class="js-modal-trigger dropdown-item btn-add-couple button is-clickable is-small is-primary is-light">
-							${Loc.getMessage('ADD')}
-						</button>
-					`;
-
-					if (this.isAdmin === true)
+					if (this.isAdmin === true && this.dataSourceIsDb)
 					{
+						const addCoupleButton = Tag.render`
+							<button 
+							data-target="modal-js-example" type="button" id="button-add-${day}-${i}" class="js-modal-trigger dropdown-item btn-add-couple button is-clickable is-small is-primary is-light">
+								${Loc.getMessage('ADD')}
+							</button>
+						`;
+
 						addCoupleButton.addEventListener('click', () => {
 							this.handleAddCoupleButtonClick(day, i);
 						});
@@ -207,39 +286,76 @@ export class CouplesList {
 				const coupleContainer = document.createElement('div');
 				coupleContainer.className = 'box is-clickable couple m-0';
 
-				if(this.isAdmin)
+				if (this.isAdmin && this.dataSourceIsDb)
 				{
-				const dropdownTrigger = Tag.render`<div class="dropdown-trigger"></div>`;
-				const button = Tag.render`
-					<button type="button" aria-haspopup="true" aria-controls="dropdown-menu" id="button-${day}-${i}" class="btn-dropdown-couple button is-clickable is-small is-ghost">
-						...
-					</button>
-				`;
+					const dropdownTrigger = Tag.render`<div class="dropdown-trigger"></div>`;
+					const button = Tag.render`
+						<button type="button" aria-haspopup="true" aria-controls="dropdown-menu" id="button-${day}-${i}" class="btn-dropdown-couple button is-clickable is-small is-ghost">
+							...
+						</button>
+					`;
 
-				button.addEventListener('click', () => {
-					this.handleOpenDropdownCoupleButtonClick(day, i);
-				}, { once: true });
+					button.addEventListener('click', () => {
+						this.handleOpenDropdownCoupleButtonClick(day, i);
+					}, { once: true });
 
-				dropdownTrigger.appendChild(button);
+					dropdownTrigger.appendChild(button);
 
-				const btnContainer = Tag.render`
-					<div id="dropdown-${day}-${i}" class="btn-edit-couple-container dropdown"></div>`;
+					const btnContainer = Tag.render`
+						<div id="dropdown-${day}-${i}" class="btn-edit-couple-container dropdown"></div>`;
 
-				const dropdownMenu = Tag.render`<div class="dropdown-menu" id="dropdown-menu" role="menu"></div>`;
-				dropdownMenu.appendChild(dropdownContent);
+					const dropdownMenu = Tag.render`<div class="dropdown-menu" id="dropdown-menu" role="menu"></div>`;
+					dropdownMenu.appendChild(dropdownContent);
 
-				btnContainer.appendChild(dropdownTrigger);
-				btnContainer.appendChild(dropdownMenu);
+					btnContainer.appendChild(dropdownTrigger);
+					btnContainer.appendChild(dropdownMenu);
 
-				coupleContainer.appendChild(btnContainer);
-			}
+					coupleContainer.appendChild(btnContainer);
+				}
 				coupleContainer.appendChild(coupleTextContainer);
 
 				dayContainer.appendChild(coupleContainer);
 			}
 			dayColumnContainer.appendChild(dayContainer);
-			this.rootNode.appendChild(dayColumnContainer);
+			couplesContainer.appendChild(dayColumnContainer);
 		}
+		this.rootNode.appendChild(couplesContainer);
+	}
+
+	handleSubmitScheduleButtonClick()
+	{
+		console.log('submit');
+		BX.ajax.runAction(
+				'up:schedule.api.automaticSchedule.setGeneratedSchedule',
+				{
+					data:
+						{},
+				},
+			)
+			.then(() => {
+				window.location.replace('/');
+			})
+			.catch((error) => {
+				console.log(error);
+			});
+	}
+
+	handleCancelScheduleButtonClick()
+	{
+		console.log('cancel');
+		BX.ajax.runAction(
+				'up:schedule.api.automaticSchedule.cancelGeneratedSchedule',
+				{
+					data:
+						{},
+				},
+			)
+			.then(() => {
+				window.location.replace('/');
+			})
+			.catch((error) => {
+				console.log(error);
+			});
 	}
 
 	handleOpenDropdownCoupleButtonClick(numberOfDay, numberOfCouple)
@@ -273,11 +389,13 @@ export class CouplesList {
 		this.createAddForm(numberOfDay, numberOfCouple);
 	}
 
-	handleRemoveCoupleButtonClick(numberOfDay, numberOfCouple) {
+	handleRemoveCoupleButtonClick(numberOfDay, numberOfCouple)
+	{
 		this.removeCouple(numberOfDay, numberOfCouple);
 	}
 
-	handleEditCoupleButtonClick(numberOfDay, numberOfCouple) {
+	handleEditCoupleButtonClick(numberOfDay, numberOfCouple)
+	{
 		this.openCoupleModal();
 	}
 
@@ -333,7 +451,7 @@ export class CouplesList {
 				'NUMBER_IN_DAY': numberOfCouple,
 			};
 			BX.ajax.runAction(
-				'up:schedule.api.couplesList.'+ typeOfRequest +'Couple',
+				'up:schedule.api.couplesList.' + typeOfRequest + 'Couple',
 				{
 					data:
 						{
@@ -376,8 +494,8 @@ export class CouplesList {
 						},
 				},
 			).then((response) => {
-				this.reload();
-			})
+					this.reload();
+				})
 				.catch((error) => {
 					console.error(error);
 				});

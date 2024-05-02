@@ -23,10 +23,17 @@ this.BX.Up = this.BX.Up || {};
 	    key: "reload",
 	    value: function reload() {
 	      var _this = this;
-	      this.loadInfo().then(function (currentStatus) {
-	        _this.status = currentStatus;
-	        console.log(currentStatus);
+	      this.loadInfo().then(function (info) {
+	        _this.status = info.status;
+	        console.log(info.status, info.progress, info.couples);
+	        /*if (info.status === 'finished' && typeof info.couples !== 'undefined')
+	        {
+	        	this.renderPreview();
+	        }
+	        else
+	        {*/
 	        _this.render();
+	        /*}*/
 	      });
 	    }
 	  }, {
@@ -36,9 +43,16 @@ this.BX.Up = this.BX.Up || {};
 	        BX.ajax.runAction('up:schedule.api.automaticSchedule.getCurrentStatus', {
 	          data: {}
 	        }).then(function (response) {
+	          var _response$data$couple;
 	          var currentStatus = response.data.status;
-	          console.log(response.data.progress);
-	          resolve(currentStatus);
+	          var progress = response.data.progress;
+	          var couples = (_response$data$couple = response.data.couples) !== null && _response$data$couple !== void 0 ? _response$data$couple : undefined;
+	          console.log(response.data.allFitness);
+	          resolve({
+	            status: currentStatus,
+	            progress: progress,
+	            couples: couples
+	          });
 	        })["catch"](function (error) {
 	          reject(error);
 	        });
@@ -55,6 +69,12 @@ this.BX.Up = this.BX.Up || {};
 	        this.rootNode.appendChild(container);
 	        document.getElementById('button-generate-schedule').addEventListener('click', function () {
 	          _this2.sendRequestForCancelGeneratingSchedule();
+	        });
+	      } else if (this.status === 'finished') {
+	        container.innerHTML = "\n\t\t\t<div class=\"box edit-fields\">\n\t\t\t\t<label class=\"label\">\u041F\u0435\u0440\u0435\u0439\u0442\u0438 \u043D\u0430 \u0441\u0442\u0440\u0430\u043D\u0438\u0446\u0443 \u043F\u0440\u0435\u0434\u0432\u0430\u0440\u0438\u0442\u0435\u043B\u044C\u043D\u043E\u0433\u043E \u043F\u0440\u043E\u0441\u043C\u043E\u0442\u0440\u0430?</label>\n\t\t\t\t<button class=\"button is-danger\" id=\"button-finished-schedule\" type=\"button\">\u041F\u043E\u0434\u0442\u0432\u0435\u0440\u0434\u0438\u0442\u044C</button>\n\t\t\t</div>\n\t\t\t";
+	        this.rootNode.appendChild(container);
+	        document.getElementById('button-finished-schedule').addEventListener('click', function () {
+	          window.location.assign('/scheduling/preview/');
 	        });
 	      } else {
 	        container.innerHTML = "\n\t\t\t\t<div class=\"box edit-fields\">\n\t\t\t\t\t\u0417\u0434\u0435\u0441\u044C \u0412\u044B \u043C\u043E\u0436\u0435\u0442\u0435 \u0430\u0432\u0442\u043E\u043C\u0430\u0442\u0438\u0447\u0435\u0441\u043A\u0438 \u0441\u043E\u0441\u0442\u0430\u0432\u0438\u0442\u044C \u0440\u0430\u0441\u043F\u0438\u0441\u0430\u043D\u0438\u0435.\n\t\t\t\t</div>\n\t\t\t\t\n\t\t\t\t<div class=\"box edit-fields\">\n\t\t\t\t\t<label class=\"label\">\u0421\u0433\u0435\u043D\u0435\u0440\u0438\u0440\u043E\u0432\u0430\u0442\u044C \u0440\u0430\u0441\u043F\u0438\u0441\u0430\u043D\u0438\u0435?</label>\n\t\t\t\t\t<button class=\"button\" id=\"button-generate-schedule\" type=\"button\">\u041F\u043E\u0434\u0442\u0432\u0435\u0440\u0434\u0438\u0442\u044C</button>\n\t\t\t\t</div>\n\t\t\t";

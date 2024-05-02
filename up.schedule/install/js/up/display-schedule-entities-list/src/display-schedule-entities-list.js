@@ -12,7 +12,7 @@ export class DisplayScheduleEntitiesList
 	currentEntity = undefined;
 	defaultEntity = 'group';
 
-	constructor(options = {})
+	constructor(options = {}, dataSourceIsDb = true)
 	{
 		if (Type.isStringFilled(options.rootNodeId))
 		{
@@ -39,6 +39,7 @@ export class DisplayScheduleEntitiesList
 			throw new Error(`CouplesList: element with id = "${this.rootNodeId}" not found`);
 		}
 
+		this.dataSourceIsDb = dataSourceIsDb;
 		this.entityList = [];
 		this.suitableEntityList = [];
 
@@ -130,10 +131,16 @@ export class DisplayScheduleEntitiesList
 
 		this.suitableEntityList.forEach((entity) => {
 			let entityLink;
+			let linkPrefix = '';
+			if (!this.dataSourceIsDb)
+			{
+				linkPrefix = '/scheduling/preview';
+			}
+
 			if (this.currentEntity)
 			{
 				entityLink = Tag.render`
-				<a href="/${this.entity}/${entity['ID']}/"
+				<a href="${linkPrefix}/${Validator.escapeHTML(this.entity)}/${entity['ID']}/"
 				class="dropdown-item ${(entity['ID'] === this.currentEntity['ID']) ? 'is-active' : ''}">
 				${Validator.escapeHTML(entity['NAMING'])}
 				</a>
@@ -147,7 +154,7 @@ export class DisplayScheduleEntitiesList
 					document.getElementById('entity-selection-button').value = '';
 				}
 				entityLink = Tag.render`
-				<a href="/${Validator.escapeHTML(this.entity)}/${entity['ID']}/"
+				<a href="${linkPrefix}/${Validator.escapeHTML(this.entity)}/${entity['ID']}/"
 				class="dropdown-item">${Validator.escapeHTML(entity['NAMING'])}
 				</a>
 			`;

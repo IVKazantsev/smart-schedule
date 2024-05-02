@@ -92,12 +92,19 @@ class GeneticSchedule
 	}
 
 	// Функция для создания первой популяции
+
+	/**
+	 * @param $populationSize
+	 * @return GeneticPerson[]
+	 */
 	public function createPopulation($populationSize): array
 	{
 		$population = [];
 		for ($i = 0; $i < $populationSize; $i++)
 		{
 			$population[] = new GeneticPerson($this->groups, $this->audiences, $this->teachers);
+			$this->fitness($population[$i]);
+			//echo $population[$i]->getFitness() . "\n";
 		}
 
 		return $population;
@@ -122,6 +129,7 @@ class GeneticSchedule
 
 		foreach ($groups as $group)
 		{
+			$idOfSubject[$group->getId()] = $group->getSubjects()->getIdList();
 			$amountsOfCouples[$group->getId()] = count($group->getSubjects()->getIdList());
 		}
 		foreach ($groups as $group)
@@ -140,21 +148,29 @@ class GeneticSchedule
 
 		foreach ($couples as $couple)
 		{
-			$amountsOfCouples[$couple->getGroupId()]--;
+			if (is_int($index = array_search($couple->getSubjectId(), $idOfSubject[$couple->getGroupId()], true)))
+			{
+				unset($idOfSubject[$couple->getGroupId()][$index]);
+				$amountsOfCouples[$couple->getGroupId()]--;
+			}
+			//$amountsOfCouples[$couple->getGroupId()]--;
 			$couplesOnWeekForGroup[$couple->getGroupId()][$couple->getWeekDay()][$couple->getCoupleNumberInDay()]++;
 			$couplesOnWeekForAudience[$couple->getAudienceId()][$couple->getWeekDay()][$couple->getCoupleNumberInDay()]++;
 			$couplesOnWeekForTeacher[$couple->getTeacherId()][$couple->getWeekDay()][$couple->getCoupleNumberInDay()]++;
 
 			if (($couplesOnWeekForGroup[$couple->getGroupId()][$couple->getWeekDay()][$couple->getCoupleNumberInDay()]) > 1)
 			{
+				//echo "group" . "\n";
 				$penalty += self::$pricesOfPenalty['couple-group']; //Штраф за накладку по парам у группы
 			}
 			if (($couplesOnWeekForTeacher[$couple->getTeacherId()][$couple->getWeekDay()][$couple->getCoupleNumberInDay()]) > 1)
 			{
+				//echo "teacher" . "\n";
 				$penalty += self::$pricesOfPenalty['couple-teacher']; //Штраф за накладку по парам у преподавателей
 			}
 			if (($couplesOnWeekForAudience[$couple->getAudienceId()][$couple->getWeekDay()][$couple->getCoupleNumberInDay()]) > 1)
 			{
+				//echo "audience" . "\n";
 				$penalty += self::$pricesOfPenalty['couple-audience']; //Штраф за накладку по аудиториям
 			}
 		}
@@ -162,10 +178,12 @@ class GeneticSchedule
 		{
 			if ($amountOfCouples > 0)
 			{
+				//echo "test1";
 				$penalty += abs($amountOfCouples) * self::$pricesOfPenalty['underfulfilment']; //Штраф за недовыполнение учебного плана
 			}
 			elseif ($amountOfCouples < 0)
 			{
+				//echo "test2";
 				$penalty += abs($amountOfCouples) * self::$pricesOfPenalty['overfulfilment']; //Штраф за перевыполнение учебного плана
 			}
 		}
@@ -211,6 +229,7 @@ class GeneticSchedule
 					$spaceBetweenCouples = $numberOfNextCouple - $numberOfCouple - 1;
 					if ($spaceBetweenCouples > 0) // TODO: хранить расстояние в отдельном поле
 					{
+						//echo "space" . "\n";
 						$penalty += self::$pricesOfPenalty['big_spaces'] * $spaceBetweenCouples; // Штраф за большие окна между парами (4 и более)
 					}
 				}
@@ -221,11 +240,7 @@ class GeneticSchedule
 		$schedule->setFitness($penalty);
 	}
 
-	/**
-	 * @param GeneticPerson[] $schedules
-	 * @return GeneticPerson[]
-	 */
-	public function selection(array $schedules): array
+	public function sortSchedulesByFitness(array $schedules): array
 	{
 		uasort($schedules, static function (GeneticPerson $schedule1, GeneticPerson $schedule2) {
 			if ($schedule1->getFitness() === $schedule2->getFitness())
@@ -235,14 +250,24 @@ class GeneticSchedule
 
 			return ($schedule1->getFitness() > $schedule2->getFitness()) ? 1 : -1;
 		});
+		return $schedules;
+	}
+
+	/**
+	 * @param GeneticPerson[] $schedules
+	 * @return GeneticPerson[]
+	 */
+	public function selection(array $schedules): array
+	{
+		$schedules = $this->sortSchedulesByFitness($schedules);
 
 		$schedules = array_slice(
 			$schedules,
 			0,
 			round($this->populationSize * ($this->percentageOfSelection / 100))
 		);
-
-		if ($schedules[0]->getFitness() < 30) // TODO:Вынести в отдельный метод
+		//echo "\n\n\n".$schedules[0]->getFitness() . "\n\n\n";
+		if ($schedules[0]->getFitness() <= 70) // TODO:Вынести в отдельный метод
 		{
 			return [$schedules[0]];
 		}
@@ -254,90 +279,180 @@ class GeneticSchedule
 	public function crossover(GeneticPerson $schedule1, GeneticPerson $schedule2): GeneticPerson
 	{
 		$couplesOfFirstSchedule = $schedule1->couples->getAll();
+
+		//$subjectCollectionOfSecondSchedule = $schedule2->couples;
 		$couplesOfSecondSchedule = $schedule2->couples->getAll();
-		$groups = $this->groups;
-		$amountOfGroups = count($groups->getAll());
-		$randAmountOfGroups = random_int(1, $amountOfGroups);
+		//$groups = $this->groups;
+		//$amountOfGroups = count($groups->getAll());
+		//$randAmountOfGroups = random_int(0, $amountOfGroups);
 
 		$firstCouples = [];
 		$secondCouples = [];
 		// TODO: Предусмотреть, что в расписании могут быть не выставлены некоторые пары
 
+		/*for($i = 1; $i <= 6; $i++)
+		{
+			for($j = 1; $j <= 7 ; $j++)
+			{
+				if ()
+				$firstCouples[][]
+			}
+		}*/
 
-		if ($randAmountOfGroups === 1)
+		foreach ($couplesOfFirstSchedule as $couple)
 		{
-			//TODO:Исправить индексацию
-			$randGroupsId = [array_rand($groups->getIdList(), $randAmountOfGroups)];
+			$firstCouples[$couple->getGroupId()][$couple->getWeekDay()][$couple->getCoupleNumberInDay()] = true;
+			$fixedArrayOfFirstCouples[$couple->getGroupId()][$couple->getWeekDay()][$couple->getCoupleNumberInDay()] = $couple;
+			//$idArrayOfFirstCouples[] = $couple->getSubjectId();
 		}
-		else
+		foreach ($couplesOfSecondSchedule as $couple)
 		{
-			$randGroupsId = array_rand($groups->getIdList(), $randAmountOfGroups);
+			$secondCouples[$couple->getGroupId()][$couple->getWeekDay()][$couple->getCoupleNumberInDay()] = true;
+			//$fixedArrayOfSecondCouples[$couple->getGroupId()][$couple->getWeekDay()][$couple->getCoupleNumberInDay()] = $couple;
+			//$idArrayOfSecondCouples[] = $couple->getSubjectId();
+			$fixedArrayOfSecondCouples[$couple->getGroupId()][$couple->getSubjectId()] = $couple;
+		}
+
+		$availableCouplesOfFirstScheduleToSwitch = [];
+
+		foreach ($firstCouples as $groupId => $couples)
+		{
+			foreach ($couples as $day => $coupleNumber)
+			{
+				foreach ($coupleNumber as $numberInDay => $couple)
+				{
+					if ($couple !== ($secondCouples[$groupId][$day][$numberInDay] ?? false))
+					{
+						$availableCouplesOfFirstScheduleToSwitch[] = $fixedArrayOfFirstCouples[$groupId][$day][$numberInDay];
+						//unset($fixedArrayOfSecondCouples[$couple->getGroupId()][$couple->getSubjectId()]);
+					}
+				}
+			}
 		}
 
 		$newCouples = new EO_Couple_Collection();
-		foreach ($randGroupsId as $groupId)
+		$randAmountOfChanges = random_int(0, count($availableCouplesOfFirstScheduleToSwitch));
+
+		//if ($randAmountOfChanges > 0) echo "TEST"."\n\n\n\n";
+
+
+		for($i = 0; $i < $randAmountOfChanges; $i++)
 		{
-			$couples = [];
-			foreach ($couplesOfFirstSchedule as $couple)
-			{
-				if ($couple->getGroup()->getTitle() === $groups->getByPrimary($groupId + 1)->getTitle())
-				{
-					$couples[] = $couple;
-				}
-			}
-			$firstCouples[$groupId] = $couples;
-			$couples = [];
-			foreach ($couplesOfSecondSchedule as $couple)
-			{
-				if ($couple->getGroup()->getTitle() === $groups->getByPrimary($groupId + 1)->getTitle())
-				{
-					$couples[] = $couple;
-				}
-			}
-			$secondCouples[$groupId] = $couples;
+			$availableCoupleIndex = array_rand($availableCouplesOfFirstScheduleToSwitch, 1);
+			$availableCouple = $availableCouplesOfFirstScheduleToSwitch[$availableCoupleIndex];
 
-			if (count($firstCouples[$groupId]) === 0)
-			{
-				return $schedule2;
-			}
+			$newCouples->add($availableCouple);
+			unset(
+				$fixedArrayOfSecondCouples[$availableCouple->getGroupId()][$availableCouple->getSubjectId()],
+				$availableCouplesOfFirstScheduleToSwitch[$availableCoupleIndex]
+			);
+		}
 
-			if (count($secondCouples[$groupId]) === 0)
+		foreach ($fixedArrayOfSecondCouples as $groupId => $arrayByGroup)
+		{
+			foreach ($arrayByGroup as $subjectId => $couple)
 			{
-				return $schedule1;
-			}
-
-			$amountOfCouples = min(count($secondCouples[$groupId]), count($firstCouples[$groupId]));
-
-			$randAmountOfChanges = random_int(1, $amountOfCouples);
-			/*echo "\ncount" . count($secondCouples[$groupId]) . "\trand amount of changes: " . $randAmountOfChanges . "\tamount of couples" . $amountOfCouples . "\t" . "\tfit: " . $schedule1->getFitness() .
-			"\tfit2: " . $schedule2->getFitness() . "\n";*/ // ВЫВОД
-			if ($randAmountOfChanges === 1)
-			{
-				$randCouplesId = [array_rand($secondCouples[$groupId])];
-			}
-			else
-			{
-				$randCouplesId = array_rand($secondCouples[$groupId], $randAmountOfChanges);
-			}
-
-			$remainingId = array_diff(array_keys($secondCouples[$groupId]), $randCouplesId);
-			foreach ($randCouplesId as $coupleId)
-			{
-				$couple = $secondCouples[$groupId][$coupleId]; //Пары берутся из второго расписания
-				if ($couple !== null)
-				{
-					$newCouples->add($couple);
-				}
-			}
-			foreach ($remainingId as $coupleId)
-			{
-				$couple = $firstCouples[$groupId][$coupleId]; //Пары берутся из первого расписания
-				if ($couple !== null)
-				{
-					$newCouples->add($couple);
-				}
+				$newCouples->add($couple);
 			}
 		}
+
+
+		/*for($i = 1; $i <= 6; $i++)
+		{
+			for($j = 1; $j <= 7; $j++)
+			{
+				if (($firstCouples[$i][$j] ?? false) !== ($secondCouples[$i][$j] ?? false))
+				{
+					$availableCouplesOfFirstScheduleToSwitch[] = $fixedArrayOfFirstCouples[$i][$j];
+
+				}
+			}
+		}*/
+
+
+
+//		if ($randAmountOfGroups === 1)
+//		{
+//			//TODO:Исправить индексацию
+//			$randGroupsId = [array_rand($groups->getIdList(), $randAmountOfGroups)];
+//		}
+//		else
+//		{
+//			$randGroupsId = array_rand($groups->getIdList(), $randAmountOfGroups);
+//		}
+//
+//		$newCouples = new EO_Couple_Collection();
+//		foreach ($randGroupsId as $groupId)
+//		{
+//			$couples = [];
+//			foreach ($couplesOfFirstSchedule as $couple)
+//			{
+//				if ($couple->getGroup()->getTitle() === $groups->getByPrimary($groupId + 1)->getTitle())
+//				{
+//					$couples[] = $couple;
+//				}
+//			}
+//			$firstCouples[$groupId] = $couples;
+//			$couples = [];
+//			foreach ($couplesOfSecondSchedule as $couple)
+//			{
+//				if ($couple->getGroup()->getTitle() === $groups->getByPrimary($groupId + 1)->getTitle())
+//				{
+//					$couples[] = $couple;
+//				}
+//			}
+//			$secondCouples[$groupId] = $couples;
+//
+//			if (count($firstCouples[$groupId]) === 0)
+//			{
+//				return $schedule2;
+//			}
+//
+//			if (count($secondCouples[$groupId]) === 0)
+//			{
+//				return $schedule1;
+//			}
+//
+//
+//			$amountOfCouples = min(count($secondCouples[$groupId]), count($firstCouples[$groupId]));
+//
+//			$randAmountOfChanges = random_int(1, $amountOfCouples);
+//			/*echo "\ncount" . count($secondCouples[$groupId]) . "\trand amount of changes: " . $randAmountOfChanges . "\tamount of couples" . $amountOfCouples . "\t" . "\tfit: " . $schedule1->getFitness() .
+//			"\tfit2: " . $schedule2->getFitness() . "\n";*/ // ВЫВОД
+//			if ($randAmountOfChanges === 1)
+//			{
+//				$randCouplesId = [array_rand($secondCouples[$groupId])];
+//			}
+//			else
+//			{
+//				$randCouplesId = array_rand($secondCouples[$groupId], $randAmountOfChanges);
+//			}
+//
+//			$remainingId = array_diff(array_keys($secondCouples[$groupId]), $randCouplesId);
+//			foreach ($randCouplesId as $coupleId)
+//			{
+//				$couple = $secondCouples[$groupId][$coupleId]; //Пары берутся из второго расписания
+//				if ($couple !== null)
+//				{
+//					/*$newCouple = new EO_Couple();
+//					$newCouple->setAudience($randAudience);
+//					$newCouple->setGroup($randGroup);
+//					$newCouple->setSubject($randSubject);
+//					$newCouple->setTeacher($randTeacher);
+//					$newCouple->setWeekDay($randDay);
+//					$newCouple->setCoupleNumberInDay($randCoupleNumber);*/
+//					$newCouples->add($couple);
+//				}
+//			}
+//			foreach ($remainingId as $coupleId)
+//			{
+//				$couple = $firstCouples[$groupId][$coupleId]; //Пары берутся из первого расписания
+//				if ($couple !== null)
+//				{
+//					$newCouples->add($couple);
+//				}
+//			}
+//		}
 		$newSchedule = clone $schedule1;
 		$newSchedule->setCouples($newCouples);
 
@@ -351,6 +466,11 @@ class GeneticSchedule
 		// Вернуть измененное расписание
 	}
 
+	/**
+	 * @param GeneticPerson[] $population
+	 * @param int $amountOfIterations
+	 * @return GeneticPerson[]
+	 */
 	public function doIterations(array $population, int $amountOfIterations): array
 	{
 		for ($i = 0; $i < $amountOfIterations; $i++)
@@ -363,8 +483,8 @@ class GeneticSchedule
 			$selectedSchedules = $this->selection($population);
 			if (count($selectedSchedules) === 1)
 			{
-				echo $selectedSchedules[0]->getFitness();
-				return $selectedSchedules[0];
+				//echo $selectedSchedules[0]->getFitness();
+				return [$selectedSchedules[0]];
 			}
 			// Скрещивание
 			$newPopulation = $selectedSchedules;
@@ -375,13 +495,15 @@ class GeneticSchedule
 
 
 				$child = $this->crossover($parent1, $parent2);
+				$this->fitness($child);
 				$newPopulation[] = $child;
 			}
-
 			// Замена старой популяции новой
-			$population = $newPopulation;
+			$population = $this->sortSchedulesByFitness($newPopulation);
 		}
-		return $population;
+
+		//echo $population[0]->getFitness() . "\n";
+		return $newPopulation;
 	}
 
 	// Генетический алгоритм для составления расписания
@@ -399,7 +521,7 @@ class GeneticSchedule
 			$selectedSchedules = $this->selection($population);
 			if (count($selectedSchedules) === 1)
 			{
-				echo $selectedSchedules[0]->getFitness();
+				//echo $selectedSchedules[0]->getFitness();
 				return $selectedSchedules[0];
 			}
 			// Скрещивание
@@ -432,4 +554,11 @@ class GeneticSchedule
 		//echo $bestSchedule->getFitness();
 		return $bestSchedule;
 	}
+
+	public function getPopulationSize(): int
+	{
+		return $this->populationSize;
+	}
+
+
 }
