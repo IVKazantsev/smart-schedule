@@ -2,7 +2,6 @@ window.addEventListener('load', () => {
 	const tabButtonsContainers = document.querySelectorAll('.tabs');
 	const tabButtons = document.querySelectorAll('.tabs .column a');
 	const tabContainers = document.querySelectorAll('.tabs-content div');
-	const backButtonContainer = document.getElementById('back-button-container');
 	const backButton = document.getElementById('back-button');
 
 	let id = window.location.hash.substring(1);
@@ -14,7 +13,7 @@ window.addEventListener('load', () => {
 		});
 
 		tabContainers.forEach(container => container.classList.remove('active'));
-		document.getElementById('back-button-container').classList.add('active');
+		document.getElementById('admin-buttons-container').classList.add('active');
 		document.getElementById(id).classList.add('active');
 
 		const entityListDiv = document.createElement('div');
@@ -30,7 +29,7 @@ window.addEventListener('load', () => {
 
 			const id = event.target.hash.substring(1);
 			tabContainers.forEach(container => container.classList.remove('active'));
-			document.getElementById('back-button-container').classList.add('active');
+			document.getElementById('admin-buttons-container').classList.add('active');
 			document.getElementById(id).classList.add('active');
 
 			const entityListDiv = document.createElement('div');

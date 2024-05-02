@@ -2,6 +2,7 @@
 
 namespace Up\Schedule\Repository;
 
+use Bitrix\Main\ORM\Query\Query;
 use Up\Schedule\Model\CoupleTable;
 use Up\Schedule\Model\EO_Couple;
 use Up\Schedule\Model\EO_Group;
@@ -23,9 +24,35 @@ class GroupRepository
 		return GroupTable::query()->setSelect(['ID', 'TITLE'])->where('TITLE', $title)->fetchObject();
 	}
 
-	public static function getAllArray(): ?array
+	public static function getAllArray(): array
 	{
 		return GroupTable::query()->setSelect(['ID', 'TITLE'])->fetchAll();
+	}
+
+	public static function getPageWithArrays(int $entityPerPage, int $pageNumber, string $searchInput): array
+	{
+		$offset = 0;
+		if($pageNumber > 1)
+		{
+			$offset = $entityPerPage * ($pageNumber - 1);
+		}
+
+		return GroupTable::query()
+						 ->setSelect(['ID', 'TITLE'])
+						 ->whereLike('TITLE', "%$searchInput%")
+						 ->setLimit($entityPerPage + 1)
+						 ->setOffset($offset)
+						 ->setOrder('ID')
+						 ->fetchAll();
+	}
+
+	public static function getCountOfEntities(string $searchInput): int
+	{
+		$result = GroupTable::query()
+							->addSelect(Query::expr()->count('ID'), 'CNT')
+							->whereLike('TITLE', "%$searchInput%")
+							->exec();
+		return $result->fetch()['CNT'];
 	}
 
 	public static function getById(int $id): ?EO_Group
@@ -33,7 +60,7 @@ class GroupRepository
 		return GroupTable::query()->setSelect(['ID', 'TITLE', 'SUBJECTS'])->where('ID', $id)->fetchObject();
 	}
 
-	public static function getArrayById(int $id): ?array
+	public static function getArrayById(int $id): array|false
 	{
 		return GroupTable::query()->setSelect(['ID', 'TITLE', 'SUBJECTS'])->where('ID', $id)->fetch();
 	}

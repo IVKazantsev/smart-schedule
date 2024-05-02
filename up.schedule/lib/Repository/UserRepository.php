@@ -42,7 +42,7 @@ class UserRepository
 		)->fetchCollection();
 	}
 
-	public static function getAllArray(): ?array
+	public static function getAllArray(): array
 	{
 		return UserTable::query()->setSelect([
 												 'ID',
@@ -60,6 +60,51 @@ class UserRepository
 				'UP_SCHEDULE_GROUP', GroupTable::class, Join::on('this.UF_GROUP_ID', 'ref.ID')
 			))
 		)->fetchAll();
+	}
+
+	public static function getPageWithArrays(int $entityPerPage, int $pageNumber, string $searchInput): array
+	{
+		$offset = 0;
+		if ($pageNumber > 1)
+		{
+			$offset = $entityPerPage * ($pageNumber - 1);
+		}
+
+		return UserTable::query()->setSelect([
+												'ID',
+												 'NAME',
+												 'LAST_NAME',
+												 'EMAIL',
+												 'ROLE' => 'UP_SCHEDULE_ROLE.TITLE',
+											 ])
+								 ->where(Query::filter()
+											  ->logic('or')
+											  ->whereLike('NAME', "%$searchInput%")
+											  ->whereLike('LAST_NAME', "%$searchInput%")
+								 )
+								 ->registerRuntimeField(
+									 (new Reference(
+										 'UP_SCHEDULE_ROLE',
+										 RoleTable::class,
+										 Join::on('this.UF_ROLE_ID', 'ref.ID')
+									 )))
+								 ->setLimit($entityPerPage + 1)
+								 ->setOffset($offset)
+								 ->setOrder('ID')
+								 ->fetchAll();
+	}
+
+	public static function getCountOfEntities(string $searchInput): int
+	{
+		$result = UserTable::query()
+						   ->addSelect(Query::expr()->count('ID'), 'CNT')
+						   ->where(Query::filter()
+										->logic('or')
+										->whereLike('NAME', "%$searchInput%")
+										->whereLike('LAST_NAME', "%$searchInput%")
+						   )
+						   ->exec();
+		return $result->fetch()['CNT'];
 	}
 
 	public static function getById(int $id): ?EO_User
@@ -81,7 +126,6 @@ class UserRepository
 			))
 		)->where('ID', $id)->fetchObject();
 	}
-
 
 	public static function getArrayById(int $id): ?array
 	{
@@ -123,34 +167,47 @@ class UserRepository
 		)->where('ID', $id)->where('ROLE', 'Преподаватель')->fetchObject();
 	}
 
-	public static function getArrayForAdminById(int $id): ?array
+	public static function getArrayOfTeacherById(int $id): array|false
 	{
-		$user = UserTable::query()
-			->setSelect([
-						 'NAME',
-						 'LAST_NAME',
-						 'EMAIL',
-						 'ROLE' => 'UP_SCHEDULE_ROLE.TITLE',
-						 'GROUP' => 'UP_SCHEDULE_GROUP.TITLE',
-					 ])
-			->registerRuntimeField(
+		return UserTable::query()->setSelect([
+												 'ID',
+												 'NAME',
+												 'LAST_NAME',
+												 'EMAIL',
+												 'ROLE' => 'UP_SCHEDULE_ROLE.TITLE',
+												 'GROUP' => 'UP_SCHEDULE_GROUP.TITLE',
+											 ])->registerRuntimeField(
 			(new Reference(
 				'UP_SCHEDULE_ROLE', RoleTable::class, Join::on('this.UF_ROLE_ID', 'ref.ID')
-			)))
-			->registerRuntimeField(
+			))
+		)->registerRuntimeField(
 			(new Reference(
 				'UP_SCHEDULE_GROUP', GroupTable::class, Join::on('this.UF_GROUP_ID', 'ref.ID')
-			)))
-			->where('ID', $id)
-			->fetch();
+			))
+		)->where('ID', $id)->where('ROLE', 'Преподаватель')->fetch();
+	}
 
-		$roles = RoleTable::query()
-			->setSelect(['ID', 'TITLE',])
-			->fetchAll();
+	public static function getArrayForAdminById(int $id): ?array
+	{
+		$user = UserTable::query()->setSelect([
+												  'NAME',
+												  'LAST_NAME',
+												  'EMAIL',
+												  'ROLE' => 'UP_SCHEDULE_ROLE.TITLE',
+												  'GROUP' => 'UP_SCHEDULE_GROUP.TITLE',
+											  ])->registerRuntimeField(
+			(new Reference(
+				'UP_SCHEDULE_ROLE', RoleTable::class, Join::on('this.UF_ROLE_ID', 'ref.ID')
+			))
+		)->registerRuntimeField(
+			(new Reference(
+				'UP_SCHEDULE_GROUP', GroupTable::class, Join::on('this.UF_GROUP_ID', 'ref.ID')
+			))
+		)->where('ID', $id)->fetch();
 
-		$groups = GroupTable::query()
-			->setSelect(['ID', 'TITLE'])
-			->fetchAll();
+		$roles = RoleTable::query()->setSelect(['ID', 'TITLE',])->fetchAll();
+
+		$groups = GroupTable::query()->setSelect(['ID', 'TITLE'])->fetchAll();
 		if ($user['ROLE'] === 'Студент')
 		{
 			$user['GROUP'] = array_unique(
@@ -171,14 +228,14 @@ class UserRepository
 			{
 				$user['SUBJECTS']['ALL_SUBJECTS'][$subject->getId()] = $subject->getTitle();
 			}
-			$subjects = SubjectTeacherTable::query()
-				->setSelect(['SUBJECTS' => 'UP_SCHEDULE_SUBJECT'])
-				->where('TEACHER_ID', $id)
-				->registerRuntimeField(
-					(new Reference(
-						'UP_SCHEDULE_SUBJECT', SubjectTable::class, Join::on('this.SUBJECT_ID', 'ref.ID')
-					)))
-				->fetchAll();
+			$subjects = SubjectTeacherTable::query()->setSelect(['SUBJECTS' => 'UP_SCHEDULE_SUBJECT'])->where(
+				'TEACHER_ID',
+				$id
+			)->registerRuntimeField(
+				(new Reference(
+					'UP_SCHEDULE_SUBJECT', SubjectTable::class, Join::on('this.SUBJECT_ID', 'ref.ID')
+				))
+			)->fetchAll();
 			foreach ($subjects as $subject)
 			{
 				$user['SUBJECTS']['CURRENT_SUBJECTS'][$subject['SUBJECTSID']] = $subject['SUBJECTSTITLE'];
@@ -206,30 +263,30 @@ class UserRepository
 												 'ROLE' => 'UP_SCHEDULE_ROLE.TITLE',
 												 'SUBJECT_ID' => 'UP_SCHEDULE_SUBJECT_TEACHER.SUBJECT_ID',
 											 ])->registerRuntimeField(
-				(new Reference(
-					'UP_SCHEDULE_ROLE', RoleTable::class, Join::on('this.UF_ROLE_ID', 'ref.ID')
-				))
-			)->registerRuntimeField(
-				(new Reference(
-					'UP_SCHEDULE_SUBJECT_TEACHER', SubjectTeacherTable::class, Join::on('this.ID', 'ref.TEACHER_ID')
-				))
-			)->registerRuntimeField(
-				(new Reference(
-					'UP_SCHEDULE_GROUP', GroupTable::class, Join::on('this.UF_GROUP_ID', 'ref.ID')
-				))
-			)->where('ROLE', 'Преподаватель')->where('SUBJECT_ID', $subjectId)->fetchCollection();
+			(new Reference(
+				'UP_SCHEDULE_ROLE', RoleTable::class, Join::on('this.UF_ROLE_ID', 'ref.ID')
+			))
+		)->registerRuntimeField(
+			(new Reference(
+				'UP_SCHEDULE_SUBJECT_TEACHER', SubjectTeacherTable::class, Join::on('this.ID', 'ref.TEACHER_ID')
+			))
+		)->registerRuntimeField(
+			(new Reference(
+				'UP_SCHEDULE_GROUP', GroupTable::class, Join::on('this.UF_GROUP_ID', 'ref.ID')
+			))
+		)->where('ROLE', 'Преподаватель')->where('SUBJECT_ID', $subjectId)->fetchCollection();
 	}
 
 	public static function getArrayOfTeachersBySubjectId(int $subjectId): ?array
 	{
 		return UserTable::query()->setSelect([
-			'ID',
-			'NAME',
-			'LAST_NAME',
-			'EMAIL',
-			'ROLE' => 'UP_SCHEDULE_ROLE.TITLE',
-			'SUBJECT_ID' => 'UP_SCHEDULE_SUBJECT_TEACHER.SUBJECT_ID',
-		])->registerRuntimeField(
+												 'ID',
+												 'NAME',
+												 'LAST_NAME',
+												 'EMAIL',
+												 'ROLE' => 'UP_SCHEDULE_ROLE.TITLE',
+												 'SUBJECT_ID' => 'UP_SCHEDULE_SUBJECT_TEACHER.SUBJECT_ID',
+											 ])->registerRuntimeField(
 			(new Reference(
 				'UP_SCHEDULE_ROLE', RoleTable::class, Join::on('this.UF_ROLE_ID', 'ref.ID')
 			))
@@ -244,32 +301,32 @@ class UserRepository
 		)->where('ROLE', 'Преподаватель')->where('SUBJECT_ID', $subjectId)->fetchAll();
 	}
 
-//	public static function getArrayOfTeachersBySubjectsId(array $subjectsId): ?array
-//	{
-//		return UserTable::query()->setSelect([
-//			'ID',
-//			'NAME',
-//			'LAST_NAME',
-//			'EMAIL',
-//			'ROLE' => 'UP_SCHEDULE_ROLE.TITLE',
-//			'SUBJECT_ID' => 'UP_SCHEDULE_SUBJECT_TEACHER.SUBJECT_ID',
-//		])->registerRuntimeField(
-//			(new Reference(
-//				'UP_SCHEDULE_ROLE', RoleTable::class, Join::on('this.UF_ROLE_ID', 'ref.ID')
-//			))
-//		)->registerRuntimeField(
-//			(new Reference(
-//				'UP_SCHEDULE_SUBJECT_TEACHER', SubjectTeacherTable::class, Join::on('this.ID', 'ref.TEACHER_ID')
-//			))
-//		)->registerRuntimeField(
-//			(new Reference(
-//				'UP_SCHEDULE_GROUP', GroupTable::class, Join::on('this.UF_GROUP_ID', 'ref.ID')
-//			))
-//		)
-//			->where('ROLE', 'Преподаватель')
-//			->whereIn('SUBJECT_ID', $subjectsId)
-//			->fetchAll();
-//	}
+	//	public static function getArrayOfTeachersBySubjectsId(array $subjectsId): ?array
+	//	{
+	//		return UserTable::query()->setSelect([
+	//			'ID',
+	//			'NAME',
+	//			'LAST_NAME',
+	//			'EMAIL',
+	//			'ROLE' => 'UP_SCHEDULE_ROLE.TITLE',
+	//			'SUBJECT_ID' => 'UP_SCHEDULE_SUBJECT_TEACHER.SUBJECT_ID',
+	//		])->registerRuntimeField(
+	//			(new Reference(
+	//				'UP_SCHEDULE_ROLE', RoleTable::class, Join::on('this.UF_ROLE_ID', 'ref.ID')
+	//			))
+	//		)->registerRuntimeField(
+	//			(new Reference(
+	//				'UP_SCHEDULE_SUBJECT_TEACHER', SubjectTeacherTable::class, Join::on('this.ID', 'ref.TEACHER_ID')
+	//			))
+	//		)->registerRuntimeField(
+	//			(new Reference(
+	//				'UP_SCHEDULE_GROUP', GroupTable::class, Join::on('this.UF_GROUP_ID', 'ref.ID')
+	//			))
+	//		)
+	//			->where('ROLE', 'Преподаватель')
+	//			->whereIn('SUBJECT_ID', $subjectsId)
+	//			->fetchAll();
+	//	}
 
 	public static function getAllTeachers(): EO_User_Collection
 	{
@@ -319,7 +376,7 @@ class UserRepository
 	public static function add(array $data): void
 	{
 		$fields = [];
-		$validate = function (string $fieldName, mixed $value) use (&$fields): void {
+		$validate = function(string $fieldName, mixed $value) use (&$fields): void {
 			if ($value !== null)
 			{
 				$fields[$fieldName] = $value;
@@ -332,7 +389,7 @@ class UserRepository
 		$validate('LAST_NAME', $data['LAST_NAME']);
 		$validate('PASSWORD', $data['PASSWORD']);
 		$validate('CONFIRM_PASSWORD', $data['CONFIRM_PASSWORD']);
-		$validate('UF_ROLE_ID', RoleRepository::getByTitle($data['ROLE']??'')?->getId());
+		$validate('UF_ROLE_ID', RoleRepository::getByTitle($data['ROLE'] ?? '')?->getId());
 
 		$user = new CUser();
 		$ID = $user->Add($fields);
@@ -341,12 +398,12 @@ class UserRepository
 		{
 			throw new Exception($user->LAST_ERROR);
 		}
-/*
-		var_dump($user->GetID()); die;
-		if (($roleId = RoleRepository::getByTitle($data['ROLE']??'')?->getId()) !== null)
-		{
-			$user->Update($user->GetID(), ['UF_ROLE_ID' => $roleId]);
-		}*/
+		/*
+				var_dump($user->GetID()); die;
+				if (($roleId = RoleRepository::getByTitle($data['ROLE']??'')?->getId()) !== null)
+				{
+					$user->Update($user->GetID(), ['UF_ROLE_ID' => $roleId]);
+				}*/
 	}
 
 	public static function getTeacherByFirstAndLastName(string $name, string $lastName): ?EO_User
@@ -355,16 +412,16 @@ class UserRepository
 												 'ID',
 												 'NAME',
 												 'LAST_NAME',
-											 ])->where('UF_ROLE_ID', 2)
-											   ->where('NAME', $name)
-											   ->where('LAST_NAME', $lastName)
-											   ->fetchObject();
+											 ])->where('UF_ROLE_ID', 2)->where('NAME', $name)->where(
+			'LAST_NAME',
+			$lastName
+		)->fetchObject();
 	}
 
 	public static function editById(int $id, array $data): void
 	{
 		$fields = [];
-		$validate = function (string $fieldName, mixed $value) use (&$fields): void {
+		$validate = function(string $fieldName, mixed $value) use (&$fields): void {
 			if ($value !== null)
 			{
 				$fields[$fieldName] = $value;
@@ -374,8 +431,8 @@ class UserRepository
 		$validate('NAME', $data['NAME']);
 		$validate('LAST_NAME', $data['LAST_NAME']);
 		$validate('EMAIL', $data['EMAIL']);
-		$validate('UF_GROUP_ID', GroupRepository::getByTitle($data['GROUP']??'')?->getId());
-		$validate('UF_ROLE_ID', RoleRepository::getByTitle($data['ROLE']??'')?->getId());
+		$validate('UF_GROUP_ID', GroupRepository::getByTitle($data['GROUP'] ?? '')?->getId());
+		$validate('UF_ROLE_ID', RoleRepository::getByTitle($data['ROLE'] ?? '')?->getId());
 
 		/*echo "<pre>";
 		var_dump($fields);*/
@@ -385,7 +442,8 @@ class UserRepository
 		{
 			foreach ($data['SUBJECTS_TO_DELETE'] as $subjectId)
 			{
-				$result = SubjectTeacherTable::getByPrimary(['TEACHER_ID' => $id, 'SUBJECT_ID' => $subjectId])->fetchObject();
+				$result = SubjectTeacherTable::getByPrimary(['TEACHER_ID' => $id, 'SUBJECT_ID' => $subjectId])
+											 ->fetchObject();
 				$result?->delete();
 			}
 			$collection = new EO_SubjectTeacher_Collection();
@@ -418,14 +476,14 @@ class UserRepository
 	public static function getArrayOfRelatedEntitiesById(int $id): ?array
 	{
 		$relatedEntities = [];
-		$relatedCouples = CoupleTable::query()
-									 ->setSelect(['SUBJECT.TITLE', 'AUDIENCE.NUMBER', 'GROUP.TITLE', 'TEACHER.NAME', 'TEACHER.LAST_NAME'])
-									 ->where('TEACHER_ID', $id)
-									 ->fetchAll();
-		if(!empty($relatedCouples))
+		$relatedCouples = CoupleTable::query()->setSelect(
+			['SUBJECT.TITLE', 'AUDIENCE.NUMBER', 'GROUP.TITLE', 'TEACHER.NAME', 'TEACHER.LAST_NAME']
+		)->where('TEACHER_ID', $id)->fetchAll();
+		if (!empty($relatedCouples))
 		{
 			$relatedEntities['COUPLES'] = $relatedCouples;
 		}
+
 		return $relatedEntities;
 		// TODO: handle exceptions
 	}
@@ -437,19 +495,14 @@ class UserRepository
 												   'ID',
 												   'NAME',
 												   'LAST_NAME',
-											   ])
-						  ->whereNot('UF_ROLE_ID',  1)
-								   ->where(
-				Query::filter()
-				->logic('or')
-				->whereNotNull('UF_ROLE_ID')
-				->whereNotNull('UF_GROUP_ID')
-			)->fetchCollection();
+											   ])->whereNot('UF_ROLE_ID', 1)->where(
+			Query::filter()->logic('or')->whereNotNull('UF_ROLE_ID')->whereNotNull('UF_GROUP_ID')
+		)->fetchCollection();
 
 		foreach ($users as $user)
 		{
 			$result = CUser::Delete($user->getId());
-			if(!$result)
+			if (!$result)
 			{
 				return "Не удалось удалить пользователя {$user->getName()} {$user->getLastName()}";
 			}
@@ -457,6 +510,7 @@ class UserRepository
 
 		$DB->Query("DELETE FROM b_uts_user where UF_ROLE_ID != 1");
 		$DB->Query("DELETE FROM up_schedule_subject_teacher");
+
 		return $DB->GetErrorSQL();
 	}
 }

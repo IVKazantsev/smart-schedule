@@ -362,7 +362,6 @@ export class CouplesList {
 
 	handleOpenDropdownCoupleButtonClick(numberOfDay, numberOfCouple)
 	{
-		console.log('open');
 		const modals = document.querySelectorAll('.dropdown');
 		modals.forEach((modalWindow) => {
 			modalWindow.classList.remove('is-active');
@@ -378,7 +377,6 @@ export class CouplesList {
 
 	handleCloseDropdownCoupleButtonClick(numberOfDay, numberOfCouple)
 	{
-		console.log('close');
 		const dropdown = document.getElementById(`dropdown-${numberOfDay}-${numberOfCouple}`);
 		dropdown.className = 'btn-edit-couple-container dropdown';
 		const button = document.getElementById(`button-${numberOfDay}-${numberOfCouple}`);
@@ -389,21 +387,16 @@ export class CouplesList {
 
 	handleAddCoupleButtonClick(numberOfDay, numberOfCouple)
 	{
-		//console.log(numberOfDay);
-
 		this.openCoupleModal();
 		this.createAddForm(numberOfDay, numberOfCouple);
-		console.log('add');
 	}
 
 	handleRemoveCoupleButtonClick(numberOfDay, numberOfCouple) {
 		this.removeCouple(numberOfDay, numberOfCouple);
-		console.log('remove');
 	}
 
 	handleEditCoupleButtonClick(numberOfDay, numberOfCouple) {
 		this.openCoupleModal();
-		console.log('edit');
 	}
 
 	openCoupleModal()
@@ -429,12 +422,9 @@ export class CouplesList {
 				this.insertSubjectsDataForAddForm(subjectsList);
 			});
 
-		console.log(numberOfDay + ' ' + numberOfCouple);
-
 		const submitButton = document.getElementById('submit-form-button');
 		const cancelButton = document.getElementById('cancel-form-button');
 		submitButton.addEventListener('click', () => {
-			//console.log(numberOfDay);
 			this.sendForm(numberOfDay, numberOfCouple, 'add');
 		}, { once: true });
 
@@ -452,7 +442,6 @@ export class CouplesList {
 
 		if (subjectInput && teacherInput && audienceInput && groupInput)
 		{
-			console.log(subjectInput.value);
 			const coupleInfo = {
 				'GROUP_ID': groupInput.value,
 				'SUBJECT_ID': subjectInput.value,
@@ -470,7 +459,6 @@ export class CouplesList {
 						},
 				},
 			).then((response) => {
-					console.log(response);
 					this.closeCoupleModal();
 					this.reload();
 				})
@@ -482,7 +470,6 @@ export class CouplesList {
 
 	removeCouple(numberOfDay, numberOfCouple)
 	{
-		console.log(numberOfDay, numberOfCouple)
 		const subject = document.getElementById(`subjectId-${numberOfDay}-${numberOfCouple}`).innerText;
 		const teacher = document.getElementById(`teacherId-${numberOfDay}-${numberOfCouple}`).innerText;
 		const audience = document.getElementById(`audienceId-${numberOfDay}-${numberOfCouple}`).innerText;
@@ -507,7 +494,6 @@ export class CouplesList {
 						},
 				},
 			).then((response) => {
-				console.log(response);
 				this.reload();
 			})
 				.catch((error) => {
@@ -558,7 +544,6 @@ export class CouplesList {
 				</option>
 			`;
 			selectContainer.appendChild(option);
-			//console.log(subject.subject);
 		});
 
 		const container = Tag.render`<div class="is-60-height box edit-fields"></div>`;
@@ -678,7 +663,6 @@ export class CouplesList {
 		const selectContainer = Tag.render`
 			<select id="teacher-select" name="subject"> </select>
 		`;
-		// console.log(this.formData);
 		this.formData.forEach((subject) => {
 			if (subject.subject.ID === subjectId)
 			{
@@ -720,14 +704,10 @@ export class CouplesList {
 							{
 								entity: this.entity,
 								id: this.entityId,
-								// numberOfDay: numberOfDay,
-								// numberOfCouple: numberOfCouple,
 							},
 					},
 				)
 				.then((response) => {
-					console.log('Subjects:');
-					console.log(response.data);
 					const subjectList = response.data;
 					resolve(subjectList);
 				})

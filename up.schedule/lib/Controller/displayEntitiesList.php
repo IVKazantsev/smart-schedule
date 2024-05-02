@@ -51,21 +51,16 @@ class DisplayEntitiesList extends Controller
 		$entities = [];
 		if ($entity === 'teacher')
 		{
-			$currentEntity = $repository::getTeacherById($id);
+			$currentEntity = $repository::getArrayOfTeacherById($id);
 			$entities = $repository::getAllTeachersArray();
 		}
 		else
 		{
-			$currentEntity = $repository::getById($id);
+			$currentEntity = $repository::getArrayById($id);
 			$entities = $repository::getAllArray();
 		}
 
 		$locEntity = mb_strtoupper($entity);
-
-		if($currentEntity)
-		{
-			$currentEntityName = '';
-		}
 
 		$entitiesCount = count($entities);
 		for ($i = 0; $i < $entitiesCount; $i++)
@@ -73,22 +68,23 @@ class DisplayEntitiesList extends Controller
 			$entities[$i]['NAMING'] = '';
 		}
 
+		$lestMethod = end($entityNameIndexes);
 		foreach ($entityNameIndexes as $methodIndex)
 		{
-			if($currentEntity)
-			{
-				$currentEntityName .= $currentEntity[$methodIndex] . ' ';
-			}
 			for ($i = 0; $i < $entitiesCount; $i++)
 			{
-				$entities[$i]['NAMING'] .= $entities[$i][$methodIndex] . ' ';
+				$entities[$i]['NAMING'] .= $entities[$i][$methodIndex];
+
+				if($methodIndex !== $lestMethod)
+				{
+					$entities[$i]['NAMING'] .= ' ';
+				}
 			}
 		}
 
 		return [
 			'currentEntity' => $currentEntity,
 			'entities' => $entities,
-			'currentEntityName' => $currentEntityName,
 			'locEntity' => $locEntity,
 		];
 	}

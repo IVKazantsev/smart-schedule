@@ -23,6 +23,8 @@ class CouplesListComponent extends CBitrixComponent
 		// Выставляем сущность "по умолчанию"
 		if (!$this->arParams['ENTITY'])
 		{
+			// $role = EntityService::getRoleStringOfCurrentUser();
+			// var_dump($role); die();
 			$this->arParams['ENTITY'] = 'group';
 		}
 		// Обрабатываем неправильные сущности

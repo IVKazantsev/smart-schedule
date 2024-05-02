@@ -4,6 +4,7 @@ namespace Up\Schedule\Repository;
 
 use Bitrix\Main\ORM\Fields\Relations\Reference;
 use Bitrix\Main\ORM\Query\Join;
+use Bitrix\Main\ORM\Query\Query;
 use Up\Schedule\Model\AudienceTable;
 use Up\Schedule\Model\AudienceTypeTable;
 use Up\Schedule\Model\CoupleTable;
@@ -21,12 +22,7 @@ class AudienceTypeRepository
 			->where('ID', $id)
 			->fetch();
 
-		if ($result === null)
-		{
-			return null;
-		}
-
-		return $result;
+		return $result ?? null;
 	}
 
 	public static function getArrayForAdding(): ?array
@@ -99,11 +95,37 @@ class AudienceTypeRepository
 		}
 		return $relatedEntities;
 	}
-	public static function getAllArray(): ?array
+	public static function getAllArray(): array
 	{
 		return AudienceTypeTable::query()
-			->setSelect(['ID', 'TITLE',])
+			->setSelect(['ID', 'TITLE'])
 			->fetchAll();
+	}
+
+	public static function getPageWithArrays(int $entityPerPage, int $pageNumber, string $searchInput): array
+	{
+		$offset = 0;
+		if($pageNumber > 1)
+		{
+			$offset = $entityPerPage * ($pageNumber - 1);
+		}
+
+		return AudienceTypeTable::query()
+			->setSelect(['ID', 'TITLE'])
+			->whereLike('TITLE', "%$searchInput%")
+			->setLimit($entityPerPage + 1)
+			->setOffset($offset)
+			->setOrder('ID')
+			->fetchAll();
+	}
+
+	public static function getCountOfEntities(string $searchInput): int
+	{
+		$result = AudienceTypeTable::query()
+							   ->addSelect(Query::expr()->count('ID'), 'CNT')
+							   ->whereLike('TITLE', "%$searchInput%")
+							   ->exec();
+		return $result->fetch()['CNT'];
 	}
 
 	public static function getAll(): ?EO_AudienceType_Collection
