@@ -418,7 +418,7 @@ class UserRepository
 
 		if ((int)$ID <= 0)
 		{
-			throw new Exception($user->LAST_ERROR);
+			return $user->LAST_ERROR;
 		}
 
 		return '';
