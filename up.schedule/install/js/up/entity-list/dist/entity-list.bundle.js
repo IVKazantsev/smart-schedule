@@ -7,7 +7,6 @@ this.BX.Up = this.BX.Up || {};
 	var Validator = /*#__PURE__*/function () {
 	  function Validator() {
 	    babelHelpers.classCallCheck(this, Validator);
-	    console.log('Validator construct');
 	  }
 	  babelHelpers.createClass(Validator, null, [{
 	    key: "escapeHTML",

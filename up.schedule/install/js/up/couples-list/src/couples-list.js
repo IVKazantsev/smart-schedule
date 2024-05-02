@@ -232,8 +232,7 @@ export class CouplesList
 							<p hidden id="audienceId-${day}-${i}">${this.coupleList[day][i].UP_SCHEDULE_MODEL_COUPLE_AUDIENCE_ID}</p>
 							<p>${Validator.escapeHTML(this.coupleList[day][i].UP_SCHEDULE_MODEL_COUPLE_GROUP_TITLE)}</p>
 							<p hidden id="groupId-${day}-${i}">${this.coupleList[day][i].UP_SCHEDULE_MODEL_COUPLE_GROUP_ID}</p>
-							<p>${Validator.escapeHTML(this.coupleList[day][i].UP_SCHEDULE_MODEL_COUPLE_TEACHER_NAME)}
-							   ${Validator.escapeHTML(this.coupleList[day][i].UP_SCHEDULE_MODEL_COUPLE_TEACHER_LAST_NAME)}</p>
+							<p>${Validator.escapeHTML(this.coupleList[day][i].UP_SCHEDULE_MODEL_COUPLE_TEACHER_NAME)} ${Validator.escapeHTML(this.coupleList[day][i].UP_SCHEDULE_MODEL_COUPLE_TEACHER_LAST_NAME)}</p>
 							<p hidden id="teacherId-${day}-${i}">${this.coupleList[day][i].UP_SCHEDULE_MODEL_COUPLE_TEACHER_ID}</p>
 						</div>
 					`;
