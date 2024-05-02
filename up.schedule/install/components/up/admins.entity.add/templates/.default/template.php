@@ -137,9 +137,7 @@ Extension::load('up.popup-message');
 			i++;
 		});
 	}
-</script>
 
-<script>
 	BX.ready(function () {
 		window.PopupMessages = new BX.Up.Schedule.PopupMessage({
 			rootNodeId: 'messages',
