@@ -457,6 +457,11 @@ class UserRepository
 			}
 			$collection->save();
 		}
+		else
+		{
+			SubjectTeacherTable::deleteByFilter(['TEACHER_ID' => $id]);
+			CoupleTable::deleteByFilter(['TEACHER_ID' => $id]);
+		}
 		// TODO: handle exceptions
 	}
 
