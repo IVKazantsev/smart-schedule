@@ -212,4 +212,17 @@ class AudienceRepository
 
 		return $DB->GetErrorSQL();
 	}
+
+	public static function getArrayByAudienceTypeId(int $id): array
+	{
+		return AudienceTable::query()
+						   ->setSelect(['NUMBER'])
+						   ->where('AUDIENCE_TYPE.ID', $id)
+						   ->fetchAll();
+	}
+
+	public static function deleteByAudienceTypeId(int $id): void
+	{
+		AudienceTable::deleteByFilter(['AUDIENCE_TYPE_ID' => $id]);
+	}
 }

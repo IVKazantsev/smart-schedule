@@ -11,6 +11,7 @@ use Up\Schedule\Model\CoupleTable;
 use Up\Schedule\Model\EO_Audience;
 use Up\Schedule\Model\EO_AudienceType;
 use Up\Schedule\Model\EO_AudienceType_Collection;
+use Up\Schedule\Model\SubjectTable;
 
 class AudienceTypeRepository
 {
@@ -34,18 +35,10 @@ class AudienceTypeRepository
 
 	public static function deleteById(int $id): void
 	{
-		$relatedCouples = CoupleTable::query()
-			->setSelect(['SUBJECT.TITLE', 'AUDIENCE.NUMBER', 'GROUP.TITLE', 'TEACHER.NAME', 'TEACHER.LAST_NAME'])
-			->where('UP_SCHEDULE_AUDIENCE.AUDIENCE_TYPE_ID', $id)
-			->registerRuntimeField(
-				(new Reference(
-					'UP_SCHEDULE_AUDIENCE', AudienceTable::class, Join::on('this.AUDIENCE_ID', 'ref.ID')
-				)))
-			->fetchCollection();
-		foreach ($relatedCouples as $couple)
-		{
-			$couple->delete();
-		}
+		CoupleRepository::deleteByAudienceTypeId($id);
+		SubjectRepository::deleteByAudienceTypeId($id);
+		AudienceRepository::deleteByAudienceTypeId($id);
+
 		AudienceTypeTable::delete($id);
 	}
 
@@ -78,21 +71,28 @@ class AudienceTypeRepository
 		// TODO: handle exceptions
 	}
 
-	public static function getArrayOfRelatedEntitiesById(int $id): ?array
+	public static function getArrayOfRelatedEntitiesById(int $id): array
 	{
 		$relatedEntities = [];
-		$relatedCouples = CoupleTable::query()
-			->setSelect(['SUBJECT.TITLE', 'AUDIENCE.NUMBER', 'GROUP.TITLE', 'TEACHER.NAME', 'TEACHER.LAST_NAME'])
-			->where('UP_SCHEDULE_AUDIENCE.AUDIENCE_TYPE_ID', $id)
-			->registerRuntimeField(
-				(new Reference(
-					'UP_SCHEDULE_AUDIENCE', AudienceTable::class, Join::on('this.AUDIENCE_ID', 'ref.ID')
-				)))
-			->fetchAll();
+
+		$relatedCouples = CoupleRepository::getArrayByAudienceTypeId($id);
 		if(!empty($relatedCouples))
 		{
 			$relatedEntities['COUPLES'] = $relatedCouples;
 		}
+
+		$relatedSubjects = SubjectRepository::getArrayByAudienceTypeId($id);
+		if(!empty($relatedSubjects))
+		{
+			$relatedEntities['SUBJECTS'] = $relatedSubjects;
+		}
+
+		$relatedAudiences = AudienceRepository::getArrayByAudienceTypeId($id);
+		if(!empty($relatedAudiences))
+		{
+			$relatedEntities['AUDIENCES'] = $relatedAudiences;
+		}
+
 		return $relatedEntities;
 	}
 	public static function getAllArray(): array

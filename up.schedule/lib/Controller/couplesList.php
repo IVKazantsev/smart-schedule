@@ -24,8 +24,8 @@ class CouplesList extends Controller
 	{
 		$this->setActionConfig('getCouplesList', [
 			'-prefilters' => [
-				Authentication::class
-                ],
+				Authentication::class,
+			],
 		]);
 	}
 
@@ -40,13 +40,27 @@ class CouplesList extends Controller
 
 	public function deleteCoupleAction(array $coupleInfo): array
 	{
-		if(!EntityService::isCurrentUserAdmin())
+		if (!EntityService::isCurrentUserAdmin())
 		{
 			$this->addError(new Error('you must be an administrator', 'inappropriate_role'));
 		}
 
-		try {
+		if (
+			!$coupleInfo['GROUP_ID']
+			|| !$coupleInfo['SUBJECT_ID']
+			|| !$coupleInfo['TEACHER_ID']
+			|| !$coupleInfo['AUDIENCE_ID']
+			|| !$coupleInfo['DAY_OF_WEEK']
+			|| !$coupleInfo['NUMBER_IN_DAY']
+		)
+		{
+			$this->addError(new Error('all info must be filled', 'not_filled_couple_info'));
+		}
+
+		try
+		{
 			CoupleRepository::deleteCouple($coupleInfo);
+
 			return ['result' => true];
 		}
 		catch (\Exception)
@@ -57,16 +71,21 @@ class CouplesList extends Controller
 
 	public function addCoupleAction(array $coupleInfo): array
 	{
-		if(!EntityService::isCurrentUserAdmin())
+		if (!EntityService::isCurrentUserAdmin())
 		{
 			$this->addError(new Error('you must be an administrator', 'inappropriate_role'));
 		}
 
-		if(!check_bitrix_sessid())
+		if (
+			!$coupleInfo['GROUP_ID']
+			|| !$coupleInfo['SUBJECT_ID']
+			|| !$coupleInfo['TEACHER_ID']
+			|| !$coupleInfo['AUDIENCE_ID']
+			|| !$coupleInfo['DAY_OF_WEEK']
+			|| !$coupleInfo['NUMBER_IN_DAY']
+		)
 		{
-			return [
-				'result' => false,
-			];
+			$this->addError(new Error('all info must be filled', 'not_filled_couple_info'));
 		}
 
 		CoupleRepository::addCouple($coupleInfo);
@@ -78,7 +97,7 @@ class CouplesList extends Controller
 
 	public function fetchAddCoupleDataAction(string $entity, int $id): array
 	{
-		if(!EntityService::isCurrentUserAdmin())
+		if (!EntityService::isCurrentUserAdmin())
 		{
 			$this->addError(new Error('you must be an administrator', 'inappropriate_role'));
 		}
@@ -89,7 +108,7 @@ class CouplesList extends Controller
 		$this->fetchCouples($entity, $id);
 		$getMethodName = "getArrayBy{$entity}Id";
 		$subjects = SubjectRepository::$getMethodName($id);
-		if($entity === 'group')
+		if ($entity === 'group')
 		{
 			$idListOfSubjects = array_column($subjects, 'ID');
 			foreach ($this->couples as $day)
@@ -111,10 +130,13 @@ class CouplesList extends Controller
 		{
 			$result[] = [
 				'subject' => $subject,
-				'teachers' => ($entity === 'teacher') ? [ UserRepository::getArrayById($id) ] : UserRepository::getArrayOfTeachersBySubjectId((int)$subject['ID']),
-				'audiences' => ($entity === 'audience') ? [ AudienceRepository::getArrayById($id) ] : AudienceRepository::getArrayOfAudiencesBySubjectId((int)$subject['ID']),
-				'groups' => ($entity === 'group') ? [ GroupRepository::getArrayById($id) ] : GroupRepository::getArrayOfGroupsBySubjectId((int)$subject['ID']),
-				];
+				'teachers' => ($entity === 'teacher') ? [UserRepository::getArrayById($id)]
+					: UserRepository::getArrayOfTeachersBySubjectId((int)$subject['ID']),
+				'audiences' => ($entity === 'audience') ? [AudienceRepository::getArrayById($id)]
+					: AudienceRepository::getArrayOfAudiencesBySubjectId((int)$subject['ID']),
+				'groups' => ($entity === 'group') ? [GroupRepository::getArrayById($id)]
+					: GroupRepository::getArrayOfGroupsBySubjectId((int)$subject['ID']),
+			];
 		}
 
 		return $result;

@@ -4,7 +4,12 @@ $MESS['TEACHERS'] = 'Преподаватели';
 $MESS['GROUP'] = 'Группа';
 $MESS['AUDIENCE'] = 'Аудитория';
 $MESS['SUBJECT'] = 'Предмет';
-$MESS['EMPTY_ADD_MESSAGE'] = 'Добавлять больше нечего';
+
+$MESS['EMPTY_SUBJECTS_MESSAGE'] = 'Добавлять больше нечего';
+$MESS['EMPTY_GROUPS_MESSAGE'] = 'Добавлять больше нечего';
+$MESS['EMPTY_AUDIENCES_MESSAGE'] = 'Нет подходящей аудитории';
+$MESS['EMPTY_TEACHERS_MESSAGE'] = 'Нет подходящих преподавателей';
+
 $MESS['ADD'] = 'Добавить';
 $MESS['EDIT'] = 'Изменить';
 $MESS['DELETE'] = 'Удалить';

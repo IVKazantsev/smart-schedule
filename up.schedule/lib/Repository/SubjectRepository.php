@@ -252,4 +252,25 @@ class SubjectRepository
 
 		return $DB->GetErrorSQL();
 	}
+
+	public static function getArrayByAudienceTypeId(int $id): array
+	{
+		return SubjectTable::query()
+						  ->setSelect(['TITLE'])
+						  ->where('AUDIENCE_TYPE.ID', $id)
+						  ->fetchAll();
+	}
+
+	public static function getAllByAudienceTypeId(int $id): ?EO_Subject_Collection
+	{
+		return SubjectTable::query()
+						  ->setSelect(['TITLE'])
+						  ->where('AUDIENCE_TYPE_ID', $id)
+						  ->fetchCollection();
+	}
+
+	public static function deleteByAudienceTypeId(int $id): void
+	{
+		SubjectTable::deleteByFilter(['AUDIENCE_TYPE_ID' => $id]);
+	}
 }

@@ -8,8 +8,9 @@ $MESS['ROLE'] = 'Роль';
 $MESS['GROUP'] = 'Группа';
 $MESS['TITLE'] = 'Название';
 $MESS['NUMBER'] = 'Номер';
-$MESS['TYPE'] = 'Тип';
+$MESS['TYPE'] = 'Тип аудитории';
 $MESS['SUBJECTS'] = 'Предметы';
+$MESS['AUDIENCES'] = 'Аудитории';
 $MESS['COUPLES'] = 'Пары';
 
 $MESS['ENTITY_EDIT'] = 'Редактирование';

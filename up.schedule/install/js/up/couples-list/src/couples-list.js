@@ -146,17 +146,14 @@ export class CouplesList
 
 		if (this.isAdmin === true && !this.dataSourceIsDb)
 		{
-			//this.rootNode.classList.remove('columns');
 			this.rootNode.classList.add('is-flex', 'column', 'columns', 'is-flex-direction-column', 'is-align-items-center');
 
 			const previewMenuContainer = document.createElement('div');
 			previewMenuContainer.classList.add('box', 'columns', 'column', 'is-half', 'is-flex', 'is-flex-direction-column', 'is-align-items-center');
-			/*previewMenuContainer.style.height = '50px';*/
 			previewMenuContainer.id = 'preview-menu-container';
 
 			const buttonsPreviewContainer = document.createElement('div');
 			buttonsPreviewContainer.classList.add('is-flex', 'column', 'columns', 'is-full', 'is-justify-content-space-evenly', 'is-flex-direction-row', 'mb-2');
-			/*buttonsPreviewContainer.style.height = '50px';*/
 			buttonsPreviewContainer.id = 'buttons-preview-container';
 
 			const label = Tag.render`
@@ -186,7 +183,6 @@ export class CouplesList
 			});
 
 			buttonsPreviewContainer.appendChild(submitButton);
-			//buttonsPreviewContainer.appendChild(separator);
 			buttonsPreviewContainer.appendChild(cancelButton);
 			previewMenuContainer.appendChild(label);
 			previewMenuContainer.appendChild(buttonsPreviewContainer);
@@ -223,7 +219,7 @@ export class CouplesList
 					{
 						marginClassText = 'class = "mt-3"';
 					}
-					console.log(this.coupleList);
+
 					coupleTextContainer = Tag.render`
 						<div class="couple-text">
 							<p ${Validator.escapeHTML(marginClassText)}>${Validator.escapeHTML(this.coupleList[day][i].UP_SCHEDULE_MODEL_COUPLE_SUBJECT_TITLE)}</p>
@@ -420,10 +416,20 @@ export class CouplesList
 			.then((subjectsList) => {
 				this.insertSubjectsDataForAddForm(subjectsList);
 			});
+		if(this.isValidInput === false)
+		{
+			return;
+		}
+		else
+		{
+			this.deleteEmptyForm();
+		}
+
 
 		const submitButton = document.getElementById('submit-form-button');
 		const cancelButton = document.getElementById('cancel-form-button');
 		submitButton.addEventListener('click', () => {
+			console.log('click');
 			this.sendForm(numberOfDay, numberOfCouple, 'add');
 		}, { once: true });
 
@@ -516,18 +522,17 @@ export class CouplesList
 
 		if (subjectsList.length === 0)
 		{
-			if (document.getElementById('empty-form'))
-			{
-				form.removeChild(document.getElementById('empty-form'));
-			}
+			this.isValidInput = false;
 
-			const emptyForm = Tag.render`
-				<div id="empty-form">${Loc.getMessage('EMPTY_ADD_MESSAGE')}</div>
-			`;
+			this.fillEmptyForm('SUBJECTS');
 
-			modalBody.appendChild(emptyForm);
 			return;
 		}
+		else
+		{
+			this.deleteEmptyForm()
+		}
+
 		const selectContainer = Tag.render`
 			<select id="subject-select" name="subject"> </select>
 		`;
@@ -561,20 +566,27 @@ export class CouplesList
 		form.appendChild(container);
 
 		modalBody.appendChild(form);
-		const select = document.getElementById('subject-select');
-		select.addEventListener('change', () => {
-			this.insertAudiencesDataForForm(select.value);
-			this.insertGroupsDataForForm(select.value);
-			this.insertTeachersDataForForm(select.value);
+
+		selectContainer.addEventListener('change', () => {
+			this.isValidInput = true;
+
+			this.insertAudiencesDataForForm(selectContainer.value);
+			this.insertGroupsDataForForm(selectContainer.value);
+			this.insertTeachersDataForForm(selectContainer.value);
 		});
 	}
 
 	insertAudiencesDataForForm(subjectId)
 	{
+		if(!this.isValidInput)
+		{
+			return;
+		}
+
 		const form = document.getElementById('add-edit-form');
 		if (document.getElementById('audience-container'))
 		{
-			form.removeChild(document.getElementById('audience-container'));
+			document.getElementById('audience-container').remove();
 		}
 
 		const selectContainer = Tag.render`
@@ -583,6 +595,27 @@ export class CouplesList
 		this.formData.forEach((subject) => {
 			if (subject.subject.ID === subjectId)
 			{
+				if (subject.audiences.length === 0)
+				{
+					this.isValidInput = false;
+
+					this.fillEmptyForm('AUDIENCES');
+					if (document.getElementById('group-container'))
+					{
+						document.getElementById('group-container').remove();
+					}
+					if (document.getElementById('teacher-container'))
+					{
+						document.getElementById('teacher-container').remove();
+					}
+
+					return;
+				}
+				else
+				{
+					this.deleteEmptyForm()
+				}
+
 				subject.audiences.forEach((audience) => {
 					const option = Tag.render`
 						<option value="${audience.ID}">
@@ -593,6 +626,11 @@ export class CouplesList
 				});
 			}
 		});
+
+		if(!this.isValidInput)
+		{
+			return;
+		}
 
 		const container = Tag.render`<div id="audience-container" class="is-60-height box edit-fields"></div>`;
 
@@ -612,10 +650,15 @@ export class CouplesList
 
 	insertGroupsDataForForm(subjectId)
 	{
+		if(!this.isValidInput)
+		{
+			return;
+		}
+
 		const form = document.getElementById('add-edit-form');
 		if (document.getElementById('group-container'))
 		{
-			form.removeChild(document.getElementById('group-container'));
+			document.getElementById('group-container').remove();
 		}
 
 		const selectContainer = Tag.render`
@@ -624,6 +667,23 @@ export class CouplesList
 		this.formData.forEach((subject) => {
 			if (subject.subject.ID === subjectId)
 			{
+				if (subject.groups.length === 0)
+				{
+					this.isValidInput = false;
+
+					this.fillEmptyForm('GROUPS');
+					if (document.getElementById('teacher-container'))
+					{
+						document.getElementById('teacher-container').remove();
+					}
+
+					return;
+				}
+				else
+				{
+					this.deleteEmptyForm()
+				}
+
 				subject.groups.forEach((group) => {
 					const option = Tag.render`
 						<option value="${group.ID}">
@@ -653,10 +713,15 @@ export class CouplesList
 
 	insertTeachersDataForForm(subjectId)
 	{
+		if(!this.isValidInput)
+		{
+			return;
+		}
+
 		const form = document.getElementById('add-edit-form');
 		if (document.getElementById('teacher-container'))
 		{
-			form.removeChild(document.getElementById('teacher-container'));
+			document.getElementById('teacher-container').remove();
 		}
 
 		const selectContainer = Tag.render`
@@ -665,6 +730,19 @@ export class CouplesList
 		this.formData.forEach((subject) => {
 			if (subject.subject.ID === subjectId)
 			{
+				if (subject.teachers.length === 0)
+				{
+					this.isValidInput = false;
+
+					this.fillEmptyForm('TEACHERS');
+
+					return;
+				}
+				else
+				{
+					this.deleteEmptyForm()
+				}
+
 				subject.teachers.forEach((teacher) => {
 					const option = Tag.render`
 						<option value="${teacher.ID}">
@@ -721,5 +799,26 @@ export class CouplesList
 	{
 		const modal = document.getElementById('coupleModal');
 		modal.classList.remove('is-active');
+	}
+
+	fillEmptyForm(entity)
+	{
+		const modalBody = document.getElementById('modal-body');
+
+		this.deleteEmptyForm();
+
+		const emptyForm = Tag.render`
+						<div id="empty-form">${Loc.getMessage('EMPTY_' + entity + '_MESSAGE')}</div>
+					`;
+
+		modalBody.appendChild(emptyForm);
+	}
+
+	deleteEmptyForm()
+	{
+		if (document.getElementById('empty-form'))
+		{
+			document.getElementById('empty-form').remove();
+		}
 	}
 }

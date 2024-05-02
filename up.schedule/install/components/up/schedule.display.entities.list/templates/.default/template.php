@@ -52,8 +52,8 @@ Extension::load('up.couples-list');
 		</section>
 		<footer class="modal-card-foot">
 			<div class="buttons">
-				<button id="submit-form-button" type="button" class="button is-success">Сохранить</button>
-				<button id="cancel-form-button" type="button" class="button">Отменить</button>
+				<button id="submit-form-button" type="button" class="button is-success"><?= GetMessage('SAVE') ?></button>
+				<button id="cancel-form-button" type="button" class="button"><?= GetMessage('CANCEL') ?></button>
 			</div>
 		</footer>
 	</div>
