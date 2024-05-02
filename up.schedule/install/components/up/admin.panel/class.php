@@ -1,20 +1,16 @@
 <?php
 
 use Bitrix\Main\Engine\CurrentUser;
+use Up\Schedule\Service\EntityService;
 
 class AdminPanelComponent extends CBitrixComponent
 {
 	public function executeComponent(): void
 	{
-		if(!$this->checkRole())
+		if(!EntityService::isCurrentUserAdmin())
 		{
 			LocalRedirect('/404/');
 		}
 		$this->includeComponentTemplate();
-	}
-
-	protected function checkRole(): bool
-	{
-		return CurrentUser::get()->isAdmin();
 	}
 }

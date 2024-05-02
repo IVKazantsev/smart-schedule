@@ -7,7 +7,7 @@ class AdminsEntityAddComponent extends CBitrixComponent
 {
 	public function executeComponent(): void
 	{
-		if(!$this->checkRole())
+		if(!EntityService::isCurrentUserAdmin())
 		{
 			LocalRedirect('/404/');
 		}
@@ -22,10 +22,5 @@ class AdminsEntityAddComponent extends CBitrixComponent
 		$entityName = (string)$this->arParams['ENTITY'];
 		$this->arResult['ENTITY_NAME'] = $entityName;
 		return EntityService::getEntityInfoForAdding($entityName);
-	}
-
-	protected function checkRole(): bool
-	{
-		return CurrentUser::get()->isAdmin();
 	}
 }

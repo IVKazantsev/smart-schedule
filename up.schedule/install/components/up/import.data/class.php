@@ -17,13 +17,14 @@ use Up\Schedule\Model\EO_Subject_Collection;
 use Up\Schedule\Repository\AudienceTypeRepository;
 use Up\Schedule\Repository\GroupRepository;
 use Up\Schedule\Repository\SubjectRepository;
+use Up\Schedule\Service\EntityService;
 use Up\Schedule\Service\ImportService;
 
 class ImportDataComponent extends CBitrixComponent
 {
 	public function executeComponent(): void
 	{
-		if (!$this->checkRole())
+		if (!EntityService::isCurrentUserAdmin())
 		{
 			LocalRedirect('/404/');
 		}
@@ -34,11 +35,6 @@ class ImportDataComponent extends CBitrixComponent
 		}
 
 		$this->includeComponentTemplate();
-	}
-
-	protected function checkRole(): bool
-	{
-		return CurrentUser::get()->isAdmin();
 	}
 
 	protected function processImporting(): void

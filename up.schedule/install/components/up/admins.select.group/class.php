@@ -1,12 +1,13 @@
 <?php
 
 use Bitrix\Main\Engine\CurrentUser;
+use Up\Schedule\Service\EntityService;
 
 class AdminsSelectGroupComponent extends CBitrixComponent
 {
 	public function executeComponent(): void
 	{
-		if(!$this->checkRole())
+		if(!EntityService::isCurrentUserAdmin())
 		{
 			LocalRedirect('/404/');
 		}
@@ -17,10 +18,5 @@ class AdminsSelectGroupComponent extends CBitrixComponent
 	private static function getGroupInfo(): ?array
 	{
 		return \Up\Schedule\Repository\GroupRepository::getAllArray();
-	}
-
-	protected function checkRole(): bool
-	{
-		return CurrentUser::get()->isAdmin();
 	}
 }

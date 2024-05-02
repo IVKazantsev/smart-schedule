@@ -3,6 +3,7 @@
 namespace Up\Schedule\Controller;
 
 use Bitrix\Main\Engine\Controller;
+use Bitrix\Main\Engine\CurrentUser;
 use Bitrix\Main\Error;
 use Up\Schedule\Repository\AudienceRepository;
 use Up\Schedule\Repository\AudienceTypeRepository;
@@ -17,6 +18,11 @@ class AdminPanel extends Controller
 
 	public function getEntityListAction(string $entityName, int $pageNumber = 1, string $searchInput = ''): array
 	{
+		if(!EntityService::isCurrentUserAdmin())
+		{
+			$this->addError(new Error('you must be an administrator', 'inappropriate_role'));
+		}
+
 		if($pageNumber < 1)
 		{
 			$pageNumber = 1;
