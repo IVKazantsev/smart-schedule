@@ -5,9 +5,18 @@
  * @var Application $APPLICATION
  */
 
+use Bitrix\Main\UI\Extension;
 use Bitrix\Main\Application;
 
+if (!defined("B_PROLOG_INCLUDED") || B_PROLOG_INCLUDED !== true)
+{
+	die();
+}
+
+Extension::load('up.popup-message');
+
 ?>
+<div id="messages"></div>
 
 <div class="column">
 	<div class="columns">
@@ -128,4 +137,14 @@ use Bitrix\Main\Application;
 			i++;
 		});
 	}
+</script>
+
+<script>
+	BX.ready(function () {
+		window.PopupMessages = new BX.Up.Schedule.PopupMessage({
+			rootNodeId: 'messages',
+			errorsMessage: '<?= $arResult['ERRORS'] ?>',
+			successMessage: '<?= $arResult['SUCCESS'] ?>',
+		});
+	});
 </script>

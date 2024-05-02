@@ -366,8 +366,37 @@ class UserRepository
 		return $result;
 	}
 
-	public static function add(array $data): void
+	public static function add(array $data): string
 	{
+		if($data['LOGIN'] === null)
+		{
+			return 'Введите логин';
+		}
+		if($data['EMAIL'] === null)
+		{
+			return 'Введите почту';
+		}
+		if($data['NAME'] === null)
+		{
+			return 'Введите имя';
+		}
+		if($data['LAST_NAME'] === null)
+		{
+			return 'Введите фамилию';
+		}
+		if($data['PASSWORD'] === null)
+		{
+			return 'Введите пароль';
+		}
+		if($data['CONFIRM_PASSWORD'] === null)
+		{
+			return 'Подтвердите пароль';
+		}
+		if($data['ROLE'] === null)
+		{
+			return 'Выберите роль';
+		}
+
 		$fields = [];
 		$validate = function(string $fieldName, mixed $value) use (&$fields): void {
 			if ($value !== null)
@@ -391,12 +420,8 @@ class UserRepository
 		{
 			throw new Exception($user->LAST_ERROR);
 		}
-		/*
-				var_dump($user->GetID()); die;
-				if (($roleId = RoleRepository::getByTitle($data['ROLE']??'')?->getId()) !== null)
-				{
-					$user->Update($user->GetID(), ['UF_ROLE_ID' => $roleId]);
-				}*/
+
+		return '';
 	}
 
 	public static function getTeacherByFirstAndLastName(string $name, string $lastName): ?EO_User

@@ -109,7 +109,7 @@ class EntityService
 		}
 	}
 
-	public static function addEntity(string $entityName)
+	public static function addEntity(string $entityName): string
 	{
 		try
 		{
@@ -119,8 +119,7 @@ class EntityService
 		}
 		catch (\Error $error)
 		{
-			echo "$error";
-			echo "Entity $entityName not added"; die();
+			return "Не удалось добавить $entityName";
 		}
 	}
 

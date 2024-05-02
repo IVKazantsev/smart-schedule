@@ -115,11 +115,11 @@ class GroupRepository
 		return $result;
 	}
 
-	public static function add(array $data): void
+	public static function add(array $data): string
 	{
 		if (($title = $data['TITLE']) === null)
 		{
-			throw new \Exception();
+			return 'Введите название группы';
 		}
 
 		$group = new EO_Group();
@@ -133,6 +133,8 @@ class GroupRepository
 			}
 		}
 		$group->save();
+
+		return '';
 	}
 
 	public static function editById(int $id, array $data): void

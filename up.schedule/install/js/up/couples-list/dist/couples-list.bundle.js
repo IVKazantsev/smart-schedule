@@ -11,6 +11,9 @@ this.BX.Up = this.BX.Up || {};
 	  babelHelpers.createClass(Validator, null, [{
 	    key: "escapeHTML",
 	    value: function escapeHTML(text) {
+	      if (!text || text === '') {
+	        return '';
+	      }
 	      return text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
 	    }
 	  }]);
