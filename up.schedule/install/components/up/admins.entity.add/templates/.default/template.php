@@ -110,7 +110,21 @@ Extension::load('up.popup-message');
 					<div class="field">
 						<label class="label"><?= GetMessage($key) ?></label>
 						<div class="control">
-							<input class="input" type="<?= ($key === 'PASSWORD') || ($key === 'CONFIRM_PASSWORD') ? 'password' : 'text'?>" name="<?= $key ?>" value="<?= ($field) ?? ''?>" placeholder="<?= GetMessage("ENTER_$key") ?>">
+							<input class="input" minlength="<?= ($key === 'PASSWORD') || ($key === 'CONFIRM_PASSWORD') ? 6 : ''?>" type=
+							"<?php
+							if (($key === 'PASSWORD') || ($key === 'CONFIRM_PASSWORD'))
+							{
+								echo 'password';
+							}
+							elseif ($key === 'EMAIL')
+							{
+								echo 'email';
+							}
+							else
+							{
+								echo 'text';
+							}
+							?>" name="<?= $key ?>" value="<?= ($field) ?? ''?>" placeholder="<?= GetMessage("ENTER_$key") ?>" required>
 						</div>
 					</div>
 				<?php

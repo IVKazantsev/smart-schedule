@@ -118,7 +118,7 @@ Extension::load('up.popup-message');
 					<div class="field">
 						<label class="label"><?= GetMessage($key) ?></label>
 						<div class="control">
-							<input class="input" type="text" name="<?= $key ?>" placeholder="Введите данные">
+							<input class="input" type="text" name="<?= $key ?>" placeholder="<?= GetMessage("ENTER_$key") ?>">
 						</div>
 						<p class="help">
 							<?= GetMessage('CURRENT_FIELD_VALUE_HELPER') ?>:
