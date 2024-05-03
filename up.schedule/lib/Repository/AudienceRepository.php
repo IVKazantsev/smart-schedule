@@ -100,7 +100,12 @@ class AudienceRepository
 		$audience->setNumber($number);
 		$typeEntityObject = AudienceTypeTable::query()->setSelect(['ID'])->where('TITLE', $type)->fetchObject();
 		$audience->setAudienceType($typeEntityObject);
-		$audience->save();
+		$result = $audience->save();
+
+		if(!$result->isSuccess())
+		{
+			return implode('<br>', $result->getErrorMessages());
+		}
 
 		return '';
 	}
@@ -120,19 +125,14 @@ class AudienceRepository
 		{
 			return 'Введите аудиторию для редактирования';
 		}
-		if ($data['NUMBER'] === null)
-		{
-			return 'Введите номер аудитории';
-		}
-		if ($data['TYPE'] === null)
-		{
-			return 'Выберите тип аудитории';
-		}
 
 		$audience = AudienceTable::getByPrimary($id)->fetchObject();
 		$type = AudienceTypeTable::query()->setSelect(['ID'])->where('TITLE', $data['TYPE'])->fetchObject();
 
-		$audience->setNumber($data['NUMBER']);
+		if($data['NUMBER'])
+		{
+			$audience->setNumber($data['NUMBER']);
+		}
 
 		if ($audience->getAudienceTypeId() !== $type->getId())
 		{
@@ -140,7 +140,13 @@ class AudienceRepository
 			$audience->setAudienceType($type);
 		}
 
-		$audience->save();
+		$result = $audience->save();
+
+		if(!$result->isSuccess())
+		{
+			return implode('<br>', $result->getErrorMessages());
+		}
+
 		return '';
 		// TODO: handle exceptions
 	}

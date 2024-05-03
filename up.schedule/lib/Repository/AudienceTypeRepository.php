@@ -50,7 +50,12 @@ class AudienceTypeRepository
 
 		$audienceType = new EO_AudienceType();
 		$audienceType->setTitle($title);
-		$audienceType->save();
+		$result = $audienceType->save();
+
+		if(!$result->isSuccess())
+		{
+			return implode('<br>', $result->getErrorMessages());
+		}
 
 		return '';
 
@@ -62,16 +67,19 @@ class AudienceTypeRepository
 		{
 			return 'Введите тип аудитории для редактирования';
 		}
-		if ( $data['TITLE'] === null)
-		{
-			return 'Введите название типа аудитории';
-		}
 
 		$type = AudienceTypeTable::getByPrimary($id)->fetchObject();
 
+		if($data['TITLE'])
+		{
+			$type->setTitle($data['TITLE']);
+		}
 
-		$type->setTitle($data['TITLE']);
-		$type->save();
+		$result = $type->save();
+		if(!$result->isSuccess())
+		{
+			return implode('<br>', $result->getErrorMessages());
+		}
 
 		return '';
 		// TODO: handle exceptions

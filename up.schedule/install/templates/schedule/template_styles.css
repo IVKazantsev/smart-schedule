@@ -258,3 +258,7 @@ a:hover {
 	justify-content: left;
 	padding: 0;
 }
+
+.is-fullheight {
+	height: 100%;
+}

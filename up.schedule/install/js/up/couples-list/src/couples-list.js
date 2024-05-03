@@ -242,7 +242,7 @@ export class CouplesList
 					}
 
 					coupleTextContainer = Tag.render`
-						<div class="couple-text">
+						<div class="couple-text is-fullheight ${(this.isAdmin !== true) ? 'pt-2' : ''}">
 							<p ${Validator.escapeHTML(marginClassText)}>${Validator.escapeHTML(this.coupleList[day][i].UP_SCHEDULE_MODEL_COUPLE_SUBJECT_TITLE)}</p>
 							<p hidden id="subjectId-${day}-${i}">${this.coupleList[day][i].UP_SCHEDULE_MODEL_COUPLE_SUBJECT_ID}</p>
 							<p>${Validator.escapeHTML(this.coupleList[day][i].UP_SCHEDULE_MODEL_COUPLE_AUDIENCE_NUMBER)}</p>

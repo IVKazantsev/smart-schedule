@@ -30,6 +30,7 @@ return static function(RoutingConfigurator $routes) {
 
 	$routes->get('/profile/', new PublicPageController('/local/modules/up.schedule/views/profile.php'));
 	$routes->get('/admin/', new PublicPageController('/local/modules/up.schedule/views/admin.php'));
+	$routes->post('/admin/', new PublicPageController('/local/modules/up.schedule/views/admin.php'));
 	$routes->get('/optimize/', new PublicPageController('/local/modules/up.schedule/views/optimize.php'));
 	$routes->get('/statistics/', new PublicPageController('/local/modules/up.schedule/views/statistics.php'));
 

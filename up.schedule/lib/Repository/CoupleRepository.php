@@ -80,17 +80,17 @@ class CoupleRepository
 		return $DB->GetErrorSQL();
 	}
 
-	// public static function getArrayByAudienceTypeId(int $id): array
-	// {
-	// 	return CoupleTable::query()
-	// 					  ->setSelect(['SUBJECT.TITLE', 'AUDIENCE.NUMBER', 'GROUP.TITLE', 'TEACHER.NAME', 'TEACHER.LAST_NAME'])
-	// 					  ->where('UP_SCHEDULE_AUDIENCE.AUDIENCE_TYPE_ID', $id)
-	// 					  ->registerRuntimeField(
-	// 						  (new Reference(
-	// 							  'UP_SCHEDULE_AUDIENCE', AudienceTable::class, Join::on('this.AUDIENCE_ID', 'ref.ID')
-	// 						  )))
-	// 					  ->fetchAll();
-	// }
+	public static function getArrayByAudienceTypeId(int $id): array
+	{
+		return CoupleTable::query()
+						  ->setSelect(['SUBJECT.TITLE', 'AUDIENCE.NUMBER', 'GROUP.TITLE', 'TEACHER.NAME', 'TEACHER.LAST_NAME'])
+						  ->where('UP_SCHEDULE_AUDIENCE.AUDIENCE_TYPE_ID', $id)
+						  ->registerRuntimeField(
+							  (new Reference(
+								  'UP_SCHEDULE_AUDIENCE', AudienceTable::class, Join::on('this.AUDIENCE_ID', 'ref.ID')
+							  )))
+						  ->fetchAll();
+	}
 
 	public static function deleteByAudienceTypeId(int $id): void
 	{

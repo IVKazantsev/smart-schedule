@@ -132,8 +132,12 @@ class GroupRepository
 				$group->addToSubjects($subject);
 			}
 		}
-		$group->save();
 
+		$result = $group->save();
+		if(!$result->isSuccess())
+		{
+			return implode('<br>', $result->getErrorMessages());
+		}
 		return '';
 	}
 
@@ -143,14 +147,13 @@ class GroupRepository
 		{
 			return 'Введите группу для редактирования';
 		}
-		if ($data['TITLE'] === null)
-		{
-			return 'Введите название группы';
-		}
 
 		$group = self::getById($id);
 
-		$group?->setTitle($data['TITLE']);
+		if($data['TITLE'])
+		{
+			$group?->setTitle($data['TITLE']);
+		}
 
 		if (!empty($data['SUBJECTS_TO_DELETE']))
 		{
@@ -170,6 +173,7 @@ class GroupRepository
 				}
 			}
 		}
+
 		$subjectsToAdd = SubjectRepository::getByIds($data['SUBJECTS_TO_ADD']);
 		if ($subjectsToAdd !== null)
 		{
@@ -179,8 +183,11 @@ class GroupRepository
 			}
 		}
 
-		$group?->save();
-
+		$result = $group?->save();
+		if(!$result->isSuccess())
+		{
+			return implode('<br>', $result->getErrorMessages());
+		}
 		return '';
 		// TODO: handle exceptions
 	}

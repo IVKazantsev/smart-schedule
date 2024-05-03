@@ -7,7 +7,7 @@
 ?>
 
 <!doctype html>
-<html lang="<?= LANGUAGE_ID ?>">
+<html lang="<?= LANGUAGE_ID ?>" class="has-background-grey-lighter">
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
@@ -15,7 +15,7 @@
 	<title><?php $APPLICATION->ShowTitle(); ?></title>
 	<?php $APPLICATION->ShowHead(); ?>
 </head>
-<body class="has-background-grey-lighter is-fullheight">
+<body class="has-background-grey-lighter">
 <?php $APPLICATION->ShowPanel(); ?>
 <div class="container mt-4">
 	<div class="columns">

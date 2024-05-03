@@ -191,7 +191,12 @@ class SubjectRepository
 		$subject->setTitle($title);
 		$typeEntityObject = AudienceTypeTable::query()->setSelect(['ID'])->where('TITLE', $type)->fetchObject();
 		$subject->setAudienceType($typeEntityObject);
-		$subject->save();
+		$result = $subject->save();
+
+		if(!$result->isSuccess())
+		{
+			return implode('<br>', $result->getErrorMessages());
+		}
 
 		return '';
 	}
@@ -202,25 +207,25 @@ class SubjectRepository
 		{
 			return 'Введите предмет для редактирования';
 		}
-		if ($data['TITLE'] === null)
-		{
-			return 'Введите название предмета';
-		}
-		if ($data['TYPE'] === null)
-		{
-			return 'Выберите тип аудитории';
-		}
 
 		$subject = SubjectTable::getByPrimary($id)->fetchObject();
 		$type = AudienceTypeTable::query()->setSelect(['ID'])->where('TITLE', $data['TYPE'])->fetchObject();
 
-		$subject->setTitle($data['TITLE']);
+		if($data['TITLE'])
+		{
+			$subject->setTitle($data['TITLE']);
+		}
 
 		if ($subject->getAudienceTypeId() !== $type->getId())
 		{
 			CoupleTable::deleteByFilter(['SUBJECT_ID' => $id]);
 		}
-		$subject->setAudienceType($type)->save();
+		$result = $subject->setAudienceType($type)->save();
+
+		if(!$result->isSuccess())
+		{
+			return implode('<br>', $result->getErrorMessages());
+		}
 
 		return '';
 		// TODO: handle exceptions

@@ -471,7 +471,12 @@ class UserRepository
 				$subjectTeacherEntity->setTeacherId($id);
 				$collection->add($subjectTeacherEntity);
 			}
-			$collection->save();
+			$result = $collection->save();
+
+			if(!$result->isSuccess())
+			{
+				return implode('<br>', $result->getErrorMessages());
+			}
 		}
 
 		return '';
@@ -560,7 +565,13 @@ class UserRepository
 				$subjectTeacherEntity->setTeacherId($id);
 				$collection->add($subjectTeacherEntity);
 			}
-			$collection->save();
+
+			$result = $collection->save();
+
+			if(!$result->isSuccess())
+			{
+				return implode('<br>', $result->getErrorMessages());
+			}
 		}
 		else
 		{
