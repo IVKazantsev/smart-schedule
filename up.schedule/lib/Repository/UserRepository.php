@@ -72,6 +72,7 @@ class UserRepository
 
 		return UserTable::query()->setSelect([
 												 'ID',
+												 'LOGIN',
 												 'NAME',
 												 'LAST_NAME',
 												 'EMAIL',
@@ -104,6 +105,7 @@ class UserRepository
 	{
 		return UserTable::query()->setSelect([
 												 'ID',
+												 'LOGIN',
 												 'NAME',
 												 'LAST_NAME',
 												 'EMAIL',

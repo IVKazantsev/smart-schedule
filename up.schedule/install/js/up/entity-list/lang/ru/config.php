@@ -6,3 +6,4 @@ $MESS['EMAIL'] = 'Почта';
 $MESS['ROLE'] = 'Роль';
 $MESS['NUMBER'] = 'Номер';
 $MESS['TYPE'] = 'Тип';
+$MESS['LOGIN'] = 'Логин';

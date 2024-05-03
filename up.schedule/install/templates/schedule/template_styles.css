@@ -254,7 +254,7 @@ a:hover {
 	background-color: #485fc7 !important;
 }
 
-/*#current-entity:focus::-webkit-input-placeholder { color:transparent; }*/
-/*#current-entity:focus:-moz-placeholder { color:transparent; } !* FF 4-18 *!*/
-/*#current-entity:focus::-moz-placeholder { color:transparent; } !* FF 19+ *!*/
-/*#current-entity:focus:-ms-input-placeholder { color:transparent; } !* IE 10+ *!*/
+.admin-entity-column {
+	justify-content: left;
+	padding: 0;
+}
