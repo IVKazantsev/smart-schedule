@@ -196,19 +196,33 @@ class SubjectRepository
 		return '';
 	}
 
-	public static function editById(int $id, array $data): void
+	public static function editById(int $id, array $data): string
 	{
+		if ($id === 0)
+		{
+			return 'Введите предмет для редактирования';
+		}
+		if ($data['TITLE'] === null)
+		{
+			return 'Введите название предмета';
+		}
+		if ($data['TYPE'] === null)
+		{
+			return 'Выберите тип аудитории';
+		}
+
 		$subject = SubjectTable::getByPrimary($id)->fetchObject();
 		$type = AudienceTypeTable::query()->setSelect(['ID'])->where('TITLE', $data['TYPE'])->fetchObject();
-		if ($data['TITLE'] !== null)
-		{
-			$subject->setTitle($data['TITLE']);
-		}
+
+		$subject->setTitle($data['TITLE']);
+
 		if ($subject->getAudienceTypeId() !== $type->getId())
 		{
 			CoupleTable::deleteByFilter(['SUBJECT_ID' => $id]);
 		}
 		$subject->setAudienceType($type)->save();
+
+		return '';
 		// TODO: handle exceptions
 	}
 

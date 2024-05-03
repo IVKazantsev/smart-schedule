@@ -16,6 +16,7 @@ if (!defined("B_PROLOG_INCLUDED") || B_PROLOG_INCLUDED !== true)
 Extension::load('up.popup-message');
 
 ?>
+
 <div id="messages"></div>
 
 <div class="column">

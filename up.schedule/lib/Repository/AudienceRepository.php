@@ -114,21 +114,34 @@ class AudienceRepository
 		return $result;
 	}
 
-	public static function editById(int $id, array $data): void
+	public static function editById(int $id, array $data): string
 	{
+		if ($id === 0)
+		{
+			return 'Введите аудиторию для редактирования';
+		}
+		if ($data['NUMBER'] === null)
+		{
+			return 'Введите номер аудитории';
+		}
+		if ($data['TYPE'] === null)
+		{
+			return 'Выберите тип аудитории';
+		}
+
 		$audience = AudienceTable::getByPrimary($id)->fetchObject();
 		$type = AudienceTypeTable::query()->setSelect(['ID'])->where('TITLE', $data['TYPE'])->fetchObject();
-		if ($data['NUMBER'] !== null)
-		{
-			$audience->setNumber($data['NUMBER']);
-		}
+
+		$audience->setNumber($data['NUMBER']);
 
 		if ($audience->getAudienceTypeId() !== $type->getId())
 		{
 			CoupleTable::deleteByFilter(['AUDIENCE_ID' => $id]);
 			$audience->setAudienceType($type);
 		}
+
 		$audience->save();
+		return '';
 		// TODO: handle exceptions
 	}
 

@@ -137,15 +137,20 @@ class GroupRepository
 		return '';
 	}
 
-	public static function editById(int $id, array $data): void
+	public static function editById(int $id, array $data): string
 	{
-		$group = self::getById($id);
-		/*$group = GroupTable::getByPrimary($id)->fetchObject();*/
-
-		if ($data['TITLE'] !== null)
+		if ($id === 0)
 		{
-			$group?->setTitle($data['TITLE']);
+			return 'Введите группу для редактирования';
 		}
+		if ($data['TITLE'] === null)
+		{
+			return 'Введите название группы';
+		}
+
+		$group = self::getById($id);
+
+		$group?->setTitle($data['TITLE']);
 
 		if (!empty($data['SUBJECTS_TO_DELETE']))
 		{
@@ -175,6 +180,8 @@ class GroupRepository
 		}
 
 		$group?->save();
+
+		return '';
 		// TODO: handle exceptions
 	}
 

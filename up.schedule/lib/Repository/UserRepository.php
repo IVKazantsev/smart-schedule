@@ -200,6 +200,13 @@ class UserRepository
 				'UP_SCHEDULE_GROUP', GroupTable::class, Join::on('this.UF_GROUP_ID', 'ref.ID')
 			))
 		)->where('ID', $id)->fetch();
+		if($user === false)
+		{
+			return null;
+		}
+
+		$user['PASSWORD'] = '';
+		$user['CONFIRM_PASSWORD'] = '';
 
 		$roles = RoleTable::query()->setSelect(['ID', 'TITLE',])->fetchAll();
 
@@ -399,7 +406,6 @@ class UserRepository
 		{
 			return 'Пароли не совпадают';
 		}
-
 		if($data['ROLE'] === null)
 		{
 			return 'Выберите роль';
@@ -444,15 +450,47 @@ class UserRepository
 		)->fetchObject();
 	}
 
-	public static function editById(int $id, array $data): void
+	public static function editById(int $id, array $data): string
 	{
 		$fields = [];
+
 		$validate = static function(string $fieldName, mixed $value) use (&$fields): void {
 			if ($value !== null)
 			{
 				$fields[$fieldName] = $value;
 			}
 		};
+
+		if($id === 0)
+		{
+			return 'Введите пользователя для редактирования';
+		}
+		if($data['EMAIL'] === null)
+		{
+			return 'Введите почту';
+		}
+		if($data['NAME'] === null)
+		{
+			return 'Введите имя';
+		}
+		if($data['LAST_NAME'] === null)
+		{
+			return 'Введите фамилию';
+		}
+		if($data['ROLE'] === null)
+		{
+			return 'Выберите роль';
+		}
+
+		if($data['PASSWORD'] !== 0)
+		{
+			if($data['PASSWORD'] !== $data['CONFIRM_PASSWORD'])
+			{
+				return 'Пароли не совпадают';
+			}
+
+			$validate('PASSWORD', $data['PASSWORD']);
+		}
 
 		$validate('NAME', $data['NAME']);
 		$validate('LAST_NAME', $data['LAST_NAME']);
@@ -470,7 +508,11 @@ class UserRepository
 		$validate('UF_ROLE_ID', RoleRepository::getByTitle($data['ROLE'] ?? '')?->getId());
 
 		$user = new CUser();
-		$user->Update($id, $fields);
+		$result = $user->Update($id, $fields);
+		if($result === false)
+		{
+			return 'Не удалось отредактировать пользователя';
+		}
 
 		if ($data['ROLE'] === 'Преподаватель')
 		{
@@ -495,6 +537,8 @@ class UserRepository
 			SubjectTeacherTable::deleteByFilter(['TEACHER_ID' => $id]);
 			CoupleTable::deleteByFilter(['TEACHER_ID' => $id]);
 		}
+
+		return '';
 		// TODO: handle exceptions
 	}
 

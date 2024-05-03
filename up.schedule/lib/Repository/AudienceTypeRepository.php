@@ -56,18 +56,24 @@ class AudienceTypeRepository
 
 	}
 
-	public static function editById(int $id, ?array $data): void
+	public static function editById(int $id, ?array $data): string
 	{
+		if ($id === 0)
+		{
+			return 'Введите тип аудитории для редактирования';
+		}
+		if ( $data['TITLE'] === null)
+		{
+			return 'Введите название типа аудитории';
+		}
+
 		$type = AudienceTypeTable::getByPrimary($id)->fetchObject();
 
-		/*	echo "<pre>";
-			var_dump($data);
-			var_dump($type); die;*/
-		if ($data['TITLE'] !== null)
-		{
-			$type->setTitle($data['TITLE']);
-		}
+
+		$type->setTitle($data['TITLE']);
 		$type->save();
+
+		return '';
 		// TODO: handle exceptions
 	}
 

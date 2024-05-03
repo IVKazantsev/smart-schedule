@@ -7,6 +7,7 @@ use Bitrix\Main\Context;
 use Bitrix\Main\DB\TransactionException;
 use Bitrix\Main\Engine\CurrentUser;
 use CUser;
+use Error;
 use Up\Schedule\Model\EO_Audience;
 use Up\Schedule\Model\EO_Audience_Collection;
 use Up\Schedule\Model\EO_AudienceType;
@@ -62,7 +63,7 @@ class EntityService
 		{
 			return self::getEntityRepositoryName($entityName)::getArrayForAdminById($entityId);
 		}
-		catch (\Error $error)
+		catch (Error $error)
 		{
 			echo "$error";
 			echo "Entity $entityName not found"; die();
@@ -75,7 +76,7 @@ class EntityService
 		{
 			return self::getEntityRepositoryName($entityName)::getArrayOfRelatedEntitiesById($entityId);
 		}
-		catch (\Error $error)
+		catch (Error $error)
 		{
 			echo "$error";
 			echo "Entity $entityName not found"; die();
@@ -88,12 +89,12 @@ class EntityService
 		{
 			return self::getEntityRepositoryName($entityName)::deleteById($entityId);
 		}
-		catch (\Error)
+		catch (Error)
 		{
 			echo "Entity $entityName not found"; die();
 		}
 	}
-	public static function editEntityById(string $entityName, int $entityId): ?array
+	public static function editEntityById(string $entityName, int $entityId): string
 	{
 		try
 		{
@@ -102,10 +103,9 @@ class EntityService
 				self::getData($entityName)
 			);
 		}
-		catch (\Error $error)
+		catch (Error)
 		{
-			echo "$error";
-			echo "Entity $entityName not found"; die();
+			return "Не удалось отредактировать сущность $entityName";
 		}
 	}
 
@@ -117,7 +117,7 @@ class EntityService
 				self::getData($entityName)
 			);
 		}
-		catch (\Error $error)
+		catch (Error)
 		{
 			return "Не удалось добавить $entityName";
 		}
@@ -133,7 +133,7 @@ class EntityService
 			}
 			return self::getEntityRepositoryName($entityName)::getArrayForAdding();
 		}
-		catch (\Error $error)
+		catch (Error $error)
 		{
 			echo "$error";
 			echo "Entity $entityName not found"; die();
