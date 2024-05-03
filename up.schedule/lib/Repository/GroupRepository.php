@@ -102,10 +102,10 @@ class GroupRepository
 		return $data;
 	}
 
-	public static function getArrayForAdding(): ?array
+	public static function getArrayForAdding($data = []): ?array
 	{
 		$result = [];
-		$result['TITLE'] = '';
+		$result['TITLE'] = $data['TITLE'] ?? '';
 		foreach (SubjectRepository::getAll() as $subject)
 		{
 			$result['SUBJECTS']['ALL_SUBJECTS'][$subject->getId()] = $subject->getTitle();

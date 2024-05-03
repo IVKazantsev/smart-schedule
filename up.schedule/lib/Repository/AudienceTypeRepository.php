@@ -24,10 +24,10 @@ class AudienceTypeRepository
 		return $result ?? null;
 	}
 
-	public static function getArrayForAdding(): ?array
+	public static function getArrayForAdding($data = []): ?array
 	{
 		$result = [];
-		$result['TITLE'] = '';
+		$result['TITLE'] = $data['TITLE'] ?? '';
 
 		return $result;
 	}

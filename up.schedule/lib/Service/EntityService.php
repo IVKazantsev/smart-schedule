@@ -132,7 +132,13 @@ class EntityService
 			{
 				return null;
 			}
-			return self::getEntityRepositoryName($entityName)::getArrayForAdding();
+
+			$data = [];
+			if(Context::getCurrent()->getRequest()->isPost())
+			{
+				$data = self::getData($entityName);
+			}
+			return self::getEntityRepositoryName($entityName)::getArrayForAdding($data);
 		}
 		catch (Error $error)
 		{
@@ -141,23 +147,11 @@ class EntityService
 		}
 	}
 
-	private static function getData(string $entityName): ?array
+	public static function getData(string $entityName): ?array
 	{
-		switch ($entityName)
-		{
-			case 'group':
-				return self::getGroupData();
-			case 'audience':
-				return self::getAudienceData();
-			case 'user':
-				return self::getUserData();
-			case 'subject':
-				return self::getSubjectData();
-			case 'audienceType':
-				return self::getAudienceTypeData();
-			default:
-				return null;
-		}
+		$getDataMethodName = 'get' . $entityName . 'Data';
+
+		return self::$getDataMethodName();
 	}
 
 	private static function getGroupData(): ?array
@@ -182,10 +176,10 @@ class EntityService
 	private static function getUserData(): ?array
 	{
 		$data = [
+			'LOGIN' => self::getParameter('LOGIN'),
 			'NAME' => self::getParameter('NAME'),
 			'LAST_NAME' => self::getParameter('LAST_NAME'),
 			'EMAIL' => self::getParameter('EMAIL'),
-			'LOGIN' => self::getParameter('LOGIN'),
 			'PASSWORD' => self::getParameter('PASSWORD'),
 			'CONFIRM_PASSWORD' => self::getParameter('CONFIRM_PASSWORD'),
 			'ROLE' => self::getParameter('ROLE'),

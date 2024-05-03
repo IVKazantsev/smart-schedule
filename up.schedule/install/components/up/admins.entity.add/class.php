@@ -50,6 +50,7 @@ class AdminsEntityAddComponent extends CBitrixComponent
 		if ($errors !== '')
 		{
 			$this->arResult['ERRORS'] = $errors;
+
 			return;
 		}
 

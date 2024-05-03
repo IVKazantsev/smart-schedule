@@ -363,15 +363,15 @@ class UserRepository
 		)->where('ROLE_ID', 2)->fetchAll();
 	}
 
-	public static function getArrayForAdding(): ?array
+	public static function getArrayForAdding(array $data = []): ?array
 	{
 		$result = [];
-		$result['LOGIN'] = '';
-		$result['NAME'] = '';
-		$result['LAST_NAME'] = '';
-		$result['EMAIL'] = '';
-		$result['PASSWORD'] = '';
-		$result['CONFIRM_PASSWORD'] = '';
+		$result['LOGIN'] = $data['LOGIN'] ?? '';
+		$result['NAME'] = $data['NAME'] ?? '';
+		$result['LAST_NAME'] = $data['LAST_NAME'] ?? '';
+		$result['EMAIL'] = $data['EMAIL'] ?? '';
+		$result['PASSWORD'] = $data['PASSWORD'] ?? '';
+		$result['CONFIRM_PASSWORD'] = $data['CONFIRM_PASSWORD'] ?? '';
 
 		$result['ROLE'] = array_column(RoleRepository::getAllArray(), 'TITLE');
 		$result['GROUP'] = array_column(GroupRepository::getAllArray(), 'TITLE');

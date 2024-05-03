@@ -110,7 +110,7 @@ Extension::load('up.popup-message');
 					<div class="field">
 						<label class="label"><?= GetMessage($key) ?></label>
 						<div class="control">
-							<input class="input" type="<?= ($key === 'PASSWORD') || ($key === 'CONFIRM_PASSWORD') ? 'password' : 'text'?>" name="<?= $key ?>" placeholder="Введите данные">
+							<input class="input" type="<?= ($key === 'PASSWORD') || ($key === 'CONFIRM_PASSWORD') ? 'password' : 'text'?>" name="<?= $key ?>" value="<?= ($field) ?? ''?>" placeholder="<?= GetMessage("ENTER_$key") ?>">
 						</div>
 					</div>
 				<?php

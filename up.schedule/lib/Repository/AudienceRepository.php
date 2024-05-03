@@ -110,10 +110,10 @@ class AudienceRepository
 		return '';
 	}
 
-	public static function getArrayForAdding(): ?array
+	public static function getArrayForAdding($data = []): ?array
 	{
 		$result = [];
-		$result['NUMBER'] = '';
+		$result['NUMBER'] = ($data['NUMBER']) ?? '';
 		$result['TYPE'] = array_column(AudienceTypeRepository::getAllArray(), 'TITLE');
 
 		return $result;

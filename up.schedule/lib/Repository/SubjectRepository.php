@@ -167,10 +167,10 @@ class SubjectRepository
 		return $subject;
 	}
 
-	public static function getArrayForAdding(): ?array
+	public static function getArrayForAdding($data = []): ?array
 	{
 		$result = [];
-		$result['TITLE'] = '';
+		$result['TITLE'] = $data['TITLE'] ?? '';
 		$result['TYPE'] = array_column(AudienceTypeRepository::getAllArray(), 'TITLE');
 
 		return $result;
