@@ -465,22 +465,6 @@ class UserRepository
 		{
 			return 'Введите пользователя для редактирования';
 		}
-		if($data['EMAIL'] === null)
-		{
-			return 'Введите почту';
-		}
-		if($data['NAME'] === null)
-		{
-			return 'Введите имя';
-		}
-		if($data['LAST_NAME'] === null)
-		{
-			return 'Введите фамилию';
-		}
-		if($data['ROLE'] === null)
-		{
-			return 'Выберите роль';
-		}
 
 		if($data['PASSWORD'] !== 0)
 		{
@@ -506,6 +490,12 @@ class UserRepository
 		}
 
 		$validate('UF_ROLE_ID', RoleRepository::getByTitle($data['ROLE'] ?? '')?->getId());
+
+		if ($data['ROLE'] === 'Администратор')
+		{
+			$group = array(1);
+			$fields['GROUP_ID'] = $group;
+		}
 
 		$user = new CUser();
 		$result = $user->Update($id, $fields);
