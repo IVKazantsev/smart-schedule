@@ -185,6 +185,7 @@ class UserRepository
 	public static function getArrayForAdminById(int $id): ?array
 	{
 		$user = UserTable::query()->setSelect([
+												  'LOGIN',
 												  'NAME',
 												  'LAST_NAME',
 												  'EMAIL',

@@ -79,8 +79,7 @@ use Bitrix\Main\Application;
 						<button class="button is-primary is-dark are-small" type="button" id="addSubject">
 							<?= GetMessage('ADD') ?> <?= mb_strtolower(GetMessage($key)) ?>
 						</button>
-					<?php
-					else: ?>
+					<?php else: ?>
 						<div class="control">
 							<div class="select">
 								<label>
@@ -98,6 +97,14 @@ use Bitrix\Main\Application;
 					endif; ?>
 				<?php
 				else: ?>
+					<?php if ($key === 'LOGIN'): ?>
+						<div class="field">
+							<label class="label"><?= GetMessage($key) ?></label>
+							<div class="is-size-5">
+								<?= htmlspecialcharsbx($field) ?>
+							</div>
+						</div>
+					<?php else: ?>
 					<div class="field">
 						<label class="label"><?= GetMessage($key) ?></label>
 						<div class="control">
@@ -108,6 +115,8 @@ use Bitrix\Main\Application;
 							<strong> <?= htmlspecialcharsbx($field) ?> </strong>
 						</p>
 					</div>
+					<?php
+					endif; ?>
 				<?php
 				endif; ?>
 			</div>

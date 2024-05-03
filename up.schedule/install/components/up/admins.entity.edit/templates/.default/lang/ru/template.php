@@ -1,6 +1,7 @@
 <?php
 
 $MESS['ID'] = 'ID';
+$MESS['LOGIN'] = 'Логин';
 $MESS['NAME'] = 'Имя';
 $MESS['LAST_NAME'] = 'Фамилия';
 $MESS['EMAIL'] = 'Почта';
