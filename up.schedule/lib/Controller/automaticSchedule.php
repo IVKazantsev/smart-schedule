@@ -18,15 +18,47 @@ class AutomaticSchedule extends Controller
 	{
 		//$cache = Cache::createInstance();
 		$status = 'notInProcess';
-		$progress = 0;
+
 		$cache = Cache::createInstance();
+
 		if ($cache->initCache(3600, 'schedule', '/schedule/'))
 		{
-			$variables = $cache->getVars();
-			$status = $variables['status'];
-			$progress = $variables['progress'];
+			$variablesOfAgentCache = $cache->getVars();
+			$statusAgent = $variablesOfAgentCache['status'];
+			$progressAgent = $variablesOfAgentCache['progress'];
 		}
 
+		//$cacheController = Cache::createInstance();
+		if ($cache->initCache(3600, 'scheduleStatus', '/scheduleStatus/'))
+		{
+			$variablesOfStatusCache = $cache->getVars();
+			$statusOfControllerCache = $variablesOfStatusCache['status'];
+			$progressOfControllerCache = $variablesOfStatusCache['progress'];
+		}
+
+		$status = $statusAgent ?? ($statusOfControllerCache ?? 'notInProcess');
+
+		$progress = max($progressAgent??0, $progressOfControllerCache??0);
+
+		$this->saveInfoInControllerCache($status, $progress);
+
+
+		//$cache->abortDataCache();
+/*
+		if ($cache->initCache(3600, 'scheduleStatus', '/scheduleStatus/'))
+		{
+			$variablesOfStatusCache = $cache->getVars();
+			$statusOfControllerCache = $variablesOfStatusCache['status'];
+			$progressOfControllerCache = $variablesOfStatusCache['progress'];
+		}
+
+		if ($cache->startDataCache(3600, 'scheduleStatus', '/scheduleStatus/'))
+		{
+			$status = $statusAgent ?: $statusOfControllerCache;
+			$progress = max($progressAgent, $progressOfControllerCache);
+
+			$cache->endDataCache(['status' => $status, 'progress' => $progress]);
+		}*/
 //		if ($status === 'finished')
 //		{
 //			$schedule = $variables['schedule'];
@@ -57,18 +89,29 @@ class AutomaticSchedule extends Controller
 			];
 	}
 
+	private function saveInfoInControllerCache(string $status, int $progress)
+	{
+		$cache = Cache::createInstance();
+		if ($cache->startDataCache(3600, 'scheduleStatus', '/scheduleStatus/'))
+		{
+			$cache->endDataCache(['status' => $status, 'progress' => $progress]);
+		}
+	}
+
 	public function setGeneratedScheduleAction(): array
 	{
 		CoupleRepository::deleteAllFromDB();
 		$couples = $this->getArrayForAddToDb();
 		EntityService::addCouplesToDB($couples);
 		self::clearCache('schedule');
+		self::clearCache('scheduleStatus');
 		return ['result' => true];
 	}
 
 	public function cancelGeneratedScheduleAction(): array
 	{
 		self::clearCache('schedule');
+		self::clearCache('scheduleStatus');
 		return ['result' => true];
 	}
 
@@ -197,11 +240,15 @@ class AutomaticSchedule extends Controller
 
 		/*$cache = Cache::createInstance();
 		$cache->cleanDir( '/schedule/');*/
-//		$cache = Cache::createInstance();
-//		if ($cache->startDataCache(3600, 'schedule', '/schedule/'))
-//		{
-//			$cache->endDataCache(['status' => 'notInProcess', 'progress' => 0]);
-//		}
+		$cache = Cache::createInstance();
+
+		$cache->initCache(3600, 'scheduleStatus', '/scheduleStatus/');
+		$cache->forceRewriting(true);
+		if ($cache->startDataCache(3600, 'scheduleStatus', '/scheduleStatus/'))
+		{
+			$cache->endDataCache(['status' => 'started', 'progress' => 0]);
+		}
+
 		$result = \CAgent::AddAgent(
 			"\\Up\\Schedule\\AutomaticScheduleAgent::testAgent();",
 			"up.schedule",
@@ -211,7 +258,12 @@ class AutomaticSchedule extends Controller
 			"Y",
 		);
 
-		return ['result' => $result];
+		if($result)
+		{
+			return ['result' => true];
+		}
+
+		return ['result' => false];
 	}
 
 	public function cancelGenerateScheduleAction(): array
@@ -219,6 +271,8 @@ class AutomaticSchedule extends Controller
 		\CAgent::RemoveAgent("\\Up\\Schedule\\AutomaticScheduleAgent::testAgent();", "up.schedule");
 
 		self::clearCache('schedule');
+		self::clearCache('scheduleStatus');
+
 
 		return ['result' => true];
 	}
