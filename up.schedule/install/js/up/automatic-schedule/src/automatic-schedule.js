@@ -2,6 +2,7 @@ import {Type, Tag} from 'main.core';
 
 export class AutomaticSchedule
 {
+	progress = 0;
 	constructor(options = {})
 	{
 		if (Type.isStringFilled(options.rootNodeId))
@@ -27,7 +28,8 @@ export class AutomaticSchedule
 		this.loadInfo()
 			.then(info => {
 				this.status = info.status;
-				console.log(info.status, info.progress, info.couples);
+				this.progress = info.progress;
+				//console.log(info.status, info.progress, info.couples);
 				/*if (info.status === 'finished' && typeof info.couples !== 'undefined')
 				{
 					this.renderPreview();
@@ -54,7 +56,7 @@ export class AutomaticSchedule
 				const progress = response.data.progress;
 				const couples = response.data.couples ?? undefined;
 
-				console.log(response.data.allFitness);
+				console.log(currentStatus, progress);
 
 				resolve({status: currentStatus, progress: progress, couples: couples});
 			})
@@ -69,7 +71,7 @@ export class AutomaticSchedule
 		this.rootNode.innerHTML = '';
 
 		const container = document.createElement('div');
-		if (this.status === 'inProcess')
+		if (this.status === 'inProcess' || this.status === 'started')
 		{
 			container.innerHTML = `
 				<div class="box edit-fields">
@@ -77,7 +79,11 @@ export class AutomaticSchedule
 				</div>
 				
 				<div class="box edit-fields">
-					Прогресс.
+					<label class="label">Прогресс: ${this.progress}%</label>
+ 
+					<progress class="progress is-large" value="${this.progress}" max="100">
+						${this.progress}%
+					</progress>
 				</div>
 				
 				<div class="box edit-fields">
@@ -96,7 +102,7 @@ export class AutomaticSchedule
 			container.innerHTML = `
 			<div class="box edit-fields">
 				<label class="label">Перейти на страницу предварительного просмотра?</label>
-				<button class="button is-danger" id="button-finished-schedule" type="button">Подтвердить</button>
+				<button class="button is-primary" id="button-finished-schedule" type="button">Подтвердить</button>
 			</div>
 			`;
 
@@ -114,7 +120,7 @@ export class AutomaticSchedule
 				
 				<div class="box edit-fields">
 					<label class="label">Сгенерировать расписание?</label>
-					<button class="button" id="button-generate-schedule" type="button">Подтвердить</button>
+					<button class="button is-primary" id="button-generate-schedule" type="button">Подтвердить</button>
 				</div>
 			`;
 			this.rootNode.appendChild(container);
@@ -137,6 +143,14 @@ export class AutomaticSchedule
 			},
 		).then((response) => {
 			console.log(response.data.result)
+			if (response.data.result === true)
+			{
+				this.status = 'inProcess';
+			}
+			else
+			{
+				this.status = 'notInProcess';
+			}
 			this.reload();
 		})
 			.catch((error) => {
@@ -153,6 +167,8 @@ export class AutomaticSchedule
 			},
 		)
 			.then((response) => {
+				this.status = 'notInProcess';
+				this.progress = 0;
 				console.log(response.data.result)
 				this.reload();
 			})

@@ -23,8 +23,10 @@ class GeneticSchedule
 
 	private int $percentageOfSelection = 50;
 	private int $maxGenerations = 5000; // Макс. кол-во итерации.
+	private int $limitOfFitness = 60;
 
 	private int $mutationRate = 10; // Процент мутации
+
 	public readonly EO_Group_Collection $groups;
 	public readonly EO_User_Collection $teachers;
 	public readonly EO_Audience_Collection $audiences;
@@ -37,8 +39,6 @@ class GeneticSchedule
 		'big_spaces' => 10,
 		'difference_between_min_and_max' => 10,
 	];
-
-
 	/**
 	 * @param Collection[] $parameters [EO_Group_Collection $groups, EO_User_Collection $teachers, EO_Audience_Collection $audiences]
 	 */
@@ -55,6 +55,7 @@ class GeneticSchedule
 			$this->teachers = UserRepository::getAllTeachers();
 		}
 	}
+
 
 	/**
 	 * @param array $parameters
@@ -106,11 +107,12 @@ class GeneticSchedule
 			$this->fitness($population[$i]);
 			//echo $population[$i]->getFitness() . "\n";
 		}
-
+		$this->sortSchedulesByFitness($population);
 		return $population;
 	}
 
 	// Функция приспособленности (evaluation function)
+
 	public function fitness(GeneticPerson $schedule): void
 	{
 		// 1.Накладки для учебных групп +
@@ -239,7 +241,6 @@ class GeneticSchedule
 
 		$schedule->setFitness($penalty);
 	}
-
 	public function sortSchedulesByFitness(array $schedules): array
 	{
 		uasort($schedules, static function (GeneticPerson $schedule1, GeneticPerson $schedule2) {
@@ -267,7 +268,7 @@ class GeneticSchedule
 			round($this->populationSize * ($this->percentageOfSelection / 100))
 		);
 		//echo "\n\n\n".$schedules[0]->getFitness() . "\n\n\n";
-		if ($schedules[0]->getFitness() <= 70) // TODO:Вынести в отдельный метод
+		if ($schedules[0]->getFitness() <= $this->limitOfFitness) // TODO:Вынести в отдельный метод
 		{
 			return [$schedules[0]];
 		}
@@ -276,6 +277,7 @@ class GeneticSchedule
 	}
 
 	// Функция скрещивания (crossover)
+
 	public function crossover(GeneticPerson $schedule1, GeneticPerson $schedule2): GeneticPerson
 	{
 		$couplesOfFirstSchedule = $schedule1->couples->getAll();
@@ -458,14 +460,13 @@ class GeneticSchedule
 
 		return $newSchedule;
 	}
-
 	// Функция мутации (mutation)
+
 	public function mutate($schedule)
 	{
 		// Применить оператор мутации для изменения расписания
 		// Вернуть измененное расписание
 	}
-
 	/**
 	 * @param GeneticPerson[] $population
 	 * @param int $amountOfIterations
@@ -503,10 +504,11 @@ class GeneticSchedule
 		}
 
 		//echo $population[0]->getFitness() . "\n";
-		return $newPopulation;
+		return $population;
 	}
 
 	// Генетический алгоритм для составления расписания
+
 	public function geneticAlgorithm($generations)
 	{
 		$population = $this->createPopulation($this->populationSize);
@@ -554,10 +556,14 @@ class GeneticSchedule
 		//echo $bestSchedule->getFitness();
 		return $bestSchedule;
 	}
-
 	public function getPopulationSize(): int
 	{
 		return $this->populationSize;
+	}
+
+	public function getLimitOfFitness(): int
+	{
+		return $this->limitOfFitness;
 	}
 
 
