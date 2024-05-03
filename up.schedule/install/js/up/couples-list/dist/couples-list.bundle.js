@@ -4,6 +4,22 @@ this.BX.Up = this.BX.Up || {};
 (function (exports,main_core) {
 	'use strict';
 
+	var Validator = /*#__PURE__*/function () {
+	  function Validator() {
+	    babelHelpers.classCallCheck(this, Validator);
+	  }
+	  babelHelpers.createClass(Validator, null, [{
+	    key: "escapeHTML",
+	    value: function escapeHTML(text) {
+	      if (!text || text === '') {
+	        return '';
+	      }
+	      return text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
+	    }
+	  }]);
+	  return Validator;
+	}();
+
 	var _templateObject, _templateObject2, _templateObject3, _templateObject4, _templateObject5, _templateObject6, _templateObject7, _templateObject8, _templateObject9, _templateObject10, _templateObject11, _templateObject12, _templateObject13, _templateObject14, _templateObject15, _templateObject16, _templateObject17, _templateObject18, _templateObject19, _templateObject20, _templateObject21, _templateObject22, _templateObject23, _templateObject24, _templateObject25, _templateObject26, _templateObject27, _templateObject28, _templateObject29, _templateObject30, _templateObject31, _templateObject32, _templateObject33, _templateObject34, _templateObject35, _templateObject36, _templateObject37, _templateObject38, _templateObject39, _templateObject40, _templateObject41, _templateObject42, _templateObject43, _templateObject44, _templateObject45, _templateObject46;
 	var CouplesList = /*#__PURE__*/function () {
 	  function CouplesList() {
@@ -12,12 +28,12 @@ this.BX.Up = this.BX.Up || {};
 	    babelHelpers.classCallCheck(this, CouplesList);
 	    babelHelpers.defineProperty(this, "formData", {});
 	    babelHelpers.defineProperty(this, "daysOfWeek", {
-	      1: 'Понедельник',
-	      2: 'Вторник',
-	      3: 'Среда',
-	      4: 'Четверг',
-	      5: 'Пятница',
-	      6: 'Суббота'
+	      1: main_core.Loc.getMessage('DAY_1_OF_WEEK'),
+	      2: main_core.Loc.getMessage('DAY_2_OF_WEEK'),
+	      3: main_core.Loc.getMessage('DAY_3_OF_WEEK'),
+	      4: main_core.Loc.getMessage('DAY_4_OF_WEEK'),
+	      5: main_core.Loc.getMessage('DAY_5_OF_WEEK'),
+	      6: main_core.Loc.getMessage('DAY_6_OF_WEEK')
 	    });
 	    babelHelpers.defineProperty(this, "entityId", undefined);
 	    babelHelpers.defineProperty(this, "entity", undefined);
@@ -119,15 +135,12 @@ this.BX.Up = this.BX.Up || {};
 	      var _this3 = this;
 	      this.rootNode.innerHTML = '';
 	      if (this.isAdmin === true && !this.dataSourceIsDb) {
-	        //this.rootNode.classList.remove('columns');
 	        this.rootNode.classList.add('is-flex', 'column', 'columns', 'is-flex-direction-column', 'is-align-items-center');
 	        var previewMenuContainer = document.createElement('div');
 	        previewMenuContainer.classList.add('box', 'columns', 'column', 'is-half', 'is-flex', 'is-flex-direction-column', 'is-align-items-center');
-	        /*previewMenuContainer.style.height = '50px';*/
 	        previewMenuContainer.id = 'preview-menu-container';
 	        var buttonsPreviewContainer = document.createElement('div');
 	        buttonsPreviewContainer.classList.add('is-flex', 'column', 'columns', 'is-full', 'is-justify-content-space-evenly', 'is-flex-direction-row', 'mb-2');
-	        /*buttonsPreviewContainer.style.height = '50px';*/
 	        buttonsPreviewContainer.id = 'buttons-preview-container';
 	        var label = main_core.Tag.render(_templateObject || (_templateObject = babelHelpers.taggedTemplateLiteral(["\n\t\t\t\t<label class=\"label column m-2\">\u0421\u043E\u0445\u0440\u0430\u043D\u0438\u0442\u044C \u0438\u0437\u043C\u0435\u043D\u0435\u043D\u0438\u044F?</label>\n\t\t\t"])));
 	        var submitButton = main_core.Tag.render(_templateObject2 || (_templateObject2 = babelHelpers.taggedTemplateLiteral(["\n\t\t\t\t\t\t\t<button \n\t\t\t\t\t\t\ttype=\"button\" id=\"button-preview-submit\" class=\"column  is-two-fifths button is-clickable is-medium is-primary\">\n\t\t\t\t\t\t\t\t\u041F\u043E\u0434\u0432\u0435\u0440\u0434\u0438\u0442\u044C\n\t\t\t\t\t\t\t</button>\n\t\t\t\t\t\t"])));
@@ -140,7 +153,6 @@ this.BX.Up = this.BX.Up || {};
 	          _this3.handleCancelScheduleButtonClick();
 	        });
 	        buttonsPreviewContainer.appendChild(submitButton);
-	        //buttonsPreviewContainer.appendChild(separator);
 	        buttonsPreviewContainer.appendChild(cancelButton);
 	        previewMenuContainer.appendChild(label);
 	        previewMenuContainer.appendChild(buttonsPreviewContainer);
@@ -157,25 +169,19 @@ this.BX.Up = this.BX.Up || {};
 	        dayContainer.appendChild(dayTitleContainer);
 	        var _loop2 = function _loop2(i) {
 	          var coupleTextContainer = main_core.Tag.render(_templateObject6 || (_templateObject6 = babelHelpers.taggedTemplateLiteral(["<br>"])));
-
-	          /*if (this.isAdmin === true && this.dataSourceIsDb)
-	          {*/
 	          var dropdownContent = main_core.Tag.render(_templateObject7 || (_templateObject7 = babelHelpers.taggedTemplateLiteral(["<div class=\"dropdown-content\"></div>"])));
-	          /*}*/
-
 	          if (typeof _this3.coupleList[day] !== 'undefined' && typeof _this3.coupleList[day][i] !== 'undefined') {
 	            var marginClassText = '';
 	            if (!_this3.isAdmin || !_this3.dataSourceIsDb) {
 	              marginClassText = 'class = "mt-3"';
 	            }
-	            console.log(_this3.coupleList);
-	            coupleTextContainer = main_core.Tag.render(_templateObject8 || (_templateObject8 = babelHelpers.taggedTemplateLiteral(["\n\t\t\t\t\t\t<div class=\"couple-text\">\n\t\t\t\t\t\t\t<p ", ">", "</p>\n\t\t\t\t\t\t\t<p hidden id=\"subjectId-", "-", "\">", "</p>\n\t\t\t\t\t\t\t<p>", "</p>\n\t\t\t\t\t\t\t<p hidden id=\"audienceId-", "-", "\">", "</p>\n\t\t\t\t\t\t\t<p>", "</p>\n\t\t\t\t\t\t\t<p hidden id=\"groupId-", "-", "\">", "</p>\n\t\t\t\t\t\t\t<p>", " ", "</p>\n\t\t\t\t\t\t\t<p hidden id=\"teacherId-", "-", "\">", "</p>\n\t\t\t\t\t\t</div>\n\t\t\t\t\t"])), marginClassText, _this3.coupleList[day][i].UP_SCHEDULE_MODEL_COUPLE_SUBJECT_TITLE, day, i, _this3.coupleList[day][i].UP_SCHEDULE_MODEL_COUPLE_SUBJECT_ID, _this3.coupleList[day][i].UP_SCHEDULE_MODEL_COUPLE_AUDIENCE_NUMBER, day, i, _this3.coupleList[day][i].UP_SCHEDULE_MODEL_COUPLE_AUDIENCE_ID, _this3.coupleList[day][i].UP_SCHEDULE_MODEL_COUPLE_GROUP_TITLE, day, i, _this3.coupleList[day][i].UP_SCHEDULE_MODEL_COUPLE_GROUP_ID, _this3.coupleList[day][i].UP_SCHEDULE_MODEL_COUPLE_TEACHER_NAME, _this3.coupleList[day][i].UP_SCHEDULE_MODEL_COUPLE_TEACHER_LAST_NAME, day, i, _this3.coupleList[day][i].UP_SCHEDULE_MODEL_COUPLE_TEACHER_ID);
+	            coupleTextContainer = main_core.Tag.render(_templateObject8 || (_templateObject8 = babelHelpers.taggedTemplateLiteral(["\n\t\t\t\t\t\t<div class=\"couple-text\">\n\t\t\t\t\t\t\t<p ", ">", "</p>\n\t\t\t\t\t\t\t<p hidden id=\"subjectId-", "-", "\">", "</p>\n\t\t\t\t\t\t\t<p>", "</p>\n\t\t\t\t\t\t\t<p hidden id=\"audienceId-", "-", "\">", "</p>\n\t\t\t\t\t\t\t<p>", "</p>\n\t\t\t\t\t\t\t<p hidden id=\"groupId-", "-", "\">", "</p>\n\t\t\t\t\t\t\t<p>", " ", "</p>\n\t\t\t\t\t\t\t<p hidden id=\"teacherId-", "-", "\">", "</p>\n\t\t\t\t\t\t</div>\n\t\t\t\t\t"])), Validator.escapeHTML(marginClassText), Validator.escapeHTML(_this3.coupleList[day][i].UP_SCHEDULE_MODEL_COUPLE_SUBJECT_TITLE), day, i, _this3.coupleList[day][i].UP_SCHEDULE_MODEL_COUPLE_SUBJECT_ID, Validator.escapeHTML(_this3.coupleList[day][i].UP_SCHEDULE_MODEL_COUPLE_AUDIENCE_NUMBER), day, i, _this3.coupleList[day][i].UP_SCHEDULE_MODEL_COUPLE_AUDIENCE_ID, Validator.escapeHTML(_this3.coupleList[day][i].UP_SCHEDULE_MODEL_COUPLE_GROUP_TITLE), day, i, _this3.coupleList[day][i].UP_SCHEDULE_MODEL_COUPLE_GROUP_ID, Validator.escapeHTML(_this3.coupleList[day][i].UP_SCHEDULE_MODEL_COUPLE_TEACHER_NAME), Validator.escapeHTML(_this3.coupleList[day][i].UP_SCHEDULE_MODEL_COUPLE_TEACHER_LAST_NAME), day, i, _this3.coupleList[day][i].UP_SCHEDULE_MODEL_COUPLE_TEACHER_ID);
 	            if (_this3.isAdmin === true && _this3.dataSourceIsDb) {
-	              var removeCoupleButton = main_core.Tag.render(_templateObject9 || (_templateObject9 = babelHelpers.taggedTemplateLiteral(["\n\t\t\t\t\t\t\t<button \n\t\t\t\t\t\t\tdata-target=\"modal-js-example\" type=\"button\" id=\"button-remove-", "-", "\" class=\"js-modal-trigger dropdown-item btn-remove-couple button is-clickable is-small is-primary is-light\">\n\t\t\t\t\t\t\t\t\u0423\u0434\u0430\u043B\u0438\u0442\u044C\n\t\t\t\t\t\t\t</button>\n\t\t\t\t\t\t"])), day, i);
+	              var removeCoupleButton = main_core.Tag.render(_templateObject9 || (_templateObject9 = babelHelpers.taggedTemplateLiteral(["\n\t\t\t\t\t\t\t<button \n\t\t\t\t\t\t\tdata-target=\"modal-js-example\" type=\"button\" id=\"button-remove-", "-", "\" class=\"js-modal-trigger dropdown-item btn-remove-couple button is-clickable is-small is-primary is-light\">\n\t\t\t\t\t\t\t\t", "\n\t\t\t\t\t\t\t</button>\n\t\t\t\t\t\t"])), day, i, main_core.Loc.getMessage('DELETE'));
 	              removeCoupleButton.addEventListener('click', function () {
 	                _this3.handleRemoveCoupleButtonClick(day, i);
 	              });
-	              var editCoupleButton = main_core.Tag.render(_templateObject10 || (_templateObject10 = babelHelpers.taggedTemplateLiteral(["\n\t\t\t\t\t\t\t<button \n\t\t\t\t\t\t\tdata-target=\"modal-js-example\" type=\"button\" id=\"button-edit-", "-", "\" class=\"js-modal-trigger dropdown-item btn-edit-couple button is-clickable is-small is-primary is-light mb-1\">\n\t\t\t\t\t\t\t\t\u0418\u0437\u043C\u0435\u043D\u0438\u0442\u044C\n\t\t\t\t\t\t\t</button>\n\t\t\t\t\t\t"])), day, i);
+	              var editCoupleButton = main_core.Tag.render(_templateObject10 || (_templateObject10 = babelHelpers.taggedTemplateLiteral(["\n\t\t\t\t\t\t\t<button \n\t\t\t\t\t\t\tdata-target=\"modal-js-example\" type=\"button\" id=\"button-edit-", "-", "\" class=\"js-modal-trigger dropdown-item btn-edit-couple button is-clickable is-small is-primary is-light mb-1\">\n\t\t\t\t\t\t\t\t", "\n\t\t\t\t\t\t\t</button>\n\t\t\t\t\t\t"])), day, i, main_core.Loc.getMessage('EDIT'));
 	              editCoupleButton.addEventListener('click', function () {
 	                _this3.handleEditCoupleButtonClick();
 	              });
@@ -184,7 +190,7 @@ this.BX.Up = this.BX.Up || {};
 	            }
 	          } else {
 	            if (_this3.isAdmin === true && _this3.dataSourceIsDb) {
-	              var addCoupleButton = main_core.Tag.render(_templateObject11 || (_templateObject11 = babelHelpers.taggedTemplateLiteral(["\n\t\t\t\t\t\t\t<button \n\t\t\t\t\t\t\tdata-target=\"modal-js-example\" type=\"button\" id=\"button-add-", "-", "\" class=\"js-modal-trigger dropdown-item btn-add-couple button is-clickable is-small is-primary is-light\">\n\t\t\t\t\t\t\t\t\u0414\u043E\u0431\u0430\u0432\u0438\u0442\u044C\n\t\t\t\t\t\t\t</button>\n\t\t\t\t\t\t"])), day, i);
+	              var addCoupleButton = main_core.Tag.render(_templateObject11 || (_templateObject11 = babelHelpers.taggedTemplateLiteral(["\n\t\t\t\t\t\t\t<button \n\t\t\t\t\t\t\tdata-target=\"modal-js-example\" type=\"button\" id=\"button-add-", "-", "\" class=\"js-modal-trigger dropdown-item btn-add-couple button is-clickable is-small is-primary is-light\">\n\t\t\t\t\t\t\t\t", "\n\t\t\t\t\t\t\t</button>\n\t\t\t\t\t\t"])), day, i, main_core.Loc.getMessage('ADD'));
 	              addCoupleButton.addEventListener('click', function () {
 	                _this3.handleAddCoupleButtonClick(day, i);
 	              });
@@ -207,9 +213,6 @@ this.BX.Up = this.BX.Up || {};
 	            dropdownMenu.appendChild(dropdownContent);
 	            btnContainer.appendChild(dropdownTrigger);
 	            btnContainer.appendChild(dropdownMenu);
-
-	            //coupleContainer.appendChild(some);
-
 	            coupleContainer.appendChild(btnContainer);
 	          }
 	          coupleContainer.appendChild(coupleTextContainer);
@@ -319,9 +322,15 @@ this.BX.Up = this.BX.Up || {};
 	      this.fetchSubjectsForAddForm().then(function (subjectsList) {
 	        _this7.insertSubjectsDataForAddForm(subjectsList);
 	      });
+	      if (this.isValidInput === false) {
+	        return;
+	      } else {
+	        this.deleteEmptyForm();
+	      }
 	      var submitButton = document.getElementById('submit-form-button');
 	      var cancelButton = document.getElementById('cancel-form-button');
 	      submitButton.addEventListener('click', function () {
+	        console.log('click');
 	        _this7.sendForm(numberOfDay, numberOfCouple, 'add');
 	      }, {
 	        once: true
@@ -402,25 +411,24 @@ this.BX.Up = this.BX.Up || {};
 	      }
 	      this.formData = subjectsList;
 	      if (subjectsList.length === 0) {
-	        if (document.getElementById('empty-form')) {
-	          form.removeChild(document.getElementById('empty-form'));
-	        }
-	        var emptyForm = main_core.Tag.render(_templateObject17 || (_templateObject17 = babelHelpers.taggedTemplateLiteral(["\n\t\t\t\t<div id=\"empty-form\">\u0414\u043E\u0431\u0430\u0432\u043B\u044F\u0442\u044C \u0431\u043E\u043B\u044C\u0448\u0435 \u043D\u0435\u0447\u0435\u0433\u043E</div>\n\t\t\t"])));
-	        modalBody.appendChild(emptyForm);
+	        this.isValidInput = false;
+	        this.fillEmptyForm('SUBJECTS');
 	        return;
+	      } else {
+	        this.deleteEmptyForm();
 	      }
-	      var selectContainer = main_core.Tag.render(_templateObject18 || (_templateObject18 = babelHelpers.taggedTemplateLiteral(["\n\t\t\t<select id=\"subject-select\" name=\"subject\"> </select>\n\t\t"])));
-	      var option = main_core.Tag.render(_templateObject19 || (_templateObject19 = babelHelpers.taggedTemplateLiteral(["\n\t\t\t\t<option selected disabled hidden></option>\n\t\t\t"])));
+	      var selectContainer = main_core.Tag.render(_templateObject17 || (_templateObject17 = babelHelpers.taggedTemplateLiteral(["\n\t\t\t<select id=\"subject-select\" name=\"subject\"> </select>\n\t\t"])));
+	      var option = main_core.Tag.render(_templateObject18 || (_templateObject18 = babelHelpers.taggedTemplateLiteral(["\n\t\t\t\t<option selected disabled hidden></option>\n\t\t\t"])));
 	      selectContainer.appendChild(option);
 	      subjectsList.forEach(function (subject) {
-	        var option = main_core.Tag.render(_templateObject20 || (_templateObject20 = babelHelpers.taggedTemplateLiteral(["\n\t\t\t\t<option value=\"", "\">\n\t\t\t\t\t", "\n\t\t\t\t</option>\n\t\t\t"])), subject.subject.ID, subject.subject.TITLE);
+	        var option = main_core.Tag.render(_templateObject19 || (_templateObject19 = babelHelpers.taggedTemplateLiteral(["\n\t\t\t\t<option value=\"", "\">\n\t\t\t\t\t", "\n\t\t\t\t</option>\n\t\t\t"])), subject.subject.ID, Validator.escapeHTML(subject.subject.TITLE));
 	        selectContainer.appendChild(option);
 	      });
-	      var container = main_core.Tag.render(_templateObject21 || (_templateObject21 = babelHelpers.taggedTemplateLiteral(["<div class=\"is-60-height box edit-fields\"></div>"])));
-	      var label = main_core.Tag.render(_templateObject22 || (_templateObject22 = babelHelpers.taggedTemplateLiteral(["<label class=\"label\">\u041F\u0440\u0435\u0434\u043C\u0435\u0442</label>"])));
-	      var divControl = main_core.Tag.render(_templateObject23 || (_templateObject23 = babelHelpers.taggedTemplateLiteral(["<div class=\"control\"></div>"])));
-	      var divSelect = main_core.Tag.render(_templateObject24 || (_templateObject24 = babelHelpers.taggedTemplateLiteral(["<div class=\"select\"></div>"])));
-	      var underLabel = main_core.Tag.render(_templateObject25 || (_templateObject25 = babelHelpers.taggedTemplateLiteral(["<label></label>"])));
+	      var container = main_core.Tag.render(_templateObject20 || (_templateObject20 = babelHelpers.taggedTemplateLiteral(["<div class=\"is-60-height box edit-fields\"></div>"])));
+	      var label = main_core.Tag.render(_templateObject21 || (_templateObject21 = babelHelpers.taggedTemplateLiteral(["<label class=\"label\">", "</label>"])), main_core.Loc.getMessage('SUBJECT'));
+	      var divControl = main_core.Tag.render(_templateObject22 || (_templateObject22 = babelHelpers.taggedTemplateLiteral(["<div class=\"control\"></div>"])));
+	      var divSelect = main_core.Tag.render(_templateObject23 || (_templateObject23 = babelHelpers.taggedTemplateLiteral(["<div class=\"select\"></div>"])));
+	      var underLabel = main_core.Tag.render(_templateObject24 || (_templateObject24 = babelHelpers.taggedTemplateLiteral(["<label></label>"])));
 	      underLabel.appendChild(selectContainer);
 	      divSelect.appendChild(underLabel);
 	      divControl.appendChild(divSelect);
@@ -428,34 +436,54 @@ this.BX.Up = this.BX.Up || {};
 	      container.appendChild(divControl);
 	      form.appendChild(container);
 	      modalBody.appendChild(form);
-	      var select = document.getElementById('subject-select');
-	      select.addEventListener('change', function () {
-	        _this10.insertAudiencesDataForForm(select.value);
-	        _this10.insertGroupsDataForForm(select.value);
-	        _this10.insertTeachersDataForForm(select.value);
+	      selectContainer.addEventListener('change', function () {
+	        _this10.isValidInput = true;
+	        _this10.insertAudiencesDataForForm(selectContainer.value);
+	        _this10.insertGroupsDataForForm(selectContainer.value);
+	        _this10.insertTeachersDataForForm(selectContainer.value);
 	      });
 	    }
 	  }, {
 	    key: "insertAudiencesDataForForm",
 	    value: function insertAudiencesDataForForm(subjectId) {
+	      var _this11 = this;
+	      if (!this.isValidInput) {
+	        return;
+	      }
 	      var form = document.getElementById('add-edit-form');
 	      if (document.getElementById('audience-container')) {
-	        form.removeChild(document.getElementById('audience-container'));
+	        document.getElementById('audience-container').remove();
 	      }
-	      var selectContainer = main_core.Tag.render(_templateObject26 || (_templateObject26 = babelHelpers.taggedTemplateLiteral(["\n\t\t\t<select id=\"audience-select\" name=\"subject\"> </select>\n\t\t"])));
+	      var selectContainer = main_core.Tag.render(_templateObject25 || (_templateObject25 = babelHelpers.taggedTemplateLiteral(["\n\t\t\t<select id=\"audience-select\" name=\"subject\"> </select>\n\t\t"])));
 	      this.formData.forEach(function (subject) {
 	        if (subject.subject.ID === subjectId) {
+	          if (subject.audiences.length === 0) {
+	            _this11.isValidInput = false;
+	            _this11.fillEmptyForm('AUDIENCES');
+	            if (document.getElementById('group-container')) {
+	              document.getElementById('group-container').remove();
+	            }
+	            if (document.getElementById('teacher-container')) {
+	              document.getElementById('teacher-container').remove();
+	            }
+	            return;
+	          } else {
+	            _this11.deleteEmptyForm();
+	          }
 	          subject.audiences.forEach(function (audience) {
-	            var option = main_core.Tag.render(_templateObject27 || (_templateObject27 = babelHelpers.taggedTemplateLiteral(["\n\t\t\t\t\t\t<option value=\"", "\">\n\t\t\t\t\t\t\t", "\n\t\t\t\t\t\t</option>\n\t\t\t\t\t"])), audience.ID, audience.NUMBER);
+	            var option = main_core.Tag.render(_templateObject26 || (_templateObject26 = babelHelpers.taggedTemplateLiteral(["\n\t\t\t\t\t\t<option value=\"", "\">\n\t\t\t\t\t\t\t", "\n\t\t\t\t\t\t</option>\n\t\t\t\t\t"])), audience.ID, Validator.escapeHTML(audience.NUMBER));
 	            selectContainer.appendChild(option);
 	          });
 	        }
 	      });
-	      var container = main_core.Tag.render(_templateObject28 || (_templateObject28 = babelHelpers.taggedTemplateLiteral(["<div id=\"audience-container\" class=\"is-60-height box edit-fields\"></div>"])));
-	      var label = main_core.Tag.render(_templateObject29 || (_templateObject29 = babelHelpers.taggedTemplateLiteral(["<label class=\"label\">\u0410\u0443\u0434\u0438\u0442\u043E\u0440\u0438\u044F</label>"])));
-	      var divControl = main_core.Tag.render(_templateObject30 || (_templateObject30 = babelHelpers.taggedTemplateLiteral(["<div class=\"control\"></div>"])));
-	      var divSelect = main_core.Tag.render(_templateObject31 || (_templateObject31 = babelHelpers.taggedTemplateLiteral(["<div class=\"select\"></div>"])));
-	      var underLabel = main_core.Tag.render(_templateObject32 || (_templateObject32 = babelHelpers.taggedTemplateLiteral(["<label></label>"])));
+	      if (!this.isValidInput) {
+	        return;
+	      }
+	      var container = main_core.Tag.render(_templateObject27 || (_templateObject27 = babelHelpers.taggedTemplateLiteral(["<div id=\"audience-container\" class=\"is-60-height box edit-fields\"></div>"])));
+	      var label = main_core.Tag.render(_templateObject28 || (_templateObject28 = babelHelpers.taggedTemplateLiteral(["<label class=\"label\">", "</label>"])), main_core.Loc.getMessage('AUDIENCE'));
+	      var divControl = main_core.Tag.render(_templateObject29 || (_templateObject29 = babelHelpers.taggedTemplateLiteral(["<div class=\"control\"></div>"])));
+	      var divSelect = main_core.Tag.render(_templateObject30 || (_templateObject30 = babelHelpers.taggedTemplateLiteral(["<div class=\"select\"></div>"])));
+	      var underLabel = main_core.Tag.render(_templateObject31 || (_templateObject31 = babelHelpers.taggedTemplateLiteral(["<label></label>"])));
 	      underLabel.appendChild(selectContainer);
 	      divSelect.appendChild(underLabel);
 	      divControl.appendChild(divSelect);
@@ -466,24 +494,41 @@ this.BX.Up = this.BX.Up || {};
 	  }, {
 	    key: "insertGroupsDataForForm",
 	    value: function insertGroupsDataForForm(subjectId) {
+	      var _this12 = this;
+	      if (!this.isValidInput) {
+	        return;
+	      }
 	      var form = document.getElementById('add-edit-form');
 	      if (document.getElementById('group-container')) {
-	        form.removeChild(document.getElementById('group-container'));
+	        document.getElementById('group-container').remove();
 	      }
-	      var selectContainer = main_core.Tag.render(_templateObject33 || (_templateObject33 = babelHelpers.taggedTemplateLiteral(["\n\t\t\t<select id=\"group-select\" name=\"subject\"> </select>\n\t\t"])));
+	      var selectContainer = main_core.Tag.render(_templateObject32 || (_templateObject32 = babelHelpers.taggedTemplateLiteral(["\n\t\t\t<select id=\"group-select\" name=\"subject\"> </select>\n\t\t"])));
 	      this.formData.forEach(function (subject) {
 	        if (subject.subject.ID === subjectId) {
+	          if (subject.groups.length === 0) {
+	            _this12.isValidInput = false;
+	            _this12.fillEmptyForm('GROUPS');
+	            if (document.getElementById('teacher-container')) {
+	              document.getElementById('teacher-container').remove();
+	            }
+	            return;
+	          } else {
+	            _this12.deleteEmptyForm();
+	          }
 	          subject.groups.forEach(function (group) {
-	            var option = main_core.Tag.render(_templateObject34 || (_templateObject34 = babelHelpers.taggedTemplateLiteral(["\n\t\t\t\t\t\t<option value=\"", "\">\n\t\t\t\t\t\t\t", "\n\t\t\t\t\t\t</option>\n\t\t\t\t\t"])), group.ID, group.TITLE);
+	            var option = main_core.Tag.render(_templateObject33 || (_templateObject33 = babelHelpers.taggedTemplateLiteral(["\n\t\t\t\t\t\t<option value=\"", "\">\n\t\t\t\t\t\t\t", "\n\t\t\t\t\t\t</option>\n\t\t\t\t\t"])), group.ID, Validator.escapeHTML(group.TITLE));
 	            selectContainer.appendChild(option);
 	          });
 	        }
 	      });
-	      var container = main_core.Tag.render(_templateObject35 || (_templateObject35 = babelHelpers.taggedTemplateLiteral(["<div id=\"group-container\" class=\"is-60-height box edit-fields\"></div>"])));
-	      var label = main_core.Tag.render(_templateObject36 || (_templateObject36 = babelHelpers.taggedTemplateLiteral(["<label class=\"label\">\u0413\u0440\u0443\u043F\u043F\u0430</label>"])));
-	      var divControl = main_core.Tag.render(_templateObject37 || (_templateObject37 = babelHelpers.taggedTemplateLiteral(["<div class=\"control\"></div>"])));
-	      var divSelect = main_core.Tag.render(_templateObject38 || (_templateObject38 = babelHelpers.taggedTemplateLiteral(["<div class=\"select\"></div>"])));
-	      var underLabel = main_core.Tag.render(_templateObject39 || (_templateObject39 = babelHelpers.taggedTemplateLiteral(["<label></label>"])));
+	      if (!this.isValidInput) {
+	        return;
+	      }
+	      var container = main_core.Tag.render(_templateObject34 || (_templateObject34 = babelHelpers.taggedTemplateLiteral(["<div id=\"group-container\" class=\"is-60-height box edit-fields\"></div>"])));
+	      var label = main_core.Tag.render(_templateObject35 || (_templateObject35 = babelHelpers.taggedTemplateLiteral(["<label class=\"label\">", "</label>"])), main_core.Loc.getMessage('GROUP'));
+	      var divControl = main_core.Tag.render(_templateObject36 || (_templateObject36 = babelHelpers.taggedTemplateLiteral(["<div class=\"control\"></div>"])));
+	      var divSelect = main_core.Tag.render(_templateObject37 || (_templateObject37 = babelHelpers.taggedTemplateLiteral(["<div class=\"select\"></div>"])));
+	      var underLabel = main_core.Tag.render(_templateObject38 || (_templateObject38 = babelHelpers.taggedTemplateLiteral(["<label></label>"])));
 	      underLabel.appendChild(selectContainer);
 	      divSelect.appendChild(underLabel);
 	      divControl.appendChild(divSelect);
@@ -494,24 +539,38 @@ this.BX.Up = this.BX.Up || {};
 	  }, {
 	    key: "insertTeachersDataForForm",
 	    value: function insertTeachersDataForForm(subjectId) {
+	      var _this13 = this;
+	      if (!this.isValidInput) {
+	        return;
+	      }
 	      var form = document.getElementById('add-edit-form');
 	      if (document.getElementById('teacher-container')) {
-	        form.removeChild(document.getElementById('teacher-container'));
+	        document.getElementById('teacher-container').remove();
 	      }
-	      var selectContainer = main_core.Tag.render(_templateObject40 || (_templateObject40 = babelHelpers.taggedTemplateLiteral(["\n\t\t\t<select id=\"teacher-select\" name=\"subject\"> </select>\n\t\t"])));
+	      var selectContainer = main_core.Tag.render(_templateObject39 || (_templateObject39 = babelHelpers.taggedTemplateLiteral(["\n\t\t\t<select id=\"teacher-select\" name=\"subject\"> </select>\n\t\t"])));
 	      this.formData.forEach(function (subject) {
 	        if (subject.subject.ID === subjectId) {
+	          if (subject.teachers.length === 0) {
+	            _this13.isValidInput = false;
+	            _this13.fillEmptyForm('TEACHERS');
+	            return;
+	          } else {
+	            _this13.deleteEmptyForm();
+	          }
 	          subject.teachers.forEach(function (teacher) {
-	            var option = main_core.Tag.render(_templateObject41 || (_templateObject41 = babelHelpers.taggedTemplateLiteral(["\n\t\t\t\t\t\t<option value=\"", "\">\n\t\t\t\t\t\t\t", " ", "\n\t\t\t\t\t\t</option>\n\t\t\t\t\t"])), teacher.ID, teacher.NAME, teacher.LAST_NAME);
+	            var option = main_core.Tag.render(_templateObject40 || (_templateObject40 = babelHelpers.taggedTemplateLiteral(["\n\t\t\t\t\t\t<option value=\"", "\">\n\t\t\t\t\t\t\t", " ", "\n\t\t\t\t\t\t</option>\n\t\t\t\t\t"])), teacher.ID, Validator.escapeHTML(teacher.NAME), Validator.escapeHTML(teacher.LAST_NAME));
 	            selectContainer.appendChild(option);
 	          });
 	        }
 	      });
-	      var container = main_core.Tag.render(_templateObject42 || (_templateObject42 = babelHelpers.taggedTemplateLiteral(["<div id=\"teacher-container\" class=\"is-60-height box edit-fields\"></div>"])));
-	      var label = main_core.Tag.render(_templateObject43 || (_templateObject43 = babelHelpers.taggedTemplateLiteral(["<label class=\"label\">\u041F\u0440\u0435\u043F\u043E\u0434\u0430\u0432\u0430\u0442\u0435\u043B\u0438</label>"])));
-	      var divControl = main_core.Tag.render(_templateObject44 || (_templateObject44 = babelHelpers.taggedTemplateLiteral(["<div class=\"control\"></div>"])));
-	      var divSelect = main_core.Tag.render(_templateObject45 || (_templateObject45 = babelHelpers.taggedTemplateLiteral(["<div class=\"select\"></div>"])));
-	      var underLabel = main_core.Tag.render(_templateObject46 || (_templateObject46 = babelHelpers.taggedTemplateLiteral(["<label></label>"])));
+	      if (!this.isValidInput) {
+	        return;
+	      }
+	      var container = main_core.Tag.render(_templateObject41 || (_templateObject41 = babelHelpers.taggedTemplateLiteral(["<div id=\"teacher-container\" class=\"is-60-height box edit-fields\"></div>"])));
+	      var label = main_core.Tag.render(_templateObject42 || (_templateObject42 = babelHelpers.taggedTemplateLiteral(["<label class=\"label\">", "</label>"])), main_core.Loc.getMessage('TEACHERS'));
+	      var divControl = main_core.Tag.render(_templateObject43 || (_templateObject43 = babelHelpers.taggedTemplateLiteral(["<div class=\"control\"></div>"])));
+	      var divSelect = main_core.Tag.render(_templateObject44 || (_templateObject44 = babelHelpers.taggedTemplateLiteral(["<div class=\"select\"></div>"])));
+	      var underLabel = main_core.Tag.render(_templateObject45 || (_templateObject45 = babelHelpers.taggedTemplateLiteral(["<label></label>"])));
 	      underLabel.appendChild(selectContainer);
 	      divSelect.appendChild(underLabel);
 	      divControl.appendChild(divSelect);
@@ -522,13 +581,13 @@ this.BX.Up = this.BX.Up || {};
 	  }, {
 	    key: "fetchSubjectsForAddForm",
 	    value: function fetchSubjectsForAddForm(numberOfDay, numberOfCouple) {
-	      var _this11 = this;
+	      var _this14 = this;
 	      this.extractEntityFromUrl();
 	      return new Promise(function (resolve, reject) {
 	        BX.ajax.runAction('up:schedule.api.couplesList.fetchAddCoupleData', {
 	          data: {
-	            entity: _this11.entity,
-	            id: _this11.entityId
+	            entity: _this14.entity,
+	            id: _this14.entityId
 	          }
 	        }).then(function (response) {
 	          var subjectList = response.data;
@@ -543,6 +602,21 @@ this.BX.Up = this.BX.Up || {};
 	    value: function closeCoupleModal() {
 	      var modal = document.getElementById('coupleModal');
 	      modal.classList.remove('is-active');
+	    }
+	  }, {
+	    key: "fillEmptyForm",
+	    value: function fillEmptyForm(entity) {
+	      var modalBody = document.getElementById('modal-body');
+	      this.deleteEmptyForm();
+	      var emptyForm = main_core.Tag.render(_templateObject46 || (_templateObject46 = babelHelpers.taggedTemplateLiteral(["\n\t\t\t\t\t\t<div id=\"empty-form\" class=\"has-text-danger\">", "</div>\n\t\t\t\t\t"])), main_core.Loc.getMessage('EMPTY_' + entity + '_MESSAGE'));
+	      modalBody.appendChild(emptyForm);
+	    }
+	  }, {
+	    key: "deleteEmptyForm",
+	    value: function deleteEmptyForm() {
+	      if (document.getElementById('empty-form')) {
+	        document.getElementById('empty-form').remove();
+	      }
 	    }
 	  }]);
 	  return CouplesList;

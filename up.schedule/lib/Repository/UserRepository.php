@@ -71,39 +71,32 @@ class UserRepository
 		}
 
 		return UserTable::query()->setSelect([
-												'ID',
+												 'ID',
 												 'NAME',
 												 'LAST_NAME',
 												 'EMAIL',
 												 'ROLE' => 'UP_SCHEDULE_ROLE.TITLE',
-											 ])
-								 ->where(Query::filter()
-											  ->logic('or')
-											  ->whereLike('NAME', "%$searchInput%")
-											  ->whereLike('LAST_NAME', "%$searchInput%")
-								 )
-								 ->registerRuntimeField(
-									 (new Reference(
-										 'UP_SCHEDULE_ROLE',
-										 RoleTable::class,
-										 Join::on('this.UF_ROLE_ID', 'ref.ID')
-									 )))
-								 ->setLimit($entityPerPage + 1)
-								 ->setOffset($offset)
-								 ->setOrder('ID')
-								 ->fetchAll();
+											 ])->where(
+			Query::filter()->logic('or')->whereLike('NAME', "%$searchInput%")->whereLike(
+				'LAST_NAME',
+				"%$searchInput%"
+			)
+		)->registerRuntimeField(
+			(new Reference(
+				'UP_SCHEDULE_ROLE', RoleTable::class, Join::on('this.UF_ROLE_ID', 'ref.ID')
+			))
+		)->setLimit($entityPerPage + 1)->setOffset($offset)->setOrder('ID')->fetchAll();
 	}
 
 	public static function getCountOfEntities(string $searchInput): int
 	{
-		$result = UserTable::query()
-						   ->addSelect(Query::expr()->count('ID'), 'CNT')
-						   ->where(Query::filter()
-										->logic('or')
-										->whereLike('NAME', "%$searchInput%")
-										->whereLike('LAST_NAME', "%$searchInput%")
-						   )
-						   ->exec();
+		$result = UserTable::query()->addSelect(Query::expr()->count('ID'), 'CNT')->where(
+			Query::filter()->logic('or')->whereLike('NAME', "%$searchInput%")->whereLike(
+				'LAST_NAME',
+				"%$searchInput%"
+			)
+		)->exec();
+
 		return $result->fetch()['CNT'];
 	}
 
@@ -373,8 +366,37 @@ class UserRepository
 		return $result;
 	}
 
-	public static function add(array $data): void
+	public static function add(array $data): string
 	{
+		if($data['LOGIN'] === null)
+		{
+			return 'Введите логин';
+		}
+		if($data['EMAIL'] === null)
+		{
+			return 'Введите почту';
+		}
+		if($data['NAME'] === null)
+		{
+			return 'Введите имя';
+		}
+		if($data['LAST_NAME'] === null)
+		{
+			return 'Введите фамилию';
+		}
+		if($data['PASSWORD'] === null)
+		{
+			return 'Введите пароль';
+		}
+		if($data['CONFIRM_PASSWORD'] === null)
+		{
+			return 'Подтвердите пароль';
+		}
+		if($data['ROLE'] === null)
+		{
+			return 'Выберите роль';
+		}
+
 		$fields = [];
 		$validate = function(string $fieldName, mixed $value) use (&$fields): void {
 			if ($value !== null)
@@ -396,14 +418,10 @@ class UserRepository
 
 		if ((int)$ID <= 0)
 		{
-			throw new Exception($user->LAST_ERROR);
+			return $user->LAST_ERROR;
 		}
-		/*
-				var_dump($user->GetID()); die;
-				if (($roleId = RoleRepository::getByTitle($data['ROLE']??'')?->getId()) !== null)
-				{
-					$user->Update($user->GetID(), ['UF_ROLE_ID' => $roleId]);
-				}*/
+
+		return '';
 	}
 
 	public static function getTeacherByFirstAndLastName(string $name, string $lastName): ?EO_User
@@ -421,7 +439,7 @@ class UserRepository
 	public static function editById(int $id, array $data): void
 	{
 		$fields = [];
-		$validate = function(string $fieldName, mixed $value) use (&$fields): void {
+		$validate = static function(string $fieldName, mixed $value) use (&$fields): void {
 			if ($value !== null)
 			{
 				$fields[$fieldName] = $value;
@@ -431,13 +449,21 @@ class UserRepository
 		$validate('NAME', $data['NAME']);
 		$validate('LAST_NAME', $data['LAST_NAME']);
 		$validate('EMAIL', $data['EMAIL']);
-		$validate('UF_GROUP_ID', GroupRepository::getByTitle($data['GROUP'] ?? '')?->getId());
+
+		if (!array_key_exists('GROUP', $data) || !$data['GROUP'] || $data['ROLE'] !== 'Студент')
+		{
+			$fields['UF_GROUP_ID'] = null;
+		}
+		else
+		{
+			$validate('UF_GROUP_ID', GroupRepository::getByTitle($data['GROUP'])?->getId());
+		}
+
 		$validate('UF_ROLE_ID', RoleRepository::getByTitle($data['ROLE'] ?? '')?->getId());
 
-		/*echo "<pre>";
-		var_dump($fields);*/
-		$user = new \CUser();
+		$user = new CUser();
 		$user->Update($id, $fields);
+
 		if ($data['ROLE'] === 'Преподаватель')
 		{
 			foreach ($data['SUBJECTS_TO_DELETE'] as $subjectId)
@@ -455,6 +481,11 @@ class UserRepository
 				$collection->add($subjectTeacherEntity);
 			}
 			$collection->save();
+		}
+		else
+		{
+			SubjectTeacherTable::deleteByFilter(['TEACHER_ID' => $id]);
+			CoupleTable::deleteByFilter(['TEACHER_ID' => $id]);
 		}
 		// TODO: handle exceptions
 	}

@@ -7,7 +7,7 @@ class AdminsEntityEditComponent extends CBitrixComponent
 {
 	public function executeComponent(): void
 	{
-		if(!EntityService::isCurrentUserAdmin())
+		if (!EntityService::isCurrentUserAdmin())
 		{
 			LocalRedirect('/404/');
 		}
@@ -23,6 +23,7 @@ class AdminsEntityEditComponent extends CBitrixComponent
 		$entityName = (string)$this->arParams['ENTITY'];
 		$this->arResult['ENTITY_NAME'] = $entityName;
 		$this->arResult['RELATED_ENTITIES'] = EntityService::getArrayOfRelatedEntitiesById($entityName, $id);
+
 		return EntityService::getEntityById($entityName, $id);
 	}
 }

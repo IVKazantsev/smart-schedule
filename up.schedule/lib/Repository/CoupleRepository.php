@@ -2,6 +2,8 @@
 
 namespace Up\Schedule\Repository;
 
+use Bitrix\Main\ORM\Fields\Relations\Reference;
+use Bitrix\Main\ORM\Query\Join;
 use Bitrix\Main\UserTable;
 use Up\Schedule\Model\AudienceTable;
 use Up\Schedule\Model\CoupleTable;
@@ -76,5 +78,29 @@ class CoupleRepository
 		global $DB;
 		$DB->Query('DELETE FROM up_schedule_couple');
 		return $DB->GetErrorSQL();
+	}
+
+	// public static function getArrayByAudienceTypeId(int $id): array
+	// {
+	// 	return CoupleTable::query()
+	// 					  ->setSelect(['SUBJECT.TITLE', 'AUDIENCE.NUMBER', 'GROUP.TITLE', 'TEACHER.NAME', 'TEACHER.LAST_NAME'])
+	// 					  ->where('UP_SCHEDULE_AUDIENCE.AUDIENCE_TYPE_ID', $id)
+	// 					  ->registerRuntimeField(
+	// 						  (new Reference(
+	// 							  'UP_SCHEDULE_AUDIENCE', AudienceTable::class, Join::on('this.AUDIENCE_ID', 'ref.ID')
+	// 						  )))
+	// 					  ->fetchAll();
+	// }
+
+	public static function deleteByAudienceTypeId(int $id): void
+	{
+		global $DB;
+
+		$DB->Query("
+			DELETE up_schedule_couple
+			FROM up_schedule_couple
+				INNER JOIN up_schedule_audience ON up_schedule_couple.AUDIENCE_ID = up_schedule_audience.ID
+			WHERE up_schedule_audience.AUDIENCE_TYPE_ID = $id
+		");
 	}
 }

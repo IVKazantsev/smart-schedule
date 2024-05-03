@@ -36,20 +36,18 @@ class SubjectRepository
 			$offset = ($entityPerPage * ($pageNumber - 1));
 		}
 
-		return SubjectTable::query()->setSelect(['ID', 'TITLE'])
-						->whereLike('TITLE', "%$searchInput%")
-						->setLimit($entityPerPage + 1)
-						->setOffset($offset)
-						->setOrder('ID')
-						->fetchAll();
+		return SubjectTable::query()->setSelect(['ID', 'TITLE'])->whereLike('TITLE', "%$searchInput%")->setLimit(
+			$entityPerPage + 1
+		)->setOffset($offset)->setOrder('ID')->fetchAll();
 	}
 
 	public static function getCountOfEntities(string $searchInput): int
 	{
-		$result = SubjectTable::query()
-							->addSelect(Query::expr()->count('ID'), 'CNT')
-							->whereLike('TITLE', "%$searchInput%")
-							->exec();
+		$result = SubjectTable::query()->addSelect(Query::expr()->count('ID'), 'CNT')->whereLike(
+			'TITLE',
+			"%$searchInput%"
+		)->exec();
+
 		return $result->fetch()['CNT'];
 	}
 
@@ -126,14 +124,11 @@ class SubjectRepository
 													'TITLE',
 													'AUDIENCE_TYPE.TITLE',
 													'GROUPS',
-												])
-			->registerRuntimeField(
-				new Reference(
-					'up_schedule_audience',
-					AudienceTable::class,
-					Join::on('this.AUDIENCE_TYPE.ID', 'ref.AUDIENCE_TYPE_ID')
-				)
-			)->where('up_schedule_audience.ID', $id)->fetchAll();
+												])->registerRuntimeField(
+			new Reference(
+				'up_schedule_audience', AudienceTable::class, Join::on('this.AUDIENCE_TYPE.ID', 'ref.AUDIENCE_TYPE_ID')
+			)
+		)->where('up_schedule_audience.ID', $id)->fetchAll();
 	}
 
 	// TODO
@@ -144,16 +139,11 @@ class SubjectRepository
 													'TITLE',
 													'AUDIENCE_TYPE.TITLE',
 													'GROUPS',
-												])
-									->registerRuntimeField(
-											new Reference(
-													'up_schedule_subject_teacher',
-													SubjectTeacherTable::class,
-													Join::on('this.ID', 'ref.SUBJECT_ID')
-											)
-									)
-									->where('up_schedule_subject_teacher.TEACHER_ID', $id)
-									->fetchAll();
+												])->registerRuntimeField(
+			new Reference(
+				'up_schedule_subject_teacher', SubjectTeacherTable::class, Join::on('this.ID', 'ref.SUBJECT_ID')
+			)
+		)->where('up_schedule_subject_teacher.TEACHER_ID', $id)->fetchAll();
 	}
 
 	public static function getArrayForAdminById(int $id): ?array
@@ -186,20 +176,24 @@ class SubjectRepository
 		return $result;
 	}
 
-	public static function add(array $data): void
+	public static function add(array $data): string
 	{
+		if (($title = $data['TITLE']) === null)
+		{
+			return 'Введите название предмета';
+		}
+		if (($type = $data['TYPE']) === null)
+		{
+			return 'Выберите тип аудитории';
+		}
+
 		$subject = new EO_Subject();
-		if (($title = $data['TITLE']) !== null && ($type = $data['TYPE']) !== null)
-		{
-			$subject->setTitle($title);
-			$typeEntityObject = AudienceTypeTable::query()->setSelect(['ID'])->where('TITLE', $type)->fetchObject();
-			$subject->setAudienceType($typeEntityObject);
-			$subject->save();
-		}
-		else
-		{
-			throw new \Exception();
-		}
+		$subject->setTitle($title);
+		$typeEntityObject = AudienceTypeTable::query()->setSelect(['ID'])->where('TITLE', $type)->fetchObject();
+		$subject->setAudienceType($typeEntityObject);
+		$subject->save();
+
+		return '';
 	}
 
 	public static function editById(int $id, array $data): void
@@ -209,6 +203,10 @@ class SubjectRepository
 		if ($data['TITLE'] !== null)
 		{
 			$subject->setTitle($data['TITLE']);
+		}
+		if ($subject->getAudienceTypeId() !== $type->getId())
+		{
+			CoupleTable::deleteByFilter(['SUBJECT_ID' => $id]);
 		}
 		$subject->setAudienceType($type)->save();
 		// TODO: handle exceptions
@@ -251,5 +249,20 @@ class SubjectRepository
 		$DB->Query('DELETE FROM up_schedule_subject_teacher');
 
 		return $DB->GetErrorSQL();
+	}
+
+	public static function getArrayByAudienceTypeId(int $id): array
+	{
+		return SubjectTable::query()->setSelect(['TITLE'])->where('AUDIENCE_TYPE.ID', $id)->fetchAll();
+	}
+
+	public static function getAllByAudienceTypeId(int $id): ?EO_Subject_Collection
+	{
+		return SubjectTable::query()->setSelect(['TITLE'])->where('AUDIENCE_TYPE_ID', $id)->fetchCollection();
+	}
+
+	public static function deleteByAudienceTypeId(int $id): void
+	{
+		SubjectTable::deleteByFilter(['AUDIENCE_TYPE_ID' => $id]);
 	}
 }

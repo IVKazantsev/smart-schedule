@@ -16,3 +16,6 @@ $MESS['TEACHER'] = 'Преподаватель';
 $MESS['SELECT_AUDIENCE'] = 'Выберите аудиторию';
 $MESS['SELECT_GROUP'] = 'Выберите группу';
 $MESS['SELECT_TEACHER'] = 'Выберите преподавателя';
+
+$MESS['SAVE'] = 'Сохранить';
+$MESS['CANCEL'] = 'Отменить';

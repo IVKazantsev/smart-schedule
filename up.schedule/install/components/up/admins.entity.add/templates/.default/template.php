@@ -5,9 +5,18 @@
  * @var Application $APPLICATION
  */
 
+use Bitrix\Main\UI\Extension;
 use Bitrix\Main\Application;
 
+if (!defined("B_PROLOG_INCLUDED") || B_PROLOG_INCLUDED !== true)
+{
+	die();
+}
+
+Extension::load('up.popup-message');
+
 ?>
+<div id="messages"></div>
 
 <div class="column">
 	<div class="columns">
@@ -20,7 +29,11 @@ use Bitrix\Main\Application;
 
 	<div id="back-button-container" class="mb-4">
 		<div class="column is-1 p-0">
-			<a id ="back-button" class="is-60-height box is-flex is-align-items-center is-justify-content-center" href="/admin/#<?= $arResult['ENTITY_NAME'] ?>"><?= GetMessage('BACK') ?></a>
+			<a id ="back-button"
+			   class="is-60-height box is-flex is-align-items-center is-justify-content-center"
+			   href="/admin/#<?= $arResult['ENTITY_NAME'] ?>">
+				<?= GetMessage('BACK') ?>
+			</a>
 		</div>
 	</div>
 
@@ -124,4 +137,12 @@ use Bitrix\Main\Application;
 			i++;
 		});
 	}
+
+	BX.ready(function () {
+		window.PopupMessages = new BX.Up.Schedule.PopupMessage({
+			rootNodeId: 'messages',
+			errorsMessage: '<?= $arResult['ERRORS'] ?>',
+			successMessage: '<?= $arResult['SUCCESS'] ?>',
+		});
+	});
 </script>

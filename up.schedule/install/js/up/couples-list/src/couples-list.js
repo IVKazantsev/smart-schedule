@@ -1,14 +1,16 @@
-import { Tag, Type } from 'main.core';
+import { Tag, Type, Loc } from 'main.core';
+import { Validator } from '../../validator/src/validator';
 
-export class CouplesList {
+export class CouplesList
+{
 	formData = {};
 	daysOfWeek = {
-		1: 'Понедельник',
-		2: 'Вторник',
-		3: 'Среда',
-		4: 'Четверг',
-		5: 'Пятница',
-		6: 'Суббота',
+		1: Loc.getMessage('DAY_1_OF_WEEK'),
+		2: Loc.getMessage('DAY_2_OF_WEEK'),
+		3: Loc.getMessage('DAY_3_OF_WEEK'),
+		4: Loc.getMessage('DAY_4_OF_WEEK'),
+		5: Loc.getMessage('DAY_5_OF_WEEK'),
+		6: Loc.getMessage('DAY_6_OF_WEEK'),
 	};
 	entityId = undefined;
 	entity = undefined;
@@ -39,7 +41,8 @@ export class CouplesList {
 		this.checkRole();
 	}
 
-	extractEntityFromUrl() {
+	extractEntityFromUrl()
+	{
 		const url = window.location.pathname;
 		if (url.length === 0)
 		{
@@ -108,13 +111,13 @@ export class CouplesList {
 			{
 				return 'up:schedule.api.automaticSchedule.getCouplesList';
 			}
-		}
+		};
 
-		const controller = controllerFn(this.dataSourceIsDb)
+		const controller = controllerFn(this.dataSourceIsDb);
 		const entity = (this.entity) ?? this.defaultEntity;
 		const entityId = Number(this.entityId);
 
-		const promise = function (controller, entity, entityId){
+		const promise = function(controller, entity, entityId) {
 			return new Promise((resolve, reject) => {
 				BX.ajax.runAction(
 					controller,
@@ -126,14 +129,14 @@ export class CouplesList {
 							},
 					},
 				).then((response) => {
-					const coupleList = response.data.couples;
-					resolve(coupleList);
-				})
+						const coupleList = response.data.couples;
+						resolve(coupleList);
+					})
 					.catch((error) => {
 						reject(error);
 					});
 			});
-		}
+		};
 		return promise(controller, entity, entityId);
 	}
 
@@ -143,17 +146,14 @@ export class CouplesList {
 
 		if (this.isAdmin === true && !this.dataSourceIsDb)
 		{
-			//this.rootNode.classList.remove('columns');
-			this.rootNode.classList.add('is-flex', 'column', 'columns','is-flex-direction-column', 'is-align-items-center');
+			this.rootNode.classList.add('is-flex', 'column', 'columns', 'is-flex-direction-column', 'is-align-items-center');
 
 			const previewMenuContainer = document.createElement('div');
 			previewMenuContainer.classList.add('box', 'columns', 'column', 'is-half', 'is-flex', 'is-flex-direction-column', 'is-align-items-center');
-			/*previewMenuContainer.style.height = '50px';*/
 			previewMenuContainer.id = 'preview-menu-container';
 
 			const buttonsPreviewContainer = document.createElement('div');
 			buttonsPreviewContainer.classList.add('is-flex', 'column', 'columns', 'is-full', 'is-justify-content-space-evenly', 'is-flex-direction-row', 'mb-2');
-			/*buttonsPreviewContainer.style.height = '50px';*/
 			buttonsPreviewContainer.id = 'buttons-preview-container';
 
 			const label = Tag.render`
@@ -183,7 +183,6 @@ export class CouplesList {
 			});
 
 			buttonsPreviewContainer.appendChild(submitButton);
-			//buttonsPreviewContainer.appendChild(separator);
 			buttonsPreviewContainer.appendChild(cancelButton);
 			previewMenuContainer.appendChild(label);
 			previewMenuContainer.appendChild(buttonsPreviewContainer);
@@ -191,7 +190,7 @@ export class CouplesList {
 			this.rootNode.appendChild(previewMenuContainer);
 		}
 		const couplesContainer = document.createElement('div');
-		couplesContainer.className = 'column columns is-full'
+		couplesContainer.className = 'column columns is-full';
 		for (let day in this.daysOfWeek)
 		{
 			const dayTitleContainer = Tag.render`
@@ -211,11 +210,7 @@ export class CouplesList {
 			for (let i = 1; i < 7; i++)
 			{
 				let coupleTextContainer = Tag.render`<br>`;
-
-				/*if (this.isAdmin === true && this.dataSourceIsDb)
-				{*/
-					const dropdownContent = Tag.render`<div class="dropdown-content"></div>`;
-				/*}*/
+				const dropdownContent = Tag.render`<div class="dropdown-content"></div>`;
 
 				if (typeof this.coupleList[day] !== 'undefined' && typeof this.coupleList[day][i] !== 'undefined')
 				{
@@ -224,16 +219,16 @@ export class CouplesList {
 					{
 						marginClassText = 'class = "mt-3"';
 					}
-					console.log(this.coupleList);
+
 					coupleTextContainer = Tag.render`
 						<div class="couple-text">
-							<p ${marginClassText}>${this.coupleList[day][i].UP_SCHEDULE_MODEL_COUPLE_SUBJECT_TITLE}</p>
+							<p ${Validator.escapeHTML(marginClassText)}>${Validator.escapeHTML(this.coupleList[day][i].UP_SCHEDULE_MODEL_COUPLE_SUBJECT_TITLE)}</p>
 							<p hidden id="subjectId-${day}-${i}">${this.coupleList[day][i].UP_SCHEDULE_MODEL_COUPLE_SUBJECT_ID}</p>
-							<p>${this.coupleList[day][i].UP_SCHEDULE_MODEL_COUPLE_AUDIENCE_NUMBER}</p>
+							<p>${Validator.escapeHTML(this.coupleList[day][i].UP_SCHEDULE_MODEL_COUPLE_AUDIENCE_NUMBER)}</p>
 							<p hidden id="audienceId-${day}-${i}">${this.coupleList[day][i].UP_SCHEDULE_MODEL_COUPLE_AUDIENCE_ID}</p>
-							<p>${this.coupleList[day][i].UP_SCHEDULE_MODEL_COUPLE_GROUP_TITLE}</p>
+							<p>${Validator.escapeHTML(this.coupleList[day][i].UP_SCHEDULE_MODEL_COUPLE_GROUP_TITLE)}</p>
 							<p hidden id="groupId-${day}-${i}">${this.coupleList[day][i].UP_SCHEDULE_MODEL_COUPLE_GROUP_ID}</p>
-							<p>${this.coupleList[day][i].UP_SCHEDULE_MODEL_COUPLE_TEACHER_NAME} ${this.coupleList[day][i].UP_SCHEDULE_MODEL_COUPLE_TEACHER_LAST_NAME}</p>
+							<p>${Validator.escapeHTML(this.coupleList[day][i].UP_SCHEDULE_MODEL_COUPLE_TEACHER_NAME)} ${Validator.escapeHTML(this.coupleList[day][i].UP_SCHEDULE_MODEL_COUPLE_TEACHER_LAST_NAME)}</p>
 							<p hidden id="teacherId-${day}-${i}">${this.coupleList[day][i].UP_SCHEDULE_MODEL_COUPLE_TEACHER_ID}</p>
 						</div>
 					`;
@@ -243,7 +238,7 @@ export class CouplesList {
 						const removeCoupleButton = Tag.render`
 							<button 
 							data-target="modal-js-example" type="button" id="button-remove-${day}-${i}" class="js-modal-trigger dropdown-item btn-remove-couple button is-clickable is-small is-primary is-light">
-								Удалить
+								${Loc.getMessage('DELETE')}
 							</button>
 						`;
 						removeCoupleButton.addEventListener('click', () => {
@@ -253,7 +248,7 @@ export class CouplesList {
 						const editCoupleButton = Tag.render`
 							<button 
 							data-target="modal-js-example" type="button" id="button-edit-${day}-${i}" class="js-modal-trigger dropdown-item btn-edit-couple button is-clickable is-small is-primary is-light mb-1">
-								Изменить
+								${Loc.getMessage('EDIT')}
 							</button>
 						`;
 						editCoupleButton.addEventListener('click', () => {
@@ -271,7 +266,7 @@ export class CouplesList {
 						const addCoupleButton = Tag.render`
 							<button 
 							data-target="modal-js-example" type="button" id="button-add-${day}-${i}" class="js-modal-trigger dropdown-item btn-add-couple button is-clickable is-small is-primary is-light">
-								Добавить
+								${Loc.getMessage('ADD')}
 							</button>
 						`;
 
@@ -286,7 +281,7 @@ export class CouplesList {
 				const coupleContainer = document.createElement('div');
 				coupleContainer.className = 'box is-clickable couple m-0';
 
-				if(this.isAdmin && this.dataSourceIsDb)
+				if (this.isAdmin && this.dataSourceIsDb)
 				{
 					const dropdownTrigger = Tag.render`<div class="dropdown-trigger"></div>`;
 					const button = Tag.render`
@@ -310,8 +305,6 @@ export class CouplesList {
 					btnContainer.appendChild(dropdownTrigger);
 					btnContainer.appendChild(dropdownMenu);
 
-					//coupleContainer.appendChild(some);
-
 					coupleContainer.appendChild(btnContainer);
 				}
 				coupleContainer.appendChild(coupleTextContainer);
@@ -319,7 +312,7 @@ export class CouplesList {
 				dayContainer.appendChild(coupleContainer);
 			}
 			dayColumnContainer.appendChild(dayContainer);
-			couplesContainer.appendChild(dayColumnContainer)
+			couplesContainer.appendChild(dayColumnContainer);
 		}
 		this.rootNode.appendChild(couplesContainer);
 	}
@@ -328,12 +321,12 @@ export class CouplesList {
 	{
 		console.log('submit');
 		BX.ajax.runAction(
-			'up:schedule.api.automaticSchedule.setGeneratedSchedule',
-			{
-				data:
-					{}
-			},
-		)
+				'up:schedule.api.automaticSchedule.setGeneratedSchedule',
+				{
+					data:
+						{},
+				},
+			)
 			.then(() => {
 				window.location.replace('/');
 			})
@@ -346,12 +339,12 @@ export class CouplesList {
 	{
 		console.log('cancel');
 		BX.ajax.runAction(
-			'up:schedule.api.automaticSchedule.cancelGeneratedSchedule',
-			{
-				data:
-					{}
-			},
-		)
+				'up:schedule.api.automaticSchedule.cancelGeneratedSchedule',
+				{
+					data:
+						{},
+				},
+			)
 			.then(() => {
 				window.location.replace('/');
 			})
@@ -391,11 +384,13 @@ export class CouplesList {
 		this.createAddForm(numberOfDay, numberOfCouple);
 	}
 
-	handleRemoveCoupleButtonClick(numberOfDay, numberOfCouple) {
+	handleRemoveCoupleButtonClick(numberOfDay, numberOfCouple)
+	{
 		this.removeCouple(numberOfDay, numberOfCouple);
 	}
 
-	handleEditCoupleButtonClick(numberOfDay, numberOfCouple) {
+	handleEditCoupleButtonClick(numberOfDay, numberOfCouple)
+	{
 		this.openCoupleModal();
 	}
 
@@ -421,10 +416,20 @@ export class CouplesList {
 			.then((subjectsList) => {
 				this.insertSubjectsDataForAddForm(subjectsList);
 			});
+		if(this.isValidInput === false)
+		{
+			return;
+		}
+		else
+		{
+			this.deleteEmptyForm();
+		}
+
 
 		const submitButton = document.getElementById('submit-form-button');
 		const cancelButton = document.getElementById('cancel-form-button');
 		submitButton.addEventListener('click', () => {
+			console.log('click');
 			this.sendForm(numberOfDay, numberOfCouple, 'add');
 		}, { once: true });
 
@@ -451,7 +456,7 @@ export class CouplesList {
 				'NUMBER_IN_DAY': numberOfCouple,
 			};
 			BX.ajax.runAction(
-				'up:schedule.api.couplesList.'+ typeOfRequest +'Couple',
+				'up:schedule.api.couplesList.' + typeOfRequest + 'Couple',
 				{
 					data:
 						{
@@ -494,8 +499,8 @@ export class CouplesList {
 						},
 				},
 			).then((response) => {
-				this.reload();
-			})
+					this.reload();
+				})
 				.catch((error) => {
 					console.error(error);
 				});
@@ -517,18 +522,17 @@ export class CouplesList {
 
 		if (subjectsList.length === 0)
 		{
-			if (document.getElementById('empty-form'))
-			{
-				form.removeChild(document.getElementById('empty-form'));
-			}
+			this.isValidInput = false;
 
-			const emptyForm = Tag.render`
-				<div id="empty-form">Добавлять больше нечего</div>
-			`;
+			this.fillEmptyForm('SUBJECTS');
 
-			modalBody.appendChild(emptyForm);
 			return;
 		}
+		else
+		{
+			this.deleteEmptyForm()
+		}
+
 		const selectContainer = Tag.render`
 			<select id="subject-select" name="subject"> </select>
 		`;
@@ -540,7 +544,7 @@ export class CouplesList {
 		subjectsList.forEach((subject) => {
 			const option = Tag.render`
 				<option value="${subject.subject.ID}">
-					${subject.subject.TITLE}
+					${Validator.escapeHTML(subject.subject.TITLE)}
 				</option>
 			`;
 			selectContainer.appendChild(option);
@@ -548,7 +552,7 @@ export class CouplesList {
 
 		const container = Tag.render`<div class="is-60-height box edit-fields"></div>`;
 
-		const label = Tag.render`<label class="label">Предмет</label>`;
+		const label = Tag.render`<label class="label">${Loc.getMessage('SUBJECT')}</label>`;
 		const divControl = Tag.render`<div class="control"></div>`;
 		const divSelect = Tag.render`<div class="select"></div>`;
 		const underLabel = Tag.render`<label></label>`;
@@ -562,20 +566,27 @@ export class CouplesList {
 		form.appendChild(container);
 
 		modalBody.appendChild(form);
-		const select = document.getElementById('subject-select');
-		select.addEventListener('change', () => {
-			this.insertAudiencesDataForForm(select.value);
-			this.insertGroupsDataForForm(select.value);
-			this.insertTeachersDataForForm(select.value);
+
+		selectContainer.addEventListener('change', () => {
+			this.isValidInput = true;
+
+			this.insertAudiencesDataForForm(selectContainer.value);
+			this.insertGroupsDataForForm(selectContainer.value);
+			this.insertTeachersDataForForm(selectContainer.value);
 		});
 	}
 
 	insertAudiencesDataForForm(subjectId)
 	{
+		if(!this.isValidInput)
+		{
+			return;
+		}
+
 		const form = document.getElementById('add-edit-form');
 		if (document.getElementById('audience-container'))
 		{
-			form.removeChild(document.getElementById('audience-container'));
+			document.getElementById('audience-container').remove();
 		}
 
 		const selectContainer = Tag.render`
@@ -584,10 +595,31 @@ export class CouplesList {
 		this.formData.forEach((subject) => {
 			if (subject.subject.ID === subjectId)
 			{
+				if (subject.audiences.length === 0)
+				{
+					this.isValidInput = false;
+
+					this.fillEmptyForm('AUDIENCES');
+					if (document.getElementById('group-container'))
+					{
+						document.getElementById('group-container').remove();
+					}
+					if (document.getElementById('teacher-container'))
+					{
+						document.getElementById('teacher-container').remove();
+					}
+
+					return;
+				}
+				else
+				{
+					this.deleteEmptyForm()
+				}
+
 				subject.audiences.forEach((audience) => {
 					const option = Tag.render`
 						<option value="${audience.ID}">
-							${audience.NUMBER}
+							${Validator.escapeHTML(audience.NUMBER)}
 						</option>
 					`;
 					selectContainer.appendChild(option);
@@ -595,9 +627,14 @@ export class CouplesList {
 			}
 		});
 
+		if(!this.isValidInput)
+		{
+			return;
+		}
+
 		const container = Tag.render`<div id="audience-container" class="is-60-height box edit-fields"></div>`;
 
-		const label = Tag.render`<label class="label">Аудитория</label>`;
+		const label = Tag.render`<label class="label">${Loc.getMessage('AUDIENCE')}</label>`;
 		const divControl = Tag.render`<div class="control"></div>`;
 		const divSelect = Tag.render`<div class="select"></div>`;
 		const underLabel = Tag.render`<label></label>`;
@@ -613,10 +650,15 @@ export class CouplesList {
 
 	insertGroupsDataForForm(subjectId)
 	{
+		if(!this.isValidInput)
+		{
+			return;
+		}
+
 		const form = document.getElementById('add-edit-form');
 		if (document.getElementById('group-container'))
 		{
-			form.removeChild(document.getElementById('group-container'));
+			document.getElementById('group-container').remove();
 		}
 
 		const selectContainer = Tag.render`
@@ -625,10 +667,27 @@ export class CouplesList {
 		this.formData.forEach((subject) => {
 			if (subject.subject.ID === subjectId)
 			{
+				if (subject.groups.length === 0)
+				{
+					this.isValidInput = false;
+
+					this.fillEmptyForm('GROUPS');
+					if (document.getElementById('teacher-container'))
+					{
+						document.getElementById('teacher-container').remove();
+					}
+
+					return;
+				}
+				else
+				{
+					this.deleteEmptyForm()
+				}
+
 				subject.groups.forEach((group) => {
 					const option = Tag.render`
 						<option value="${group.ID}">
-							${group.TITLE}
+							${Validator.escapeHTML(group.TITLE)}
 						</option>
 					`;
 					selectContainer.appendChild(option);
@@ -636,9 +695,14 @@ export class CouplesList {
 			}
 		});
 
+		if(!this.isValidInput)
+		{
+			return;
+		}
+
 		const container = Tag.render`<div id="group-container" class="is-60-height box edit-fields"></div>`;
 
-		const label = Tag.render`<label class="label">Группа</label>`;
+		const label = Tag.render`<label class="label">${Loc.getMessage('GROUP')}</label>`;
 		const divControl = Tag.render`<div class="control"></div>`;
 		const divSelect = Tag.render`<div class="select"></div>`;
 		const underLabel = Tag.render`<label></label>`;
@@ -654,10 +718,15 @@ export class CouplesList {
 
 	insertTeachersDataForForm(subjectId)
 	{
+		if(!this.isValidInput)
+		{
+			return;
+		}
+
 		const form = document.getElementById('add-edit-form');
 		if (document.getElementById('teacher-container'))
 		{
-			form.removeChild(document.getElementById('teacher-container'));
+			document.getElementById('teacher-container').remove();
 		}
 
 		const selectContainer = Tag.render`
@@ -666,10 +735,23 @@ export class CouplesList {
 		this.formData.forEach((subject) => {
 			if (subject.subject.ID === subjectId)
 			{
+				if (subject.teachers.length === 0)
+				{
+					this.isValidInput = false;
+
+					this.fillEmptyForm('TEACHERS');
+
+					return;
+				}
+				else
+				{
+					this.deleteEmptyForm()
+				}
+
 				subject.teachers.forEach((teacher) => {
 					const option = Tag.render`
 						<option value="${teacher.ID}">
-							${teacher.NAME} ${teacher.LAST_NAME}
+							${Validator.escapeHTML(teacher.NAME)} ${Validator.escapeHTML(teacher.LAST_NAME)}
 						</option>
 					`;
 					selectContainer.appendChild(option);
@@ -677,9 +759,14 @@ export class CouplesList {
 			}
 		});
 
+		if(!this.isValidInput)
+		{
+			return;
+		}
+
 		const container = Tag.render`<div id="teacher-container" class="is-60-height box edit-fields"></div>`;
 
-		const label = Tag.render`<label class="label">Преподаватели</label>`;
+		const label = Tag.render`<label class="label">${Loc.getMessage('TEACHERS')}</label>`;
 		const divControl = Tag.render`<div class="control"></div>`;
 		const divSelect = Tag.render`<div class="select"></div>`;
 		const underLabel = Tag.render`<label></label>`;
@@ -722,5 +809,26 @@ export class CouplesList {
 	{
 		const modal = document.getElementById('coupleModal');
 		modal.classList.remove('is-active');
+	}
+
+	fillEmptyForm(entity)
+	{
+		const modalBody = document.getElementById('modal-body');
+
+		this.deleteEmptyForm();
+
+		const emptyForm = Tag.render`
+						<div id="empty-form" class="has-text-danger">${Loc.getMessage('EMPTY_' + entity + '_MESSAGE')}</div>
+					`;
+
+		modalBody.appendChild(emptyForm);
+	}
+
+	deleteEmptyForm()
+	{
+		if (document.getElementById('empty-form'))
+		{
+			document.getElementById('empty-form').remove();
+		}
 	}
 }

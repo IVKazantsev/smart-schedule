@@ -16,10 +16,6 @@ class DisplayEntitiesList extends Controller
 		'teacher',
 	];
 
-	/**
-	 * Returns default pre-filters for action.
-	 * @return array
-	 */
 	protected function getDefaultPreFilters(): array
 	{
 		return [

@@ -37,21 +37,19 @@ class AudienceRepository
 			$offset = $entityPerPage * ($pageNumber - 1);
 		}
 
-		return AudienceTable::query()
-							->setSelect(['ID', 'NUMBER', 'AUDIENCE_TYPE'])
-							->whereLike('NUMBER', "%$searchInput%")
-							->setLimit($entityPerPage + 1)
-							->setOffset($offset)
-							->setOrder('ID')
-							->fetchAll();
+		return AudienceTable::query()->setSelect(['ID', 'NUMBER', 'AUDIENCE_TYPE'])->whereLike(
+				'NUMBER',
+				"%$searchInput%"
+			)->setLimit($entityPerPage + 1)->setOffset($offset)->setOrder('ID')->fetchAll();
 	}
 
 	public static function getCountOfEntities(string $searchInput): int
 	{
-		$result = AudienceTable::query()
-							->addSelect(Query::expr()->count('ID'), 'CNT')
-							->whereLike('NUMBER', "%$searchInput%")
-							->exec();
+		$result = AudienceTable::query()->addSelect(Query::expr()->count('ID'), 'CNT')->whereLike(
+				'NUMBER',
+				"%$searchInput%"
+			)->exec();
+
 		return $result->fetch()['CNT'];
 	}
 
@@ -87,20 +85,24 @@ class AudienceRepository
 		return $result;
 	}
 
-	public static function add(array $data): void
+	public static function add(array $data): string
 	{
+		if (($number = $data['NUMBER']) === null)
+		{
+			return 'Введите номер аудитории';
+		}
+		if (($type = $data['TYPE']) === null)
+		{
+			return 'Выберите тип аудитории';
+		}
 		$audience = new EO_Audience();
-		if (($number = $data['NUMBER']) !== null && ($type = $data['TYPE']) !== null)
-		{
-			$audience->setNumber($number);
-			$typeEntityObject = AudienceTypeTable::query()->setSelect(['ID'])->where('TITLE', $type)->fetchObject();
-			$audience->setAudienceType($typeEntityObject);
-			$audience->save();
-		}
-		else
-		{
-			throw new \Exception();
-		}
+
+		$audience->setNumber($number);
+		$typeEntityObject = AudienceTypeTable::query()->setSelect(['ID'])->where('TITLE', $type)->fetchObject();
+		$audience->setAudienceType($typeEntityObject);
+		$audience->save();
+
+		return '';
 	}
 
 	public static function getArrayForAdding(): ?array
@@ -120,7 +122,12 @@ class AudienceRepository
 		{
 			$audience->setNumber($data['NUMBER']);
 		}
-		$audience->setAudienceType($type);
+
+		if ($audience->getAudienceTypeId() !== $type->getId())
+		{
+			CoupleTable::deleteByFilter(['AUDIENCE_ID' => $id]);
+			$audience->setAudienceType($type);
+		}
 		$audience->save();
 		// TODO: handle exceptions
 	}
@@ -181,13 +188,13 @@ class AudienceRepository
 		$audienceTypeId = $subject['AUDIENCE_TYPE_ID'];
 
 		return AudienceTable::query()->setSelect(['ID', 'NUMBER', 'TYPE' => 'UP_SCHEDULE_AUDIENCE_TYPE'])->where(
-				'AUDIENCE_TYPE_ID',
-				$audienceTypeId
-			)->registerRuntimeField(
-				(new Reference(
-					'UP_SCHEDULE_AUDIENCE_TYPE', AudienceTypeTable::class, Join::on('this.AUDIENCE_TYPE_ID', 'ref.ID')
-				))
-			)->fetchAll();
+			'AUDIENCE_TYPE_ID',
+			$audienceTypeId
+		)->registerRuntimeField(
+			(new Reference(
+				'UP_SCHEDULE_AUDIENCE_TYPE', AudienceTypeTable::class, Join::on('this.AUDIENCE_TYPE_ID', 'ref.ID')
+			))
+		)->fetchAll();
 	}
 	//	public static function getArrayOfAudiencesBySubjectsId(array $id): ?array
 	//	{
@@ -211,5 +218,15 @@ class AudienceRepository
 		$DB->Query('DELETE FROM up_schedule_audience');
 
 		return $DB->GetErrorSQL();
+	}
+
+	public static function getArrayByAudienceTypeId(int $id): array
+	{
+		return AudienceTable::query()->setSelect(['NUMBER'])->where('AUDIENCE_TYPE.ID', $id)->fetchAll();
+	}
+
+	public static function deleteByAudienceTypeId(int $id): void
+	{
+		AudienceTable::deleteByFilter(['AUDIENCE_TYPE_ID' => $id]);
 	}
 }
