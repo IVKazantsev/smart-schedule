@@ -74,23 +74,80 @@ if (!defined("B_PROLOG_INCLUDED") || B_PROLOG_INCLUDED !== true)
 		if ($arResult['USER_ROLE'] === 'Администратор'): ?>
 			<ul class="menu-list box">
 				<li>
-					<a class="is-60-height is-flex is-align-items-center is-justify-content-center" href="/admin/">
-						<?= GetMessage("ADMIN_PANEL") ?>
+					<a class="pl-2 pr-2 is-60-height is-flex is-align-items-center is-justify-content-center" href="/admin/">
+						<div class="column is-2 p-0">
+							<svg class="sidebar-icon" version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+								viewBox="0 0 64 64" enable-background="new 0 0 64 64" xml:space="preserve">
+							<g>
+								<polygon fill="none" stroke="#000000" stroke-width="2" stroke-miterlimit="10" points="32,1 26,1 26,10 20,12 14,6 6,14 12,20
+									10,26 1,26 1,38 10,38 12,44 6,50 14,58 20,52 26,54 26,63 32,63 38,63 38,54 44,52 50,58 58,50 52,44 54,38 63,38 63,26 54,26
+									52,20 58,14 50,6 44,12 38,10 38,1 	"/>
+								<circle fill="none" stroke="#000000" stroke-width="2" stroke-miterlimit="10" cx="32" cy="32" r="6"/>
+							</g>
+							</svg>
+						</div>
+						<div class="column is-10 pl-2 has-text-left p-0">
+							<?= GetMessage("ADMIN_PANEL") ?>
+						</div>
 					</a>
 				</li>
 				<li>
-					<a class="is-60-height is-flex is-align-items-center is-justify-content-center" href="/scheduling/">
-						<?= GetMessage("SCHEDULING") ?>
+					<a class="pl-2 pr-2 is-60-height is-flex is-align-items-center is-justify-content-center" href="/scheduling/">
+						<div class="column is-2 p-0">
+							<svg class="sidebar-icon" version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+								viewBox="0 0 64 64" enable-background="new 0 0 64 64" xml:space="preserve">
+							<g>
+								<line fill="none" stroke="#000000" stroke-width="2" stroke-miterlimit="10" x1="46" y1="10" x2="18" y2="10"/>
+								<polyline fill="none" stroke="#000000" stroke-width="2" stroke-miterlimit="10" points="12,10 1,10 1,58 63,58 63,10 52,10 	"/>
+								<rect x="12" y="6" fill="none" stroke="#000000" stroke-width="2" stroke-miterlimit="10" width="6" height="8"/>
+								<rect x="46" y="6" fill="none" stroke="#000000" stroke-width="2" stroke-miterlimit="10" width="6" height="8"/>
+								<rect x="10" y="24" fill="none" stroke="#000000" stroke-width="2" stroke-miterlimit="10" width="10" height="10"/>
+								<rect x="10" y="42" fill="none" stroke="#000000" stroke-width="2" stroke-miterlimit="10" width="10" height="10"/>
+								<rect x="44" y="24" fill="none" stroke="#000000" stroke-width="2" stroke-miterlimit="10" width="10" height="10"/>
+								<rect x="44" y="42" fill="none" stroke="#000000" stroke-width="2" stroke-miterlimit="10" width="10" height="10"/>
+								<rect x="27" y="24" fill="none" stroke="#000000" stroke-width="2" stroke-miterlimit="10" width="10" height="10"/>
+								<rect x="27" y="42" fill="none" stroke="#000000" stroke-width="2" stroke-miterlimit="10" width="10" height="10"/>
+							</g>
+								<line fill="none" stroke="#000000" stroke-width="2" stroke-miterlimit="10" x1="1" y1="18" x2="63" y2="18"/>
+							</svg>
+						</div>
+						<div class="column is-10 pl-2 has-text-left p-0">
+							<?= GetMessage("SCHEDULING") ?>
+						</div>
 					</a>
 				</li>
 				<li>
-					<a class="is-60-height is-flex is-align-items-center is-justify-content-center" href="/">
-						<?= GetMessage("BACK_TO_SCHEDULE") ?>
+					<a class="pl-2 pr-2 is-60-height is-flex is-align-items-center is-justify-content-center" href="/">
+						<div class="column is-2 p-0">
+							<svg class="sidebar-icon" version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+							 viewBox="0 0 64 64" enable-background="new 0 0 64 64" xml:space="preserve">
+							<polygon fill="none" stroke="#000000" stroke-width="2" stroke-miterlimit="10" points="32,3 2,33 11,33 11,63 23,63 23,47 39,47
+								39,63 51,63 51,33 62,33 "/>
+							</svg>
+						</div>
+						<div class="column is-10 pl-2 has-text-left p-0">
+							<?= GetMessage("BACK_TO_SCHEDULE") ?>
+						</div>
 					</a>
 				</li>
 				<li>
-					<a class="is-60-height is-flex is-align-items-center is-justify-content-center" href="/import/">
-						<?= GetMessage("IMPORT_FROM_EXCEL") ?>
+					<a class="pl-2 pr-2 is-60-height is-flex is-align-items-center is-justify-content-center" href="/import/">
+						<div class="column is-2 p-0">
+							<svg class="sidebar-icon" version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+								viewBox="0 0 64 64" enable-background="new 0 0 64 64" xml:space="preserve">
+								<polyline fill="none" stroke="#000000" stroke-width="2" stroke-miterlimit="10" points="5,41 11,1 53,1 59,41 "/>
+								<rect x="5" y="41" fill="none" stroke="#000000" stroke-width="2" stroke-miterlimit="10" width="54" height="22"/>
+								<circle fill="none" stroke="#000000" stroke-width="2" stroke-miterlimit="10" cx="48" cy="52" r="3"/>
+								<polyline fill="none" stroke="#000000" stroke-width="2" stroke-linejoin="bevel" stroke-miterlimit="10" points="40,23 32,31
+								24,23 "/>
+								<g>
+									<line fill="none" stroke="#000000" stroke-width="2" stroke-miterlimit="10" x1="32" y1="31" x2="32" y2="11"/>
+								</g>
+							</svg>
+						</div>
+						<div class="column is-10 pl-2 has-text-left p-0">
+							<?= GetMessage("IMPORT_FROM_EXCEL") ?>
+						</div>
 					</a>
 				</li>
 			</ul>
@@ -138,7 +195,7 @@ if (!defined("B_PROLOG_INCLUDED") || B_PROLOG_INCLUDED !== true)
 					</li>
 				<?php
 				endforeach; ?>
-				<div class="selected-indicator"></div> <!-- Добавленный блок для индикатора -->
+				<div class="selected-indicator"></div>
 			</ul>
 
 		<?php

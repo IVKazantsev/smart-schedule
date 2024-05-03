@@ -262,3 +262,8 @@ a:hover {
 .is-fullheight {
 	height: 100%;
 }
+
+.sidebar-icon {
+	height: 100%;
+	max-width: 70%;
+}
