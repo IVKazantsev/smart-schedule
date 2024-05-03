@@ -427,6 +427,12 @@ class UserRepository
 		$validate('CONFIRM_PASSWORD', $data['CONFIRM_PASSWORD']);
 		$validate('UF_ROLE_ID', RoleRepository::getByTitle($data['ROLE'] ?? '')?->getId());
 
+		if ($data['ROLE'] === 'Администратор')
+		{
+			$group = array(1);
+			$fields['GROUP_ID'] = $group;
+		}
+
 		$user = new CUser();
 		$ID = $user->Add($fields);
 
