@@ -159,7 +159,7 @@ this.BX.Up = this.BX.Up || {};
 	        this.rootNode.appendChild(previewMenuContainer);
 	      }
 	      var couplesContainer = document.createElement('div');
-	      couplesContainer.className = 'column columns is-full';
+	      couplesContainer.className = 'column columns';
 	      var _loop = function _loop(day) {
 	        var dayTitleContainer = main_core.Tag.render(_templateObject5 || (_templateObject5 = babelHelpers.taggedTemplateLiteral(["\n\t\t\t\t<div class=\"box day-of-week m-0 is-60-height is-flex is-align-items-center is-justify-content-center\">\n\t\t\t\t\t", "\n\t\t\t\t</div>\n\t\t\t"])), _this3.daysOfWeek[day]);
 	        var dayColumnContainer = document.createElement('div');

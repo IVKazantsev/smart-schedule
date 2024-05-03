@@ -190,7 +190,7 @@ export class CouplesList
 			this.rootNode.appendChild(previewMenuContainer);
 		}
 		const couplesContainer = document.createElement('div');
-		couplesContainer.className = 'column columns is-full';
+		couplesContainer.className = 'column columns';
 		for (let day in this.daysOfWeek)
 		{
 			const dayTitleContainer = Tag.render`
