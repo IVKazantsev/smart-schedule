@@ -35,14 +35,14 @@ class AdminsEntityAddComponent extends CBitrixComponent
 	{
 		if (!check_bitrix_sessid())
 		{
-			$this->arResult['ERRORS'] = 'Сессия истекла';
+			$this->arResult['ERRORS'] = GetMessage('SESSION_EXPIRED');
 
 			return;
 		}
 		$entityName = Context::getCurrent()?->getRequest()->get('entity');
 		if (!$entityName)
 		{
-			$this->arResult['ERRORS'] = 'Не задана сущность для добавления';
+			$this->arResult['ERRORS'] = GetMessage('NOT_SPECIFIED_ENTITY');
 
 			return;
 		}

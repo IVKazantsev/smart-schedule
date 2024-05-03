@@ -374,6 +374,13 @@ class UserRepository
 		$result['CONFIRM_PASSWORD'] = '';
 
 		$result['ROLE'] = array_column(RoleRepository::getAllArray(), 'TITLE');
+		$result['GROUP'] = array_column(GroupRepository::getAllArray(), 'TITLE');
+		$subjects = SubjectRepository::getAll();
+
+		foreach ($subjects as $subject)
+		{
+			$result['SUBJECTS']['ALL_SUBJECTS'][$subject->getId()] = $subject->getTitle();
+		}
 
 		return $result;
 	}
@@ -429,6 +436,17 @@ class UserRepository
 		$validate('CONFIRM_PASSWORD', $data['CONFIRM_PASSWORD']);
 		$validate('UF_ROLE_ID', RoleRepository::getByTitle($data['ROLE'] ?? '')?->getId());
 
+		if (!array_key_exists('GROUP', $data) || !$data['GROUP'] || $data['ROLE'] !== 'Студент')
+		{
+			$fields['UF_GROUP_ID'] = null;
+		}
+		else
+		{
+			$validate('UF_GROUP_ID', GroupRepository::getByTitle($data['GROUP'])?->getId());
+		}
+
+		$validate('UF_ROLE_ID', RoleRepository::getByTitle($data['ROLE'] ?? '')?->getId());
+
 		if ($data['ROLE'] === 'Администратор')
 		{
 			$group = array(1);
@@ -436,14 +454,28 @@ class UserRepository
 		}
 
 		$user = new CUser();
-		$ID = $user->Add($fields);
+		$id = $user->Add($fields);
 
-		if ((int)$ID <= 0)
+		if ((int)$id <= 0)
 		{
 			return $user->LAST_ERROR;
 		}
 
+		if ($data['ROLE'] === 'Преподаватель')
+		{
+			$collection = new EO_SubjectTeacher_Collection();
+			foreach ($data['SUBJECTS_TO_ADD'] as $subjectId)
+			{
+				$subjectTeacherEntity = new EO_SubjectTeacher();
+				$subjectTeacherEntity->setSubjectId($subjectId);
+				$subjectTeacherEntity->setTeacherId($id);
+				$collection->add($subjectTeacherEntity);
+			}
+			$collection->save();
+		}
+
 		return '';
+		// TODO: handle exceptions
 	}
 
 	public static function getTeacherByFirstAndLastName(string $name, string $lastName): ?EO_User
@@ -509,7 +541,7 @@ class UserRepository
 		$result = $user->Update($id, $fields);
 		if($result === false)
 		{
-			return 'Не удалось отредактировать пользователя';
+			return $user->LAST_ERROR;
 		}
 
 		if ($data['ROLE'] === 'Преподаватель')

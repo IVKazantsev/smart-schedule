@@ -48,45 +48,55 @@ Extension::load('up.popup-message');
 				if (is_array($field)): ?>
 					<label class="label"><?= GetMessage($key) ?></label>
 					<?php
+					if (GetMessage('CHANGE_' . $key . '_WARNING')): ?>
+						<div class="has-text-danger"><?= GetMessage('CHANGE_' . $key . '_WARNING') ?></div>
+					<?php
+					endif; ?>
+
+					<?php
 					if ($key === 'SUBJECTS'): ?>
 						<?php
 						$allSubjectsString = '';
 						foreach ($field['ALL_SUBJECTS'] as $subjectId => $subjectTitle)
 						{
-							$allSubjectsString .= "<option value='$subjectId'> $subjectTitle</option>";
+							$allSubjectsString .= "<option value='$subjectId'> "
+								. htmlspecialcharsbx($subjectTitle)
+								. "</option>";
 						}
 						?>
 						<div id="subjectContainer">
-							<?php foreach ($field['CURRENT_SUBJECTS'] as $subjectId => $subjectTitle): ?>
-								<div class="mb-2" id="current_subject_<?=$subjectId?>">
+							<?php
+							if (!empty($field['CURRENT_SUBJECTS'])): ?>
+								<div class="has-text-danger mb-2"><?= GetMessage('DELETE_SUBJECTS_WARNING') ?></div>
+							<?php
+							endif; ?>
+							<?php
+							foreach ($field['CURRENT_SUBJECTS'] as $subjectId => $subjectTitle): ?>
+								<div class="mb-2" id="current_subject_<?= $subjectId ?>">
 									<div class="box">
 										<div class="p-1 is-flex is-justify-content-space-between is-flex-wrap-nowrap is-align-items-center">
 											<div class="mb-2">
-												<input name="current_subject_<?=$subjectId?>" type="hidden">
-												<?=$subjectTitle?>
+												<input name="current_subject_<?= $subjectId ?>" type="hidden">
+												<?= htmlspecialcharsbx($subjectTitle) ?>
 											</div>
-											<!--<select class="mb-1" name="<?php /*= 'current_subject_' . $subjectId */?>">
-												<option><?php /*= $subjectTitle */?></option>
-												<?php /*= $allSubjectsString */?>
-											</select>-->
-											<button class="btnDelete delete is-medium" type="button" id="delete_subject_<?=$subjectId?>"></button>
+											<button class="btnDelete delete is-medium" type="button" id="delete_subject_<?= $subjectId ?>"></button>
 										</div>
 									</div>
 								</div>
-							<?php endforeach; ?>
+							<?php
+							endforeach; ?>
 						</div>
-						<button class="button is-primary is-dark are-small" type="button" id="addSubject"><?= GetMessage('ADD') ?> <?= mb_strtolower(
-								GetMessage($key)
-							) ?></button>
-					<?php
-					else: ?>
+						<button class="button is-primary is-dark are-small" type="button" id="addSubject">
+							<?= GetMessage('ADD') ?> <?= mb_strtolower(GetMessage($key)) ?>
+						</button>
+					<?php else: ?>
 						<div class="control">
 							<div class="select">
 								<label>
 									<select name="<?= $key ?>">
 										<?php
 										foreach ($field as $subfield): ?>
-											<option><?= $subfield ?></option>
+											<option><?= htmlspecialcharsbx($subfield) ?></option>
 										<?php
 										endforeach; ?>
 									</select>
@@ -130,12 +140,42 @@ Extension::load('up.popup-message');
 			newListItem.innerHTML = `<div class="select">
 										<label>
 											<select class="mb-1" name="add_subject_`+ i +`">
-													<?=$allSubjectsString?>
+													<?= $allSubjectsString ?>
 											</select>
 										</label>
 									</div>`;
 			document.querySelector('#subjectContainer').appendChild(newListItem);
 			i++;
+		});
+	}
+
+	roleSelect = document.querySelector("[name='ROLE']");
+	if(roleSelect)
+	{
+		groupSelect = document.querySelector("[name='GROUP']");
+		groupContainer = groupSelect.closest('.edit-fields');
+		groupContainer.style.display = 'none';
+
+		addSubject = document.getElementById('addSubject');
+		subjectsContainer = addSubject.closest('.edit-fields');
+		subjectsContainer.style.display = 'none';
+
+		roleSelect.addEventListener('change', () => {
+			if(roleSelect.value === 'Администратор')
+			{
+				groupContainer.style.display = 'none';
+				subjectsContainer.style.display = 'none';
+			}
+			else if(roleSelect.value === 'Преподаватель')
+			{
+				groupContainer.style.display = 'none';
+				subjectsContainer.style.display = 'block';
+			}
+			else if(roleSelect.value === 'Студент')
+			{
+				groupContainer.style.display = 'block';
+				subjectsContainer.style.display = 'none';
+			}
 		});
 	}
 
