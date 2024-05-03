@@ -44,18 +44,31 @@ this.BX.Up = this.BX.Up || {};
 	    } else {
 	      throw new Error('CouplesList: options.rootNodeId required');
 	    }
+	    if (!main_core.Type.isStringFilled(options.entity) || !main_core.Type.isStringFilled(options.entityId)) {
+	      this.extractEntityFromUrl();
+	    } else {
+	      this.entity = options.entity;
+	      this.entityId = options.entityId;
+	    }
 	    this.rootNode = document.getElementById(this.rootNodeId);
 	    if (!this.rootNode) {
 	      throw new Error("CouplesList: element with id = \"".concat(this.rootNodeId, "\" not found"));
 	    }
+	    console.log(this.entity);
+	    console.log(this.entityId);
 	    this.dataSourceIsDb = dataSourceIsDb;
-	    this.extractEntityFromUrl();
 	    this.coupleList = [];
 	    this.checkRole();
 	  }
 	  babelHelpers.createClass(CouplesList, [{
 	    key: "extractEntityFromUrl",
 	    value: function extractEntityFromUrl() {
+	      if (this.entity && this.entityId) {
+	        return {
+	          'entityId': this.entityId,
+	          'entity': this.entity
+	        };
+	      }
 	      var url = window.location.pathname;
 	      if (url.length === 0) {
 	        return {

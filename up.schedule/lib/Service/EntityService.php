@@ -17,6 +17,7 @@ use Up\Schedule\Model\EO_Couple_Collection;
 use Up\Schedule\Model\EO_Group;
 use Up\Schedule\Model\EO_GroupSubject;
 use Up\Schedule\Model\EO_GroupSubject_Collection;
+use Up\Schedule\Model\EO_Role;
 use Up\Schedule\Model\EO_Subject;
 use Up\Schedule\Model\EO_Subject_Collection;
 use Up\Schedule\Model\EO_SubjectTeacher;
@@ -585,5 +586,10 @@ class EntityService
 	public static function isCurrentUserAdmin(): bool
 	{
 		return CurrentUser::get()->isAdmin();
+	}
+
+	public static function getCurrentUser(): CurrentUser
+	{
+		return CurrentUser::get();
 	}
 }

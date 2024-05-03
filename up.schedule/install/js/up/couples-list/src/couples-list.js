@@ -12,6 +12,7 @@ export class CouplesList
 		5: Loc.getMessage('DAY_5_OF_WEEK'),
 		6: Loc.getMessage('DAY_6_OF_WEEK'),
 	};
+
 	entityId = undefined;
 	entity = undefined;
 	defaultEntity = 'group';
@@ -30,19 +31,39 @@ export class CouplesList
 			throw new Error('CouplesList: options.rootNodeId required');
 		}
 
+		if(!Type.isStringFilled(options.entity) || !Type.isStringFilled(options.entityId))
+		{
+			this.extractEntityFromUrl();
+		}
+		else
+		{
+			this.entity = options.entity;
+			this.entityId = options.entityId;
+		}
+
 		this.rootNode = document.getElementById(this.rootNodeId);
 		if (!this.rootNode)
 		{
 			throw new Error(`CouplesList: element with id = "${this.rootNodeId}" not found`);
 		}
+
+		console.log(this.entity);
+		console.log(this.entityId);
 		this.dataSourceIsDb = dataSourceIsDb;
-		this.extractEntityFromUrl();
 		this.coupleList = [];
 		this.checkRole();
 	}
 
 	extractEntityFromUrl()
 	{
+		if(this.entity && this.entityId)
+		{
+			return {
+				'entityId': this.entityId,
+				'entity': this.entity,
+			}
+		}
+
 		const url = window.location.pathname;
 		if (url.length === 0)
 		{

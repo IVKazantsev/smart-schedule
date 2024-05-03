@@ -109,6 +109,8 @@ class UserRepository
 												 'NAME',
 												 'LAST_NAME',
 												 'EMAIL',
+												 'UF_ROLE_ID',
+												 'UF_GROUP_ID',
 												 'ROLE' => 'UP_SCHEDULE_ROLE.TITLE',
 												 'GROUP' => 'UP_SCHEDULE_GROUP.TITLE',
 											 ])->registerRuntimeField(
