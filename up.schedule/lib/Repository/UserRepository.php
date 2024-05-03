@@ -392,6 +392,11 @@ class UserRepository
 		{
 			return 'Подтвердите пароль';
 		}
+		if($data['PASSWORD'] !== $data['CONFIRM_PASSWORD'])
+		{
+			return 'Пароли не совпадают';
+		}
+
 		if($data['ROLE'] === null)
 		{
 			return 'Выберите роль';
