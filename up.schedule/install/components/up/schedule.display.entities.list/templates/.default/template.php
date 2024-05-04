@@ -53,9 +53,7 @@ Extension::load('up.couples-list');
 			</form>
 		</section>
 		<footer class="modal-card-foot">
-			<div class="buttons">
-				<button id="submit-form-button" type="button" class="button is-success"><?= GetMessage('SAVE') ?></button>
-				<button id="cancel-form-button" type="button" class="button"><?= GetMessage('CANCEL') ?></button>
+			<div class="buttons" id="couple-add-buttons-container">
 			</div>
 		</footer>
 	</div>

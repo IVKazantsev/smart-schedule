@@ -177,7 +177,7 @@ export class CouplesList
 						`;
 			submitButton.addEventListener('click', () => {
 				this.handleSubmitScheduleButtonClick();
-			});
+			}, { once: true });
 
 			const separator = Tag.render`<div class="column is-fifth"> </div>`;
 
@@ -189,7 +189,7 @@ export class CouplesList
 						`;
 			cancelButton.addEventListener('click', () => {
 				this.handleCancelScheduleButtonClick();
-			});
+			}, { once: true });
 
 			buttonsPreviewContainer.appendChild(submitButton);
 			buttonsPreviewContainer.appendChild(cancelButton);
@@ -250,9 +250,10 @@ export class CouplesList
 								-
 							</button>
 						`;
+
 						editCoupleButton.addEventListener('click', () => {
 							this.handleRemoveCoupleButtonClick(day, i);
-						});
+						}, { once: true });
 					}
 				}
 				else
@@ -372,15 +373,27 @@ export class CouplesList
 			this.deleteEmptyForm();
 		}
 
-		const submitButton = document.getElementById('submit-form-button');
-		const cancelButton = document.getElementById('cancel-form-button');
+		const coupleAddButtonsContainer = document.getElementById('couple-add-buttons-container');
+
+		const submitButton = Tag.render`
+			<button id="submit-form-button" type="button" class="button is-success">${Loc.getMessage('SAVE')}</button>
+		`
+		const cancelButton = Tag.render`
+			<button id="cancel-form-button" type="button" class="button">${Loc.getMessage('CANCEL')}</button>
+		`
+
 		submitButton.addEventListener('click', () => {
 			this.sendForm(numberOfDay, numberOfCouple, 'add');
-		});
+		}, { once: true });
 
 		cancelButton.addEventListener('click', () => {
 			this.closeCoupleModal();
+			submitButton.remove();
+			cancelButton.remove();
 		}, { once: true });
+
+		coupleAddButtonsContainer.appendChild(submitButton);
+		coupleAddButtonsContainer.appendChild(cancelButton);
 	}
 
 	sendForm(numberOfDay, numberOfCouple, typeOfRequest)
@@ -389,6 +402,9 @@ export class CouplesList
 		const teacherInput = document.getElementById('teacher-select');
 		const audienceInput = document.getElementById('audience-select');
 		const groupInput = document.getElementById('group-select');
+
+		const submitButton = document.getElementById('submit-form-button');
+		const cancelButton = document.getElementById('cancel-form-button');
 
 		if (subjectInput && teacherInput && audienceInput && groupInput)
 		{
@@ -412,12 +428,26 @@ export class CouplesList
 					this.sendMessage('', 'Пара успешно добавлена');
 					this.closeCoupleModal();
 					this.reload();
+
+					submitButton.remove();
+					cancelButton.remove();
 				})
 				.catch((error) => {
 					this.sendMessage(error.data.errors);
 
+					const submitButton = document.getElementById('submit-form-button');
+					submitButton.addEventListener('click', () => {
+						this.sendForm(numberOfDay, numberOfCouple, 'add');
+					}, { once: true });
+
 					console.error(error);
 				});
+		}
+		else
+		{
+			submitButton.addEventListener('click', () => {
+				this.sendForm(numberOfDay, numberOfCouple, 'add');
+			}, { once: true });
 		}
 	}
 
@@ -790,4 +820,38 @@ export class CouplesList
 			});
 		});
 	}
+
+	// handleOpenCoupleAddButtonClick(numberOfDay, numberOfCouple)
+	// {
+	// 	console.log('open');
+	// 	const dropdown = document.getElementById(`button-add-${numberOfDay}-${numberOfCouple}`);
+	//
+	// 	const button = document.getElementById(`button-${numberOfDay}-${numberOfCouple}`);
+	// 	button.addEventListener('click', () => {
+	// 		this.handleCloseCoupleAddButtonClick(numberOfDay, numberOfCouple);
+	// 	}, {once: true});
+	// }
+	//
+	// handleCloseCoupleAddButtonClick(numberOfDay, numberOfCouple)
+	// {
+	// 	console.log('close');
+	// 	const dropdown = document.getElementById(`dropdown-${numberOfDay}-${numberOfCouple}`);
+	// 	dropdown.className = 'btn-edit-couple-container dropdown';
+	// 	const button = document.getElementById(`button-${numberOfDay}-${numberOfCouple}`);
+	// 	button.addEventListener('click', () => {
+	// 		this.handleOpenDropdownCoupleButtonClick(numberOfDay, numberOfCouple);
+	// 	}, {once: true});
+	// }
+	//
+	// handleCoupleDeleteButtonClick(numberOfDay, numberOfCouple)
+	// {
+	// 	console.log('close');
+	// 	const dropdown = document.getElementById(`button-remove-${numberOfDay}-${numberOfCouple}`);
+	// 	dropdown.className = 'btn-edit-couple-container dropdown';
+	// 	const button = document.getElementById(`button-${numberOfDay}-${numberOfCouple}`);
+	// 	button.addEventListener('click', () => {
+	// 		this.handleOpenDropdownCoupleButtonClick(numberOfDay, numberOfCouple);
+	// 	}, {once: true});
+	// }
+
 }
