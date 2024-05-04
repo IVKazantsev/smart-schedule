@@ -267,3 +267,7 @@ a:hover {
 	height: 100%;
 	max-width: 70%;
 }
+
+#messages {
+	z-index: 50;
+}

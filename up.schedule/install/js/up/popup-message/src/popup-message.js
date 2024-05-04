@@ -35,40 +35,20 @@ export class PopupMessage
 		this.reload();
 	}
 
-	reload()
+	reload(errorsMessage = '', successMessage = '')
 	{
-		this.render();
-		// this.loadMessages()
-		// 	.then(data => {
-		// 		this.groupsList = data.groups;
-		// 		//this.currentGroup = data.currentGroup;
-		//
-		// 		this.render();
-		// 	});
-	}
+		if(errorsMessage !== '')
+		{
+			this.errorsMessage = errorsMessage;
+		}
 
-	// loadMessages()
-	// {
-	// 	return new Promise((resolve, reject) => {
-	// 		BX.ajax.runAction(
-	// 			'up:schedule.api.adminPanel.getEntityList',
-	// 			{
-	// 				data:
-	// 					{
-	// 						entityName: this.entity,
-	// 						pageNumber: pageNumber,
-	// 						searchInput: searchInput,
-	// 					},
-	// 			},
-	// 		).then((response) => {
-	// 				const data = response.data;
-	// 				resolve(data);
-	// 			})
-	// 			.catch((error) => {
-	// 				reject(error);
-	// 			});
-	// 	});
-	// }
+		if(errorsMessage !== '')
+		{
+			this.successMessage = successMessage;
+		}
+
+		this.render();
+	}
 
 	render()
 	{

@@ -47,6 +47,10 @@ this.BX.Up = this.BX.Up || {};
 	    if (!this.rootNode) {
 	      throw new Error("CouplesList: element with id = \"".concat(this.rootNodeId, "\" not found"));
 	    }
+	    if (!options.scheduleCouplesList) {
+	      throw new Error("CouplesList: schedule couples list in not included");
+	    }
+	    this.scheduleCouplesList = options.scheduleCouplesList;
 	    this.dataSourceIsDb = dataSourceIsDb;
 	    this.entityList = [];
 	    this.suitableEntityList = [];
@@ -139,7 +143,6 @@ this.BX.Up = this.BX.Up || {};
 	        _this3.rootNode.appendChild(entityLink);
 	        entityLink.addEventListener('click', function (event) {
 	          event.preventDefault();
-	          console.log('click');
 	          _this3.entityList.forEach(function (entity) {
 	            if (entity['NAMING'] === entityLink.textContent) {
 	              _this3.currentEntity = entity;
@@ -159,8 +162,8 @@ this.BX.Up = this.BX.Up || {};
 	              path: newUrl
 	            }, '', newUrl);
 	          }
-	          window.ScheduleCouplesList.extractEntityFromUrl();
-	          window.ScheduleCouplesList.reload();
+	          _this3.scheduleCouplesList.extractEntityFromUrl();
+	          _this3.scheduleCouplesList.reload();
 	          _this3.reload();
 	        });
 	      });

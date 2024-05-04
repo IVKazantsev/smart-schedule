@@ -87,9 +87,46 @@ class CouplesList extends Controller
 		{
 			$this->addError(new Error('all info must be filled', 'not_filled_couple_info'));
 		}
+		$couplesAtThisTime = CoupleRepository::getByDayAndNumber((int)$coupleInfo['DAY_OF_WEEK'], (int)$coupleInfo['NUMBER_IN_DAY']);
+		foreach ($couplesAtThisTime as $couple)
+		{
+			if ($couple->getAudienceId() === (int)$coupleInfo['AUDIENCE_ID'])
+			{
+				$this->addError(new Error('the couple in this audience is busy at this time', 'busy_audience'));
+				return [
+					'result' => false,
+					'errors' => "Пара в этой аудитории в это время занята",
+				];
+			}
 
-		CoupleRepository::addCouple($coupleInfo);
+			if ($couple->getTeacherId() === (int)$coupleInfo['TEACHER_ID'])
+			{
+				$this->addError(new Error('the couple with this teacher is busy at this time', 'busy_teacher'));
+				return [
+					'result' => false,
+					'errors' => "Пара с этим преподавателем в это время занята",
+				];
+			}
 
+			if ($couple->getGroupId() === (int)$coupleInfo['GROUP_ID'])
+			{
+				$this->addError(new Error('the couple in this group is busy at this time', 'busy_group'));
+				return [
+					'result' => false,
+					'errors' => "Пара у этой группы в это время занята",
+				];
+			}
+		}
+
+		$errors = CoupleRepository::addCouple($coupleInfo);
+		if($errors !== '')
+		{
+			$this->addError(new Error('failed to add a couple', 'failed_to_add_couple'));
+			return [
+				'result' => false,
+				'errors' => $errors,
+			];
+		}
 		return [
 			'result' => true,
 		];

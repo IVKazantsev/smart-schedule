@@ -9,6 +9,8 @@ return [
 	'js' => 'dist/couples-list.bundle.js',
 	'rel' => [
 		'main.core',
+		'main.loader',
+		'up.popup-message',
 	],
 	'skip_core' => false,
 ];

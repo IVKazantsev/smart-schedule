@@ -39,6 +39,12 @@ export class DisplayScheduleEntitiesList
 			throw new Error(`CouplesList: element with id = "${this.rootNodeId}" not found`);
 		}
 
+		if(!options.scheduleCouplesList)
+		{
+			throw new Error(`CouplesList: schedule couples list in not included`);
+		}
+		this.scheduleCouplesList = options.scheduleCouplesList;
+
 		this.dataSourceIsDb = dataSourceIsDb;
 		this.entityList = [];
 		this.suitableEntityList = [];
@@ -165,7 +171,6 @@ export class DisplayScheduleEntitiesList
 			entityLink.addEventListener('click', (event) => {
 				event.preventDefault();
 
-				console.log('click');
 				this.entityList.forEach((entity) => {
 					if (entity['NAMING'] === entityLink.textContent)
 					{
@@ -190,8 +195,8 @@ export class DisplayScheduleEntitiesList
 					window.history.pushState({ path: newUrl }, '', newUrl);
 				}
 
-				window.ScheduleCouplesList.extractEntityFromUrl();
-				window.ScheduleCouplesList.reload();
+				this.scheduleCouplesList.extractEntityFromUrl();
+				this.scheduleCouplesList.reload();
 
 				this.reload();
 			});

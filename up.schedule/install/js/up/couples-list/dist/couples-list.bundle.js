@@ -1,7 +1,7 @@
 /* eslint-disable */
 this.BX = this.BX || {};
 this.BX.Up = this.BX.Up || {};
-(function (exports,main_core) {
+(function (exports,main_core,main_loader,up_popupMessage) {
 	'use strict';
 
 	var Validator = /*#__PURE__*/function () {
@@ -54,8 +54,6 @@ this.BX.Up = this.BX.Up || {};
 	    if (!this.rootNode) {
 	      throw new Error("CouplesList: element with id = \"".concat(this.rootNodeId, "\" not found"));
 	    }
-	    console.log(this.entity);
-	    console.log(this.entityId);
 	    this.dataSourceIsDb = dataSourceIsDb;
 	    this.coupleList = [];
 	    this.checkRole();
@@ -63,12 +61,6 @@ this.BX.Up = this.BX.Up || {};
 	  babelHelpers.createClass(CouplesList, [{
 	    key: "extractEntityFromUrl",
 	    value: function extractEntityFromUrl() {
-	      if (this.entity && this.entityId) {
-	        return {
-	          'entityId': this.entityId,
-	          'entity': this.entity
-	        };
-	      }
 	      var url = window.location.pathname;
 	      if (url.length === 0) {
 	        return {
@@ -125,22 +117,19 @@ this.BX.Up = this.BX.Up || {};
 	      var controller = controllerFn(this.dataSourceIsDb);
 	      var entity = (_this$entity = this.entity) !== null && _this$entity !== void 0 ? _this$entity : this.defaultEntity;
 	      var entityId = Number(this.entityId);
-	      var promise = function promise(controller, entity, entityId) {
-	        return new Promise(function (resolve, reject) {
-	          BX.ajax.runAction(controller, {
-	            data: {
-	              entity: entity,
-	              id: entityId
-	            }
-	          }).then(function (response) {
-	            var coupleList = response.data.couples;
-	            resolve(coupleList);
-	          })["catch"](function (error) {
-	            reject(error);
-	          });
+	      return new Promise(function (resolve, reject) {
+	        BX.ajax.runAction(controller, {
+	          data: {
+	            entity: entity,
+	            id: entityId
+	          }
+	        }).then(function (response) {
+	          var coupleList = response.data.couples;
+	          resolve(coupleList);
+	        })["catch"](function (error) {
+	          reject(error);
 	        });
-	      };
-	      return promise(controller, entity, entityId);
+	      });
 	    }
 	  }, {
 	    key: "render",
@@ -343,10 +332,7 @@ this.BX.Up = this.BX.Up || {};
 	      var submitButton = document.getElementById('submit-form-button');
 	      var cancelButton = document.getElementById('cancel-form-button');
 	      submitButton.addEventListener('click', function () {
-	        console.log('click');
 	        _this7.sendForm(numberOfDay, numberOfCouple, 'add');
-	      }, {
-	        once: true
 	      });
 	      cancelButton.addEventListener('click', function () {
 	        _this7.closeCoupleModal();
@@ -376,9 +362,11 @@ this.BX.Up = this.BX.Up || {};
 	            coupleInfo: coupleInfo
 	          }
 	        }).then(function (response) {
+	          _this8.sendMessage('', 'Пара успешно добавлена');
 	          _this8.closeCoupleModal();
 	          _this8.reload();
 	        })["catch"](function (error) {
+	          _this8.sendMessage(error.data.errors);
 	          console.error(error);
 	        });
 	      }
@@ -631,10 +619,23 @@ this.BX.Up = this.BX.Up || {};
 	        document.getElementById('empty-form').remove();
 	      }
 	    }
+	  }, {
+	    key: "sendMessage",
+	    value: function sendMessage() {
+	      var errorMessage = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : '';
+	      var successMessage = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : '';
+	      BX.ready(function () {
+	        var PopupMessages = new BX.Up.Schedule.PopupMessage({
+	          rootNodeId: 'messages',
+	          errorsMessage: errorMessage,
+	          successMessage: successMessage
+	        });
+	      });
+	    }
 	  }]);
 	  return CouplesList;
 	}();
 
 	exports.CouplesList = CouplesList;
 
-}((this.BX.Up.Schedule = this.BX.Up.Schedule || {}),BX));
+}((this.BX.Up.Schedule = this.BX.Up.Schedule || {}),BX,BX,BX));

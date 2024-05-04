@@ -61,9 +61,9 @@ class CoupleRepository
 			->fetchAll();
 	}
 
-	public static function addCouple(array $data): void
+	public static function addCouple(array $data): string
 	{
-		(new EO_Couple())
+		$result = (new EO_Couple())
 			->setGroup(GroupTable::getByPrimary($data['GROUP_ID'])->fetchObject())
 			->setSubject(SubjectTable::getByPrimary($data['SUBJECT_ID'])->fetchObject())
 			->setTeacher(UserTable::getByPrimary($data['TEACHER_ID'])->fetchObject())
@@ -71,6 +71,13 @@ class CoupleRepository
 			->setWeekDay($data['DAY_OF_WEEK'])
 			->setCoupleNumberInDay($data['NUMBER_IN_DAY'])
 			->save();
+
+		if(!$result->isSuccess())
+		{
+			return implode('<br>', $result->getErrorMessages());
+		}
+
+		return '';
 	}
 
 	public static function deleteAllFromDB(): string
@@ -90,6 +97,15 @@ class CoupleRepository
 								  'UP_SCHEDULE_AUDIENCE', AudienceTable::class, Join::on('this.AUDIENCE_ID', 'ref.ID')
 							  )))
 						  ->fetchAll();
+	}
+
+	public static function getByDayAndNumber(int $weekDay, int $coupleNumber): ?EO_Couple_Collection
+	{
+		return CoupleTable::query()
+						  ->setSelect(['SUBJECT.TITLE', 'AUDIENCE.NUMBER', 'GROUP.TITLE', 'TEACHER.NAME', 'TEACHER.LAST_NAME'])
+						  ->where('WEEK_DAY', $weekDay)
+						  ->where('COUPLE_NUMBER_IN_DAY', $coupleNumber)
+						  ->fetchCollection();
 	}
 
 	public static function deleteByAudienceTypeId(int $id): void

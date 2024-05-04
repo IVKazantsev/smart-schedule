@@ -1,5 +1,7 @@
 import { Tag, Type, Loc } from 'main.core';
+import { Loader } from 'main.loader';
 import { Validator } from '../../validator/src/validator';
+import { PopupMessage } from 'up.popup-message';
 
 export class CouplesList
 {
@@ -31,7 +33,7 @@ export class CouplesList
 			throw new Error('CouplesList: options.rootNodeId required');
 		}
 
-		if(!Type.isStringFilled(options.entity) || !Type.isStringFilled(options.entityId))
+		if (!Type.isStringFilled(options.entity) || !Type.isStringFilled(options.entityId))
 		{
 			this.extractEntityFromUrl();
 		}
@@ -47,8 +49,6 @@ export class CouplesList
 			throw new Error(`CouplesList: element with id = "${this.rootNodeId}" not found`);
 		}
 
-		console.log(this.entity);
-		console.log(this.entityId);
 		this.dataSourceIsDb = dataSourceIsDb;
 		this.coupleList = [];
 		this.checkRole();
@@ -56,14 +56,6 @@ export class CouplesList
 
 	extractEntityFromUrl()
 	{
-		if(this.entity && this.entityId)
-		{
-			return {
-				'entityId': this.entityId,
-				'entity': this.entity,
-			}
-		}
-
 		const url = window.location.pathname;
 		if (url.length === 0)
 		{
@@ -138,27 +130,24 @@ export class CouplesList
 		const entity = (this.entity) ?? this.defaultEntity;
 		const entityId = Number(this.entityId);
 
-		const promise = function(controller, entity, entityId) {
-			return new Promise((resolve, reject) => {
-				BX.ajax.runAction(
-					controller,
-					{
-						data:
-							{
-								entity: entity,
-								id: entityId,
-							},
-					},
-				).then((response) => {
-						const coupleList = response.data.couples;
-						resolve(coupleList);
-					})
-					.catch((error) => {
-						reject(error);
-					});
-			});
-		};
-		return promise(controller, entity, entityId);
+		return new Promise((resolve, reject) => {
+			BX.ajax.runAction(
+				controller,
+				{
+					data:
+						{
+							entity: entity,
+							id: entityId,
+						},
+				},
+			).then((response) => {
+					const coupleList = response.data.couples;
+					resolve(coupleList);
+				})
+				.catch((error) => {
+					reject(error);
+				});
+		});
 	}
 
 	render()
@@ -437,7 +426,7 @@ export class CouplesList
 			.then((subjectsList) => {
 				this.insertSubjectsDataForAddForm(subjectsList);
 			});
-		if(this.isValidInput === false)
+		if (this.isValidInput === false)
 		{
 			return;
 		}
@@ -446,13 +435,11 @@ export class CouplesList
 			this.deleteEmptyForm();
 		}
 
-
 		const submitButton = document.getElementById('submit-form-button');
 		const cancelButton = document.getElementById('cancel-form-button');
 		submitButton.addEventListener('click', () => {
-			console.log('click');
 			this.sendForm(numberOfDay, numberOfCouple, 'add');
-		}, { once: true });
+		});
 
 		cancelButton.addEventListener('click', () => {
 			this.closeCoupleModal();
@@ -485,10 +472,13 @@ export class CouplesList
 						},
 				},
 			).then((response) => {
+					this.sendMessage('', 'Пара успешно добавлена');
 					this.closeCoupleModal();
 					this.reload();
 				})
 				.catch((error) => {
+					this.sendMessage(error.data.errors);
+
 					console.error(error);
 				});
 		}
@@ -551,7 +541,7 @@ export class CouplesList
 		}
 		else
 		{
-			this.deleteEmptyForm()
+			this.deleteEmptyForm();
 		}
 
 		const selectContainer = Tag.render`
@@ -599,7 +589,7 @@ export class CouplesList
 
 	insertAudiencesDataForForm(subjectId)
 	{
-		if(!this.isValidInput)
+		if (!this.isValidInput)
 		{
 			return;
 		}
@@ -634,7 +624,7 @@ export class CouplesList
 				}
 				else
 				{
-					this.deleteEmptyForm()
+					this.deleteEmptyForm();
 				}
 
 				subject.audiences.forEach((audience) => {
@@ -648,7 +638,7 @@ export class CouplesList
 			}
 		});
 
-		if(!this.isValidInput)
+		if (!this.isValidInput)
 		{
 			return;
 		}
@@ -671,7 +661,7 @@ export class CouplesList
 
 	insertGroupsDataForForm(subjectId)
 	{
-		if(!this.isValidInput)
+		if (!this.isValidInput)
 		{
 			return;
 		}
@@ -702,7 +692,7 @@ export class CouplesList
 				}
 				else
 				{
-					this.deleteEmptyForm()
+					this.deleteEmptyForm();
 				}
 
 				subject.groups.forEach((group) => {
@@ -716,7 +706,7 @@ export class CouplesList
 			}
 		});
 
-		if(!this.isValidInput)
+		if (!this.isValidInput)
 		{
 			return;
 		}
@@ -739,7 +729,7 @@ export class CouplesList
 
 	insertTeachersDataForForm(subjectId)
 	{
-		if(!this.isValidInput)
+		if (!this.isValidInput)
 		{
 			return;
 		}
@@ -766,7 +756,7 @@ export class CouplesList
 				}
 				else
 				{
-					this.deleteEmptyForm()
+					this.deleteEmptyForm();
 				}
 
 				subject.teachers.forEach((teacher) => {
@@ -780,7 +770,7 @@ export class CouplesList
 			}
 		});
 
-		if(!this.isValidInput)
+		if (!this.isValidInput)
 		{
 			return;
 		}
@@ -851,5 +841,16 @@ export class CouplesList
 		{
 			document.getElementById('empty-form').remove();
 		}
+	}
+
+	sendMessage(errorMessage = '', successMessage = '')
+	{
+		BX.ready(function() {
+			let PopupMessages = new BX.Up.Schedule.PopupMessage({
+				rootNodeId: 'messages',
+				errorsMessage: errorMessage,
+				successMessage: successMessage,
+			});
+		});
 	}
 }
