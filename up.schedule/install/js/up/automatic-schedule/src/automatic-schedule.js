@@ -111,6 +111,21 @@ export class AutomaticSchedule
 				window.location.assign('/scheduling/preview/');
 			});
 		}
+		else if (this.status === 'failed')
+		{
+			container.innerHTML = `
+			<div class="box edit-fields">
+				<label class="label">Не удалось составить расписание<br>Попробовать снова?</label>
+				<button class="button is-primary" id="button-failed-schedule" type="button">Подтвердить</button>
+			</div>
+			`;
+
+			this.rootNode.appendChild(container);
+			document.getElementById('button-failed-schedule').addEventListener('click', () => {
+				this.progress = 0;
+				this.sendRequestForMakeSchedule();
+			});
+		}
 		else
 		{
 			container.innerHTML = `

@@ -78,6 +78,13 @@ this.BX.Up = this.BX.Up || {};
 	        document.getElementById('button-finished-schedule').addEventListener('click', function () {
 	          window.location.assign('/scheduling/preview/');
 	        });
+	      } else if (this.status === 'failed') {
+	        container.innerHTML = "\n\t\t\t<div class=\"box edit-fields\">\n\t\t\t\t<label class=\"label\">\u041D\u0435 \u0443\u0434\u0430\u043B\u043E\u0441\u044C \u0441\u043E\u0441\u0442\u0430\u0432\u0438\u0442\u044C \u0440\u0430\u0441\u043F\u0438\u0441\u0430\u043D\u0438\u0435<br>\u041F\u043E\u043F\u0440\u043E\u0431\u043E\u0432\u0430\u0442\u044C \u0441\u043D\u043E\u0432\u0430?</label>\n\t\t\t\t<button class=\"button is-primary\" id=\"button-failed-schedule\" type=\"button\">\u041F\u043E\u0434\u0442\u0432\u0435\u0440\u0434\u0438\u0442\u044C</button>\n\t\t\t</div>\n\t\t\t";
+	        this.rootNode.appendChild(container);
+	        document.getElementById('button-failed-schedule').addEventListener('click', function () {
+	          _this2.progress = 0;
+	          _this2.sendRequestForMakeSchedule();
+	        });
 	      } else {
 	        container.innerHTML = "\n\t\t\t\t<div class=\"box edit-fields\">\n\t\t\t\t\t\u0417\u0434\u0435\u0441\u044C \u0412\u044B \u043C\u043E\u0436\u0435\u0442\u0435 \u0430\u0432\u0442\u043E\u043C\u0430\u0442\u0438\u0447\u0435\u0441\u043A\u0438 \u0441\u043E\u0441\u0442\u0430\u0432\u0438\u0442\u044C \u0440\u0430\u0441\u043F\u0438\u0441\u0430\u043D\u0438\u0435.\n\t\t\t\t</div>\n\t\t\t\t\n\t\t\t\t<div class=\"box edit-fields\">\n\t\t\t\t\t<label class=\"label\">\u0421\u0433\u0435\u043D\u0435\u0440\u0438\u0440\u043E\u0432\u0430\u0442\u044C \u0440\u0430\u0441\u043F\u0438\u0441\u0430\u043D\u0438\u0435?</label>\n\t\t\t\t\t<button class=\"button is-primary\" id=\"button-generate-schedule\" type=\"button\">\u041F\u043E\u0434\u0442\u0432\u0435\u0440\u0434\u0438\u0442\u044C</button>\n\t\t\t\t</div>\n\t\t\t";
 	        this.rootNode.appendChild(container);

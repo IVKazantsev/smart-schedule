@@ -89,9 +89,10 @@ class AutomaticSchedule extends Controller
 			];
 	}
 
-	private function saveInfoInControllerCache(string $status, int $progress)
+	private function saveInfoInControllerCache(string $status, int $progress): void
 	{
 		$cache = Cache::createInstance();
+//		BXClearCache(true, '/scheduleStatus/');
 		if ($cache->startDataCache(3600, 'scheduleStatus', '/scheduleStatus/'))
 		{
 			$cache->endDataCache(['status' => $status, 'progress' => $progress]);
@@ -240,10 +241,11 @@ class AutomaticSchedule extends Controller
 
 		/*$cache = Cache::createInstance();
 		$cache->cleanDir( '/schedule/');*/
+		self::clearCache('scheduleStatus');
 		$cache = Cache::createInstance();
 
 		$cache->initCache(3600, 'scheduleStatus', '/scheduleStatus/');
-		$cache->forceRewriting(true);
+		//$cache->forceRewriting(true);
 		if ($cache->startDataCache(3600, 'scheduleStatus', '/scheduleStatus/'))
 		{
 			$cache->endDataCache(['status' => 'started', 'progress' => 0]);
