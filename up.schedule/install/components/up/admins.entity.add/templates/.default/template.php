@@ -60,7 +60,7 @@ Extension::load('up.popup-message');
 						foreach ($field['ALL_SUBJECTS'] as $subjectId => $subjectTitle)
 						{
 							$allSubjectsString .= "<option value='$subjectId'> "
-								. htmlspecialcharsbx($subjectTitle)
+								.  str_replace('`', '', htmlspecialcharsbx($subjectTitle))
 								. "</option>";
 						}
 						?>
