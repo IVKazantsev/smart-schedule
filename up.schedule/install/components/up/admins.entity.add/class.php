@@ -1,5 +1,10 @@
 <?php
 
+if (!defined('B_PROLOG_INCLUDED') || B_PROLOG_INCLUDED !== true)
+{
+	die();
+}
+
 use Bitrix\Main\Context;
 use Bitrix\Main\Engine\CurrentUser;
 use Up\Schedule\Service\EntityService;
@@ -35,14 +40,14 @@ class AdminsEntityAddComponent extends CBitrixComponent
 	{
 		if (!check_bitrix_sessid())
 		{
-			$this->arResult['ERRORS'] = 'Сессия истекла';
+			$this->arResult['ERRORS'] = GetMessage('SESSION_EXPIRED');
 
 			return;
 		}
 		$entityName = Context::getCurrent()?->getRequest()->get('entity');
 		if (!$entityName)
 		{
-			$this->arResult['ERRORS'] = 'Не задана сущность для добавления';
+			$this->arResult['ERRORS'] = GetMessage('NOT_SPECIFIED_ENTITY');
 
 			return;
 		}
@@ -50,6 +55,7 @@ class AdminsEntityAddComponent extends CBitrixComponent
 		if ($errors !== '')
 		{
 			$this->arResult['ERRORS'] = $errors;
+
 			return;
 		}
 

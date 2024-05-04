@@ -100,25 +100,40 @@ class AudienceRepository
 		$audience->setNumber($number);
 		$typeEntityObject = AudienceTypeTable::query()->setSelect(['ID'])->where('TITLE', $type)->fetchObject();
 		$audience->setAudienceType($typeEntityObject);
-		$audience->save();
+		$result = $audience->save();
+
+		if(!$result->isSuccess())
+		{
+			return implode('<br>', $result->getErrorMessages());
+		}
 
 		return '';
 	}
 
-	public static function getArrayForAdding(): ?array
+	public static function getArrayForAdding($data = []): ?array
 	{
 		$result = [];
-		$result['NUMBER'] = '';
-		$result['TYPE'] = array_column(AudienceTypeRepository::getAllArray(), 'TITLE');
-
+		$result['NUMBER'] = ($data['NUMBER']) ?? '';
+		$result['TYPE'] = array_unique(
+			array_merge_recursive(
+				[$data['TYPE']],
+				array_column(AudienceTypeRepository::getAllArray(), 'TITLE')
+			)
+		);
 		return $result;
 	}
 
-	public static function editById(int $id, array $data): void
+	public static function editById(int $id, array $data): string
 	{
+		if ($id === 0)
+		{
+			return 'Введите аудиторию для редактирования';
+		}
+
 		$audience = AudienceTable::getByPrimary($id)->fetchObject();
 		$type = AudienceTypeTable::query()->setSelect(['ID'])->where('TITLE', $data['TYPE'])->fetchObject();
-		if ($data['NUMBER'] !== null)
+
+		if($data['NUMBER'])
 		{
 			$audience->setNumber($data['NUMBER']);
 		}
@@ -128,7 +143,15 @@ class AudienceRepository
 			CoupleTable::deleteByFilter(['AUDIENCE_ID' => $id]);
 			$audience->setAudienceType($type);
 		}
-		$audience->save();
+
+		$result = $audience->save();
+
+		if(!$result->isSuccess())
+		{
+			return implode('<br>', $result->getErrorMessages());
+		}
+
+		return '';
 		// TODO: handle exceptions
 	}
 

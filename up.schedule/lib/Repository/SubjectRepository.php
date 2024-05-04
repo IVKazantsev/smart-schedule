@@ -167,12 +167,17 @@ class SubjectRepository
 		return $subject;
 	}
 
-	public static function getArrayForAdding(): ?array
+	public static function getArrayForAdding($data = []): ?array
 	{
 		$result = [];
-		$result['TITLE'] = '';
-		$result['TYPE'] = array_column(AudienceTypeRepository::getAllArray(), 'TITLE');
+		$result['TITLE'] = $data['TITLE'] ?? '';
 
+		$result['TYPE'] = array_unique(
+			array_merge_recursive(
+				[$data['TYPE']],
+				array_column(AudienceTypeRepository::getAllArray(), 'TITLE')
+			)
+		);
 		return $result;
 	}
 
@@ -191,24 +196,43 @@ class SubjectRepository
 		$subject->setTitle($title);
 		$typeEntityObject = AudienceTypeTable::query()->setSelect(['ID'])->where('TITLE', $type)->fetchObject();
 		$subject->setAudienceType($typeEntityObject);
-		$subject->save();
+		$result = $subject->save();
+
+		if(!$result->isSuccess())
+		{
+			return implode('<br>', $result->getErrorMessages());
+		}
 
 		return '';
 	}
 
-	public static function editById(int $id, array $data): void
+	public static function editById(int $id, array $data): string
 	{
+		if ($id === 0)
+		{
+			return 'Введите предмет для редактирования';
+		}
+
 		$subject = SubjectTable::getByPrimary($id)->fetchObject();
 		$type = AudienceTypeTable::query()->setSelect(['ID'])->where('TITLE', $data['TYPE'])->fetchObject();
-		if ($data['TITLE'] !== null)
+
+		if($data['TITLE'])
 		{
 			$subject->setTitle($data['TITLE']);
 		}
+
 		if ($subject->getAudienceTypeId() !== $type->getId())
 		{
 			CoupleTable::deleteByFilter(['SUBJECT_ID' => $id]);
 		}
-		$subject->setAudienceType($type)->save();
+		$result = $subject->setAudienceType($type)->save();
+
+		if(!$result->isSuccess())
+		{
+			return implode('<br>', $result->getErrorMessages());
+		}
+
+		return '';
 		// TODO: handle exceptions
 	}
 

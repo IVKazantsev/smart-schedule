@@ -24,10 +24,10 @@ class AudienceTypeRepository
 		return $result ?? null;
 	}
 
-	public static function getArrayForAdding(): ?array
+	public static function getArrayForAdding($data = []): ?array
 	{
 		$result = [];
-		$result['TITLE'] = '';
+		$result['TITLE'] = $data['TITLE'] ?? '';
 
 		return $result;
 	}
@@ -50,24 +50,38 @@ class AudienceTypeRepository
 
 		$audienceType = new EO_AudienceType();
 		$audienceType->setTitle($title);
-		$audienceType->save();
+		$result = $audienceType->save();
+
+		if(!$result->isSuccess())
+		{
+			return implode('<br>', $result->getErrorMessages());
+		}
 
 		return '';
 
 	}
 
-	public static function editById(int $id, ?array $data): void
+	public static function editById(int $id, ?array $data): string
 	{
+		if ($id === 0)
+		{
+			return 'Введите тип аудитории для редактирования';
+		}
+
 		$type = AudienceTypeTable::getByPrimary($id)->fetchObject();
 
-		/*	echo "<pre>";
-			var_dump($data);
-			var_dump($type); die;*/
-		if ($data['TITLE'] !== null)
+		if($data['TITLE'])
 		{
 			$type->setTitle($data['TITLE']);
 		}
-		$type->save();
+
+		$result = $type->save();
+		if(!$result->isSuccess())
+		{
+			return implode('<br>', $result->getErrorMessages());
+		}
+
+		return '';
 		// TODO: handle exceptions
 	}
 

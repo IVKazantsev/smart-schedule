@@ -102,15 +102,24 @@ class GroupRepository
 		return $data;
 	}
 
-	public static function getArrayForAdding(): ?array
+	public static function getArrayForAdding($data = []): ?array
 	{
 		$result = [];
-		$result['TITLE'] = '';
-		foreach (SubjectRepository::getAll() as $subject)
+		$result['TITLE'] = $data['TITLE'] ?? '';
+		$subjects = SubjectRepository::getAll();
+		foreach ($subjects as $subject)
 		{
 			$result['SUBJECTS']['ALL_SUBJECTS'][$subject->getId()] = $subject->getTitle();
 		}
-		$result['SUBJECTS']['CURRENT_SUBJECTS'] = [];
+
+		if($data['SUBJECTS_TO_ADD'])
+		{
+			$currentSubjects = SubjectRepository::getByIds($data['SUBJECTS_TO_ADD']);
+			foreach ($currentSubjects as $subject)
+			{
+				$result['SUBJECTS']['CURRENT_SUBJECTS'][$subject->getId()] = $subject->getTitle();
+			}
+		}
 
 		return $result;
 	}
@@ -132,17 +141,25 @@ class GroupRepository
 				$group->addToSubjects($subject);
 			}
 		}
-		$group->save();
 
+		$result = $group->save();
+		if(!$result->isSuccess())
+		{
+			return implode('<br>', $result->getErrorMessages());
+		}
 		return '';
 	}
 
-	public static function editById(int $id, array $data): void
+	public static function editById(int $id, array $data): string
 	{
-		$group = self::getById($id);
-		/*$group = GroupTable::getByPrimary($id)->fetchObject();*/
+		if ($id === 0)
+		{
+			return 'Введите группу для редактирования';
+		}
 
-		if ($data['TITLE'] !== null)
+		$group = self::getById($id);
+
+		if($data['TITLE'])
 		{
 			$group?->setTitle($data['TITLE']);
 		}
@@ -165,6 +182,7 @@ class GroupRepository
 				}
 			}
 		}
+
 		$subjectsToAdd = SubjectRepository::getByIds($data['SUBJECTS_TO_ADD']);
 		if ($subjectsToAdd !== null)
 		{
@@ -174,7 +192,12 @@ class GroupRepository
 			}
 		}
 
-		$group?->save();
+		$result = $group?->save();
+		if(!$result->isSuccess())
+		{
+			return implode('<br>', $result->getErrorMessages());
+		}
+		return '';
 		// TODO: handle exceptions
 	}
 

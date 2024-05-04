@@ -1,12 +1,13 @@
 <?php
 
-use Bitrix\Main\ORM\Objectify\Collection;
-use Up\Schedule\AutomaticSchedule\GeneticSchedule;
-use Up\Schedule\Model\EO_Couple_Collection;
-use Up\Schedule\Repository\AudienceRepository;
-use Up\Schedule\Repository\CoupleRepository;
+if (!defined('B_PROLOG_INCLUDED') || B_PROLOG_INCLUDED !== true)
+{
+	die();
+}
+
+use Bitrix\Main\Engine\CurrentUser;
 use Up\Schedule\Repository\GroupRepository;
-use Up\Schedule\Repository\SubjectRepository;
+use Up\Schedule\Repository\RoleRepository;
 use Up\Schedule\Repository\UserRepository;
 use Up\Schedule\Service\EntityService;
 
@@ -18,14 +19,66 @@ class CouplesListComponent extends CBitrixComponent
 		'teacher',
 	];
 
+	private array $roles = [
+		'student' => 'Студент',
+		'admin' => 'Администратор',
+		'teacher' => 'Преподаватель',
+	];
+
+	private array $entityToDisplayByRole = [
+		'student' => 'group',
+		'admin' => 'group',
+		'teacher' => 'teacher',
+	];
+
 	public function executeComponent(): void
 	{
 		// Выставляем сущность "по умолчанию"
 		if (!$this->arParams['ENTITY'])
 		{
-			// $role = EntityService::getRoleStringOfCurrentUser();
-			// var_dump($role); die();
-			$this->arParams['ENTITY'] = 'group';
+			$userId = EntityService::getCurrentUser()->getId();
+			$user = UserRepository::getById($userId);
+			$roleId = $user?->get('UF_ROLE_ID');
+			if (!$roleId)
+			{
+				$this->arParams['ENTITY'] = 'group';
+				$this->includeComponentTemplate();
+
+				return;
+			}
+			$role = RoleRepository::getById($roleId);
+
+			$role = array_search($role?->getTitle(), $this->roles, true);
+			if (!array_key_exists($role, $this->entityToDisplayByRole))
+			{
+				$this->arParams['ENTITY'] = 'group';
+				$this->includeComponentTemplate();
+
+				return;
+			}
+
+			$entity = $this->entityToDisplayByRole[$role];
+			$this->arParams['ENTITY'] = $entity;
+
+			if ($role === 'admin')
+			{
+				$this->includeComponentTemplate();
+
+				return;
+			}
+
+			if($role === 'teacher')
+			{
+				$this->arResult['CURRENT_ENTITY_ID'] = $user?->getId();
+				$this->arResult['CURRENT_ENTITY'] = $user;
+			}
+			else
+			{
+				$groupId = $user?->get('UF_GROUP_ID');
+				$group = GroupRepository::getById($groupId);
+				$this->arResult['CURRENT_ENTITY_ID'] = $groupId;
+				$this->arResult['CURRENT_ENTITY'] = $group;
+			}
 		}
 		// Обрабатываем неправильные сущности
 		elseif (!in_array($this->arParams['ENTITY'], $this->entitiesForDisplaySchedule, true))
@@ -43,7 +96,15 @@ class CouplesListComponent extends CBitrixComponent
 	protected function fetchEntityList(): void
 	{
 		$entity = $this->arParams['ENTITY'];
-		$currentEntityId = (int)$this->arParams['ID'];
+		$currentEntityId = ($this->arResult['CURRENT_ENTITY_ID']) ?? (int)$this->arParams['ID'];
+		if (!$currentEntityId)
+		{
+			$user = CurrentUser::get();
+			if ($user)
+			{
+				$currentEntityId = $user->getId();
+			}
+		}
 
 		// Получим методы для получения названий сущностей
 		$fillNameMethod = "fill{$entity}NameMethod";
@@ -65,7 +126,7 @@ class CouplesListComponent extends CBitrixComponent
 		$this->arResult['CURRENT_ENTITY'] = $currentEntity;
 
 		$entityNameMethods = $this->arResult['ENTITY_NAME_METHODS'];
-		if(!$currentEntity)
+		if (!$currentEntity)
 		{
 			return;
 		}
@@ -78,14 +139,14 @@ class CouplesListComponent extends CBitrixComponent
 	protected function fillGroupNameMethod(): void
 	{
 		$this->arResult['ENTITY_NAME_METHODS'] = [
-			'getTitle'
+			'getTitle',
 		];
 	}
 
 	protected function fillAudienceNameMethod(): void
 	{
 		$this->arResult['ENTITY_NAME_METHODS'] = [
-			'getNumber'
+			'getNumber',
 		];
 	}
 

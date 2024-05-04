@@ -14,6 +14,8 @@ Extension::load('up.display-schedule-entities-list');
 Extension::load('up.couples-list');
 ?>
 
+<div id="messages"></div>
+
 <div class="column is-four-fifths">
 	<div class="columns">
 		<div class="column entity-selection-container">
@@ -63,10 +65,16 @@ Extension::load('up.couples-list');
 	BX.ready(function () {
 		window.ScheduleCouplesList = new BX.Up.Schedule.CouplesList({
 			rootNodeId: 'couples-container',
+			entity: '<?= $arResult['ENTITY'] ?>',
+			entityId: '<?= $arResult['CURRENT_ENTITY_ID'] ?>',
 		});
 		window.DisplayEntitiesList = new BX.Up.Schedule.DisplayScheduleEntitiesList({
 			rootNodeId: 'dropdown-menu-container',
-			entityInfo: window.ScheduleCouplesList.extractEntityFromUrl(),
+			entityInfo: (window.ScheduleCouplesList.entity && window.ScheduleCouplesList.entityId) ? {
+				'entity': window.ScheduleCouplesList.entity,
+				'entityId': window.ScheduleCouplesList.entityId,
+			} :  window.ScheduleCouplesList.extractEntityFromUrl(),
+			scheduleCouplesList: window.ScheduleCouplesList,
 		});
 
 		const entityButtons = document.querySelectorAll('.display-entity');

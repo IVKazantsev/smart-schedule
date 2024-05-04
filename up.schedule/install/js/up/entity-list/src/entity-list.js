@@ -8,6 +8,9 @@ export class EntityList
 			{
 				'header':
 					Tag.render`
+					<div class="column is-1 is-60-height">
+						ID
+					</div>
 					<div class="column is-11 is-60-height">
 						${Loc.getMessage('TITLE')}
 					</div>
@@ -28,10 +31,16 @@ export class EntityList
 			{
 				'header':
 					Tag.render`
-					<div class="column is-4 is-60-height">
+					<div class="column is-1 is-60-height">
+						ID
+					</div>
+					<div class="column is-3 is-60-height">
+						${Loc.getMessage('LOGIN')}
+					</div>
+					<div class="column is-3 is-60-height">
 						${Loc.getMessage('NAME')}
 					</div>
-					<div class="column is-4 is-60-height">
+					<div class="column is-3 is-60-height">
 						${Loc.getMessage('EMAIL')}
 					</div>
 					<div class="column is-3 is-60-height">
@@ -44,10 +53,13 @@ export class EntityList
 							<div class="column is-1 admin-entity-list-item">
 							${entityData.ID}
 							</div>
-							<div class="column is-4 admin-entity-list-item">
+							<div class="column is-3 admin-entity-list-item">
+								${Validator.escapeHTML(entityData.LOGIN)}
+							</div>
+							<div class="column is-3 admin-entity-list-item">
 								${Validator.escapeHTML(entityData.NAME)} ${Validator.escapeHTML(entityData.LAST_NAME)}
 							</div>
-							<div class="column is-4 admin-entity-list-item">
+							<div class="column is-3 admin-entity-list-item">
 								${Validator.escapeHTML(entityData.EMAIL) ? Validator.escapeHTML(entityData.EMAIL) : 'Отсутствует'}
 							</div>
 							<div class="column is-3 admin-entity-list-item">
@@ -60,6 +72,9 @@ export class EntityList
 			{
 				'header':
 					Tag.render`
+					<div class="column is-1 is-60-height">
+						ID
+					</div>
 					<div class="column is-60-height">
 						${Loc.getMessage('TITLE')}
 					</div>
@@ -80,6 +95,9 @@ export class EntityList
 			{
 				'header':
 					Tag.render`
+					<div class="column is-1 is-60-height">
+						ID
+					</div>
 					<div class="column is-60-height">
 						${Loc.getMessage('NUMBER')}
 					</div>
@@ -106,6 +124,9 @@ export class EntityList
 			{
 				'header':
 					Tag.render`
+					<div class="column is-1 is-60-height">
+						ID
+					</div>
 					<div class="column is-60-height">
 						${Loc.getMessage('TITLE')}
 					</div>
@@ -213,9 +234,6 @@ export class EntityList
 		const entitiesContainerNode = Tag.render`
 			<div class="box is-flex is-align-items-center is-flex-direction-column">
 				<div class="columns is-60-height is-fullwidth title-of-table">
-					<div class="column is-60-height is-1">
-						ID
-					</div>
 					${containerContent}
 				</div>
 			</div>
@@ -223,7 +241,7 @@ export class EntityList
 
 		this.entityList.forEach(entityData => {
 			const entityNode = Tag.render`
-				<a class="columns is-fullwidth is-60-height button has-text-left" href="/admin/edit/${this.entity}/${entityData.ID}/">
+				<a class="columns admin-entity-column is-fullwidth is-60-height button has-text-left" href="/admin/edit/${this.entity}/${entityData.ID}/">
 					${this.entityNode[this.entity]['content'](entityData)}
 				</a>
 			`;

@@ -7,6 +7,7 @@ use Bitrix\Main\Context;
 use Bitrix\Main\DB\TransactionException;
 use Bitrix\Main\Engine\CurrentUser;
 use CUser;
+use Error;
 use Up\Schedule\Model\EO_Audience;
 use Up\Schedule\Model\EO_Audience_Collection;
 use Up\Schedule\Model\EO_AudienceType;
@@ -16,6 +17,7 @@ use Up\Schedule\Model\EO_Couple_Collection;
 use Up\Schedule\Model\EO_Group;
 use Up\Schedule\Model\EO_GroupSubject;
 use Up\Schedule\Model\EO_GroupSubject_Collection;
+use Up\Schedule\Model\EO_Role;
 use Up\Schedule\Model\EO_Subject;
 use Up\Schedule\Model\EO_Subject_Collection;
 use Up\Schedule\Model\EO_SubjectTeacher;
@@ -62,7 +64,7 @@ class EntityService
 		{
 			return self::getEntityRepositoryName($entityName)::getArrayForAdminById($entityId);
 		}
-		catch (\Error $error)
+		catch (Error $error)
 		{
 			echo "$error";
 			echo "Entity $entityName not found"; die();
@@ -75,7 +77,7 @@ class EntityService
 		{
 			return self::getEntityRepositoryName($entityName)::getArrayOfRelatedEntitiesById($entityId);
 		}
-		catch (\Error $error)
+		catch (Error $error)
 		{
 			echo "$error";
 			echo "Entity $entityName not found"; die();
@@ -88,12 +90,12 @@ class EntityService
 		{
 			return self::getEntityRepositoryName($entityName)::deleteById($entityId);
 		}
-		catch (\Error)
+		catch (Error)
 		{
 			echo "Entity $entityName not found"; die();
 		}
 	}
-	public static function editEntityById(string $entityName, int $entityId): ?array
+	public static function editEntityById(string $entityName, int $entityId): string
 	{
 		try
 		{
@@ -102,10 +104,9 @@ class EntityService
 				self::getData($entityName)
 			);
 		}
-		catch (\Error $error)
+		catch (Error)
 		{
-			echo "$error";
-			echo "Entity $entityName not found"; die();
+			return "Не удалось отредактировать сущность $entityName";
 		}
 	}
 
@@ -117,7 +118,7 @@ class EntityService
 				self::getData($entityName)
 			);
 		}
-		catch (\Error $error)
+		catch (Error)
 		{
 			return "Не удалось добавить $entityName";
 		}
@@ -131,32 +132,26 @@ class EntityService
 			{
 				return null;
 			}
-			return self::getEntityRepositoryName($entityName)::getArrayForAdding();
+
+			$data = [];
+			if(Context::getCurrent()?->getRequest()->isPost())
+			{
+				$data = self::getData($entityName);
+			}
+			return self::getEntityRepositoryName($entityName)::getArrayForAdding($data);
 		}
-		catch (\Error $error)
+		catch (Error $error)
 		{
 			echo "$error";
 			echo "Entity $entityName not found"; die();
 		}
 	}
 
-	private static function getData(string $entityName): ?array
+	public static function getData(string $entityName): ?array
 	{
-		switch ($entityName)
-		{
-			case 'group':
-				return self::getGroupData();
-			case 'audience':
-				return self::getAudienceData();
-			case 'user':
-				return self::getUserData();
-			case 'subject':
-				return self::getSubjectData();
-			case 'audienceType':
-				return self::getAudienceTypeData();
-			default:
-				return null;
-		}
+		$getDataMethodName = 'get' . $entityName . 'Data';
+
+		return self::$getDataMethodName();
 	}
 
 	private static function getGroupData(): ?array
@@ -181,10 +176,10 @@ class EntityService
 	private static function getUserData(): ?array
 	{
 		$data = [
+			'LOGIN' => self::getParameter('LOGIN'),
 			'NAME' => self::getParameter('NAME'),
 			'LAST_NAME' => self::getParameter('LAST_NAME'),
 			'EMAIL' => self::getParameter('EMAIL'),
-			'LOGIN' => self::getParameter('LOGIN'),
 			'PASSWORD' => self::getParameter('PASSWORD'),
 			'CONFIRM_PASSWORD' => self::getParameter('CONFIRM_PASSWORD'),
 			'ROLE' => self::getParameter('ROLE'),
@@ -585,5 +580,10 @@ class EntityService
 	public static function isCurrentUserAdmin(): bool
 	{
 		return CurrentUser::get()->isAdmin();
+	}
+
+	public static function getCurrentUser(): CurrentUser
+	{
+		return CurrentUser::get();
 	}
 }

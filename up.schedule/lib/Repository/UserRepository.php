@@ -72,6 +72,7 @@ class UserRepository
 
 		return UserTable::query()->setSelect([
 												 'ID',
+												 'LOGIN',
 												 'NAME',
 												 'LAST_NAME',
 												 'EMAIL',
@@ -104,9 +105,12 @@ class UserRepository
 	{
 		return UserTable::query()->setSelect([
 												 'ID',
+												 'LOGIN',
 												 'NAME',
 												 'LAST_NAME',
 												 'EMAIL',
+												 'UF_ROLE_ID',
+												 'UF_GROUP_ID',
 												 'ROLE' => 'UP_SCHEDULE_ROLE.TITLE',
 												 'GROUP' => 'UP_SCHEDULE_GROUP.TITLE',
 											 ])->registerRuntimeField(
@@ -183,6 +187,7 @@ class UserRepository
 	public static function getArrayForAdminById(int $id): ?array
 	{
 		$user = UserTable::query()->setSelect([
+												  'LOGIN',
 												  'NAME',
 												  'LAST_NAME',
 												  'EMAIL',
@@ -197,6 +202,13 @@ class UserRepository
 				'UP_SCHEDULE_GROUP', GroupTable::class, Join::on('this.UF_GROUP_ID', 'ref.ID')
 			))
 		)->where('ID', $id)->fetch();
+		if($user === false)
+		{
+			return null;
+		}
+
+		$user['PASSWORD'] = '';
+		$user['CONFIRM_PASSWORD'] = '';
 
 		$roles = RoleTable::query()->setSelect(['ID', 'TITLE',])->fetchAll();
 
@@ -351,17 +363,67 @@ class UserRepository
 		)->where('ROLE_ID', 2)->fetchAll();
 	}
 
-	public static function getArrayForAdding(): ?array
+	public static function getArrayForAdding(array $data = []): ?array
 	{
 		$result = [];
-		$result['LOGIN'] = '';
-		$result['NAME'] = '';
-		$result['LAST_NAME'] = '';
-		$result['EMAIL'] = '';
-		$result['PASSWORD'] = '';
-		$result['CONFIRM_PASSWORD'] = '';
+		// var_dump($data);
+		$result['LOGIN'] = $data['LOGIN'] ?? '';
+		$result['NAME'] = $data['NAME'] ?? '';
+		$result['LAST_NAME'] = $data['LAST_NAME'] ?? '';
+		$result['EMAIL'] = $data['EMAIL'] ?? '';
+		$result['PASSWORD'] = $data['PASSWORD'] ?? '';
+		$result['CONFIRM_PASSWORD'] = $data['CONFIRM_PASSWORD'] ?? '';
 
-		$result['ROLE'] = array_column(RoleRepository::getAllArray(), 'TITLE');
+		// $result['ROLE'] = array_column(RoleRepository::getAllArray(), 'TITLE');
+		// $result['GROUP'] = array_column(GroupRepository::getAllArray(), 'TITLE');
+
+
+		$roles = RoleRepository::getAllArray();
+		$currentRole = $data['ROLE'];
+
+		$result['ROLE'] = array_unique(
+			array_merge_recursive(
+				[$data['ROLE']],
+				array_column($roles, 'TITLE')
+			)
+		);
+
+		$groups = GroupRepository::getAllArray();
+		if ($currentRole === 'Студент')
+		{
+			$result['GROUP'] = array_unique(
+				array_merge_recursive(
+					[$data['GROUP']],
+					array_column($groups, 'TITLE')
+				)
+			);
+		}
+		else
+		{
+			$result['GROUP'] = array_column($groups, 'TITLE');
+		}
+
+		if ($currentRole === 'Преподаватель')
+		{
+			$currentSubjects = SubjectRepository::getByIds($data['SUBJECTS_TO_ADD']);
+			foreach ($currentSubjects as $subject)
+			{
+				$result['SUBJECTS']['CURRENT_SUBJECTS'][$subject->getId()] = $subject->getTitle();
+			}
+
+			foreach ($data['SUBJECTS_TO_ADD'] as $subject)
+			{
+				$user['SUBJECTS']['CURRENT_SUBJECTS'][$subject['SUBJECTSID']] = $subject['SUBJECTSTITLE'];
+				unset($user['SUBJECTS']['ALL_SUBJECTS'][$subject['SUBJECTSID']]);
+			}
+		}
+
+		$subjects = SubjectRepository::getAll();
+
+		foreach ($subjects as $subject)
+		{
+			$result['SUBJECTS']['ALL_SUBJECTS'][$subject->getId()] = $subject->getTitle();
+		}
 
 		return $result;
 	}
@@ -392,6 +454,10 @@ class UserRepository
 		{
 			return 'Подтвердите пароль';
 		}
+		if($data['PASSWORD'] !== $data['CONFIRM_PASSWORD'])
+		{
+			return 'Пароли не совпадают';
+		}
 		if($data['ROLE'] === null)
 		{
 			return 'Выберите роль';
@@ -413,15 +479,51 @@ class UserRepository
 		$validate('CONFIRM_PASSWORD', $data['CONFIRM_PASSWORD']);
 		$validate('UF_ROLE_ID', RoleRepository::getByTitle($data['ROLE'] ?? '')?->getId());
 
-		$user = new CUser();
-		$ID = $user->Add($fields);
+		if (!array_key_exists('GROUP', $data) || !$data['GROUP'] || $data['ROLE'] !== 'Студент')
+		{
+			$fields['UF_GROUP_ID'] = null;
+		}
+		else
+		{
+			$validate('UF_GROUP_ID', GroupRepository::getByTitle($data['GROUP'])?->getId());
+		}
 
-		if ((int)$ID <= 0)
+		$validate('UF_ROLE_ID', RoleRepository::getByTitle($data['ROLE'] ?? '')?->getId());
+
+		if ($data['ROLE'] === 'Администратор')
+		{
+			$group = array(1);
+			$fields['GROUP_ID'] = $group;
+		}
+
+		$user = new CUser();
+		$id = $user->Add($fields);
+
+		if ((int)$id <= 0)
 		{
 			return $user->LAST_ERROR;
 		}
 
+		if ($data['ROLE'] === 'Преподаватель')
+		{
+			$collection = new EO_SubjectTeacher_Collection();
+			foreach ($data['SUBJECTS_TO_ADD'] as $subjectId)
+			{
+				$subjectTeacherEntity = new EO_SubjectTeacher();
+				$subjectTeacherEntity->setSubjectId($subjectId);
+				$subjectTeacherEntity->setTeacherId($id);
+				$collection->add($subjectTeacherEntity);
+			}
+			$result = $collection->save();
+
+			if(!$result->isSuccess())
+			{
+				return implode('<br>', $result->getErrorMessages());
+			}
+		}
+
 		return '';
+		// TODO: handle exceptions
 	}
 
 	public static function getTeacherByFirstAndLastName(string $name, string $lastName): ?EO_User
@@ -436,15 +538,31 @@ class UserRepository
 		)->fetchObject();
 	}
 
-	public static function editById(int $id, array $data): void
+	public static function editById(int $id, array $data): string
 	{
 		$fields = [];
+
 		$validate = static function(string $fieldName, mixed $value) use (&$fields): void {
 			if ($value !== null)
 			{
 				$fields[$fieldName] = $value;
 			}
 		};
+
+		if($id === 0)
+		{
+			return 'Введите пользователя для редактирования';
+		}
+
+		if($data['PASSWORD'] !== 0)
+		{
+			if($data['PASSWORD'] !== $data['CONFIRM_PASSWORD'])
+			{
+				return 'Пароли не совпадают';
+			}
+
+			$validate('PASSWORD', $data['PASSWORD']);
+		}
 
 		$validate('NAME', $data['NAME']);
 		$validate('LAST_NAME', $data['LAST_NAME']);
@@ -461,8 +579,18 @@ class UserRepository
 
 		$validate('UF_ROLE_ID', RoleRepository::getByTitle($data['ROLE'] ?? '')?->getId());
 
+		if ($data['ROLE'] === 'Администратор')
+		{
+			$group = array(1);
+			$fields['GROUP_ID'] = $group;
+		}
+
 		$user = new CUser();
-		$user->Update($id, $fields);
+		$result = $user->Update($id, $fields);
+		if($result === false)
+		{
+			return $user->LAST_ERROR;
+		}
 
 		if ($data['ROLE'] === 'Преподаватель')
 		{
@@ -480,13 +608,21 @@ class UserRepository
 				$subjectTeacherEntity->setTeacherId($id);
 				$collection->add($subjectTeacherEntity);
 			}
-			$collection->save();
+
+			$result = $collection->save();
+
+			if(!$result->isSuccess())
+			{
+				return implode('<br>', $result->getErrorMessages());
+			}
 		}
 		else
 		{
 			SubjectTeacherTable::deleteByFilter(['TEACHER_ID' => $id]);
 			CoupleTable::deleteByFilter(['TEACHER_ID' => $id]);
 		}
+
+		return '';
 		// TODO: handle exceptions
 	}
 

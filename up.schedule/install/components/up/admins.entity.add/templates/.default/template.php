@@ -16,6 +16,7 @@ if (!defined("B_PROLOG_INCLUDED") || B_PROLOG_INCLUDED !== true)
 Extension::load('up.popup-message');
 
 ?>
+
 <div id="messages"></div>
 
 <div class="column">
@@ -47,45 +48,55 @@ Extension::load('up.popup-message');
 				if (is_array($field)): ?>
 					<label class="label"><?= GetMessage($key) ?></label>
 					<?php
+					if (GetMessage('CHANGE_' . $key . '_WARNING')): ?>
+						<div class="has-text-danger"><?= GetMessage('CHANGE_' . $key . '_WARNING') ?></div>
+					<?php
+					endif; ?>
+
+					<?php
 					if ($key === 'SUBJECTS'): ?>
 						<?php
 						$allSubjectsString = '';
 						foreach ($field['ALL_SUBJECTS'] as $subjectId => $subjectTitle)
 						{
-							$allSubjectsString .= "<option value='$subjectId'> $subjectTitle</option>";
+							$allSubjectsString .= "<option value='$subjectId'> "
+								.  str_replace('`', '', htmlspecialcharsbx($subjectTitle))
+								. "</option>";
 						}
 						?>
 						<div id="subjectContainer">
-							<?php foreach ($field['CURRENT_SUBJECTS'] as $subjectId => $subjectTitle): ?>
-								<div class="mb-2" id="current_subject_<?=$subjectId?>">
+							<?php
+							if (!empty($field['CURRENT_SUBJECTS'])): ?>
+								<div class="has-text-danger mb-2"><?= GetMessage('DELETE_SUBJECTS_WARNING') ?></div>
+							<?php
+							endif; ?>
+							<?php
+							foreach ($field['CURRENT_SUBJECTS'] as $subjectId => $subjectTitle): ?>
+								<div class="mb-2" id="current_subject_<?= $subjectId ?>">
 									<div class="box">
 										<div class="p-1 is-flex is-justify-content-space-between is-flex-wrap-nowrap is-align-items-center">
 											<div class="mb-2">
-												<input name="current_subject_<?=$subjectId?>" type="hidden">
-												<?=$subjectTitle?>
+												<input name="current_subject_<?= $subjectId ?>" type="hidden">
+												<?= htmlspecialcharsbx($subjectTitle) ?>
 											</div>
-											<!--<select class="mb-1" name="<?php /*= 'current_subject_' . $subjectId */?>">
-												<option><?php /*= $subjectTitle */?></option>
-												<?php /*= $allSubjectsString */?>
-											</select>-->
-											<button class="btnDelete delete is-medium" type="button" id="delete_subject_<?=$subjectId?>"></button>
+											<button class="btnDelete delete is-medium" type="button" id="delete_subject_<?= $subjectId ?>"></button>
 										</div>
 									</div>
 								</div>
-							<?php endforeach; ?>
+							<?php
+							endforeach; ?>
 						</div>
-						<button class="button is-primary is-dark are-small" type="button" id="addSubject"><?= GetMessage('ADD') ?> <?= mb_strtolower(
-								GetMessage($key)
-							) ?></button>
-					<?php
-					else: ?>
+						<button class="button is-primary is-dark are-small" type="button" id="addSubject">
+							<?= GetMessage('ADD') ?> <?= mb_strtolower(GetMessage($key)) ?>
+						</button>
+					<?php else: ?>
 						<div class="control">
 							<div class="select">
 								<label>
 									<select name="<?= $key ?>">
 										<?php
 										foreach ($field as $subfield): ?>
-											<option><?= $subfield ?></option>
+											<option><?= htmlspecialcharsbx($subfield) ?></option>
 										<?php
 										endforeach; ?>
 									</select>
@@ -99,7 +110,21 @@ Extension::load('up.popup-message');
 					<div class="field">
 						<label class="label"><?= GetMessage($key) ?></label>
 						<div class="control">
-							<input class="input" type="<?= ($key === 'PASSWORD') || ($key === 'CONFIRM_PASSWORD') ? 'password' : 'text'?>" name="<?= $key ?>" placeholder="Введите данные">
+							<input class="input" minlength="<?= ($key === 'PASSWORD') || ($key === 'CONFIRM_PASSWORD') ? 6 : ''?>" type=
+							"<?php
+							if (($key === 'PASSWORD') || ($key === 'CONFIRM_PASSWORD'))
+							{
+								echo 'password';
+							}
+							elseif ($key === 'EMAIL')
+							{
+								echo 'email';
+							}
+							else
+							{
+								echo 'text';
+							}
+							?>" name="<?= $key ?>" value="<?= ($field) ?? ''?>" placeholder="<?= GetMessage("ENTER_$key") ?>">
 						</div>
 					</div>
 				<?php
@@ -124,18 +149,69 @@ Extension::load('up.popup-message');
 	{
 		let i = 0;
 		addSubjectButton.addEventListener('click', () => {
+			console.log('click');
 			const newListItem = document.createElement('div');
 			newListItem.className = "mb-2";
 			newListItem.innerHTML = `<div class="select">
 										<label>
 											<select class="mb-1" name="add_subject_`+ i +`">
-													<?=$allSubjectsString?>
+													<?= $allSubjectsString ?>
 											</select>
 										</label>
 									</div>`;
 			document.querySelector('#subjectContainer').appendChild(newListItem);
 			i++;
 		});
+	}
+
+	const buttons = document.querySelectorAll('.btnDelete');
+
+	function handleDeleteClick(e)
+	{
+		const elementId = e.target.id;
+		const lengthOfSubstr = 'delete_subject_'.length;
+		const itemId = elementId.slice(lengthOfSubstr, elementId.length);
+		const currentSubject = document.getElementById('current_subject_' + itemId);
+		currentSubject.remove();
+	}
+
+	buttons.forEach((button) => {
+		button.addEventListener('click', handleDeleteClick);
+	});
+
+	roleSelect = document.querySelector("[name='ROLE']");
+	if(roleSelect)
+	{
+		groupSelect = document.querySelector("[name='GROUP']");
+		groupContainer = groupSelect.closest('.edit-fields');
+
+		addSubject = document.getElementById('addSubject');
+		subjectsContainer = addSubject.closest('.edit-fields');
+
+		roleDisplayingBySelectValue()
+
+		roleSelect.addEventListener('change', () => {
+			roleDisplayingBySelectValue()
+		});
+	}
+
+	function roleDisplayingBySelectValue()
+	{
+		if(roleSelect.value === 'Администратор')
+		{
+			groupContainer.style.display = 'none';
+			subjectsContainer.style.display = 'none';
+		}
+		else if(roleSelect.value === 'Преподаватель')
+		{
+			groupContainer.style.display = 'none';
+			subjectsContainer.style.display = 'block';
+		}
+		else if(roleSelect.value === 'Студент')
+		{
+			groupContainer.style.display = 'block';
+			subjectsContainer.style.display = 'none';
+		}
 	}
 
 	BX.ready(function () {

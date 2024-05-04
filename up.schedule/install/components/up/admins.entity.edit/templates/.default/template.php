@@ -6,8 +6,18 @@
  */
 
 use Bitrix\Main\Application;
+use Bitrix\Main\UI\Extension;
+
+if (!defined("B_PROLOG_INCLUDED") || B_PROLOG_INCLUDED !== true)
+{
+	die();
+}
+
+Extension::load('up.popup-message');
 
 ?>
+
+<div id="messages"></div>
 
 <div class="column">
 	<div class="columns">
@@ -50,7 +60,7 @@ use Bitrix\Main\Application;
 						foreach ($field['ALL_SUBJECTS'] as $subjectId => $subjectTitle)
 						{
 							$allSubjectsString .= "<option value='$subjectId'> "
-								. htmlspecialcharsbx($subjectTitle)
+								.  str_replace('`', '', htmlspecialcharsbx($subjectTitle))
 								. "</option>";
 						}
 						?>
@@ -98,16 +108,30 @@ use Bitrix\Main\Application;
 					endif; ?>
 				<?php
 				else: ?>
-					<div class="field">
-						<label class="label"><?= GetMessage($key) ?></label>
-						<div class="control">
-							<input class="input" type="text" name="<?= $key ?>" placeholder="Введите данные">
+					<?php
+					if ($key === 'LOGIN'): ?>
+						<div class="field">
+							<label class="label"><?= GetMessage($key) ?></label>
+							<div class="is-size-5">
+								<?= htmlspecialcharsbx($field) ?>
+							</div>
 						</div>
-						<p class="help">
-							<?= GetMessage('CURRENT_FIELD_VALUE_HELPER') ?>:
-							<strong> <?= htmlspecialcharsbx($field) ?> </strong>
-						</p>
-					</div>
+					<?php
+					else: ?>
+						<div class="field">
+							<label class="label"><?= GetMessage($key) ?></label>
+							<div class="control">
+								<input class="input" type="text" name="<?= $key ?>" placeholder="<?= GetMessage(
+									"ENTER_$key"
+								) ?>">
+							</div>
+							<p class="help">
+								<?= GetMessage('CURRENT_FIELD_VALUE_HELPER') ?>:
+								<strong> <?= htmlspecialcharsbx($field) ?> </strong>
+							</p>
+						</div>
+					<?php
+					endif; ?>
 				<?php
 				endif; ?>
 			</div>
@@ -181,6 +205,7 @@ use Bitrix\Main\Application;
 											</select>
 										</label>
 									</div>`;
+			console.log(newListItem.innerHTML);
 			document.querySelector('#subjectContainer').appendChild(newListItem);
 			i++;
 		});
@@ -242,4 +267,12 @@ use Bitrix\Main\Application;
 		modal.classList.remove('active');
 		overlay.classList.remove('active');
 	}
+
+	BX.ready(function() {
+		window.PopupMessages = new BX.Up.Schedule.PopupMessage({
+			rootNodeId: 'messages',
+			errorsMessage: '<?= $arResult['ERRORS'] ?>',
+			successMessage: '<?= $arResult['SUCCESS'] ?>',
+		});
+	});
 </script>

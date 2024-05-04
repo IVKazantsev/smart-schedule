@@ -194,14 +194,15 @@ a:hover {
 	max-height: 7px;
 }
 
-.dropdown {
+.btn-edit-couple-container {
+	display: flex;
+	justify-content: end;
 	width: 100%;
 }
 
-.dropdown-trigger {
-	width: 100%;
-	display: flex;
-	justify-content: end;
+.couple-edit-button {
+	border: none !important;
+	background-color: white !important;
 }
 
 .btn-dropdown-couple {
@@ -254,7 +255,20 @@ a:hover {
 	background-color: #485fc7 !important;
 }
 
-/*#current-entity:focus::-webkit-input-placeholder { color:transparent; }*/
-/*#current-entity:focus:-moz-placeholder { color:transparent; } !* FF 4-18 *!*/
-/*#current-entity:focus::-moz-placeholder { color:transparent; } !* FF 19+ *!*/
-/*#current-entity:focus:-ms-input-placeholder { color:transparent; } !* IE 10+ *!*/
+.admin-entity-column {
+	justify-content: left;
+	padding: 0;
+}
+
+.is-fullheight {
+	height: 100%;
+}
+
+.sidebar-icon {
+	height: 100%;
+	max-width: 70%;
+}
+
+#messages {
+	z-index: 50;
+}

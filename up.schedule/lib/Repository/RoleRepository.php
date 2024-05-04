@@ -10,6 +10,14 @@ use Up\Schedule\Model\RoleTable;
 
 class RoleRepository
 {
+	public static function getById(int $id): ?EO_Role
+	{
+		return RoleTable::query()
+			->setSelect(['ID', 'TITLE'])
+			->where('ID', $id)
+			->fetchObject();
+	}
+
 	public static function getByTitle(string $title): ?EO_Role
 	{
 		return RoleTable::query()
@@ -23,17 +31,5 @@ class RoleRepository
 		return RoleTable::query()
 			->setSelect(['ID', 'TITLE'])
 			->fetchAll();
-	}
-
-	public static function getRoleByUserId(int $id): ?string
-	{
-		return RoleTable::query()->setSelect([
-										  'ID',
-										  'TITLE',
-									  ])->registerRuntimeField(
-			(new Reference(
-				'b_uts_user', UserTable::class, Join::on('this.ID', 'ref.UF_ROLE_ID')
-			))
-		)->where('b_uts_user.VALUE_ID', $id)->getQuery();
 	}
 }

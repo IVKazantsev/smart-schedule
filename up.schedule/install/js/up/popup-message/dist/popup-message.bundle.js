@@ -29,36 +29,16 @@ this.BX.Up = this.BX.Up || {};
 	  babelHelpers.createClass(PopupMessage, [{
 	    key: "reload",
 	    value: function reload() {
+	      var errorsMessage = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : '';
+	      var successMessage = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : '';
+	      if (errorsMessage !== '') {
+	        this.errorsMessage = errorsMessage;
+	      }
+	      if (errorsMessage !== '') {
+	        this.successMessage = successMessage;
+	      }
 	      this.render();
-	      // this.loadMessages()
-	      // 	.then(data => {
-	      // 		this.groupsList = data.groups;
-	      // 		//this.currentGroup = data.currentGroup;
-	      //
-	      // 		this.render();
-	      // 	});
-	    } // loadMessages()
-	    // {
-	    // 	return new Promise((resolve, reject) => {
-	    // 		BX.ajax.runAction(
-	    // 			'up:schedule.api.adminPanel.getEntityList',
-	    // 			{
-	    // 				data:
-	    // 					{
-	    // 						entityName: this.entity,
-	    // 						pageNumber: pageNumber,
-	    // 						searchInput: searchInput,
-	    // 					},
-	    // 			},
-	    // 		).then((response) => {
-	    // 				const data = response.data;
-	    // 				resolve(data);
-	    // 			})
-	    // 			.catch((error) => {
-	    // 				reject(error);
-	    // 			});
-	    // 	});
-	    // }
+	    }
 	  }, {
 	    key: "render",
 	    value: function render() {
