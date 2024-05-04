@@ -1,5 +1,4 @@
 import { Tag, Type, Loc } from 'main.core';
-import { Loader } from 'main.loader';
 import { Validator } from '../../validator/src/validator';
 import { PopupMessage } from 'up.popup-message';
 
@@ -219,8 +218,8 @@ export class CouplesList
 
 			for (let i = 1; i < 7; i++)
 			{
+				let editCoupleButton = Tag.render`<div></div>`;
 				let coupleTextContainer = Tag.render`<br>`;
-				const dropdownContent = Tag.render`<div class="dropdown-content"></div>`;
 
 				if (typeof this.coupleList[day] !== 'undefined' && typeof this.coupleList[day][i] !== 'undefined')
 				{
@@ -245,46 +244,31 @@ export class CouplesList
 
 					if (this.isAdmin === true && this.dataSourceIsDb)
 					{
-						const removeCoupleButton = Tag.render`
+						editCoupleButton = Tag.render`
 							<button 
-							data-target="modal-js-example" type="button" id="button-remove-${day}-${i}" class="js-modal-trigger dropdown-item btn-remove-couple button is-clickable is-small is-primary is-light">
-								${Loc.getMessage('DELETE')}
-							</button>
-						`;
-						removeCoupleButton.addEventListener('click', () => {
-							this.handleRemoveCoupleButtonClick(day, i);
-						});
-
-						const editCoupleButton = Tag.render`
-							<button 
-							data-target="modal-js-example" type="button" id="button-edit-${day}-${i}" class="js-modal-trigger dropdown-item btn-edit-couple button is-clickable is-small is-primary is-light mb-1">
-								${Loc.getMessage('EDIT')}
+							data-target="modal-js-example" type="button" id="button-remove-${day}-${i}" class="couple-edit-button is-size-6">
+								-
 							</button>
 						`;
 						editCoupleButton.addEventListener('click', () => {
-							this.handleEditCoupleButtonClick();
+							this.handleRemoveCoupleButtonClick(day, i);
 						});
-
-						dropdownContent.appendChild(editCoupleButton);
-						dropdownContent.appendChild(removeCoupleButton);
 					}
 				}
 				else
 				{
 					if (this.isAdmin === true && this.dataSourceIsDb)
 					{
-						const addCoupleButton = Tag.render`
+						editCoupleButton = Tag.render`
 							<button 
-							data-target="modal-js-example" type="button" id="button-add-${day}-${i}" class="js-modal-trigger dropdown-item btn-add-couple button is-clickable is-small is-primary is-light">
-								${Loc.getMessage('ADD')}
+							data-target="modal-js-example" type="button" id="button-add-${day}-${i}" class="couple-edit-button">
+								+
 							</button>
 						`;
 
-						addCoupleButton.addEventListener('click', () => {
+						editCoupleButton.addEventListener('click', () => {
 							this.handleAddCoupleButtonClick(day, i);
 						});
-
-						dropdownContent.appendChild(addCoupleButton);
 					}
 				}
 
@@ -293,27 +277,10 @@ export class CouplesList
 
 				if (this.isAdmin && this.dataSourceIsDb)
 				{
-					const dropdownTrigger = Tag.render`<div class="dropdown-trigger"></div>`;
-					const button = Tag.render`
-						<button type="button" aria-haspopup="true" aria-controls="dropdown-menu" id="button-${day}-${i}" class="btn-dropdown-couple button is-clickable is-small is-ghost">
-							...
-						</button>
-					`;
-
-					button.addEventListener('click', () => {
-						this.handleOpenDropdownCoupleButtonClick(day, i);
-					}, { once: true });
-
-					dropdownTrigger.appendChild(button);
-
 					const btnContainer = Tag.render`
 						<div id="dropdown-${day}-${i}" class="btn-edit-couple-container dropdown"></div>`;
 
-					const dropdownMenu = Tag.render`<div class="dropdown-menu" id="dropdown-menu" role="menu"></div>`;
-					dropdownMenu.appendChild(dropdownContent);
-
-					btnContainer.appendChild(dropdownTrigger);
-					btnContainer.appendChild(dropdownMenu);
+					btnContainer.appendChild(editCoupleButton);
 
 					coupleContainer.appendChild(btnContainer);
 				}
@@ -363,31 +330,6 @@ export class CouplesList
 			});
 	}
 
-	handleOpenDropdownCoupleButtonClick(numberOfDay, numberOfCouple)
-	{
-		const modals = document.querySelectorAll('.dropdown');
-		modals.forEach((modalWindow) => {
-			modalWindow.classList.remove('is-active');
-		});
-		const dropdown = document.getElementById(`dropdown-${numberOfDay}-${numberOfCouple}`);
-		dropdown.className = 'btn-edit-couple-container dropdown is-active';
-
-		const button = document.getElementById(`button-${numberOfDay}-${numberOfCouple}`);
-		button.addEventListener('click', () => {
-			this.handleCloseDropdownCoupleButtonClick(numberOfDay, numberOfCouple);
-		}, { once: true });
-	}
-
-	handleCloseDropdownCoupleButtonClick(numberOfDay, numberOfCouple)
-	{
-		const dropdown = document.getElementById(`dropdown-${numberOfDay}-${numberOfCouple}`);
-		dropdown.className = 'btn-edit-couple-container dropdown';
-		const button = document.getElementById(`button-${numberOfDay}-${numberOfCouple}`);
-		button.addEventListener('click', () => {
-			this.handleOpenDropdownCoupleButtonClick(numberOfDay, numberOfCouple);
-		}, { once: true });
-	}
-
 	handleAddCoupleButtonClick(numberOfDay, numberOfCouple)
 	{
 		this.openCoupleModal();
@@ -397,11 +339,6 @@ export class CouplesList
 	handleRemoveCoupleButtonClick(numberOfDay, numberOfCouple)
 	{
 		this.removeCouple(numberOfDay, numberOfCouple);
-	}
-
-	handleEditCoupleButtonClick(numberOfDay, numberOfCouple)
-	{
-		this.openCoupleModal();
 	}
 
 	openCoupleModal()
@@ -846,7 +783,7 @@ export class CouplesList
 	sendMessage(errorMessage = '', successMessage = '')
 	{
 		BX.ready(function() {
-			let PopupMessages = new BX.Up.Schedule.PopupMessage({
+			new BX.Up.Schedule.PopupMessage({
 				rootNodeId: 'messages',
 				errorsMessage: errorMessage,
 				successMessage: successMessage,
