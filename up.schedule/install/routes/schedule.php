@@ -11,23 +11,6 @@ return static function(RoutingConfigurator $routes) {
 	$routes->get('/', new PublicPageController('/local/modules/up.schedule/views/schedule.php'));
 	$routes->get('/schedule/', new PublicPageController('/local/modules/up.schedule/views/schedule.php'));
 
-	$routes->get('/add/couple/select/group/', new PublicPageController('/local/modules/up.schedule/views/select-group.php'));
-	$routes->get('/add/couple/group/{groupId}/select/subject/', new PublicPageController('/local/modules/up.schedule/views/select-subject.php'))
-		->where('groupId', '[0-9]+');
-	$routes->get('/add/couple/group/{groupId}/subject/{subjectId}/', new PublicPageController('/local/modules/up.schedule/views/add-couple.php'))
-		->where('groupId', '[0-9]+')
-		->where('subjectId', '[0-9]+');
-	$routes->post('/add/couple/group/{groupId}/subject/{subjectId}/', function () {
-		$subjectId = (int)Context::getCurrent()?->getRequest()->get('subjectId');
-		$groupId = (int)Context::getCurrent()?->getRequest()->get('groupId');
-		// if(!check_bitrix_sessid())
-		// {
-		// 	LocalRedirect("/add/couple/group/$groupId/subject/$subjectId/");
-		// }
-		//CoupleService::addCouple($groupId, $subjectId);
-		LocalRedirect("/add/couple/group/$groupId/subject/$subjectId/");
-	});
-
 	$routes->get('/profile/', new PublicPageController('/local/modules/up.schedule/views/profile.php'));
 	$routes->get('/admin/', new PublicPageController('/local/modules/up.schedule/views/admin.php'));
 	$routes->post('/admin/', new PublicPageController('/local/modules/up.schedule/views/admin.php'));
