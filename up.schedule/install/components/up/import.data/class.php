@@ -1,22 +1,11 @@
 <?php
 
+if (!defined('B_PROLOG_INCLUDED') || B_PROLOG_INCLUDED !== true)
+{
+	die();
+}
+
 use Bitrix\Main\Context;
-use Bitrix\Main\Engine\CurrentUser;
-use PhpOffice\PhpSpreadsheet\IOFactory;
-use PhpOffice\PhpSpreadsheet\Spreadsheet;
-use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
-use Up\Schedule\Model\EO_Audience;
-use Up\Schedule\Model\EO_Audience_Collection;
-use Up\Schedule\Model\EO_AudienceType;
-use Up\Schedule\Model\EO_AudienceType_Collection;
-use Up\Schedule\Model\EO_Group;
-use Up\Schedule\Model\EO_GroupSubject;
-use Up\Schedule\Model\EO_GroupSubject_Collection;
-use Up\Schedule\Model\EO_Subject;
-use Up\Schedule\Model\EO_Subject_Collection;
-use Up\Schedule\Repository\AudienceTypeRepository;
-use Up\Schedule\Repository\GroupRepository;
-use Up\Schedule\Repository\SubjectRepository;
 use Up\Schedule\Service\EntityService;
 use Up\Schedule\Service\ImportService;
 

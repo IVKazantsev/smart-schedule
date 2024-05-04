@@ -1,12 +1,11 @@
 <?php
 
-use Bitrix\Main\Data\Cache;
+if (!defined('B_PROLOG_INCLUDED') || B_PROLOG_INCLUDED !== true)
+{
+	die();
+}
+
 use Bitrix\Main\Engine\CurrentUser;
-use Up\Schedule\AutomaticSchedule\GeneticPerson;
-use Up\Schedule\AutomaticSchedule\GeneticSchedule;
-use Up\Schedule\Repository\AudienceRepository;
-use Up\Schedule\Repository\GroupRepository;
-use Up\Schedule\Repository\SubjectRepository;
 use Up\Schedule\Repository\UserRepository;
 
 class SidebarComponent extends CBitrixComponent

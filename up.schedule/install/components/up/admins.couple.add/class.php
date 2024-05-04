@@ -1,5 +1,10 @@
 <?php
 
+if (!defined('B_PROLOG_INCLUDED') || B_PROLOG_INCLUDED !== true)
+{
+	die();
+}
+
 use Bitrix\Main\Engine\CurrentUser;
 use Up\Schedule\Repository\AudienceRepository;
 use Up\Schedule\Repository\UserRepository;

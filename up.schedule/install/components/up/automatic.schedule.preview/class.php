@@ -1,13 +1,10 @@
 <?php
 
-use Bitrix\Main\ORM\Objectify\Collection;
-use Up\Schedule\AutomaticSchedule\GeneticSchedule;
-use Up\Schedule\Model\EO_Couple_Collection;
-use Up\Schedule\Repository\AudienceRepository;
-use Up\Schedule\Repository\CoupleRepository;
-use Up\Schedule\Repository\GroupRepository;
-use Up\Schedule\Repository\SubjectRepository;
-use Up\Schedule\Repository\UserRepository;
+if (!defined('B_PROLOG_INCLUDED') || B_PROLOG_INCLUDED !== true)
+{
+	die();
+}
+
 use Up\Schedule\Service\EntityService;
 
 class CouplesListComponent extends CBitrixComponent

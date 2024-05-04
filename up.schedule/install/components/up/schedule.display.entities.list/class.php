@@ -1,14 +1,13 @@
 <?php
 
+if (!defined('B_PROLOG_INCLUDED') || B_PROLOG_INCLUDED !== true)
+{
+	die();
+}
+
 use Bitrix\Main\Engine\CurrentUser;
-use Bitrix\Main\ORM\Objectify\Collection;
-use Up\Schedule\AutomaticSchedule\GeneticSchedule;
-use Up\Schedule\Model\EO_Couple_Collection;
-use Up\Schedule\Repository\AudienceRepository;
-use Up\Schedule\Repository\CoupleRepository;
 use Up\Schedule\Repository\GroupRepository;
 use Up\Schedule\Repository\RoleRepository;
-use Up\Schedule\Repository\SubjectRepository;
 use Up\Schedule\Repository\UserRepository;
 use Up\Schedule\Service\EntityService;
 
