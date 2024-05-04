@@ -171,8 +171,13 @@ class SubjectRepository
 	{
 		$result = [];
 		$result['TITLE'] = $data['TITLE'] ?? '';
-		$result['TYPE'] = array_column(AudienceTypeRepository::getAllArray(), 'TITLE');
 
+		$result['TYPE'] = array_unique(
+			array_merge_recursive(
+				[$data['TYPE']],
+				array_column(AudienceTypeRepository::getAllArray(), 'TITLE')
+			)
+		);
 		return $result;
 	}
 

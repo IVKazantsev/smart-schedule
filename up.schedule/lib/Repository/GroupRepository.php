@@ -106,11 +106,16 @@ class GroupRepository
 	{
 		$result = [];
 		$result['TITLE'] = $data['TITLE'] ?? '';
-		foreach (SubjectRepository::getAll() as $subject)
+		$subjects = SubjectRepository::getAll();
+		foreach ($subjects as $subject)
 		{
 			$result['SUBJECTS']['ALL_SUBJECTS'][$subject->getId()] = $subject->getTitle();
 		}
-		$result['SUBJECTS']['CURRENT_SUBJECTS'] = [];
+		$currentSubjects = SubjectRepository::getByIds($data['SUBJECTS_TO_ADD']);
+		foreach ($currentSubjects as $subject)
+		{
+			$result['SUBJECTS']['CURRENT_SUBJECTS'][$subject->getId()] = $subject->getTitle();
+		}
 
 		return $result;
 	}

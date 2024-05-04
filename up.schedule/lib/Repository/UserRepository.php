@@ -366,6 +366,7 @@ class UserRepository
 	public static function getArrayForAdding(array $data = []): ?array
 	{
 		$result = [];
+		// var_dump($data);
 		$result['LOGIN'] = $data['LOGIN'] ?? '';
 		$result['NAME'] = $data['NAME'] ?? '';
 		$result['LAST_NAME'] = $data['LAST_NAME'] ?? '';
@@ -373,8 +374,50 @@ class UserRepository
 		$result['PASSWORD'] = $data['PASSWORD'] ?? '';
 		$result['CONFIRM_PASSWORD'] = $data['CONFIRM_PASSWORD'] ?? '';
 
-		$result['ROLE'] = array_column(RoleRepository::getAllArray(), 'TITLE');
-		$result['GROUP'] = array_column(GroupRepository::getAllArray(), 'TITLE');
+		// $result['ROLE'] = array_column(RoleRepository::getAllArray(), 'TITLE');
+		// $result['GROUP'] = array_column(GroupRepository::getAllArray(), 'TITLE');
+
+
+		$roles = RoleRepository::getAllArray();
+		$currentRole = $data['ROLE'];
+
+		$result['ROLE'] = array_unique(
+			array_merge_recursive(
+				[$data['ROLE']],
+				array_column($roles, 'TITLE')
+			)
+		);
+
+		$groups = GroupRepository::getAllArray();
+		if ($currentRole === 'Студент')
+		{
+			$result['GROUP'] = array_unique(
+				array_merge_recursive(
+					[$data['GROUP']],
+					array_column($groups, 'TITLE')
+				)
+			);
+		}
+		else
+		{
+			$result['GROUP'] = array_column($groups, 'TITLE');
+		}
+
+		if ($currentRole === 'Преподаватель')
+		{
+			$currentSubjects = SubjectRepository::getByIds($data['SUBJECTS_TO_ADD']);
+			foreach ($currentSubjects as $subject)
+			{
+				$result['SUBJECTS']['CURRENT_SUBJECTS'][$subject->getId()] = $subject->getTitle();
+			}
+
+			foreach ($data['SUBJECTS_TO_ADD'] as $subject)
+			{
+				$user['SUBJECTS']['CURRENT_SUBJECTS'][$subject['SUBJECTSID']] = $subject['SUBJECTSTITLE'];
+				unset($user['SUBJECTS']['ALL_SUBJECTS'][$subject['SUBJECTSID']]);
+			}
+		}
+
 		$subjects = SubjectRepository::getAll();
 
 		foreach ($subjects as $subject)

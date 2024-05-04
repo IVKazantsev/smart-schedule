@@ -124,7 +124,7 @@ Extension::load('up.popup-message');
 							{
 								echo 'text';
 							}
-							?>" name="<?= $key ?>" value="<?= ($field) ?? ''?>" placeholder="<?= GetMessage("ENTER_$key") ?>" required>
+							?>" name="<?= $key ?>" value="<?= ($field) ?? ''?>" placeholder="<?= GetMessage("ENTER_$key") ?>">
 						</div>
 					</div>
 				<?php
@@ -149,6 +149,7 @@ Extension::load('up.popup-message');
 	{
 		let i = 0;
 		addSubjectButton.addEventListener('click', () => {
+			console.log('click');
 			const newListItem = document.createElement('div');
 			newListItem.className = "mb-2";
 			newListItem.innerHTML = `<div class="select">
@@ -163,34 +164,54 @@ Extension::load('up.popup-message');
 		});
 	}
 
+	const buttons = document.querySelectorAll('.btnDelete');
+
+	function handleDeleteClick(e)
+	{
+		const elementId = e.target.id;
+		const lengthOfSubstr = 'delete_subject_'.length;
+		const itemId = elementId.slice(lengthOfSubstr, elementId.length);
+		const currentSubject = document.getElementById('current_subject_' + itemId);
+		currentSubject.remove();
+	}
+
+	buttons.forEach((button) => {
+		button.addEventListener('click', handleDeleteClick);
+	});
+
 	roleSelect = document.querySelector("[name='ROLE']");
 	if(roleSelect)
 	{
 		groupSelect = document.querySelector("[name='GROUP']");
 		groupContainer = groupSelect.closest('.edit-fields');
-		groupContainer.style.display = 'none';
 
 		addSubject = document.getElementById('addSubject');
 		subjectsContainer = addSubject.closest('.edit-fields');
-		subjectsContainer.style.display = 'none';
+
+		roleDisplayingBySelectValue()
 
 		roleSelect.addEventListener('change', () => {
-			if(roleSelect.value === 'Администратор')
-			{
-				groupContainer.style.display = 'none';
-				subjectsContainer.style.display = 'none';
-			}
-			else if(roleSelect.value === 'Преподаватель')
-			{
-				groupContainer.style.display = 'none';
-				subjectsContainer.style.display = 'block';
-			}
-			else if(roleSelect.value === 'Студент')
-			{
-				groupContainer.style.display = 'block';
-				subjectsContainer.style.display = 'none';
-			}
+			roleDisplayingBySelectValue()
 		});
+	}
+
+	function roleDisplayingBySelectValue()
+	{
+		if(roleSelect.value === 'Администратор')
+		{
+			groupContainer.style.display = 'none';
+			subjectsContainer.style.display = 'none';
+		}
+		else if(roleSelect.value === 'Преподаватель')
+		{
+			groupContainer.style.display = 'none';
+			subjectsContainer.style.display = 'block';
+		}
+		else if(roleSelect.value === 'Студент')
+		{
+			groupContainer.style.display = 'block';
+			subjectsContainer.style.display = 'none';
+		}
 	}
 
 	BX.ready(function () {

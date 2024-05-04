@@ -134,7 +134,7 @@ class EntityService
 			}
 
 			$data = [];
-			if(Context::getCurrent()->getRequest()->isPost())
+			if(Context::getCurrent()?->getRequest()->isPost())
 			{
 				$data = self::getData($entityName);
 			}
