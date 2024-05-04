@@ -218,7 +218,7 @@ this.BX.Up = this.BX.Up || {};
 	          coupleContainer.appendChild(coupleTextContainer);
 	          dayContainer.appendChild(coupleContainer);
 	        };
-	        for (var i = 1; i < 7; i++) {
+	        for (var i = 1; i <= 7; i++) {
 	          _loop2(i);
 	        }
 	        dayColumnContainer.appendChild(dayContainer);

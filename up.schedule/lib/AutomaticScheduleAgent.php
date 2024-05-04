@@ -12,7 +12,7 @@ class AutomaticScheduleAgent
 	private static GeneticSchedule $algo;
 	private static Cache $cache;
 	private static int $cacheTtl = 3600;
-	private static int $iterations = 100;
+	private static int $iterations = 200;
 	//private static int $worstFitness = 0;
 	//private array $population = [];
 

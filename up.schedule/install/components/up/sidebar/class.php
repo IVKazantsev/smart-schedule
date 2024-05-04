@@ -19,17 +19,17 @@ class SidebarComponent extends CBitrixComponent
 
 	public function executeComponent(): void
 	{
-//		echo "<pre>";
-//		for($i = 0; $i < 1; $i++)
-//		{
-//			$algo = new GeneticSchedule();
-//			$algo->createPopulation($algo->getPopulationSize());
-////			$string = \Up\Schedule\AutomaticScheduleAgent::testAgent();
-////			if ($string === '')
-////			{
-////				break;
-////			}
-//		}
+		/*echo "<pre>";
+		for($i = 0; $i < 32; $i++)
+		{
+			$algo = new GeneticSchedule();
+			$algo->createPopulation($algo->getPopulationSize());
+			$string = \Up\Schedule\AutomaticScheduleAgent::testAgent();
+			if ($string === '')
+			{
+				break;
+			}
+		}*/
 //		$algo = new GeneticSchedule();
 //		echo "<pre>";
 //		$population = $algo->createPopulation($algo->getPopulationSize());
