@@ -19,23 +19,24 @@ use Up\Schedule\Repository\UserRepository;
 
 class GeneticSchedule
 {
-	private int $populationSize = 100; // Размер популяции. Можно увеличить.
+	private int $populationSize = 50; // Размер популяции. Можно увеличить.
 
 	private int $percentageOfSelection = 50;
-	private int $maxGenerations = 5000; // Макс. кол-во итерации.
-	private int $limitOfFitness = 60;
+	private int $maxGenerations = 300;
 
-	private int $mutationRate = 10; // Процент мутации
+	private int $limitOfFitness = 150;
+	private int $mutationRate = 20; // Процент мутации
 
 	public readonly EO_Group_Collection $groups;
+
 	public readonly EO_User_Collection $teachers;
 	public readonly EO_Audience_Collection $audiences;
 	private static array $pricesOfPenalty = [
-		'couple-group' => 150,
-		'couple-teacher' => 120,
-		'couple-audience' => 120,
-		'overfulfilment' => 100,
-		'underfulfilment' => 120,
+		'couple-group' => 550,
+		'couple-teacher' => 550,
+		'couple-audience' => 500,
+		'overfulfilment' => 500,
+		'underfulfilment' => 500,
 		'big_spaces' => 10,
 		'difference_between_min_and_max' => 10,
 	];
@@ -55,8 +56,6 @@ class GeneticSchedule
 			$this->teachers = UserRepository::getAllTeachers();
 		}
 	}
-
-
 	/**
 	 * @param array $parameters
 	 *
@@ -92,6 +91,7 @@ class GeneticSchedule
 		$this->teachers = $teachers;
 	}
 
+
 	// Функция для создания первой популяции
 
 	/**
@@ -105,9 +105,8 @@ class GeneticSchedule
 		{
 			$population[] = new GeneticPerson($this->groups, $this->audiences, $this->teachers);
 			$this->fitness($population[$i]);
-			//echo $population[$i]->getFitness() . "\n";
 		}
-		$this->sortSchedulesByFitness($population);
+		$population = $this->sortSchedulesByFitness($population);
 		return $population;
 	}
 
@@ -123,8 +122,7 @@ class GeneticSchedule
 		// 6. Соответствие типа аудитории виду занятия
 		// 7.Необходимость проведения пар в полном объеме запланированных часов +
 		$penalty = 0;
-		$newSchedule = clone $schedule;
-		$couples = $newSchedule->couples->getAll();
+		$couples = $schedule->couples->getAll();
 		$groups = $this->groups;
 		$audiences = $this->audiences;
 		$teachers = $this->teachers;
@@ -231,19 +229,23 @@ class GeneticSchedule
 					$spaceBetweenCouples = $numberOfNextCouple - $numberOfCouple - 1;
 					if ($spaceBetweenCouples > 0) // TODO: хранить расстояние в отдельном поле
 					{
-						//echo "space" . "\n";
+						//echo "bigspaces" . "\n";
 						$penalty += self::$pricesOfPenalty['big_spaces'] * $spaceBetweenCouples; // Штраф за большие окна между парами (4 и более)
 					}
 				}
 			}
+			//echo "different" . "\n";
 			$penalty += self::$pricesOfPenalty['difference_between_min_and_max'] * ($maxAmount - $minAmount);
 		}
 
+		//echo "\nfit: " . $penalty . "\n";
+
 		$schedule->setFitness($penalty);
 	}
+
 	public function sortSchedulesByFitness(array $schedules): array
 	{
-		uasort($schedules, static function (GeneticPerson $schedule1, GeneticPerson $schedule2) {
+		usort($schedules, function (GeneticPerson $schedule1, GeneticPerson $schedule2) {
 			if ($schedule1->getFitness() === $schedule2->getFitness())
 			{
 				return 0;
@@ -253,7 +255,6 @@ class GeneticSchedule
 		});
 		return $schedules;
 	}
-
 	/**
 	 * @param GeneticPerson[] $schedules
 	 * @return GeneticPerson[]
@@ -267,7 +268,6 @@ class GeneticSchedule
 			0,
 			round($this->populationSize * ($this->percentageOfSelection / 100))
 		);
-		//echo "\n\n\n".$schedules[0]->getFitness() . "\n\n\n";
 		if ($schedules[0]->getFitness() <= $this->limitOfFitness) // TODO:Вынести в отдельный метод
 		{
 			return [$schedules[0]];
@@ -460,13 +460,111 @@ class GeneticSchedule
 
 		return $newSchedule;
 	}
-	// Функция мутации (mutation)
 
-	public function mutate($schedule)
+	// Функция мутации (mutation)
+	/**
+	 * @param GeneticPerson[] $schedules
+	 * @return GeneticPerson[]
+	 */
+	public function mutate(array $schedules): array
 	{
 		// Применить оператор мутации для изменения расписания
 		// Вернуть измененное расписание
+		$schedules = $this->sortSchedulesByFitness($schedules);
+
+		//$schedulesFirstPart = array_slice($schedules, 0, $this->populationSize / 2 - 1, true);
+		/*$keys = array_keys($schedules);
+		$idOfSelectedSchedules = array_rand(, round($this->populationSize / 2 * ($this->mutationRate / 100)));*/
+		//$selectedSchedules = array_combine($idOfSelectedSchedules, $schedules);
+		$rate = $this->mutationRate;
+		$size = $this->populationSize;
+		$arrayKeys = array_keys($schedules);
+		$arrayKeys = array_slice($arrayKeys, $size/2 - 1);
+
+		$amountOfMutations = round($size * $rate / 100);
+		$ids = array_rand($arrayKeys, $amountOfMutations);
+
+//		for($i = 0; $i < $amountOfMutations; $i++)
+//		{
+//
+//			$this->replaceCouples($schedules[$id]);
+//			$this->fitness($schedules[$id]);
+//			echo "\nFIT OF REPLACED: " . $schedules[$id]->getFitness() . "\n";
+//		}
+		foreach ($ids as $id)
+		{
+			$this->replaceCouples($schedules[$id]);
+			$this->fitness($schedules[$id]);
+			//echo "\nFIT OF REPLACED: " . $schedules[$id]->getFitness() . "\n";
+		}
+//		/*foreach ($idOfSelectedSchedules as $id)
+//		{
+//			//$before = $schedules[$id]->getFitness();
+//			//echo "\n Before: " . $schedules[$id]->getFitness();
+//
+//			$schedules[$id] = $this->replaceCouples($schedules[$id]);
+//			$this->fitness($schedules[$id]);
+//			//$after = $schedules[$id]->getFitness();
+//
+//			/*if (abs($before - $after) > 200)
+//			{
+//				echo "\n Before: " . $before . "\n" . "After: " . $after . "\n\n";
+//			}*/
+//			//echo "\n After: " . $schedules[$id]->getFitness() . "\n\n";
+//		}
+		return $this->sortSchedulesByFitness($schedules);
 	}
+
+	private function replaceCouples(GeneticPerson $schedule): GeneticPerson
+	{
+		$newSchedule = clone $schedule;
+		$couples = $newSchedule->couples->getAll();
+
+		$countOfCouples = $newSchedule->couples->count();
+		$groups = $this->groups;
+
+		foreach ($groups as $group)
+		{
+			$freeCouples[$group->getId()] = array_fill(1, 6, array_fill(1, 7, true));
+		}
+
+		//$freeCouples = array_fill(1, $countsOfGroups,array_fill(1, 6, array_fill(1, 7, true)));
+
+		foreach ($couples as $couple)
+		{
+			$freeCouples[$couple->getGroupId()][$couple->getWeekDay()][$couple->getCoupleNumberInDay()] = false;
+		}
+
+		$countOfChanges = random_int(0, $countOfCouples);
+
+		for($i = 0; $i < $countOfChanges; $i++)
+		{
+			$id = array_rand($couples);
+
+			$randDay = random_int(1, 6);
+
+			$day = $freeCouples[$couples[$id]->getGroupId()][$randDay];
+
+			$freeCouplesInDay = array_keys($day, true, true);
+
+			if ($freeCouplesInDay !== [])
+			{
+				$newNumberInDay = $freeCouplesInDay[array_rand($freeCouplesInDay)];
+				$couples[$id]->setCoupleNumberInDay($newNumberInDay);
+				$couples[$id]->setWeekDay($randDay);
+			}
+		}
+		$newCollection = new EO_Couple_Collection();
+		foreach ($couples as $couple)
+		{
+			$newCollection->add($couple);
+		}
+
+		$newSchedule->setCouples($newCollection);
+
+		return $newSchedule;
+	}
+
 	/**
 	 * @param GeneticPerson[] $population
 	 * @param int $amountOfIterations
@@ -476,19 +574,58 @@ class GeneticSchedule
 	{
 		for ($i = 0; $i < $amountOfIterations; $i++)
 		{
+			//echo "\n\n\n";
+
 			// Оценить приспособленность каждого расписания
 			array_map([$this, 'fitness'], $population);
 
 			// Выбрать лучшие индивиды (отбор)
+			// Скрещивание
+			/*$children = [];
+			while (count($children) < $this->populationSize / 2)
+			{
+				$parent1 = $population[array_rand($population)]; //TODO: предусмотреть фиксированный маскимум детей
+				$parent2 = $population[array_rand($population)];
+
+
+				$child = $this->crossover($parent1, $parent2);
+				$this->fitness($child);
+				$children[] = $child;
+			}
+
+			// Выбрать лучшие индивиды (отбор)
+			$selectedSchedules = $this->selection($population);
+			$newPopulation = array_merge($selectedSchedules, $children);*/
 
 			$selectedSchedules = $this->selection($population);
+
 			if (count($selectedSchedules) === 1)
 			{
 				//echo $selectedSchedules[0]->getFitness();
 				return [$selectedSchedules[0]];
 			}
 			// Скрещивание
+//			for($j = round($this->populationSize * ($this->percentageOfSelection / 100)); $j <= $this->populationSize - 1; $j++)
+//			{
+//				$parent1 = $selectedSchedules[array_rand($selectedSchedules)]; //TODO: предусмотреть фиксированный маскимум детей
+//				$parent2 = $selectedSchedules[array_rand($selectedSchedules)];
+//
+//				$child = $this->crossover($parent1, $parent2);
+//				$this->fitness($child);
+//				$selectedSchedules[$j] = $child;
+//			}
 			$newPopulation = $selectedSchedules;
+			/*while (count($newPopulation) < $this->populationSize)
+			{
+				$parent1 = $selectedSchedules[array_rand($selectedSchedules)]; //TODO: предусмотреть фиксированный маскимум детей
+				$parent2 = $selectedSchedules[array_rand($selectedSchedules)];
+
+
+				$child = $this->crossover($parent1, $parent2);
+				$this->fitness($child);
+				$newPopulation[] = $child;
+			}*/
+			/*
 			while (count($newPopulation) < $this->populationSize)
 			{
 				$parent1 = $population[array_rand($selectedSchedules)]; //TODO: предусмотреть фиксированный маскимум детей
@@ -498,14 +635,48 @@ class GeneticSchedule
 				$child = $this->crossover($parent1, $parent2);
 				$this->fitness($child);
 				$newPopulation[] = $child;
+			}*/
+			$children = [];
+			while (count($children) < $this->populationSize / 2)
+			{
+				$parent1 = $population[array_rand($selectedSchedules)]; //TODO: предусмотреть фиксированный маскимум детей
+				$parent2 = $population[array_rand($selectedSchedules)];
+
+
+				$child = $this->crossover($parent1, $parent2);
+				$this->fitness($child);
+				$children[] = $child;
 			}
+
+//			$amountOfMutations = $this->mutationRate * $this->populationSize / 100;
+//			for($j = 0; $j < $amountOfMutations; $j++)
+//			{
+//				$randIndex = array_rand($children);
+//				$mutatedChild = $this->replaceCouples($children[$randIndex]);
+//				$this->fitness($mutatedChild);
+//				$children[$randIndex] = $mutatedChild;
+//			}
+//			$children = $this->sortSchedulesByFitness($children);
+
+
+			//$children = $this->sortSchedulesByFitness($children);
+			$newPopulation = array_merge($children, $selectedSchedules);
 			// Замена старой популяции новой
+			//$newPopulation = $this->mutate($newPopulation);
+
 			$population = $this->sortSchedulesByFitness($newPopulation);
+
+//			$population = $this->sortSchedulesByFitness($newPopulation);
+			echo "\n\n\nITERATION\n";
+			foreach ($population as $item) {
+				echo "fit\n" . $item->getFitness() . "\n\n";
+			}
 		}
 
 		//echo $population[0]->getFitness() . "\n";
 		return $population;
 	}
+
 
 	// Генетический алгоритм для составления расписания
 
@@ -538,6 +709,8 @@ class GeneticSchedule
 				$newPopulation[] = $child;
 			}
 
+			//$newPopulation = $this->mutate($newPopulation);
+			$newPopulation = $this->sortSchedulesByFitness($newPopulation);
 			// Замена старой популяции новой
 			$population = $newPopulation;
 		}
@@ -556,15 +729,18 @@ class GeneticSchedule
 		//echo $bestSchedule->getFitness();
 		return $bestSchedule;
 	}
+
 	public function getPopulationSize(): int
 	{
 		return $this->populationSize;
 	}
-
 	public function getLimitOfFitness(): int
 	{
 		return $this->limitOfFitness;
 	}
 
-
+	public function getMaxGenerations(): int
+	{
+		return $this->maxGenerations;
+	}
 }

@@ -12,6 +12,7 @@ class AutomaticScheduleAgent
 	private static GeneticSchedule $algo;
 	private static Cache $cache;
 	private static int $cacheTtl = 3600;
+	private static int $iterations = 200;
 	//private static int $worstFitness = 0;
 	//private array $population = [];
 
@@ -20,7 +21,7 @@ class AutomaticScheduleAgent
 	 */
 	public static function generatePopulation(): array
 	{
-		self::$algo = new GeneticSchedule();
+		//self::$algo = new GeneticSchedule();
 		//self::$worstFitness = $population[self::$algo->getPopulationSize() - 1]->getFitness();
 		return self::$algo->createPopulation(self::$algo->getPopulationSize());
 	}
@@ -35,7 +36,7 @@ class AutomaticScheduleAgent
 
 		//BXClearCache(true, '/schedule/');
 		//self::$cache->clean('schedule', '/schedule/');
-		$newPopulation = self::$algo->doIterations($population, 100);
+		$newPopulation = self::$algo->doIterations($population, self::$iterations);
 		/*uasort($newPopulation, static function (GeneticPerson $schedule1, GeneticPerson $schedule2) {
 			if ($schedule1->getFitness() === $schedule2->getFitness())
 			{
@@ -62,19 +63,16 @@ class AutomaticScheduleAgent
 		{
 			$result = [
 				'status' => 'finished',
-				'schedule' => $newPopulation[0],//serialize($newPopulation[0]),
-				'progress' => $progress//$progress,
+				'schedule' => $newPopulation[0],
+				'progress' => $progress
 			];
-			// завершить агента прогрессбара
 		}
 		else
 		{
 			$result = [
 				'status' => 'inProcess',
-				'population' => $newPopulation,//serialize($newPopulation),
-				'progress' => $progress,//$progress,
-				//'worstFitness' => self::$worstFitness,
-				//'allFitness' => $allFitness,
+				'population' => $newPopulation,
+				'progress' => $progress,
 			];
 		}
 
@@ -84,7 +82,7 @@ class AutomaticScheduleAgent
 
 	private static function setDataToCache(array $data): void
 	{
-		//self::$cache->cleanDir( '/schedule/');
+		self::$cache->cleanDir( '/schedule/');
 		/*self::$cache->cleanDir( '/schedule/');*/
 		if (self::$cache->startDataCache(self::$cacheTtl, 'schedule', '/schedule/'))
 		{
@@ -93,6 +91,34 @@ class AutomaticScheduleAgent
 			/*$population = self::generatePopulation();
 			return self::doIterations($population);*/
 		}
+	}
+
+//	private static function checkIterations(int $amountOfIterations): bool
+//	{
+//
+//	}
+
+
+	private static function startAlgorithm(int $amountOfPopulations, array $population = []): array
+	{
+		if (empty($population))
+		{
+			$population = self::generatePopulation();
+		}
+		$amountOfPopulations = max($amountOfPopulations, 0);
+
+		if ($amountOfPopulations > self::$algo->getMaxGenerations())
+		{
+			return [
+				'status' => 'finished',
+				'schedule' => $population[0],
+				'progress' => 100,
+			];
+		}
+
+		$result = self::doIterations($population);
+		$result['amountOfPopulations'] = $amountOfPopulations + self::$iterations;
+		return $result;
 	}
 
 	public static function testAgent(): string
@@ -110,14 +136,14 @@ class AutomaticScheduleAgent
 			{
 				case 'inProcess':
 					$population = $variables['population'];
-					//self::$worstFitness = $variables['worstFitness'];
-					$result = self::doIterations($population);
+					$amountOfPopulations = $variables['amountOfPopulations'] ?? 0;
+					$result = self::startAlgorithm($amountOfPopulations, $population);
 					break;
 
 				case 'notInProcess':
 				case 'started':
-					$population = self::generatePopulation();
-					$result = self::doIterations($population);
+					$amountOfPopulations = $variables['amountOfPopulations'] ?? 0;
+					$result = self::startAlgorithm($amountOfPopulations);
 					break;
 
 				case 'finished':
@@ -130,8 +156,7 @@ class AutomaticScheduleAgent
 		}
 		else
 		{
-			$population = self::generatePopulation();
-			$result = self::doIterations($population);
+			$result = self::startAlgorithm(0);
 		}
 
 		self::setDataToCache($result);

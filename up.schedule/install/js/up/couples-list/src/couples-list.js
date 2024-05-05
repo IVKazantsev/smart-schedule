@@ -216,7 +216,7 @@ export class CouplesList
 
 			dayContainer.appendChild(dayTitleContainer);
 
-			for (let i = 1; i < 7; i++)
+			for (let i = 1; i <= 7; i++)
 			{
 				let editCoupleButton = Tag.render`<div></div>`;
 				let coupleTextContainer = Tag.render`<br>`;
