@@ -179,8 +179,6 @@ export class CouplesList
 				this.handleSubmitScheduleButtonClick();
 			}, { once: true });
 
-			const separator = Tag.render`<div class="column is-fifth"> </div>`;
-
 			const cancelButton = Tag.render`
 							<button 
 							type="button" id="button-preview-cancel" class="column  is-two-fifths button is-danger is-clickable is-medium">
@@ -230,8 +228,8 @@ export class CouplesList
 					}
 
 					coupleTextContainer = Tag.render`
-						<div class="couple-text is-fullheight ${(this.isAdmin !== true) ? 'pt-2' : ''}">
-							<p ${Validator.escapeHTML(marginClassText)}>${Validator.escapeHTML(this.coupleList[day][i].UP_SCHEDULE_MODEL_COUPLE_SUBJECT_TITLE)}</p>
+						<div class="couple-text is-fullheight pt-2">
+							<p ${Validator.escapeHTML(marginClassText)} class="subject-of-couple">${Validator.escapeHTML(this.coupleList[day][i].UP_SCHEDULE_MODEL_COUPLE_SUBJECT_TITLE)}</p>
 							<p hidden id="subjectId-${day}-${i}">${this.coupleList[day][i].UP_SCHEDULE_MODEL_COUPLE_SUBJECT_ID}</p>
 							<p>${Validator.escapeHTML(this.coupleList[day][i].UP_SCHEDULE_MODEL_COUPLE_AUDIENCE_NUMBER)}</p>
 							<p hidden id="audienceId-${day}-${i}">${this.coupleList[day][i].UP_SCHEDULE_MODEL_COUPLE_AUDIENCE_ID}</p>
@@ -246,7 +244,7 @@ export class CouplesList
 					{
 						editCoupleButton = Tag.render`
 							<button 
-							data-target="modal-js-example" type="button" id="button-remove-${day}-${i}" class="couple-edit-button is-size-6">
+							data-target="modal-js-example" type="button" id="button-remove-${day}-${i}" class="couple-edit-button is-size-6 button pb-0 pt-0 is-size-7 pl-2 pr-2">
 								-
 							</button>
 						`;
@@ -262,7 +260,7 @@ export class CouplesList
 					{
 						editCoupleButton = Tag.render`
 							<button 
-							data-target="modal-js-example" type="button" id="button-add-${day}-${i}" class="couple-edit-button">
+							data-target="modal-js-example" type="button" id="button-add-${day}-${i}" class="couple-edit-button button is-size-7 pb-0 pt-0 pl-2 pr-2">
 								+
 							</button>
 						`;
@@ -274,7 +272,7 @@ export class CouplesList
 				}
 
 				const coupleContainer = document.createElement('div');
-				coupleContainer.className = 'box is-clickable couple m-0';
+				coupleContainer.className = 'box couple m-0';
 
 				if (this.isAdmin && this.dataSourceIsDb)
 				{
@@ -346,16 +344,18 @@ export class CouplesList
 	{
 		const modal = document.getElementById('coupleModal');
 		modal.classList.add('is-active');
+
 		document.addEventListener('keydown', (event) => {
 			if (event.key === 'Escape')
 			{
 				this.closeCoupleModal();
+
 			}
 		});
 		const closeButton = document.getElementById('button-close-modal');
 		closeButton.addEventListener('click', () => {
 			this.closeCoupleModal();
-		});
+		}, {once: true});
 	}
 
 	createAddForm(numberOfDay, numberOfCouple)
@@ -364,11 +364,7 @@ export class CouplesList
 			.then((subjectsList) => {
 				this.insertSubjectsDataForAddForm(subjectsList);
 			});
-		if (this.isValidInput === false)
-		{
-			return;
-		}
-		else
+		if (this.isValidInput !== false)
 		{
 			this.deleteEmptyForm();
 		}
@@ -377,10 +373,10 @@ export class CouplesList
 
 		const submitButton = Tag.render`
 			<button id="submit-form-button" type="button" class="button is-success">${Loc.getMessage('SAVE')}</button>
-		`
+		`;
 		const cancelButton = Tag.render`
 			<button id="cancel-form-button" type="button" class="button">${Loc.getMessage('CANCEL')}</button>
-		`
+		`;
 
 		submitButton.addEventListener('click', () => {
 			this.sendForm(numberOfDay, numberOfCouple, 'add');
@@ -388,8 +384,6 @@ export class CouplesList
 
 		cancelButton.addEventListener('click', () => {
 			this.closeCoupleModal();
-			submitButton.remove();
-			cancelButton.remove();
 		}, { once: true });
 
 		coupleAddButtonsContainer.appendChild(submitButton);
@@ -404,7 +398,6 @@ export class CouplesList
 		const groupInput = document.getElementById('group-select');
 
 		const submitButton = document.getElementById('submit-form-button');
-		const cancelButton = document.getElementById('cancel-form-button');
 
 		if (subjectInput && teacherInput && audienceInput && groupInput)
 		{
@@ -428,14 +421,10 @@ export class CouplesList
 					this.sendMessage('', 'Пара успешно добавлена');
 					this.closeCoupleModal();
 					this.reload();
-
-					submitButton.remove();
-					cancelButton.remove();
 				})
 				.catch((error) => {
 					this.sendMessage(error.data.errors);
 
-					const submitButton = document.getElementById('submit-form-button');
 					submitButton.addEventListener('click', () => {
 						this.sendForm(numberOfDay, numberOfCouple, 'add');
 					}, { once: true });
@@ -492,9 +481,13 @@ export class CouplesList
 		if (document.getElementById('add-edit-form'))
 		{
 			form = document.getElementById('add-edit-form');
-			form = Tag.render`<form id="add-edit-form"></form>`;
-			modalBody.innerHTML = '';
+			form.innerHTML = '';
 		}
+		else
+		{
+			form = Tag.render`<form id="add-edit-form"></form>`;
+		}
+		modalBody.innerHTML = '';
 
 		this.formData = subjectsList;
 
@@ -508,11 +501,13 @@ export class CouplesList
 		}
 		else
 		{
+			this.isValidInput = true;
+
 			this.deleteEmptyForm();
 		}
 
 		const selectContainer = Tag.render`
-			<select id="subject-select" name="subject"> </select>
+			<select id="subject-select" name="subject"></select>
 		`;
 
 		const option = Tag.render`
@@ -544,7 +539,7 @@ export class CouplesList
 		form.appendChild(container);
 
 		modalBody.appendChild(form);
-
+		console.log(modalBody.innerHTML);
 		selectContainer.addEventListener('change', () => {
 			this.isValidInput = true;
 
@@ -785,6 +780,17 @@ export class CouplesList
 
 	closeCoupleModal()
 	{
+		const submitButton = document.getElementById('submit-form-button');
+		const cancelButton = document.getElementById('cancel-form-button');
+
+		if(submitButton && cancelButton)
+		{
+		submitButton.remove();
+		cancelButton.remove();
+		}
+
+		this.deleteEmptyForm();
+
 		const modal = document.getElementById('coupleModal');
 		modal.classList.remove('is-active');
 	}

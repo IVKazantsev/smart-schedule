@@ -63,6 +63,7 @@ a:hover {
 }
 
 .couple {
+	position: relative;
 	border-radius: 0;
 	height: 120px;
 	font-size: 0.8em;
@@ -191,17 +192,17 @@ a:hover {
 }
 
 .btn-edit-couple-container {
-	max-height: 7px;
-}
-
-.btn-edit-couple-container {
+	position: absolute;
 	display: flex;
 	justify-content: end;
 	width: 100%;
 }
 
 .couple-edit-button {
-	border: none !important;
+	height: 20px;
+	width: 20px;
+	right: 2px;
+	top: 2px;
 	background-color: white !important;
 }
 
@@ -271,4 +272,12 @@ a:hover {
 
 #messages {
 	z-index: 50;
+}
+
+.subject-of-couple {
+	overflow: hidden;
+	display: -webkit-box;
+	-webkit-line-clamp: 3;
+	line-clamp: 2;
+	-webkit-box-orient: vertical;
 }
