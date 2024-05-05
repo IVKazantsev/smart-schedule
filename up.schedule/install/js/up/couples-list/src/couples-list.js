@@ -155,10 +155,10 @@ export class CouplesList
 
 		if (this.isAdmin === true && !this.dataSourceIsDb)
 		{
-			this.rootNode.classList.add('is-flex', 'column', 'columns', 'is-flex-direction-column', 'is-align-items-center');
+			this.rootNode.classList.add('is-flex', 'column', 'columns', 'is-flex-direction-column',);
 
 			const previewMenuContainer = document.createElement('div');
-			previewMenuContainer.classList.add('box', 'columns', 'column', 'is-half', 'is-flex', 'is-flex-direction-column', 'is-align-items-center');
+			previewMenuContainer.classList.add('box', 'columns', 'column', 'is-half', 'is-flex', 'is-flex-direction-column', 'is-align-items-center', 'ml-auto', 'mr-auto');
 			previewMenuContainer.id = 'preview-menu-container';
 
 			const buttonsPreviewContainer = document.createElement('div');

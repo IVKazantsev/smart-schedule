@@ -137,9 +137,9 @@ this.BX.Up = this.BX.Up || {};
 	      var _this3 = this;
 	      this.rootNode.innerHTML = '';
 	      if (this.isAdmin === true && !this.dataSourceIsDb) {
-	        this.rootNode.classList.add('is-flex', 'column', 'columns', 'is-flex-direction-column', 'is-align-items-center');
+	        this.rootNode.classList.add('is-flex', 'column', 'columns', 'is-flex-direction-column');
 	        var previewMenuContainer = document.createElement('div');
-	        previewMenuContainer.classList.add('box', 'columns', 'column', 'is-half', 'is-flex', 'is-flex-direction-column', 'is-align-items-center');
+	        previewMenuContainer.classList.add('box', 'columns', 'column', 'is-half', 'is-flex', 'is-flex-direction-column', 'is-align-items-center', 'ml-auto', 'mr-auto');
 	        previewMenuContainer.id = 'preview-menu-container';
 	        var buttonsPreviewContainer = document.createElement('div');
 	        buttonsPreviewContainer.classList.add('is-flex', 'column', 'columns', 'is-full', 'is-justify-content-space-evenly', 'is-flex-direction-row', 'mb-2');

@@ -1,4 +1,5 @@
 <?php
+
 use Bitrix\Main\UI\Extension;
 
 /**
@@ -23,7 +24,12 @@ Extension::load('up.couples-list');
 						<button id="entity-selection-button" class="button is-fullwidth is-60-height-child" aria-haspopup="true" aria-controls="dropdown-menu">
 							<span id="current-entity">
 								<?= ($arResult['CURRENT_ENTITY'])
-									? GetMessage($arResult['LOC_ENTITY']) . ' ' . htmlspecialcharsbx($arResult['CURRENT_ENTITY_NAME']) : GetMessage("SELECT_{$arResult['LOC_ENTITY']}") ?>
+									? GetMessage($arResult['LOC_ENTITY'])
+									. ' '
+									. htmlspecialcharsbx($arResult['CURRENT_ENTITY_NAME'])
+									: GetMessage(
+										"SELECT_{$arResult['LOC_ENTITY']}"
+									) ?>
 							</span>
 						</button>
 					</div>
@@ -40,15 +46,16 @@ Extension::load('up.couples-list');
 </div>
 
 <script>
-	BX.ready(function () {
+	BX.ready(function() {
 		window.ScheduleCouplesList = new BX.Up.Schedule.CouplesList(
-			{rootNodeId: 'couples-container'},
+			{ rootNodeId: 'couples-container' },
 			false,
 		);
 		window.DisplayEntitiesList = new BX.Up.Schedule.DisplayScheduleEntitiesList({
-			rootNodeId: 'dropdown-menu-container',
-			entityInfo: window.ScheduleCouplesList.extractEntityFromUrl(),
-		},
+				rootNodeId: 'dropdown-menu-container',
+				entityInfo: window.ScheduleCouplesList.extractEntityFromUrl(),
+				scheduleCouplesList: window.ScheduleCouplesList,
+			},
 			false,
 		);
 
@@ -84,7 +91,7 @@ Extension::load('up.couples-list');
 				window.ScheduleCouplesList.entity = entity;
 				window.ScheduleCouplesList.reload();
 				window.DisplayEntitiesList.reload(entityInfo);
-			})
-		})
+			});
+		});
 	});
 </script>
