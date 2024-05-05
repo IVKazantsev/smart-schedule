@@ -151,30 +151,6 @@ if (!defined("B_PROLOG_INCLUDED") || B_PROLOG_INCLUDED !== true)
 					</a>
 				</li>
 			</ul>
-
-			<?php
-			if ($arResult['ENTITY']): ?>
-				<div class="box notes">
-					<div class="m-3">
-						<?= GetMessage("NOTES") ?>:
-						<div class="note is-flex is-flex-direction-row columns is-centered mb-0">
-							<div class="column is-2 is-flex is-align-items-center pr-0">
-								<div class="note-box has-background-warning ml-auto"></div>
-							</div>
-							<div class="column is-9">- <?= GetMessage("BUSY_TEACHER_OR_GROUP") ?></div>
-						</div>
-						<div class="note is-flex is-flex-direction-row columns is-centered">
-							<div class="column is-2 is-flex is-align-items-center pr-0">
-								<div class="note-box has-background-danger ml-auto"></div>
-							</div>
-							<div class="column is-9">
-								- <?= GetMessage("OCCUPIED_ROOM") ?>
-							</div>
-						</div>
-					</div>
-				</div>
-			<?php
-			endif; ?>
 		<?php
 		endif; ?>
 
