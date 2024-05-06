@@ -3,9 +3,23 @@ this.BX = this.BX || {};
 (function (exports,main_core) {
 	'use strict';
 
-	var _templateObject, _templateObject2, _templateObject3, _templateObject4, _templateObject5, _templateObject6, _templateObject7, _templateObject8, _templateObject9, _templateObject10, _templateObject11, _templateObject12, _templateObject13, _templateObject14, _templateObject15, _templateObject16, _templateObject17, _templateObject18, _templateObject19, _templateObject20, _templateObject21, _templateObject22, _templateObject23, _templateObject24, _templateObject25;
-	// import { TextValidator } from 'up.text-validator';
+	var Validator = /*#__PURE__*/function () {
+	  function Validator() {
+	    babelHelpers.classCallCheck(this, Validator);
+	  }
+	  babelHelpers.createClass(Validator, null, [{
+	    key: "escapeHTML",
+	    value: function escapeHTML(text) {
+	      if (!text || text === '') {
+	        return '';
+	      }
+	      return text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
+	    }
+	  }]);
+	  return Validator;
+	}();
 
+	var _templateObject, _templateObject2, _templateObject3, _templateObject4, _templateObject5, _templateObject6, _templateObject7, _templateObject8, _templateObject9, _templateObject10, _templateObject11, _templateObject12, _templateObject13, _templateObject14, _templateObject15, _templateObject16, _templateObject17, _templateObject18, _templateObject19, _templateObject20, _templateObject21, _templateObject22, _templateObject23, _templateObject24, _templateObject25;
 	var EntityList = /*#__PURE__*/function () {
 	  function EntityList() {
 	    var options = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
