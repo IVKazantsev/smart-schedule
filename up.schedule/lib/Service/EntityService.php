@@ -2,9 +2,7 @@
 
 namespace Up\Schedule\Service;
 
-use Bitrix\Main\Application;
 use Bitrix\Main\Context;
-use Bitrix\Main\DB\TransactionException;
 use Bitrix\Main\Engine\CurrentUser;
 use CUser;
 use Error;
@@ -17,7 +15,6 @@ use Up\Schedule\Model\EO_Couple_Collection;
 use Up\Schedule\Model\EO_Group;
 use Up\Schedule\Model\EO_GroupSubject;
 use Up\Schedule\Model\EO_GroupSubject_Collection;
-use Up\Schedule\Model\EO_Role;
 use Up\Schedule\Model\EO_Subject;
 use Up\Schedule\Model\EO_Subject_Collection;
 use Up\Schedule\Model\EO_SubjectTeacher;
@@ -25,7 +22,6 @@ use Up\Schedule\Model\EO_SubjectTeacher_Collection;
 use Up\Schedule\Repository\AudienceRepository;
 use Up\Schedule\Repository\AudienceTypeRepository;
 use Up\Schedule\Repository\GroupRepository;
-use Up\Schedule\Repository\RoleRepository;
 use Up\Schedule\Repository\SubjectRepository;
 use Up\Schedule\Repository\UserRepository;
 
@@ -421,7 +417,7 @@ class EntityService
 
 			$group->setTitle($title);
 
-			$result = $group->save(true);
+			$result = $group->save();
 			if(!$result->isSuccess())
 			{
 				return implode(', ', $result->getErrorMessages());

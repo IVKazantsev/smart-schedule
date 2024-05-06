@@ -12,9 +12,6 @@ return static function(RoutingConfigurator $routes) {
 	$routes->get('/admin/', new PublicPageController('/local/modules/up.schedule/views/admin.php'));
 	$routes->post('/admin/', new PublicPageController('/local/modules/up.schedule/views/admin.php'));
 
-	$routes->get('/optimize/', new PublicPageController('/local/modules/up.schedule/views/optimize.php'));
-	$routes->get('/statistics/', new PublicPageController('/local/modules/up.schedule/views/statistics.php'));
-
 	$routes->get('/scheduling/', new PublicPageController('/local/modules/up.schedule/views/scheduling.php'));
 	$routes->get('/scheduling/preview/', new PublicPageController('/local/modules/up.schedule/views/scheduling-preview.php'));
 	$routes->get('/scheduling/preview/{entity}/{id}/', new PublicPageController('/local/modules/up.schedule/views/scheduling-preview.php'))
