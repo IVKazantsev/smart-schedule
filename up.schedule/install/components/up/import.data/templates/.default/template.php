@@ -5,7 +5,6 @@
  * @var array $arResult
  */
 
-use Bitrix\Main\Context;
 use Bitrix\Main\UI\Extension;
 
 if (!defined("B_PROLOG_INCLUDED") || B_PROLOG_INCLUDED !== true)
@@ -59,7 +58,7 @@ Extension::load('up.popup-message');
 	};
 
 	BX.ready(function () {
-		window.PopupMessages = new BX.Up.Schedule.PopupMessage({
+		window.PopupMessages = new BX.Up.PopupMessage({
 			rootNodeId: 'messages',
 			errorsMessage: '<?= $arResult['ERRORS'] ?>',
 			successMessage: '<?= $arResult['SUCCESS'] ?>',

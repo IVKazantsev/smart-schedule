@@ -2,6 +2,7 @@
 
 global $APPLICATION;
 IncludeModuleLangFile(__FILE__);
+
 ?>
 
 <form action="<?= $APPLICATION->GetCurPage() ?>">

@@ -1,8 +1,9 @@
-import {Type, Tag} from 'main.core';
+import { Type, Loc } from 'main.core';
 
 export class AutomaticSchedule
 {
 	progress = 0;
+
 	constructor(options = {})
 	{
 		if (Type.isStringFilled(options.rootNodeId))
@@ -29,15 +30,8 @@ export class AutomaticSchedule
 			.then(info => {
 				this.status = info.status;
 				this.progress = info.progress;
-				//console.log(info.status, info.progress, info.couples);
-				/*if (info.status === 'finished' && typeof info.couples !== 'undefined')
-				{
-					this.renderPreview();
-				}
-				else
-				{*/
-					this.render();
-				/*}*/
+
+				this.render();
 			});
 	}
 
@@ -46,20 +40,14 @@ export class AutomaticSchedule
 		return new Promise((resolve, reject) => {
 			BX.ajax.runAction(
 				'up:schedule.api.automaticSchedule.getCurrentStatus',
-				{
-					data:
-						{
-						},
-				},
+				{},
 			).then((response) => {
-				const currentStatus = response.data.status;
-				const progress = response.data.progress;
-				const couples = response.data.couples ?? undefined;
+					const currentStatus = response.data.status;
+					const progress = response.data.progress;
+					const couples = response.data.couples ?? undefined;
 
-				console.log(currentStatus, progress);
-
-				resolve({status: currentStatus, progress: progress, couples: couples});
-			})
+					resolve({ status: currentStatus, progress: progress, couples: couples });
+				})
 				.catch((error) => {
 					reject(error);
 				});
@@ -75,11 +63,11 @@ export class AutomaticSchedule
 		{
 			container.innerHTML = `
 				<div class="box edit-fields">
-					Расписание составляется.
+					${Loc.getMessage('COMPILATION_IN_PROGRESS')}.
 				</div>
 				
 				<div class="box edit-fields">
-					<label class="label">Прогресс: ${this.progress}%</label>
+					<label class="label">${Loc.getMessage('PROGRESS')}: ${this.progress}%</label>
  
 					<progress class="progress is-large" value="${this.progress}" max="100">
 						${this.progress}%
@@ -87,8 +75,10 @@ export class AutomaticSchedule
 				</div>
 				
 				<div class="box edit-fields">
-					<label class="label">Отменить генерацию расписания?</label>
-					<button class="button is-danger" id="button-generate-schedule" type="button">Подтвердить</button>
+					<label class="label">${Loc.getMessage('GENERATION_CANCELLATION')}?</label>
+					<button class="button is-danger" id="button-generate-schedule" type="button">
+						${Loc.getMessage('SUBMIT')}
+					</button>
 				</div>
 			`;
 			this.rootNode.appendChild(container);
@@ -101,8 +91,10 @@ export class AutomaticSchedule
 		{
 			container.innerHTML = `
 			<div class="box edit-fields">
-				<label class="label">Перейти на страницу предварительного просмотра?</label>
-				<button class="button is-primary" id="button-finished-schedule" type="button">Подтвердить</button>
+				<label class="label">${Loc.getMessage('GO_TO_PREVIEW')}?</label>
+				<button class="button is-primary" id="button-finished-schedule" type="button">
+					${Loc.getMessage('SUBMIT')}
+				</button>
 			</div>
 			`;
 
@@ -115,8 +107,10 @@ export class AutomaticSchedule
 		{
 			container.innerHTML = `
 			<div class="box edit-fields">
-				<label class="label">Не удалось составить расписание<br>Попробовать снова?</label>
-				<button class="button is-primary" id="button-failed-schedule" type="button">Подтвердить</button>
+				<label class="label">${Loc.getMessage('FAILED_TO_COMPOSE')}<br>${Loc.getMessage('TRY_AGAIN')}?</label>
+				<button class="button is-primary" id="button-failed-schedule" type="button">
+					${Loc.getMessage('SUBMIT')}
+				</button>
 			</div>
 			`;
 
@@ -130,12 +124,16 @@ export class AutomaticSchedule
 		{
 			container.innerHTML = `
 				<div class="box edit-fields">
-					Здесь Вы можете автоматически составить расписание.
+					${Loc.getMessage('AUTOMATIC_SCHEDULE')}.
 				</div>
 				
 				<div class="box edit-fields">
-					<label class="label">Сгенерировать расписание?</label>
-					<button class="button is-primary" id="button-generate-schedule" type="button">Подтвердить</button>
+					<label class="label">
+						${Loc.getMessage('SCHEDULE_GENERATION')}?
+					</label>
+					<button class="button is-primary" id="button-generate-schedule" type="button">
+						${Loc.getMessage('SUBMIT')}
+					</button>
 				</div>
 			`;
 			this.rootNode.appendChild(container);
@@ -144,10 +142,7 @@ export class AutomaticSchedule
 				this.sendRequestForMakeSchedule();
 			});
 		}
-
 	}
-
-
 
 	sendRequestForMakeSchedule()
 	{
@@ -157,17 +152,16 @@ export class AutomaticSchedule
 				data: {},
 			},
 		).then((response) => {
-			console.log(response.data.result)
-			if (response.data.result === true)
-			{
-				this.status = 'inProcess';
-			}
-			else
-			{
-				this.status = 'notInProcess';
-			}
-			this.reload();
-		})
+				if (response.data.result === true)
+				{
+					this.status = 'inProcess';
+				}
+				else
+				{
+					this.status = 'notInProcess';
+				}
+				this.reload();
+			})
 			.catch((error) => {
 				console.error(error);
 			});
@@ -176,15 +170,12 @@ export class AutomaticSchedule
 	sendRequestForCancelGeneratingSchedule()
 	{
 		BX.ajax.runAction(
-			'up:schedule.api.automaticSchedule.cancelGenerateSchedule',
-			{
-				data: {},
-			},
-		)
+				'up:schedule.api.automaticSchedule.cancelGenerateSchedule',
+				{},
+			)
 			.then((response) => {
 				this.status = 'notInProcess';
 				this.progress = 0;
-				console.log(response.data.result)
 				this.reload();
 			})
 			.catch((error) => {

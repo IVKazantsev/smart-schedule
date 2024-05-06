@@ -1,6 +1,5 @@
 /* eslint-disable */
 this.BX = this.BX || {};
-this.BX.Up = this.BX.Up || {};
 (function (exports) {
 	'use strict';
 
@@ -22,4 +21,4 @@ this.BX.Up = this.BX.Up || {};
 
 	exports.Validator = Validator;
 
-}((this.BX.Up.Schedule = this.BX.Up.Schedule || {})));
+}((this.BX.Up = this.BX.Up || {})));

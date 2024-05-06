@@ -11,7 +11,7 @@ $APPLICATION->IncludeComponent('up:sidebar', '', [
 	'ENTITY' => Context::getCurrent()->getRequest()->get('entity') ?? 'group',
 ]);
 
-$APPLICATION->IncludeComponent('up:schedule.display.entities.list', '', [
+$APPLICATION->IncludeComponent('up:couples.list', '', [
 	'ENTITY' =>Context::getCurrent()->getRequest()->get('entity'),
 	'ID' =>Context::getCurrent()->getRequest()->get('id'),
 ]);

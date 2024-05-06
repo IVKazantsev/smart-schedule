@@ -1,4 +1,5 @@
 <?php
+
 use Bitrix\Main\UI\Extension;
 
 /**
@@ -12,6 +13,7 @@ if (!defined("B_PROLOG_INCLUDED") || B_PROLOG_INCLUDED !== true)
 
 Extension::load('up.display-schedule-entities-list');
 Extension::load('up.couples-list');
+
 ?>
 
 <div id="messages"></div>
@@ -22,29 +24,33 @@ Extension::load('up.couples-list');
 			<div class="box is-60-height">
 				<div id="entity-selection" class="dropdown entity-selection is-60-height-child">
 					<div class="dropdown-trigger entity-selection-trigger is-60-height-child">
-						<input id="entity-selection-button" class="button is-fullwidth is-60-height-child" aria-haspopup="true" aria-controls="dropdown-menu"
-								placeholder="<?= ($arResult['CURRENT_ENTITY'])
-									? GetMessage($arResult['LOC_ENTITY']) . ' ' . htmlspecialcharsbx($arResult['CURRENT_ENTITY_NAME'])
-									: GetMessage("SELECT_{$arResult['LOC_ENTITY']}") ?>"
+						<input id="entity-selection-button"
+							   class="button is-fullwidth is-60-height-child"
+							   aria-haspopup="true"
+							   aria-controls="dropdown-menu"
+							   placeholder="<?= ($arResult['CURRENT_ENTITY'])
+								   ? GetMessage($arResult['LOC_ENTITY']) . ' '
+								   . htmlspecialcharsbx($arResult['CURRENT_ENTITY_NAME'])
+								   : GetMessage("SELECT_{$arResult['LOC_ENTITY']}") ?>"
 						>
 					</div>
 					<div class="dropdown-menu" id="dropdown-menu" role="menu">
-						<div id="dropdown-menu-container" class="dropdown-content">
-						</div>
+						<div id="dropdown-menu-container" class="dropdown-content"></div>
 					</div>
 				</div>
 			</div>
 		</div>
 	</div>
-	<div id="couples-container" class="columns">
-	</div>
+
+	<div id="couples-container" class="columns"></div>
 </div>
 
 <div class="modal" id="coupleModal">
 	<div class="modal-background"></div>
+
 	<div class="modal-card">
 		<header class="modal-card-head">
-			<p class="modal-card-title">Добавление пары</p>
+			<p class="modal-card-title"><?= GetMessage('ADD_COUPLE') ?></p>
 			<button class="delete" aria-label="close" id="button-close-modal"></button>
 		</header>
 		<section id="modal-body" class="modal-card-body">
@@ -53,20 +59,20 @@ Extension::load('up.couples-list');
 			</form>
 		</section>
 		<footer class="modal-card-foot">
-			<div class="buttons" id="couple-add-buttons-container">
-			</div>
+			<div class="buttons" id="couple-add-buttons-container"></div>
 		</footer>
 	</div>
 </div>
 
 <script>
 	BX.ready(function () {
-		window.ScheduleCouplesList = new BX.Up.Schedule.CouplesList({
+		window.ScheduleCouplesList = new BX.Up.CouplesList({
 			rootNodeId: 'couples-container',
 			entity: '<?= $arResult['ENTITY'] ?>',
 			entityId: '<?= $arResult['CURRENT_ENTITY_ID'] ?>',
 		});
-		window.DisplayEntitiesList = new BX.Up.Schedule.DisplayScheduleEntitiesList({
+
+		window.DisplayEntitiesList = new BX.Up.DisplayScheduleEntitiesList({
 			rootNodeId: 'dropdown-menu-container',
 			entityInfo: (window.ScheduleCouplesList.entity && window.ScheduleCouplesList.entityId) ? {
 				'entity': window.ScheduleCouplesList.entity,
@@ -80,7 +86,7 @@ Extension::load('up.couples-list');
 			button.addEventListener('click', () => {
 				const address = button.href;
 				const addresses = address.split('/');
-				const entityIndex = addresses.findIndex((element, index, array) => {
+				const entityIndex = addresses.findIndex((element) => {
 					const needles = [
 						'group',
 						'teacher',

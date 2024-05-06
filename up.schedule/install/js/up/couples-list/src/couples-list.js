@@ -1,7 +1,6 @@
 import { Tag, Type, Loc } from 'main.core';
 import { Validator } from '../../validator/src/validator';
-import { PopupMessage } from 'up.popup-message';
-
+import { PopupMessage } from '../../popup-message/src/popup-message';
 export class CouplesList
 {
 	formData = {};
@@ -155,7 +154,7 @@ export class CouplesList
 
 		if (this.isAdmin === true && !this.dataSourceIsDb)
 		{
-			this.rootNode.classList.add('is-flex', 'column', 'columns', 'is-flex-direction-column',);
+			this.rootNode.classList.add('is-flex', 'column', 'columns', 'is-flex-direction-column');
 
 			const previewMenuContainer = document.createElement('div');
 			previewMenuContainer.classList.add('box', 'columns', 'column', 'is-half', 'is-flex', 'is-flex-direction-column', 'is-align-items-center', 'ml-auto', 'mr-auto');
@@ -166,13 +165,13 @@ export class CouplesList
 			buttonsPreviewContainer.id = 'buttons-preview-container';
 
 			const label = Tag.render`
-				<label class="label column m-2">Сохранить изменения?</label>
+				<label class="label column m-2">${Loc.getMessage('SAVE_CHANGES')}?</label>
 			`;
 
 			const submitButton = Tag.render`
 							<button 
 							type="button" id="button-preview-submit" class="column  is-two-fifths button is-clickable is-medium is-primary">
-								Подвердить
+								${Loc.getMessage('SUBMIT')}
 							</button>
 						`;
 			submitButton.addEventListener('click', () => {
@@ -182,7 +181,7 @@ export class CouplesList
 			const cancelButton = Tag.render`
 							<button 
 							type="button" id="button-preview-cancel" class="column  is-two-fifths button is-danger is-clickable is-medium">
-								Отменить
+								${Loc.getMessage('CANCEL')}
 							</button>
 						`;
 			cancelButton.addEventListener('click', () => {
@@ -295,13 +294,9 @@ export class CouplesList
 
 	handleSubmitScheduleButtonClick()
 	{
-		console.log('submit');
 		BX.ajax.runAction(
 				'up:schedule.api.automaticSchedule.setGeneratedSchedule',
-				{
-					data:
-						{},
-				},
+				{},
 			)
 			.then(() => {
 				window.location.replace('/');
@@ -313,19 +308,15 @@ export class CouplesList
 
 	handleCancelScheduleButtonClick()
 	{
-		console.log('cancel');
 		BX.ajax.runAction(
 				'up:schedule.api.automaticSchedule.cancelGeneratedSchedule',
-				{
-					data:
-						{},
-				},
+				{},
 			)
 			.then(() => {
 				window.location.replace('/');
 			})
 			.catch((error) => {
-				console.log(error);
+				console.error(error);
 			});
 	}
 
@@ -355,7 +346,7 @@ export class CouplesList
 		const closeButton = document.getElementById('button-close-modal');
 		closeButton.addEventListener('click', () => {
 			this.closeCoupleModal();
-		}, {once: true});
+		}, { once: true });
 	}
 
 	createAddForm(numberOfDay, numberOfCouple)
@@ -417,7 +408,7 @@ export class CouplesList
 							coupleInfo: coupleInfo,
 						},
 				},
-			).then((response) => {
+			).then(() => {
 					this.sendMessage('', 'Пара успешно добавлена');
 					this.closeCoupleModal();
 					this.reload();
@@ -465,7 +456,7 @@ export class CouplesList
 							coupleInfo: coupleInfo,
 						},
 				},
-			).then((response) => {
+			).then(() => {
 					this.reload();
 				})
 				.catch((error) => {
@@ -539,7 +530,6 @@ export class CouplesList
 		form.appendChild(container);
 
 		modalBody.appendChild(form);
-		console.log(modalBody.innerHTML);
 		selectContainer.addEventListener('change', () => {
 			this.isValidInput = true;
 
@@ -753,7 +743,7 @@ export class CouplesList
 		form.appendChild(container);
 	}
 
-	fetchSubjectsForAddForm(numberOfDay, numberOfCouple)
+	fetchSubjectsForAddForm()
 	{
 		this.extractEntityFromUrl();
 		return (new Promise((resolve, reject) => {
@@ -783,10 +773,10 @@ export class CouplesList
 		const submitButton = document.getElementById('submit-form-button');
 		const cancelButton = document.getElementById('cancel-form-button');
 
-		if(submitButton && cancelButton)
+		if (submitButton && cancelButton)
 		{
-		submitButton.remove();
-		cancelButton.remove();
+			submitButton.remove();
+			cancelButton.remove();
 		}
 
 		this.deleteEmptyForm();
@@ -819,45 +809,11 @@ export class CouplesList
 	sendMessage(errorMessage = '', successMessage = '')
 	{
 		BX.ready(function() {
-			new BX.Up.Schedule.PopupMessage({
+			new PopupMessage({
 				rootNodeId: 'messages',
 				errorsMessage: errorMessage,
 				successMessage: successMessage,
 			});
 		});
 	}
-
-	// handleOpenCoupleAddButtonClick(numberOfDay, numberOfCouple)
-	// {
-	// 	console.log('open');
-	// 	const dropdown = document.getElementById(`button-add-${numberOfDay}-${numberOfCouple}`);
-	//
-	// 	const button = document.getElementById(`button-${numberOfDay}-${numberOfCouple}`);
-	// 	button.addEventListener('click', () => {
-	// 		this.handleCloseCoupleAddButtonClick(numberOfDay, numberOfCouple);
-	// 	}, {once: true});
-	// }
-	//
-	// handleCloseCoupleAddButtonClick(numberOfDay, numberOfCouple)
-	// {
-	// 	console.log('close');
-	// 	const dropdown = document.getElementById(`dropdown-${numberOfDay}-${numberOfCouple}`);
-	// 	dropdown.className = 'btn-edit-couple-container dropdown';
-	// 	const button = document.getElementById(`button-${numberOfDay}-${numberOfCouple}`);
-	// 	button.addEventListener('click', () => {
-	// 		this.handleOpenDropdownCoupleButtonClick(numberOfDay, numberOfCouple);
-	// 	}, {once: true});
-	// }
-	//
-	// handleCoupleDeleteButtonClick(numberOfDay, numberOfCouple)
-	// {
-	// 	console.log('close');
-	// 	const dropdown = document.getElementById(`button-remove-${numberOfDay}-${numberOfCouple}`);
-	// 	dropdown.className = 'btn-edit-couple-container dropdown';
-	// 	const button = document.getElementById(`button-${numberOfDay}-${numberOfCouple}`);
-	// 	button.addEventListener('click', () => {
-	// 		this.handleOpenDropdownCoupleButtonClick(numberOfDay, numberOfCouple);
-	// 	}, {once: true});
-	// }
-
 }

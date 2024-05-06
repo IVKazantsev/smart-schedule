@@ -30,7 +30,7 @@ Extension::load('up.popup-message');
 
 	<div id="back-button-container" class="mb-4">
 		<div class="column is-1 p-0">
-			<a id ="back-button"
+			<a id="back-button"
 			   class="is-60-height box is-flex is-align-items-center is-justify-content-center"
 			   href="/admin/#<?= $arResult['ENTITY_NAME'] ?>">
 				<?= GetMessage('BACK') ?>
@@ -41,37 +41,35 @@ Extension::load('up.popup-message');
 	<form method="post">
 		<?= bitrix_sessid_post() ?>
 
-		<?php
-		foreach ($arResult['ENTITY'] as $key => $field): ?>
+		<?php foreach ($arResult['ENTITY'] as $key => $field): ?>
 			<div class="is-60-height box edit-fields">
-				<?php
-				if (is_array($field)): ?>
+				<?php if (is_array($field)): ?>
 					<label class="label"><?= GetMessage($key) ?></label>
-					<?php
-					if (GetMessage('CHANGE_' . $key . '_WARNING')): ?>
+					<?php if (GetMessage('CHANGE_' . $key . '_WARNING')): ?>
 						<div class="has-text-danger"><?= GetMessage('CHANGE_' . $key . '_WARNING') ?></div>
-					<?php
-					endif; ?>
+					<?php endif; ?>
 
-					<?php
-					if ($key === 'SUBJECTS'): ?>
+					<?php if ($key === 'SUBJECTS'): ?>
 						<?php
 						$allSubjectsString = '';
 						foreach ($field['ALL_SUBJECTS'] as $subjectId => $subjectTitle)
 						{
-							$allSubjectsString .= "<option value='$subjectId'> "
-								.  str_replace('`', '', htmlspecialcharsbx($subjectTitle))
-								. "</option>";
+							$allSubjectsString .= "<option value='$subjectId'> " . str_replace(
+									'`',
+									'',
+									htmlspecialcharsbx(
+										$subjectTitle
+									)
+								) . "</option>";
 						}
 						?>
 						<div id="subjectContainer">
-							<?php
-							if (!empty($field['CURRENT_SUBJECTS'])): ?>
-								<div class="has-text-danger mb-2"><?= GetMessage('DELETE_SUBJECTS_WARNING') ?></div>
-							<?php
-							endif; ?>
-							<?php
-							foreach ($field['CURRENT_SUBJECTS'] as $subjectId => $subjectTitle): ?>
+							<?php if (!empty($field['CURRENT_SUBJECTS'])): ?>
+								<div class="has-text-danger mb-2">
+									<?= GetMessage('DELETE_SUBJECTS_WARNING') ?>
+								</div>
+							<?php endif; ?>
+							<?php foreach ($field['CURRENT_SUBJECTS'] as $subjectId => $subjectTitle): ?>
 								<div class="mb-2" id="current_subject_<?= $subjectId ?>">
 									<div class="box">
 										<div class="p-1 is-flex is-justify-content-space-between is-flex-wrap-nowrap is-align-items-center">
@@ -83,8 +81,7 @@ Extension::load('up.popup-message');
 										</div>
 									</div>
 								</div>
-							<?php
-							endforeach; ?>
+							<?php endforeach; ?>
 						</div>
 						<button class="button is-primary is-dark are-small" type="button" id="addSubject">
 							<?= GetMessage('ADD') ?> <?= mb_strtolower(GetMessage($key)) ?>
@@ -94,44 +91,40 @@ Extension::load('up.popup-message');
 							<div class="select">
 								<label>
 									<select name="<?= $key ?>">
-										<?php
-										foreach ($field as $subfield): ?>
+										<?php foreach ($field as $subfield): ?>
 											<option><?= htmlspecialcharsbx($subfield) ?></option>
-										<?php
-										endforeach; ?>
+										<?php endforeach; ?>
 									</select>
 								</label>
 							</div>
 						</div>
-					<?php
-					endif; ?>
-				<?php
-				else: ?>
+					<?php endif; ?>
+				<?php else: ?>
 					<div class="field">
 						<label class="label"><?= GetMessage($key) ?></label>
 						<div class="control">
-							<input class="input" minlength="<?= ($key === 'PASSWORD') || ($key === 'CONFIRM_PASSWORD') ? 6 : ''?>" type=
-							"<?php
-							if (($key === 'PASSWORD') || ($key === 'CONFIRM_PASSWORD'))
-							{
-								echo 'password';
-							}
-							elseif ($key === 'EMAIL')
-							{
-								echo 'email';
-							}
-							else
-							{
-								echo 'text';
-							}
-							?>" name="<?= $key ?>" value="<?= ($field) ?? ''?>" placeholder="<?= GetMessage("ENTER_$key") ?>">
+							<input class="input"
+								   minlength="<?= ($key === 'PASSWORD') || ($key === 'CONFIRM_PASSWORD') ? 6 : '' ?>"
+								   type="<?php
+								   if (($key === 'PASSWORD') || ($key === 'CONFIRM_PASSWORD'))
+								   {
+									   echo 'password';
+								   }
+								   elseif ($key === 'EMAIL')
+								   {
+									   echo 'email';
+								   }
+								   else
+								   {
+									   echo 'text';
+								   }
+								   ?>" name="<?= $key ?>" value="<?= ($field) ?? '' ?>"
+								   placeholder="<?= GetMessage("ENTER_$key") ?>">
 						</div>
 					</div>
-				<?php
-				endif; ?>
+				<?php endif; ?>
 			</div>
-		<?php
-		endforeach; ?>
+		<?php endforeach; ?>
 
 		<div class="columns">
 			<div class="column is-flex is-justify-content-center">
@@ -151,10 +144,10 @@ Extension::load('up.popup-message');
 		addSubjectButton.addEventListener('click', () => {
 			console.log('click');
 			const newListItem = document.createElement('div');
-			newListItem.className = "mb-2";
+			newListItem.className = 'mb-2';
 			newListItem.innerHTML = `<div class="select">
 										<label>
-											<select class="mb-1" name="add_subject_`+ i +`">
+											<select class="mb-1" name="add_subject_` + i + `">
 													<?= $allSubjectsString ?>
 											</select>
 										</label>
@@ -179,43 +172,43 @@ Extension::load('up.popup-message');
 		button.addEventListener('click', handleDeleteClick);
 	});
 
-	roleSelect = document.querySelector("[name='ROLE']");
-	if(roleSelect)
+	roleSelect = document.querySelector('[name=\'ROLE\']');
+	if (roleSelect)
 	{
-		groupSelect = document.querySelector("[name='GROUP']");
+		groupSelect = document.querySelector('[name=\'GROUP\']');
 		groupContainer = groupSelect.closest('.edit-fields');
 
 		addSubject = document.getElementById('addSubject');
 		subjectsContainer = addSubject.closest('.edit-fields');
 
-		roleDisplayingBySelectValue()
+		roleDisplayingBySelectValue();
 
 		roleSelect.addEventListener('change', () => {
-			roleDisplayingBySelectValue()
+			roleDisplayingBySelectValue();
 		});
 	}
 
 	function roleDisplayingBySelectValue()
 	{
-		if(roleSelect.value === 'Администратор')
+		if (roleSelect.value === 'Администратор')
 		{
 			groupContainer.style.display = 'none';
 			subjectsContainer.style.display = 'none';
 		}
-		else if(roleSelect.value === 'Преподаватель')
+		else if (roleSelect.value === 'Преподаватель')
 		{
 			groupContainer.style.display = 'none';
 			subjectsContainer.style.display = 'block';
 		}
-		else if(roleSelect.value === 'Студент')
+		else if (roleSelect.value === 'Студент')
 		{
 			groupContainer.style.display = 'block';
 			subjectsContainer.style.display = 'none';
 		}
 	}
 
-	BX.ready(function () {
-		window.PopupMessages = new BX.Up.Schedule.PopupMessage({
+	BX.ready(function() {
+		window.PopupMessages = new BX.Up.PopupMessage({
 			rootNodeId: 'messages',
 			errorsMessage: '<?= $arResult['ERRORS'] ?>',
 			successMessage: '<?= $arResult['SUCCESS'] ?>',

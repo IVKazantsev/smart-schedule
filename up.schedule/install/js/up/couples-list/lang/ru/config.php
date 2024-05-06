@@ -14,7 +14,9 @@ $MESS['ADD'] = 'Добавить';
 $MESS['EDIT'] = 'Изменить';
 $MESS['DELETE'] = 'Удалить';
 $MESS['SAVE'] = 'Сохранить';
+$MESS['SAVE_CHANGES'] = 'Сохранить изменения';
 $MESS['CANCEL'] = 'Отменить';
+$MESS['SUBMIT'] = 'Подтвердить';
 
 $MESS['DAY_1_OF_WEEK'] = 'Понедельник';
 $MESS['DAY_2_OF_WEEK'] = 'Вторник';

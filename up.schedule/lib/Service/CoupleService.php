@@ -2,7 +2,6 @@
 
 namespace Up\Schedule\Service;
 
-use Bitrix\Main\Context;
 use Up\Schedule\Repository\AudienceRepository;
 use Up\Schedule\Repository\CoupleRepository;
 use Up\Schedule\Repository\UserRepository;
@@ -20,7 +19,7 @@ class CoupleService
 		{
 			$teachers[] = [
 				'ID' => $teacher->getId(),
-				'TITLE' => $teacher->getName() . " " . $teacher->getLastName()
+				'TITLE' => $teacher->getName() . " " . $teacher->getLastName(),
 			];
 		}
 		foreach (AudienceRepository::getAudiencesBySubjectId($subjectId) as $audience)
@@ -50,6 +49,7 @@ class CoupleService
 			6 => "Шестая пара",
 			7 => "Седьмая пара",
 		];
+
 		return $data;
 	}
 }

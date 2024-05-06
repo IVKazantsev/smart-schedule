@@ -13,6 +13,7 @@ if (!defined("B_PROLOG_INCLUDED") || B_PROLOG_INCLUDED !== true)
 
 Extension::load('up.display-schedule-entities-list');
 Extension::load('up.couples-list');
+
 ?>
 
 <div class="column is-four-fifths">
@@ -24,9 +25,9 @@ Extension::load('up.couples-list');
 						<button id="entity-selection-button" class="button is-fullwidth is-60-height-child" aria-haspopup="true" aria-controls="dropdown-menu">
 							<span id="current-entity">
 								<?= ($arResult['CURRENT_ENTITY'])
-									? GetMessage($arResult['LOC_ENTITY'])
-									. ' '
-									. htmlspecialcharsbx($arResult['CURRENT_ENTITY_NAME'])
+									? GetMessage($arResult['LOC_ENTITY']) . ' ' . htmlspecialcharsbx(
+										$arResult['CURRENT_ENTITY_NAME']
+									)
 									: GetMessage(
 										"SELECT_{$arResult['LOC_ENTITY']}"
 									) ?>
@@ -47,11 +48,11 @@ Extension::load('up.couples-list');
 
 <script>
 	BX.ready(function() {
-		window.ScheduleCouplesList = new BX.Up.Schedule.CouplesList(
+		window.ScheduleCouplesList = new BX.Up.CouplesList(
 			{ rootNodeId: 'couples-container' },
 			false,
 		);
-		window.DisplayEntitiesList = new BX.Up.Schedule.DisplayScheduleEntitiesList({
+		window.DisplayEntitiesList = new BX.Up.DisplayScheduleEntitiesList({
 				rootNodeId: 'dropdown-menu-container',
 				entityInfo: window.ScheduleCouplesList.extractEntityFromUrl(),
 				scheduleCouplesList: window.ScheduleCouplesList,
