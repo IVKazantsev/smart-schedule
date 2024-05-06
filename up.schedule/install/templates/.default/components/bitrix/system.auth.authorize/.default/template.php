@@ -12,8 +12,13 @@ if (!empty($arResult['ERROR_MESSAGE']))
 	ShowMessage($arResult['ERROR_MESSAGE']);
 }
 ?>
-<div class="column is-flex mt-6">
-	<div class="mt-6 box is-flex is-flex-direction-column is-align-content-center is-align-items-center column is-one-third  is-offset-one-third">
+<div class="column columns mt-6">
+	<div class="column p-0 is-one-third">
+		<a class="button is-60-height is-link mt-6" href="/">
+			Вернуться к расписанию
+		</a>
+	</div>
+	<div class="mt-6 box is-flex is-flex-direction-column is-align-content-center is-align-items-center column is-one-third">
 
 		<p class="title bx-auth-note mt-4 is-4">
 			Авторизация
@@ -74,11 +79,11 @@ if (!empty($arResult['ERROR_MESSAGE']))
 				<p class="control">
 					<input type="submit" class="is-success is-dark button" name="Login" value="<?=GetMessage("AUTH_AUTHORIZE")?>" />
 				</p>
-				<p class="control">
-					<a class="button is-info" href="/">
-						Вернуться
-					</a>
-				</p>
+<!--				<p class="control">-->
+<!--					<a class="button is-link" href="/">-->
+<!--						Вернуться-->
+<!--					</a>-->
+<!--				</p>-->
 			</div>
 		</form>
 	</div>
