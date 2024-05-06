@@ -679,7 +679,7 @@ this.BX = this.BX || {};
 	      var errorMessage = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : '';
 	      var successMessage = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : '';
 	      BX.ready(function () {
-	        new BX.Up.Schedule.PopupMessage({
+	        new PopupMessage({
 	          rootNodeId: 'messages',
 	          errorsMessage: errorMessage,
 	          successMessage: successMessage

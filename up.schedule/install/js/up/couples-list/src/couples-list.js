@@ -1,7 +1,6 @@
 import { Tag, Type, Loc } from 'main.core';
 import { Validator } from '../../validator/src/validator';
 import { PopupMessage } from '../../popup-message/src/popup-message';
-
 export class CouplesList
 {
 	formData = {};
@@ -810,7 +809,7 @@ export class CouplesList
 	sendMessage(errorMessage = '', successMessage = '')
 	{
 		BX.ready(function() {
-			new BX.Up.Schedule.PopupMessage({
+			new PopupMessage({
 				rootNodeId: 'messages',
 				errorsMessage: errorMessage,
 				successMessage: successMessage,

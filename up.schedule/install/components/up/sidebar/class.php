@@ -1,12 +1,12 @@
 <?php
 
-use Bitrix\Main\Engine\CurrentUser;
-use Up\Schedule\Repository\UserRepository;
-
 if (!defined('B_PROLOG_INCLUDED') || B_PROLOG_INCLUDED !== true)
 {
 	die();
 }
+
+use Bitrix\Main\Engine\CurrentUser;
+use Up\Schedule\Repository\UserRepository;
 
 class SidebarComponent extends CBitrixComponent
 {
