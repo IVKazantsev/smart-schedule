@@ -226,11 +226,6 @@ a:hover {
 	width: 100%;
 }
 
-/*.selected-sidebar-entity {*/
-/*	color: white !important;*/
-/*	!*transition: color 1s ease;*!*/
-/*}*/
-
 .user-info-container {
 	width: 100%;
 	text-overflow: ellipsis;

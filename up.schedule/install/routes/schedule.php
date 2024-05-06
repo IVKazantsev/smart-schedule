@@ -4,16 +4,14 @@ use Bitrix\Main\Context;
 use Bitrix\Main\Routing\Controllers\PublicPageController;
 use Bitrix\Main\Routing\RoutingConfigurator;
 use Up\Schedule\Service\EntityService;
-use Up\Schedule\Service\CoupleService;
-use Up\Schedule\Service\ImportService;
 
 return static function(RoutingConfigurator $routes) {
 	$routes->get('/', new PublicPageController('/local/modules/up.schedule/views/schedule.php'));
 	$routes->get('/schedule/', new PublicPageController('/local/modules/up.schedule/views/schedule.php'));
 
-	$routes->get('/profile/', new PublicPageController('/local/modules/up.schedule/views/profile.php'));
 	$routes->get('/admin/', new PublicPageController('/local/modules/up.schedule/views/admin.php'));
 	$routes->post('/admin/', new PublicPageController('/local/modules/up.schedule/views/admin.php'));
+
 	$routes->get('/optimize/', new PublicPageController('/local/modules/up.schedule/views/optimize.php'));
 	$routes->get('/statistics/', new PublicPageController('/local/modules/up.schedule/views/statistics.php'));
 
@@ -21,8 +19,7 @@ return static function(RoutingConfigurator $routes) {
 	$routes->get('/scheduling/preview/', new PublicPageController('/local/modules/up.schedule/views/scheduling-preview.php'));
 	$routes->get('/scheduling/preview/{entity}/{id}/', new PublicPageController('/local/modules/up.schedule/views/scheduling-preview.php'))
 		->where('entity', '[a-zA-Z]+')
-		->where('id', '[0-9]+')
-	;
+		->where('id', '[0-9]+');
 
 	$routes
 		->where('entity', '[a-zA-Z]+')
@@ -55,20 +52,7 @@ return static function(RoutingConfigurator $routes) {
 				EntityService::deleteEntityById($entityName, $entityId);
 				LocalRedirect("/admin/#$entityName");
 			});
-
-			// $routes->post('/admin/edit/{entity}/{id}/', function () {
-			// 	$entityId = (int)Context::getCurrent()?->getRequest()->get('id');
-			// 	$entityName = Context::getCurrent()?->getRequest()->get('entity');
-			// 	if(!check_bitrix_sessid())
-			// 	{
-			// 		LocalRedirect("/admin/edit/$entityName/$entityId/");
-			// 	}
-			// 	EntityService::editEntityById($entityName, $entityId);
-			// 	LocalRedirect("/admin/edit/$entityName/$entityId/");
-			// });
 		});
-
-
 
 	$routes->any('/login/', new PublicPageController('/local/modules/up.schedule/views/login.php'));
 	$routes->get('/logout/', function () {

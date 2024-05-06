@@ -41,37 +41,33 @@ Extension::load('up.popup-message');
 	<form method="post">
 		<?= bitrix_sessid_post() ?>
 
-		<?php
-		foreach ($arResult['ENTITY'] as $key => $field): ?>
+		<?php foreach ($arResult['ENTITY'] as $key => $field): ?>
 			<div class="is-60-height box edit-fields">
-				<?php
-				if (is_array($field)): ?>
+				<?php if (is_array($field)): ?>
 					<label class="label"><?= GetMessage($key) ?></label>
-					<?php
-					if (GetMessage('CHANGE_' . $key . '_WARNING')): ?>
+					<?php if (GetMessage('CHANGE_' . $key . '_WARNING')): ?>
 						<div class="has-text-danger"><?= GetMessage('CHANGE_' . $key . '_WARNING') ?></div>
-					<?php
-					endif; ?>
+					<?php endif; ?>
 
-					<?php
-					if ($key === 'SUBJECTS'): ?>
+					<?php if ($key === 'SUBJECTS'): ?>
 						<?php
 						$allSubjectsString = '';
 						foreach ($field['ALL_SUBJECTS'] as $subjectId => $subjectTitle)
 						{
-							$allSubjectsString .= "<option value='$subjectId'> "
-								.  str_replace('`', '', htmlspecialcharsbx($subjectTitle))
-								. "</option>";
+							$allSubjectsString .= "<option value='$subjectId'> " . str_replace(
+									'`',
+									'',
+									htmlspecialcharsbx(
+										$subjectTitle
+									)
+								) . "</option>";
 						}
 						?>
 						<div id="subjectContainer">
-							<?php
-							if (!empty($field['CURRENT_SUBJECTS'])): ?>
+							<?php if (!empty($field['CURRENT_SUBJECTS'])): ?>
 								<div class="has-text-danger mb-2"><?= GetMessage('DELETE_SUBJECTS_WARNING') ?></div>
-							<?php
-							endif; ?>
-							<?php
-							foreach ($field['CURRENT_SUBJECTS'] as $subjectId => $subjectTitle): ?>
+							<?php endif; ?>
+							<?php  foreach ($field['CURRENT_SUBJECTS'] as $subjectId => $subjectTitle): ?>
 								<div class="mb-2" id="current_subject_<?= $subjectId ?>">
 									<div class="box">
 										<div class="p-1 is-flex is-justify-content-space-between is-flex-wrap-nowrap is-align-items-center">
@@ -83,41 +79,33 @@ Extension::load('up.popup-message');
 										</div>
 									</div>
 								</div>
-							<?php
-							endforeach; ?>
+							<?php endforeach; ?>
 						</div>
 						<button class="button is-primary is-dark are-small" type="button" id="addSubject">
 							<?= GetMessage('ADD') ?> <?= mb_strtolower(GetMessage($key)) ?>
 						</button>
-					<?php
-					else: ?>
+					<?php else: ?>
 						<div class="control">
 							<div class="select">
 								<label>
 									<select name="<?= $key ?>">
-										<?php
-										foreach ($field as $subfield): ?>
+										<?php foreach ($field as $subfield): ?>
 											<option><?= htmlspecialcharsbx($subfield) ?></option>
-										<?php
-										endforeach; ?>
+										<?php endforeach; ?>
 									</select>
 								</label>
 							</div>
 						</div>
-					<?php
-					endif; ?>
-				<?php
-				else: ?>
-					<?php
-					if ($key === 'LOGIN'): ?>
+					<?php endif; ?>
+				<?php else: ?>
+					<?php if ($key === 'LOGIN'): ?>
 						<div class="field">
 							<label class="label"><?= GetMessage($key) ?></label>
 							<div class="is-size-5">
 								<?= htmlspecialcharsbx($field) ?>
 							</div>
 						</div>
-					<?php
-					else: ?>
+					<?php else: ?>
 						<div class="field">
 							<label class="label"><?= GetMessage($key) ?></label>
 							<div class="control">
@@ -130,13 +118,10 @@ Extension::load('up.popup-message');
 								<strong> <?= htmlspecialcharsbx($field) ?> </strong>
 							</p>
 						</div>
-					<?php
-					endif; ?>
-				<?php
-				endif; ?>
+					<?php endif; ?>
+				<?php endif; ?>
 			</div>
-		<?php
-		endforeach; ?>
+		<?php endforeach; ?>
 
 		<div class="columns">
 			<div class="column is-flex is-justify-content-center">
@@ -152,29 +137,22 @@ Extension::load('up.popup-message');
 		<div id="modal" class="box">
 			<div class="column">
 				<div class="is-size-4"><?= GetMessage('DELETION_CONFIRM_HELPER') ?></div>
-				<?php
-				if (!empty($arResult['RELATED_ENTITIES'])): ?>
+				<?php  if (!empty($arResult['RELATED_ENTITIES'])): ?>
 					<div class="mt-3 mb-2 has-text-danger"><?= GetMessage('FIELDS_BEING_REMOVED_WARNING') ?>:</div>
 					<div class="related-entities">
-						<?php
-						foreach ($arResult['RELATED_ENTITIES'] as $key => $entity): ?>
+						<?php foreach ($arResult['RELATED_ENTITIES'] as $key => $entity): ?>
 							<strong><?= GetMessage($key) ?></strong>
-							<?php
-							foreach ($entity as $exemplar): ?>
+							<?php  foreach ($entity as $exemplar): ?>
 								<div class="box edit-fields mb-1">
-									<?php
-									foreach ($exemplar as $field): ?>
+									<?php  foreach ($exemplar as $field): ?>
 										<?= htmlspecialcharsbx($field) ?>
-									<?php
-									endforeach; ?>
+									<?php endforeach; ?>
 								</div>
-							<?php
-							endforeach; ?>
-						<?php
-						endforeach; ?>
+							<?php endforeach; ?>
+						<?php endforeach; ?>
 					</div>
-				<?php
-				endif; ?>
+				<?php endif; ?>
+
 				<div class="is-flex is-align-items-center is-justify-content-center mt-2">
 					<button id="delete-button" class="button is-danger" type="submit" formaction="
 					<?= str_replace('edit', 'delete', $APPLICATION->GetCurUri()) ?>">

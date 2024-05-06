@@ -110,7 +110,6 @@ this.BX.Up = this.BX.Up || {};
 	          }
 	        }).then(function (response) {
 	          var data = response.data;
-	          console.log(data);
 	          resolve(data);
 	        })["catch"](function (error) {
 	          reject(error);

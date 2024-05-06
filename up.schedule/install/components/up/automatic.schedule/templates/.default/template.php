@@ -1,4 +1,5 @@
 <?php
+
 use Bitrix\Main\UI\Extension;
 
 /**
@@ -11,6 +12,7 @@ if (!defined("B_PROLOG_INCLUDED") || B_PROLOG_INCLUDED !== true)
 }
 
 Extension::load('up.automatic-schedule');
+
 ?>
 
 <div class="column">
@@ -22,13 +24,11 @@ Extension::load('up.automatic-schedule');
 		</div>
 	</div>
 
-	<div id="automatic-schedule-container">
-
-	</div>
+	<div id="automatic-schedule-container"></div>
 </div>
 
 <script>
-	BX.ready(function () {
+	BX.ready(function() {
 		window.ScheduleAutomaticSchedule = new BX.Up.Schedule.AutomaticSchedule({
 			rootNodeId: 'automatic-schedule-container',
 		});

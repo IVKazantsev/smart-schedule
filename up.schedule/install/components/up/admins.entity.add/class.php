@@ -6,7 +6,6 @@ if (!defined('B_PROLOG_INCLUDED') || B_PROLOG_INCLUDED !== true)
 }
 
 use Bitrix\Main\Context;
-use Bitrix\Main\Engine\CurrentUser;
 use Up\Schedule\Service\EntityService;
 
 class AdminsEntityAddComponent extends CBitrixComponent

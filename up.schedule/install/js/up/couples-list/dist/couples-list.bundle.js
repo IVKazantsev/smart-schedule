@@ -144,14 +144,14 @@ this.BX.Up = this.BX.Up || {};
 	        var buttonsPreviewContainer = document.createElement('div');
 	        buttonsPreviewContainer.classList.add('is-flex', 'column', 'columns', 'is-full', 'is-justify-content-space-evenly', 'is-flex-direction-row', 'mb-2');
 	        buttonsPreviewContainer.id = 'buttons-preview-container';
-	        var label = main_core.Tag.render(_templateObject || (_templateObject = babelHelpers.taggedTemplateLiteral(["\n\t\t\t\t<label class=\"label column m-2\">\u0421\u043E\u0445\u0440\u0430\u043D\u0438\u0442\u044C \u0438\u0437\u043C\u0435\u043D\u0435\u043D\u0438\u044F?</label>\n\t\t\t"])));
-	        var submitButton = main_core.Tag.render(_templateObject2 || (_templateObject2 = babelHelpers.taggedTemplateLiteral(["\n\t\t\t\t\t\t\t<button \n\t\t\t\t\t\t\ttype=\"button\" id=\"button-preview-submit\" class=\"column  is-two-fifths button is-clickable is-medium is-primary\">\n\t\t\t\t\t\t\t\t\u041F\u043E\u0434\u0432\u0435\u0440\u0434\u0438\u0442\u044C\n\t\t\t\t\t\t\t</button>\n\t\t\t\t\t\t"])));
+	        var label = main_core.Tag.render(_templateObject || (_templateObject = babelHelpers.taggedTemplateLiteral(["\n\t\t\t\t<label class=\"label column m-2\">", "?</label>\n\t\t\t"])), main_core.Loc.getMessage('SAVE_CHANGES'));
+	        var submitButton = main_core.Tag.render(_templateObject2 || (_templateObject2 = babelHelpers.taggedTemplateLiteral(["\n\t\t\t\t\t\t\t<button \n\t\t\t\t\t\t\ttype=\"button\" id=\"button-preview-submit\" class=\"column  is-two-fifths button is-clickable is-medium is-primary\">\n\t\t\t\t\t\t\t\t", "\n\t\t\t\t\t\t\t</button>\n\t\t\t\t\t\t"])), main_core.Loc.getMessage('SUBMIT'));
 	        submitButton.addEventListener('click', function () {
 	          _this3.handleSubmitScheduleButtonClick();
 	        }, {
 	          once: true
 	        });
-	        var cancelButton = main_core.Tag.render(_templateObject3 || (_templateObject3 = babelHelpers.taggedTemplateLiteral(["\n\t\t\t\t\t\t\t<button \n\t\t\t\t\t\t\ttype=\"button\" id=\"button-preview-cancel\" class=\"column  is-two-fifths button is-danger is-clickable is-medium\">\n\t\t\t\t\t\t\t\t\u041E\u0442\u043C\u0435\u043D\u0438\u0442\u044C\n\t\t\t\t\t\t\t</button>\n\t\t\t\t\t\t"])));
+	        var cancelButton = main_core.Tag.render(_templateObject3 || (_templateObject3 = babelHelpers.taggedTemplateLiteral(["\n\t\t\t\t\t\t\t<button \n\t\t\t\t\t\t\ttype=\"button\" id=\"button-preview-cancel\" class=\"column  is-two-fifths button is-danger is-clickable is-medium\">\n\t\t\t\t\t\t\t\t", "\n\t\t\t\t\t\t\t</button>\n\t\t\t\t\t\t"])), main_core.Loc.getMessage('CANCEL'));
 	        cancelButton.addEventListener('click', function () {
 	          _this3.handleCancelScheduleButtonClick();
 	        }, {
@@ -221,10 +221,7 @@ this.BX.Up = this.BX.Up || {};
 	  }, {
 	    key: "handleSubmitScheduleButtonClick",
 	    value: function handleSubmitScheduleButtonClick() {
-	      console.log('submit');
-	      BX.ajax.runAction('up:schedule.api.automaticSchedule.setGeneratedSchedule', {
-	        data: {}
-	      }).then(function () {
+	      BX.ajax.runAction('up:schedule.api.automaticSchedule.setGeneratedSchedule', {}).then(function () {
 	        window.location.replace('/');
 	      })["catch"](function (error) {
 	        console.log(error);
@@ -233,13 +230,10 @@ this.BX.Up = this.BX.Up || {};
 	  }, {
 	    key: "handleCancelScheduleButtonClick",
 	    value: function handleCancelScheduleButtonClick() {
-	      console.log('cancel');
-	      BX.ajax.runAction('up:schedule.api.automaticSchedule.cancelGeneratedSchedule', {
-	        data: {}
-	      }).then(function () {
+	      BX.ajax.runAction('up:schedule.api.automaticSchedule.cancelGeneratedSchedule', {}).then(function () {
 	        window.location.replace('/');
 	      })["catch"](function (error) {
-	        console.log(error);
+	        console.error(error);
 	      });
 	    }
 	  }, {
@@ -319,7 +313,7 @@ this.BX.Up = this.BX.Up || {};
 	          data: {
 	            coupleInfo: coupleInfo
 	          }
-	        }).then(function (response) {
+	        }).then(function () {
 	          _this6.sendMessage('', 'Пара успешно добавлена');
 	          _this6.closeCoupleModal();
 	          _this6.reload();
@@ -361,7 +355,7 @@ this.BX.Up = this.BX.Up || {};
 	          data: {
 	            coupleInfo: coupleInfo
 	          }
-	        }).then(function (response) {
+	        }).then(function () {
 	          _this7.reload();
 	        })["catch"](function (error) {
 	          console.error(error);
@@ -409,7 +403,6 @@ this.BX.Up = this.BX.Up || {};
 	      container.appendChild(divControl);
 	      form.appendChild(container);
 	      modalBody.appendChild(form);
-	      console.log(modalBody.innerHTML);
 	      selectContainer.addEventListener('change', function () {
 	        _this8.isValidInput = true;
 	        _this8.insertAudiencesDataForForm(selectContainer.value);
@@ -554,7 +547,7 @@ this.BX.Up = this.BX.Up || {};
 	    }
 	  }, {
 	    key: "fetchSubjectsForAddForm",
-	    value: function fetchSubjectsForAddForm(numberOfDay, numberOfCouple) {
+	    value: function fetchSubjectsForAddForm() {
 	      var _this12 = this;
 	      this.extractEntityFromUrl();
 	      return new Promise(function (resolve, reject) {
@@ -611,38 +604,7 @@ this.BX.Up = this.BX.Up || {};
 	          successMessage: successMessage
 	        });
 	      });
-	    } // handleOpenCoupleAddButtonClick(numberOfDay, numberOfCouple)
-	    // {
-	    // 	console.log('open');
-	    // 	const dropdown = document.getElementById(`button-add-${numberOfDay}-${numberOfCouple}`);
-	    //
-	    // 	const button = document.getElementById(`button-${numberOfDay}-${numberOfCouple}`);
-	    // 	button.addEventListener('click', () => {
-	    // 		this.handleCloseCoupleAddButtonClick(numberOfDay, numberOfCouple);
-	    // 	}, {once: true});
-	    // }
-	    //
-	    // handleCloseCoupleAddButtonClick(numberOfDay, numberOfCouple)
-	    // {
-	    // 	console.log('close');
-	    // 	const dropdown = document.getElementById(`dropdown-${numberOfDay}-${numberOfCouple}`);
-	    // 	dropdown.className = 'btn-edit-couple-container dropdown';
-	    // 	const button = document.getElementById(`button-${numberOfDay}-${numberOfCouple}`);
-	    // 	button.addEventListener('click', () => {
-	    // 		this.handleOpenDropdownCoupleButtonClick(numberOfDay, numberOfCouple);
-	    // 	}, {once: true});
-	    // }
-	    //
-	    // handleCoupleDeleteButtonClick(numberOfDay, numberOfCouple)
-	    // {
-	    // 	console.log('close');
-	    // 	const dropdown = document.getElementById(`button-remove-${numberOfDay}-${numberOfCouple}`);
-	    // 	dropdown.className = 'btn-edit-couple-container dropdown';
-	    // 	const button = document.getElementById(`button-${numberOfDay}-${numberOfCouple}`);
-	    // 	button.addEventListener('click', () => {
-	    // 		this.handleOpenDropdownCoupleButtonClick(numberOfDay, numberOfCouple);
-	    // 	}, {once: true});
-	    // }
+	    }
 	  }]);
 	  return CouplesList;
 	}();

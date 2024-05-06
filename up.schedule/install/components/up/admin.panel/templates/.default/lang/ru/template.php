@@ -9,7 +9,6 @@ $MESS['AUDIENCES'] = 'Аудитории';
 $MESS['AUDIENCE_TYPE'] = 'Типы аудиторий';
 $MESS['ADD'] = 'Добавить';
 $MESS['SEARCH_PLACEHOLDER'] = 'Введите что-нибудь';
+
 $MESS['SEARCH'] = 'Искать';
-
-
 $MESS['BACK'] = 'Назад';

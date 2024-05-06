@@ -32,6 +32,7 @@ if (!defined("B_PROLOG_INCLUDED") || B_PROLOG_INCLUDED !== true)
 			</a>
 		</div>
 	</div>
+
 	<div class="columns tabs is-active">
 		<div class="column">
 			<a class="is-60-height box is-flex is-align-items-center is-justify-content-center" href="/admin/#group">
@@ -44,6 +45,7 @@ if (!defined("B_PROLOG_INCLUDED") || B_PROLOG_INCLUDED !== true)
 			</a>
 		</div>
 	</div>
+
 	<div class="columns tabs is-active">
 		<div class="column">
 			<a class="is-60-height box is-flex is-align-items-center is-justify-content-center" href="/admin/#audienceType">
@@ -61,12 +63,13 @@ if (!defined("B_PROLOG_INCLUDED") || B_PROLOG_INCLUDED !== true)
 				<a id="add-button" class="ml-2 column is-1 buttonLink is-60-height mb-5 box is-flex is-align-items-center is-justify-content-center" onclick="location.href=getEntityAddUrl()">
 					<?= GetMessage('ADD') ?>
 				</a>
-				<input id="search-input" class="input column is-60-height is-offset-4" type="text" placeholder=
-				"<?= GetMessage('SEARCH_PLACEHOLDER') ?>">
+				<input id="search-input" class="input column is-60-height is-offset-4" type="text"
+					   placeholder="<?= GetMessage('SEARCH_PLACEHOLDER') ?>">
 				<a href="/admin/" id="search-button" class="column ml-2 is-1 is-offset-0 buttonLink is-60-height mb-5 box is-flex is-align-items-center is-justify-content-center">
 					<?= GetMessage('SEARCH') ?>
 				</a>
 			</div>
+
 			<div class="" id="subject"></div>
 			<div class="" id="user"></div>
 			<div class="" id="group"></div>
@@ -109,8 +112,9 @@ if (!defined("B_PROLOG_INCLUDED") || B_PROLOG_INCLUDED !== true)
 			const searchButton = document.getElementById('search-button');
 			const searchInput = document.getElementById('search-input');
 
-			searchInput.addEventListener("keypress", function(event) {
-				if (event.key === "Enter") {
+			searchInput.addEventListener('keypress', function(event) {
+				if (event.key === 'Enter')
+				{
 					event.preventDefault();
 					searchButton.click();
 				}
@@ -125,7 +129,7 @@ if (!defined("B_PROLOG_INCLUDED") || B_PROLOG_INCLUDED !== true)
 			const backButton = document.getElementById('back-button');
 			backButton.addEventListener('click', () => {
 				searchInput.value = '';
-			})
+			});
 		});
 	});
 </script>

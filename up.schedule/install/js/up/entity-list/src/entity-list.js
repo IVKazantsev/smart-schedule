@@ -216,7 +216,6 @@ export class EntityList
 				},
 			).then((response) => {
 					const data = response.data;
-					console.log(data);
 					resolve(data);
 				})
 				.catch((error) => {

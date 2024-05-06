@@ -20,15 +20,15 @@ if (!defined("B_PROLOG_INCLUDED") || B_PROLOG_INCLUDED !== true)
 			<?php
 			if ($arResult['IS_AUTHORIZED']): ?>
 				<li class="is-flex is-justify-content-flex-start">
-					<a id="user-info" class="column is-9 is-60-height is-flex is-flex-direction-column is-align-items-center is-justify-content-center is-flex-grow-5" href="/profile/">
+					<div id="user-info" class="column is-10 is-60-height is-flex is-flex-direction-column is-align-items-center is-justify-content-center is-flex-grow-5">
 						<div class="user-info-container">
 							<?= htmlspecialcharsbx($arResult['USER_NAME'] . ' ' . $arResult['USER_LAST_NAME']) ?>
 						</div>
 						<div class="user-info-container">
 							<?= htmlspecialcharsbx($arResult['USER_ROLE']) ?>
 						</div>
-					</a>
-					<a class="column is-3 is-60-height is-flex is-align-items-center is-justify-content-end" href="/logout/">
+					</div>
+					<a class="column p-1 is-2 is-60-height is-flex is-align-items-center is-justify-content-center" href="/logout/">
 						<svg
 							xmlns="http://www.w3.org/2000/svg"
 							class="icon icon-tabler icon-tabler-logout"
@@ -46,10 +46,10 @@ if (!defined("B_PROLOG_INCLUDED") || B_PROLOG_INCLUDED !== true)
 			<?php
 			else: ?>
 				<li class="is-flex is-justify-content-flex-start">
-					<div class="is-60-height is-flex is-align-items-center is-justify-content-center is-flex-grow-5">
+					<div id="user-info" class="column is-10 is-60-height is-flex is-flex-direction-column is-align-items-center is-justify-content-center is-flex-grow-5">
 						<?= htmlspecialcharsbx($arResult['USER_ROLE']) ?>
 					</div>
-					<a class="is-60-height is-flex is-align-items-center is-justify-content-end" href="/login/">
+					<a class="column p-1 is-2 is-60-height is-flex is-align-items-center is-justify-content-center" href="/login/">
 						<svg width="24" height="24"
 							 xmlns="http://www.w3.org/2000/svg"
 							 stroke-linejoin="round"

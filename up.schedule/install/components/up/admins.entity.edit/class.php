@@ -6,7 +6,6 @@ if (!defined('B_PROLOG_INCLUDED') || B_PROLOG_INCLUDED !== true)
 }
 
 use Bitrix\Main\Context;
-use Bitrix\Main\Engine\CurrentUser;
 use Up\Schedule\Service\EntityService;
 
 class AdminsEntityEditComponent extends CBitrixComponent
@@ -62,6 +61,7 @@ class AdminsEntityEditComponent extends CBitrixComponent
 		if ($errors !== '')
 		{
 			$this->arResult['ERRORS'] = $errors;
+
 			return;
 		}
 

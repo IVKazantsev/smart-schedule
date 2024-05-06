@@ -1,4 +1,5 @@
 <?php
+
 use Bitrix\Main\UI\Extension;
 
 /**
@@ -12,6 +13,7 @@ if (!defined("B_PROLOG_INCLUDED") || B_PROLOG_INCLUDED !== true)
 
 Extension::load('up.display-schedule-entities-list');
 Extension::load('up.couples-list');
+
 ?>
 
 <div id="messages"></div>

@@ -18,63 +18,6 @@ class SidebarComponent extends CBitrixComponent
 
 	public function executeComponent(): void
 	{
-		/*echo "<pre>";
-		for($i = 0; $i < 32; $i++)
-		{
-			$algo = new GeneticSchedule();
-			$algo->createPopulation($algo->getPopulationSize());
-			$string = \Up\Schedule\AutomaticScheduleAgent::testAgent();
-			if ($string === '')
-			{
-				break;
-			}
-		}*/
-//		$algo = new GeneticSchedule();
-//		echo "<pre>";
-//		$population = $algo->createPopulation($algo->getPopulationSize());
-//		//$algo->geneticAlgorithm(100);
-//
-//		$population = $algo->doIterations($population, 10);
-
-//		$cache = Cache::createInstance();
-//		if ($cache->initCache(3600, 'schedule', '/schedule/'))
-//		{
-//			$variables = $cache->getVars();
-//			/*return '';*/
-//			if ($variables['status'] === 'inProcess') {
-//				$population = unserialize($variables['population'], ['allowed_classes' => true]);
-//				//$result = self::doIterations($population);
-//				$newPopulation = $algo->doIterations($population, 10);
-//				$fit = $newPopulation[0]->getFitness();
-//				if (count($newPopulation) === 1) {
-//					$result = [
-//						'status' => 'finished',
-//						'schedule' => serialize($newPopulation),
-//						'progress' => $fit,
-//					];
-//					// завершить агента прогрессбара
-//				} else {
-//					$result = [
-//						'status' => 'inProcess',
-//						'population' => serialize($newPopulation),
-//						'progress' => $fit,
-//					];
-//				}
-//				/*return '';*/
-//			}
-//		}
-//		$population = $alg->createPopulation(10);
-//		$population[0]->setFitness(10);
-//		//echo implode(' ', $population[0]->couples->getGroupIdList());
-//		$serialized = serialize($population);
-//		$unserialized = unserialize($serialized, ['allowed_classes' => true]);
-//		$newPopulation = $alg->doIterations($unserialized, 3);
-//
-//		$serialized = serialize($newPopulation);
-//		$unserialized = unserialize($serialized, ['allowed_classes' => true]);
-//		$newPopulation = $alg->doIterations($unserialized, 3);
-		/*echo "<br>";
-		echo implode(' ', $unserialized[0]->couples->getGroupIdList());*/
 		$this->prepareTemplateParams();
 		$this->fetchUserInfo();
 		$this->includeComponentTemplate();
