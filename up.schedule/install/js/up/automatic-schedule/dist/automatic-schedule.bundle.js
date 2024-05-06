@@ -1,6 +1,5 @@
 /* eslint-disable */
 this.BX = this.BX || {};
-this.BX.Up = this.BX.Up || {};
 (function (exports,main_core) {
 	'use strict';
 
@@ -117,4 +116,4 @@ this.BX.Up = this.BX.Up || {};
 
 	exports.AutomaticSchedule = AutomaticSchedule;
 
-}((this.BX.Up.Schedule = this.BX.Up.Schedule || {}),BX));
+}((this.BX.Up = this.BX.Up || {}),BX));

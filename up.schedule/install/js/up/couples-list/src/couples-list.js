@@ -1,6 +1,6 @@
 import { Tag, Type, Loc } from 'main.core';
 import { Validator } from '../../validator/src/validator';
-import { PopupMessage } from 'up.popup-message';
+import { PopupMessage } from '../../popup-message/src/popup-message';
 
 export class CouplesList
 {

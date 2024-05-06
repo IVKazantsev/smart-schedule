@@ -63,12 +63,12 @@ Extension::load('up.couples-list');
 
 <script>
 	BX.ready(function () {
-		window.ScheduleCouplesList = new BX.Up.Schedule.CouplesList({
+		window.ScheduleCouplesList = new BX.Up.CouplesList({
 			rootNodeId: 'couples-container',
 			entity: '<?= $arResult['ENTITY'] ?>',
 			entityId: '<?= $arResult['CURRENT_ENTITY_ID'] ?>',
 		});
-		window.DisplayEntitiesList = new BX.Up.Schedule.DisplayScheduleEntitiesList({
+		window.DisplayEntitiesList = new BX.Up.DisplayScheduleEntitiesList({
 			rootNodeId: 'dropdown-menu-container',
 			entityInfo: (window.ScheduleCouplesList.entity && window.ScheduleCouplesList.entityId) ? {
 				'entity': window.ScheduleCouplesList.entity,

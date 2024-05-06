@@ -186,7 +186,7 @@ export class DisplayScheduleEntitiesList
 				});
 				entityLink.classList.add('is-active');
 
-				document.getElementById('entity-selection-button').placeholder = Loc.getMessage(this.locEntity) + ' ' + Validator.escapeHTML(entityLink.textContent);
+				document.getElementById('entity-selection-button').placeholder = Loc.getMessage(this.locEntity) + ' ' +Validator.escapeHTML(entityLink.textContent);
 				document.getElementById('entity-selection-button').value = '';
 
 				if (history.pushState)

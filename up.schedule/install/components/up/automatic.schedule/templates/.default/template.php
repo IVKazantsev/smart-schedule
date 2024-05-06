@@ -29,7 +29,7 @@ Extension::load('up.automatic-schedule');
 
 <script>
 	BX.ready(function() {
-		window.ScheduleAutomaticSchedule = new BX.Up.Schedule.AutomaticSchedule({
+		window.ScheduleAutomaticSchedule = new BX.Up.AutomaticSchedule({
 			rootNodeId: 'automatic-schedule-container',
 		});
 	});

@@ -104,7 +104,7 @@ if (!defined("B_PROLOG_INCLUDED") || B_PROLOG_INCLUDED !== true)
 
 	waitForElement('#entity-list-app', element => {
 		BX.ready(function() {
-			window.ScheduleEntityList = new BX.Up.Schedule.EntityList({
+			window.ScheduleEntityList = new BX.Up.EntityList({
 				rootNodeId: 'entity-list-app',
 				entity: document.getElementById('entity-list-app').parentElement.id,
 			});

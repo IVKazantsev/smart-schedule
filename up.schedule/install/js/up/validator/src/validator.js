@@ -1,10 +1,7 @@
 export class Validator
 {
-	constructor(options = {})
+	static escapeHTML(text)
 	{
-	}
-
-	static escapeHTML(text) {
 		if(!text || text === '')
 		{
 			return '';

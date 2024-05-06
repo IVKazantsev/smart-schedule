@@ -1,5 +1,5 @@
 import { Type, Tag, Loc } from 'main.core';
-import { Validator } from '../../validator/src/validator';
+// import { TextValidator } from 'up.text-validator';
 
 export class EntityList
 {

@@ -1,7 +1,6 @@
 /* eslint-disable */
 this.BX = this.BX || {};
-this.BX.Up = this.BX.Up || {};
-(function (exports,main_core,up_popupMessage) {
+(function (exports,main_core) {
 	'use strict';
 
 	var Validator = /*#__PURE__*/function () {
@@ -20,7 +19,89 @@ this.BX.Up = this.BX.Up || {};
 	  return Validator;
 	}();
 
-	var _templateObject, _templateObject2, _templateObject3, _templateObject4, _templateObject5, _templateObject6, _templateObject7, _templateObject8, _templateObject9, _templateObject10, _templateObject11, _templateObject12, _templateObject13, _templateObject14, _templateObject15, _templateObject16, _templateObject17, _templateObject18, _templateObject19, _templateObject20, _templateObject21, _templateObject22, _templateObject23, _templateObject24, _templateObject25, _templateObject26, _templateObject27, _templateObject28, _templateObject29, _templateObject30, _templateObject31, _templateObject32, _templateObject33, _templateObject34, _templateObject35, _templateObject36, _templateObject37, _templateObject38, _templateObject39, _templateObject40, _templateObject41, _templateObject42, _templateObject43;
+	var _templateObject, _templateObject2;
+	var PopupMessage = /*#__PURE__*/function () {
+	  function PopupMessage() {
+	    var options = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+	    babelHelpers.classCallCheck(this, PopupMessage);
+	    if (main_core.Type.isStringFilled(options.rootNodeId)) {
+	      this.rootNodeId = options.rootNodeId;
+	    } else {
+	      throw new Error('EntityList: options.rootNodeId required');
+	    }
+	    this.rootNode = document.getElementById(this.rootNodeId);
+	    if (!this.rootNode) {
+	      throw new Error("EntityList: element with id = \"".concat(this.rootNodeId, "\" not found"));
+	    }
+	    if (main_core.Type.isStringFilled(options.errorsMessage)) {
+	      this.errorsMessage = options.errorsMessage;
+	    }
+	    if (main_core.Type.isStringFilled(options.successMessage)) {
+	      this.successMessage = options.successMessage;
+	    }
+	    this.reload();
+	  }
+	  babelHelpers.createClass(PopupMessage, [{
+	    key: "reload",
+	    value: function reload() {
+	      var errorsMessage = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : '';
+	      var successMessage = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : '';
+	      if (errorsMessage !== '') {
+	        this.errorsMessage = errorsMessage;
+	      }
+	      if (errorsMessage !== '') {
+	        this.successMessage = successMessage;
+	      }
+	      this.render();
+	    }
+	  }, {
+	    key: "render",
+	    value: function render() {
+	      this.rootNode.innerHTML = '';
+	      if (this.errorsMessage && this.errorsMessage !== '') {
+	        this.clearMessages();
+	        var errorsContainer = main_core.Tag.render(_templateObject || (_templateObject = babelHelpers.taggedTemplateLiteral(["\n\t\t\t\t<div class=\"box errors active\" id=\"errors\">\n\t\t\t\t\t<div class=\"error-title has-background-danger has-text-white is-size-4 p-3 is-flex is-justify-content-center\">\n\t\t\t\t\t\t", "\n\t\t\t\t\t</div>\n\t\t\t\t\t<div class=\"errors-text p-3\">\n\t\t\t\t\t\t", "\n\t\t\t\t\t</div>\n\t\t\t\t</div>\n\t\t\t"])), main_core.Loc.getMessage('ERROR'), this.errorsMessage);
+	        this.rootNode.appendChild(errorsContainer);
+	        this.setTimeouts();
+	      }
+	      if (this.successMessage && this.successMessage !== '') {
+	        this.clearMessages();
+	        var _errorsContainer = main_core.Tag.render(_templateObject2 || (_templateObject2 = babelHelpers.taggedTemplateLiteral(["\n\t\t\t\t<div class=\"success box active has-background-success\" id=\"success\">\n\t\t\t\t\t<div class=\"is-60-height p-3 has-text-white is-size-4\">\n\t\t\t\t\t\t", ".\n\t\t\t\t\t</div>\n\t\t\t\t</div>\n\t\t\t"])), this.successMessage);
+	        this.rootNode.appendChild(_errorsContainer);
+	        this.setTimeouts();
+	      }
+	    }
+	  }, {
+	    key: "clearMessages",
+	    value: function clearMessages() {
+	      if (document.getElementById('errors')) {
+	        document.getElementById('errors').remove();
+	      }
+	      if (document.getElementById('success')) {
+	        document.getElementById('success').remove();
+	      }
+	    }
+	  }, {
+	    key: "setTimeouts",
+	    value: function setTimeouts() {
+	      var success = document.getElementById('success');
+	      var errors = document.getElementById('errors');
+	      if (success) {
+	        setTimeout(function () {
+	          success.classList.remove('active');
+	        }, 3000);
+	      }
+	      if (errors) {
+	        setTimeout(function () {
+	          errors.classList.remove('active');
+	        }, 5000);
+	      }
+	    }
+	  }]);
+	  return PopupMessage;
+	}();
+
+	var _templateObject$1, _templateObject2$1, _templateObject3, _templateObject4, _templateObject5, _templateObject6, _templateObject7, _templateObject8, _templateObject9, _templateObject10, _templateObject11, _templateObject12, _templateObject13, _templateObject14, _templateObject15, _templateObject16, _templateObject17, _templateObject18, _templateObject19, _templateObject20, _templateObject21, _templateObject22, _templateObject23, _templateObject24, _templateObject25, _templateObject26, _templateObject27, _templateObject28, _templateObject29, _templateObject30, _templateObject31, _templateObject32, _templateObject33, _templateObject34, _templateObject35, _templateObject36, _templateObject37, _templateObject38, _templateObject39, _templateObject40, _templateObject41, _templateObject42, _templateObject43;
 	var CouplesList = /*#__PURE__*/function () {
 	  function CouplesList() {
 	    var options = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
@@ -144,8 +225,8 @@ this.BX.Up = this.BX.Up || {};
 	        var buttonsPreviewContainer = document.createElement('div');
 	        buttonsPreviewContainer.classList.add('is-flex', 'column', 'columns', 'is-full', 'is-justify-content-space-evenly', 'is-flex-direction-row', 'mb-2');
 	        buttonsPreviewContainer.id = 'buttons-preview-container';
-	        var label = main_core.Tag.render(_templateObject || (_templateObject = babelHelpers.taggedTemplateLiteral(["\n\t\t\t\t<label class=\"label column m-2\">", "?</label>\n\t\t\t"])), main_core.Loc.getMessage('SAVE_CHANGES'));
-	        var submitButton = main_core.Tag.render(_templateObject2 || (_templateObject2 = babelHelpers.taggedTemplateLiteral(["\n\t\t\t\t\t\t\t<button \n\t\t\t\t\t\t\ttype=\"button\" id=\"button-preview-submit\" class=\"column  is-two-fifths button is-clickable is-medium is-primary\">\n\t\t\t\t\t\t\t\t", "\n\t\t\t\t\t\t\t</button>\n\t\t\t\t\t\t"])), main_core.Loc.getMessage('SUBMIT'));
+	        var label = main_core.Tag.render(_templateObject$1 || (_templateObject$1 = babelHelpers.taggedTemplateLiteral(["\n\t\t\t\t<label class=\"label column m-2\">", "?</label>\n\t\t\t"])), main_core.Loc.getMessage('SAVE_CHANGES'));
+	        var submitButton = main_core.Tag.render(_templateObject2$1 || (_templateObject2$1 = babelHelpers.taggedTemplateLiteral(["\n\t\t\t\t\t\t\t<button \n\t\t\t\t\t\t\ttype=\"button\" id=\"button-preview-submit\" class=\"column  is-two-fifths button is-clickable is-medium is-primary\">\n\t\t\t\t\t\t\t\t", "\n\t\t\t\t\t\t\t</button>\n\t\t\t\t\t\t"])), main_core.Loc.getMessage('SUBMIT'));
 	        submitButton.addEventListener('click', function () {
 	          _this3.handleSubmitScheduleButtonClick();
 	        }, {
@@ -611,4 +692,4 @@ this.BX.Up = this.BX.Up || {};
 
 	exports.CouplesList = CouplesList;
 
-}((this.BX.Up.Schedule = this.BX.Up.Schedule || {}),BX,BX));
+}((this.BX.Up = this.BX.Up || {}),BX));
