@@ -1,12 +1,12 @@
 <?php
 
+use Bitrix\Main\Engine\CurrentUser;
+use Up\Schedule\Repository\UserRepository;
+
 if (!defined('B_PROLOG_INCLUDED') || B_PROLOG_INCLUDED !== true)
 {
 	die();
 }
-
-use Bitrix\Main\Engine\CurrentUser;
-use Up\Schedule\Repository\UserRepository;
 
 class SidebarComponent extends CBitrixComponent
 {
@@ -32,14 +32,9 @@ class SidebarComponent extends CBitrixComponent
 
 		if ($user)
 		{
-			if ($isAdmin)
-			{
-				$this->arResult['USER_ROLE'] = 'Администратор';
-			}
-			else
-			{
-				$this->arResult['USER_ROLE'] = $user->get('UP_SCHEDULE_ROLE')?->get('TITLE') ?? 'Гость';
-			}
+			$this->arResult['IS_ADMIN'] = $isAdmin;
+			$this->arResult['USER_ROLE'] = $user->get('UP_SCHEDULE_ROLE')?->get('TITLE') ?? GetMessage('GUEST');
+
 			$this->arResult['USER_NAME'] = $user->getName();
 			$this->arResult['USER_LAST_NAME'] = $user->getLastName();
 
@@ -48,7 +43,9 @@ class SidebarComponent extends CBitrixComponent
 			return;
 		}
 
-		$this->arResult['USER_ROLE'] = 'Гость';
+		$this->arResult['USER_ROLE'] = GetMessage('GUEST');
+
+		$this->arResult['IS_ADMIN'] = false;
 
 		$this->arResult['IS_AUTHORIZED'] = false;
 	}
