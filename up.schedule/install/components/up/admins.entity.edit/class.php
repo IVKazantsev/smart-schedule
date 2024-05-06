@@ -5,8 +5,12 @@ if (!defined('B_PROLOG_INCLUDED') || B_PROLOG_INCLUDED !== true)
 	die();
 }
 
+use Bitrix\Main\ArgumentException;
 use Bitrix\Main\Context;
 use Bitrix\Main\Engine\CurrentUser;
+use Bitrix\Main\ObjectPropertyException;
+use Bitrix\Main\SystemException;
+use Up\Schedule\Exception\EditEntity;
 use Up\Schedule\Service\EntityService;
 
 class AdminsEntityEditComponent extends CBitrixComponent
@@ -57,14 +61,20 @@ class AdminsEntityEditComponent extends CBitrixComponent
 			return;
 		}
 
-		$errors = EntityService::editEntityById($entityName, $entityId);
-
-		if ($errors !== '')
+		try
 		{
-			$this->arResult['ERRORS'] = $errors;
+			EntityService::editEntityById($entityName, $entityId);
+			$this->arResult['SUCCESS'] = GetMessage('SUCCESS_ADDING');
+		}
+		catch (ArgumentException|ObjectPropertyException|SystemException)
+		{
+			$this->arResult['ERRORS'] = 'Что-то пошло не так';
 			return;
 		}
-
-		$this->arResult['SUCCESS'] = GetMessage('SUCCESS_EDIT');
+		catch (EditEntity $exception)
+		{
+			$this->arResult['ERRORS'] = $exception->getMessage();
+			return;
+		}
 	}
 }

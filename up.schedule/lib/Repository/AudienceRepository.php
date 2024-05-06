@@ -8,6 +8,8 @@ use Bitrix\Main\ORM\Fields\Relations\Reference;
 use Bitrix\Main\ORM\Query\Join;
 use Bitrix\Main\ORM\Query\Query;
 use Bitrix\Main\SystemException;
+use Up\Schedule\Exception\AddEntity;
+use Up\Schedule\Exception\EditEntity;
 use Up\Schedule\Model\AudienceTable;
 use Up\Schedule\Model\AudienceTypeTable;
 use Up\Schedule\Model\CoupleTable;
@@ -45,30 +47,44 @@ class AudienceRepository
 
 	public static function getCountOfEntities(string $searchInput): int
 	{
-		$result = AudienceTable::query()->addSelect(Query::expr()->count('ID'), 'CNT')->whereLike(
+		$result = AudienceTable::query()
+			->addSelect(
+				Query::expr()->count('ID'), 'CNT'
+			)
+			->whereLike(
 				'NUMBER',
 				"%$searchInput%"
-			)->exec();
+			)
+			->exec();
 
 		return $result->fetch()['CNT'];
 	}
 
 	public static function getById(int $id): ?EO_Audience
 	{
-		return AudienceTable::query()->setSelect(['ID', 'NUMBER', 'AUDIENCE_TYPE'])->where('ID', $id)->fetchObject();
+		return AudienceTable::query()
+			->setSelect(['ID', 'NUMBER', 'AUDIENCE_TYPE'])
+			->where('ID', $id)
+			->fetchObject();
 	}
 
 	public static function getArrayById(int $id): array|false
 	{
-		return AudienceTable::query()->setSelect(['ID', 'NUMBER', 'AUDIENCE_TYPE'])->where('ID', $id)->fetch();
+		return AudienceTable::query()
+			->setSelect(['ID', 'NUMBER', 'AUDIENCE_TYPE'])
+			->where('ID', $id)
+			->fetch();
 	}
 
 	public static function getArrayForAdminById(int $id): ?array
 	{
-		$result = AudienceTable::query()->setSelect([
-														'NUMBER',
-														'TYPE' => 'AUDIENCE_TYPE.TITLE',
-													])->where('ID', $id)->fetch();
+		$result = AudienceTable::query()
+			->setSelect([
+					'NUMBER',
+					'TYPE' => 'AUDIENCE_TYPE.TITLE',
+					])
+			->where('ID', $id)
+			->fetch();
 
 		if ($result === null)
 		{
@@ -85,29 +101,42 @@ class AudienceRepository
 		return $result;
 	}
 
-	public static function add(array $data): string
+	/**
+	 * @throws ArgumentException
+	 * @throws ObjectPropertyException
+	 * @throws SystemException
+	 * @throws AddEntity
+	 */
+	public static function add(array $data): void
 	{
 		if (($number = $data['NUMBER']) === null)
 		{
-			return 'Введите номер аудитории';
+			throw new AddEntity('Введите номер аудитории');
 		}
 		if (($type = $data['TYPE']) === null)
 		{
-			return 'Выберите тип аудитории';
+			throw new AddEntity('Выберите тип аудитории');
 		}
 		$audience = new EO_Audience();
 
 		$audience->setNumber($number);
-		$typeEntityObject = AudienceTypeTable::query()->setSelect(['ID'])->where('TITLE', $type)->fetchObject();
+
+		$typeEntityObject = AudienceTypeTable::query()
+			->setSelect(['ID'])
+			->where('TITLE', $type)
+			->fetchObject();
+
 		$audience->setAudienceType($typeEntityObject);
 		$result = $audience->save();
 
 		if(!$result->isSuccess())
 		{
-			return implode('<br>', $result->getErrorMessages());
+			throw new AddEntity(
+				implode(
+					'<br>', $result->getErrorMessages()
+				)
+			);
 		}
-
-		return '';
 	}
 
 	public static function getArrayForAdding($data = []): ?array
@@ -123,15 +152,26 @@ class AudienceRepository
 		return $result;
 	}
 
-	public static function editById(int $id, array $data): string
+	/**
+	 * @throws EditEntity
+	 * @throws ObjectPropertyException
+	 * @throws ArgumentException
+	 * @throws SystemException
+	 */
+	public static function editById(int $id, array $data): void
 	{
 		if ($id === 0)
 		{
-			return 'Введите аудиторию для редактирования';
+			throw new EditEntity('Введите аудиторию для редактирования');
 		}
 
-		$audience = AudienceTable::getByPrimary($id)->fetchObject();
-		$type = AudienceTypeTable::query()->setSelect(['ID'])->where('TITLE', $data['TYPE'])->fetchObject();
+		$audience = AudienceTable::getByPrimary($id)
+			->fetchObject();
+
+		$type = AudienceTypeTable::query()
+			->setSelect(['ID'])
+			->where('TITLE', $data['TYPE'])
+			->fetchObject();
 
 		if($data['NUMBER'])
 		{
@@ -148,22 +188,28 @@ class AudienceRepository
 
 		if(!$result->isSuccess())
 		{
-			return implode('<br>', $result->getErrorMessages());
+			throw new EditEntity(implode('<br>', $result->getErrorMessages()));
 		}
-
-		return '';
-		// TODO: handle exceptions
 	}
 
 	public static function deleteById(int $id): void
 	{
-		$relatedCouples = CoupleTable::query()->setSelect(
-			['SUBJECT.TITLE', 'AUDIENCE.NUMBER', 'GROUP.TITLE', 'TEACHER.NAME', 'TEACHER.LAST_NAME']
-		)->where('AUDIENCE_ID', $id)->fetchCollection();
+		$relatedCouples = CoupleTable::query()
+			->setSelect([
+				'SUBJECT.TITLE',
+				'AUDIENCE.NUMBER',
+				'GROUP.TITLE',
+				'TEACHER.NAME',
+				'TEACHER.LAST_NAME'
+			])
+			->where('AUDIENCE_ID', $id)
+			->fetchCollection();
+
 		foreach ($relatedCouples as $couple)
 		{
 			$couple->delete();
 		}
+
 		AudienceTable::delete($id);
 
 		//TODO: handle exceptions
@@ -172,9 +218,17 @@ class AudienceRepository
 	public static function getArrayOfRelatedEntitiesById(int $id): ?array
 	{
 		$relatedEntities = [];
-		$relatedCouples = CoupleTable::query()->setSelect(
-			['SUBJECT.TITLE', 'AUDIENCE.NUMBER', 'GROUP.TITLE', 'TEACHER.NAME', 'TEACHER.LAST_NAME']
-		)->where('AUDIENCE_ID', $id)->fetchAll();
+		$relatedCouples = CoupleTable::query()
+			->setSelect([
+				'SUBJECT.TITLE',
+				'AUDIENCE.NUMBER',
+				'GROUP.TITLE',
+				'TEACHER.NAME',
+				'TEACHER.LAST_NAME'
+			])
+			->where('AUDIENCE_ID', $id)
+			->fetchAll();
+
 		if (!empty($relatedCouples))
 		{
 			$relatedEntities['COUPLES'] = $relatedCouples;
@@ -189,20 +243,33 @@ class AudienceRepository
 		$subject = SubjectRepository::getArrayById($id);
 		$audienceTypeId = $subject['AUDIENCE_TYPE_ID'];
 
-		return AudienceTable::query()->setSelect(['ID', 'NUMBER', 'TYPE' => 'UP_SCHEDULE_AUDIENCE_TYPE'])->where(
+		return AudienceTable::query()
+			->setSelect([
+				'ID',
+				'NUMBER',
+				'TYPE' => 'UP_SCHEDULE_AUDIENCE_TYPE'
+			])
+			->where(
 			'AUDIENCE_TYPE_ID',
 			$audienceTypeId
-		)->registerRuntimeField(
-			(new Reference(
+			)
+			->registerRuntimeField(
+				(new Reference(
 				'UP_SCHEDULE_AUDIENCE_TYPE', AudienceTypeTable::class, Join::on('this.AUDIENCE_TYPE_ID', 'ref.ID')
-			))
-		)->fetchCollection();
+			)))
+			->fetchCollection();
 	}
 
 	public static function getByNumber(string $number): ?EO_Audience
 	{
-		return AudienceTable::query()->setSelect(['ID', 'NUMBER', 'AUDIENCE_TYPE.TITLE'])->where('NUMBER', $number)
-							->fetchObject();
+		return AudienceTable::query()
+			->setSelect([
+				'ID',
+				'NUMBER',
+				'AUDIENCE_TYPE.TITLE'
+			])
+			->where('NUMBER', $number)
+			->fetchObject();
 	}
 
 	public static function getArrayOfAudiencesBySubjectId(int $id): ?array
@@ -210,30 +277,21 @@ class AudienceRepository
 		$subject = SubjectRepository::getArrayById($id);
 		$audienceTypeId = $subject['AUDIENCE_TYPE_ID'];
 
-		return AudienceTable::query()->setSelect(['ID', 'NUMBER', 'TYPE' => 'UP_SCHEDULE_AUDIENCE_TYPE'])->where(
+		return AudienceTable::query()
+			->setSelect([
+				'ID',
+				'NUMBER',
+				'TYPE' => 'UP_SCHEDULE_AUDIENCE_TYPE'])
+			->where(
 			'AUDIENCE_TYPE_ID',
 			$audienceTypeId
-		)->registerRuntimeField(
-			(new Reference(
-				'UP_SCHEDULE_AUDIENCE_TYPE', AudienceTypeTable::class, Join::on('this.AUDIENCE_TYPE_ID', 'ref.ID')
-			))
-		)->fetchAll();
+			)
+			->registerRuntimeField(
+				(new Reference(
+					'UP_SCHEDULE_AUDIENCE_TYPE', AudienceTypeTable::class, Join::on('this.AUDIENCE_TYPE_ID', 'ref.ID')
+			)))
+			->fetchAll();
 	}
-	//	public static function getArrayOfAudiencesBySubjectsId(array $id): ?array
-	//	{
-	//		$subjects = SubjectRepository::getArrayByIds($id);
-	//
-	//		/*$audiencesTypeId = $subject['AUDIENCE_TYPE_ID'];*/
-	//		return AudienceTable::query()
-	//			->setSelect(['ID', 'NUMBER', 'TYPE' => 'UP_SCHEDULE_AUDIENCE_TYPE'])
-	//			->setGroup([''])
-	//			->whereIn('AUDIENCE_TYPE_ID', $audiencesTypeId)
-	//			->registerRuntimeField(
-	//				(new Reference(
-	//					'UP_SCHEDULE_AUDIENCE_TYPE', AudienceTypeTable::class, Join::on('this.AUDIENCE_TYPE_ID', 'ref.ID')
-	//				)))
-	//			->fetchAll();
-	//	}
 
 	public static function deleteAllFromDB(): string
 	{
@@ -245,11 +303,16 @@ class AudienceRepository
 
 	public static function getArrayByAudienceTypeId(int $id): array
 	{
-		return AudienceTable::query()->setSelect(['NUMBER'])->where('AUDIENCE_TYPE.ID', $id)->fetchAll();
+		return AudienceTable::query()
+			->setSelect(['NUMBER'])
+			->where('AUDIENCE_TYPE.ID', $id)
+			->fetchAll();
 	}
 
 	public static function deleteByAudienceTypeId(int $id): void
 	{
-		AudienceTable::deleteByFilter(['AUDIENCE_TYPE_ID' => $id]);
+		AudienceTable::deleteByFilter([
+			'AUDIENCE_TYPE_ID' => $id
+		]);
 	}
 }

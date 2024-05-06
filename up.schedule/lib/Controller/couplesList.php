@@ -2,18 +2,18 @@
 
 namespace Up\Schedule\Controller;
 
+use Bitrix\Main\ArgumentException;
 use Bitrix\Main\Engine\ActionFilter\Authentication;
 use Bitrix\Main\Engine\Controller;
-use Bitrix\Main\Entity\Query;
 use Bitrix\Main\Error;
-use Up\Schedule\Model\EO_Couple_Collection;
-use Up\Schedule\Model\EO_Subject;
+use Bitrix\Main\ObjectPropertyException;
+use Bitrix\Main\SystemException;
+use Up\Schedule\Exception\AddCouple;
 use Up\Schedule\Repository\AudienceRepository;
 use Up\Schedule\Repository\CoupleRepository;
 use Up\Schedule\Repository\GroupRepository;
 use Up\Schedule\Repository\SubjectRepository;
 use Up\Schedule\Repository\UserRepository;
-use Up\Schedule\Service\CoupleService;
 use Up\Schedule\Service\EntityService;
 
 class CouplesList extends Controller
@@ -71,8 +71,7 @@ class CouplesList extends Controller
 
 	public function addCoupleAction(array $coupleInfo): array
 	{
-		if (!EntityService::isCurrentUserAdmin())
-		{
+		if (!EntityService::isCurrentUserAdmin()) {
 			$this->addError(new Error('you must be an administrator', 'inappropriate_role'));
 		}
 
@@ -83,15 +82,12 @@ class CouplesList extends Controller
 			|| !$coupleInfo['AUDIENCE_ID']
 			|| !$coupleInfo['DAY_OF_WEEK']
 			|| !$coupleInfo['NUMBER_IN_DAY']
-		)
-		{
+		) {
 			$this->addError(new Error('all info must be filled', 'not_filled_couple_info'));
 		}
 		$couplesAtThisTime = CoupleRepository::getByDayAndNumber((int)$coupleInfo['DAY_OF_WEEK'], (int)$coupleInfo['NUMBER_IN_DAY']);
-		foreach ($couplesAtThisTime as $couple)
-		{
-			if ($couple->getAudienceId() === (int)$coupleInfo['AUDIENCE_ID'])
-			{
+		foreach ($couplesAtThisTime as $couple) {
+			if ($couple->getAudienceId() === (int)$coupleInfo['AUDIENCE_ID']) {
 				$this->addError(new Error('the couple in this audience is busy at this time', 'busy_audience'));
 				return [
 					'result' => false,
@@ -99,8 +95,7 @@ class CouplesList extends Controller
 				];
 			}
 
-			if ($couple->getTeacherId() === (int)$coupleInfo['TEACHER_ID'])
-			{
+			if ($couple->getTeacherId() === (int)$coupleInfo['TEACHER_ID']) {
 				$this->addError(new Error('the couple with this teacher is busy at this time', 'busy_teacher'));
 				return [
 					'result' => false,
@@ -108,8 +103,7 @@ class CouplesList extends Controller
 				];
 			}
 
-			if ($couple->getGroupId() === (int)$coupleInfo['GROUP_ID'])
-			{
+			if ($couple->getGroupId() === (int)$coupleInfo['GROUP_ID']) {
 				$this->addError(new Error('the couple in this group is busy at this time', 'busy_group'));
 				return [
 					'result' => false,
@@ -118,18 +112,32 @@ class CouplesList extends Controller
 			}
 		}
 
-		$errors = CoupleRepository::addCouple($coupleInfo);
-		if($errors !== '')
+		$result = [];
+
+		try
 		{
-			$this->addError(new Error('failed to add a couple', 'failed_to_add_couple'));
-			return [
-				'result' => false,
-				'errors' => $errors,
+			CoupleRepository::addCouple($coupleInfo);
+			$result = [
+				'result' => true,
 			];
 		}
-		return [
-			'result' => true,
-		];
+		catch (ObjectPropertyException|ArgumentException|SystemException)
+		{
+			$this->addError(new Error('failed to add a couple', 'failed_to_add_couple'));
+			$result = [
+				'result' => false,
+			];
+		}
+		catch (AddCouple $exception)
+		{
+			$result = [
+				'result' => false,
+				'errors' => $exception->getMessage(),
+			];
+		}
+
+		return $result;
+
 	}
 
 	public function fetchAddCoupleDataAction(string $entity, int $id): array
@@ -140,8 +148,7 @@ class CouplesList extends Controller
 		}
 
 		$result = [];
-		/*$numberOfDay = (int)request()->get('numberOfDay');
-		$numberOfCouple = (int)request()->get('numberOfCouple');*/
+
 		$this->fetchCouples($entity, $id);
 		$getMethodName = "getArrayBy{$entity}Id";
 		$subjects = SubjectRepository::$getMethodName($id);

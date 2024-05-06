@@ -93,12 +93,6 @@ class AutomaticScheduleAgent
 		}
 	}
 
-//	private static function checkIterations(int $amountOfIterations): bool
-//	{
-//
-//	}
-
-
 	private static function startAlgorithm(int $amountOfPopulations, array $population = []): array
 	{
 		if (empty($population))

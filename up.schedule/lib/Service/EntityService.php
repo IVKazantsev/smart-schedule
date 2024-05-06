@@ -3,11 +3,16 @@
 namespace Up\Schedule\Service;
 
 use Bitrix\Main\Application;
+use Bitrix\Main\ArgumentException;
 use Bitrix\Main\Context;
 use Bitrix\Main\DB\TransactionException;
 use Bitrix\Main\Engine\CurrentUser;
+use Bitrix\Main\ObjectPropertyException;
+use Bitrix\Main\SystemException;
 use CUser;
 use Error;
+use Up\Schedule\Exception\AddEntity;
+use Up\Schedule\Exception\EditEntity;
 use Up\Schedule\Model\EO_Audience;
 use Up\Schedule\Model\EO_Audience_Collection;
 use Up\Schedule\Model\EO_AudienceType;
@@ -95,33 +100,32 @@ class EntityService
 			echo "Entity $entityName not found"; die();
 		}
 	}
-	public static function editEntityById(string $entityName, int $entityId): string
+
+	/**
+	 * @throws EditEntity
+	 * @throws ObjectPropertyException
+	 * @throws ArgumentException
+	 * @throws SystemException
+	 */
+	public static function editEntityById(string $entityName, int $entityId): void
 	{
-		try
-		{
-			return self::getEntityRepositoryName($entityName)::editById(
-				$entityId,
-				self::getData($entityName)
-			);
-		}
-		catch (Error)
-		{
-			return "Не удалось отредактировать сущность $entityName";
-		}
+		(self::getEntityRepositoryName($entityName))::editById(
+			$entityId,
+			self::getData($entityName)
+		);
 	}
 
-	public static function addEntity(string $entityName): string
+	/**
+	 * @throws ArgumentException
+	 * @throws AddEntity
+	 * @throws ObjectPropertyException
+	 * @throws SystemException
+	 */
+	public static function addEntity(string $entityName): void
 	{
-		try
-		{
-			return self::getEntityRepositoryName($entityName)::add(
-				self::getData($entityName)
-			);
-		}
-		catch (Error)
-		{
-			return "Не удалось добавить $entityName";
-		}
+		(self::getEntityRepositoryName($entityName))::add(
+			self::getData($entityName)
+		);
 	}
 
 	public static function getEntityInfoForAdding(string $entityName): ?array
