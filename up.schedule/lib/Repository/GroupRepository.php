@@ -6,13 +6,9 @@ use Bitrix\Main\ORM\Query\Query;
 use Up\Schedule\Exception\AddEntityException;
 use Up\Schedule\Exception\EditEntityException;
 use Up\Schedule\Model\CoupleTable;
-use Up\Schedule\Model\EO_Couple;
 use Up\Schedule\Model\EO_Group;
 use Up\Schedule\Model\EO_Group_Collection;
-use Up\Schedule\Model\EO_Subject;
-use Up\Schedule\Model\EO_Subject_Collection;
 use Up\Schedule\Model\GroupTable;
-use Up\Schedule\Model\SubjectTable;
 
 class GroupRepository
 {
@@ -73,15 +69,15 @@ class GroupRepository
 			->fetchObject();
 	}
 
-	public static function getArrayById(int $id): array|false
+	public static function getArrayById(int $id): ?array
 	{
-		return GroupTable::query()
+		return (GroupTable::query()
 			->setSelect(['ID', 'TITLE', 'SUBJECTS'])
 			->where('ID', $id)
-			->fetch();
+			->fetch()) ?? null;
 	}
 
-	public static function getArrayOfGroupsBySubjectId(int $id): ?array
+	public static function getArrayOfGroupsBySubjectId(int $id): array
 	{
 		return GroupTable::query()
 						 ->setSelect(['ID', 'TITLE', 'SUBJECTS'])
@@ -89,7 +85,7 @@ class GroupRepository
 						 ->fetchAll();
 	}
 
-	public static function getArrayForAdminById(int $id): ?array
+	public static function getArrayForAdminById(int $id): array
 	{
 		$data = [];
 		$group = self::getById($id);
@@ -110,7 +106,7 @@ class GroupRepository
 		return $data;
 	}
 
-	public static function getArrayForAdding($data = []): ?array
+	public static function getArrayForAdding($data = []): array
 	{
 		$result = [];
 		$result['TITLE'] = $data['TITLE'] ?? '';
@@ -235,7 +231,7 @@ class GroupRepository
 		//TODO: handle exceptions
 	}
 
-	public static function getArrayOfRelatedEntitiesById(int $id): ?array
+	public static function getArrayOfRelatedEntitiesById(int $id): array
 	{
 		$relatedEntities = [];
 

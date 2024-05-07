@@ -5,12 +5,7 @@ namespace Up\Schedule\Controller;
 use Bitrix\Main\Engine\ActionFilter\Csrf;
 use Bitrix\Main\Engine\ActionFilter\HttpMethod;
 use Bitrix\Main\Engine\Controller;
-use Bitrix\Main\Engine\CurrentUser;
-use Up\Schedule\Repository\AudienceRepository;
-use Up\Schedule\Repository\AudienceTypeRepository;
-use Up\Schedule\Repository\GroupRepository;
-use Up\Schedule\Repository\SubjectRepository;
-use Up\Schedule\Repository\UserRepository;
+use Up\Schedule\Service\EntityService;
 
 class UserRole extends Controller
 {
@@ -26,12 +21,6 @@ class UserRole extends Controller
 
 	public function isAdminAction(): bool
 	{
-		$user = CurrentUser::get();
-		if(!$user)
-		{
-			return false;
-		}
-
-		return $user->isAdmin();
+		return EntityService::getCurrentUser()->isAdmin();
 	}
 }

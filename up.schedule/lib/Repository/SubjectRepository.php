@@ -8,16 +8,13 @@ use Bitrix\Main\ORM\Fields\Relations\Reference;
 use Bitrix\Main\ORM\Query\Join;
 use Bitrix\Main\ORM\Query\Query;
 use Bitrix\Main\SystemException;
-use Bitrix\Main\UserTable;
 use Up\Schedule\Exception\AddEntityException;
 use Up\Schedule\Exception\EditEntityException;
 use Up\Schedule\Model\AudienceTable;
 use Up\Schedule\Model\AudienceTypeTable;
 use Up\Schedule\Model\CoupleTable;
-use Up\Schedule\Model\EO_Audience;
 use Up\Schedule\Model\EO_Subject;
 use Up\Schedule\Model\EO_Subject_Collection;
-use Up\Schedule\Model\GroupSubjectTable;
 use Up\Schedule\Model\SubjectTable;
 use Up\Schedule\Model\SubjectTeacherTable;
 
@@ -67,12 +64,12 @@ class SubjectRepository
 		return $result->fetch()['CNT'];
 	}
 
-	public static function getArrayById(int $id): array|false
+	public static function getArrayById(int $id): ?array
 	{
-		return SubjectTable::query()
+		return (SubjectTable::query()
 			->setSelect(['ID', 'TITLE', 'AUDIENCE_TYPE_ID'])
 			->where('ID', $id)
-			->fetch();
+			->fetch()) ?? null;
 	}
 
 	public static function getByIds(array $id): ?EO_Subject_Collection
@@ -137,7 +134,7 @@ class SubjectRepository
 			->fetchCollection();
 	}
 
-	public static function getArrayByGroupId(int $id): ?array
+	public static function getArrayByGroupId(int $id): array
 	{
 		return SubjectTable::query()
 			->setSelect([
@@ -150,7 +147,7 @@ class SubjectRepository
 			->fetchAll();
 	}
 
-	public static function getArrayByAudienceId(int $id): ?array
+	public static function getArrayByAudienceId(int $id): array
 	{
 		return SubjectTable::query()
 			->setSelect([
@@ -168,7 +165,7 @@ class SubjectRepository
 	}
 
 	// TODO
-	public static function getArrayByTeacherId(int $id): ?array
+	public static function getArrayByTeacherId(int $id): array
 	{
 		return SubjectTable::query()
 			->setSelect([
@@ -197,6 +194,10 @@ class SubjectRepository
 					'UP_SCHEDULE_AUDIENCE_TYPE', AudienceTypeTable::class, Join::on('this.AUDIENCE_TYPE_ID', 'ref.ID')
 			))
 		)->where('ID', $id)->fetch();
+		if(!$subject)
+		{
+			return null;
+		}
 
 		$subject['TYPE'] = array_unique(
 			array_merge_recursive(
@@ -208,7 +209,7 @@ class SubjectRepository
 		return $subject;
 	}
 
-	public static function getArrayForAdding($data = []): ?array
+	public static function getArrayForAdding($data = []): array
 	{
 		$result = [];
 		$result['TITLE'] = $data['TITLE'] ?? '';
@@ -304,7 +305,7 @@ class SubjectRepository
 		//TODO: handle exceptions
 	}
 
-	public static function getArrayOfRelatedEntitiesById(int $id): ?array
+	public static function getArrayOfRelatedEntitiesById(int $id): array
 	{
 		$relatedEntities = [];
 		$relatedCouples = CoupleTable::query()->setSelect(

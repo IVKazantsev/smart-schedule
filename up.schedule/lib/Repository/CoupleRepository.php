@@ -41,7 +41,7 @@ class CoupleRepository
 			->fetchCollection();
 	}
 
-	public static function getArrayByAudienceId(int $audienceId): ?array
+	public static function getArrayByAudienceId(int $audienceId): array
 	{
 		return CoupleTable::query()
 			->setSelect(['SUBJECT', 'AUDIENCE', 'COUPLE_NUMBER_IN_DAY', 'WEEK_DAY', 'TEACHER', 'GROUP'])
@@ -49,7 +49,7 @@ class CoupleRepository
 			->fetchAll();
 	}
 
-	public static function getArrayByTeacherId(int $teacherId): ?array
+	public static function getArrayByTeacherId(int $teacherId): array
 	{
 		return CoupleTable::query()
 			->setSelect(['SUBJECT', 'AUDIENCE', 'COUPLE_NUMBER_IN_DAY', 'WEEK_DAY', 'TEACHER', 'GROUP'])
@@ -57,7 +57,7 @@ class CoupleRepository
 			->fetchAll();
 	}
 
-	public static function getArrayByGroupId(int $groupId): ?array
+	public static function getArrayByGroupId(int $groupId): array
 	{
 		return CoupleTable::query()
 			->setSelect(['SUBJECT', 'AUDIENCE', 'COUPLE_NUMBER_IN_DAY', 'WEEK_DAY', 'TEACHER', 'GROUP'])

@@ -2,9 +2,6 @@
 
 namespace Up\Schedule\Repository;
 
-use Bitrix\Main\ORM\Fields\Relations\Reference;
-use Bitrix\Main\ORM\Query\Join;
-use Bitrix\Main\UserTable;
 use Up\Schedule\Model\EO_Role;
 use Up\Schedule\Model\RoleTable;
 
@@ -26,7 +23,7 @@ class RoleRepository
 			->fetchObject();
 	}
 
-	public static function getAllArray(): ?array
+	public static function getAllArray(): array
 	{
 		return RoleTable::query()
 			->setSelect(['ID', 'TITLE'])

@@ -3,7 +3,6 @@
 namespace Up\Schedule\Repository;
 
 use Bitrix\Main\ArgumentException;
-use Bitrix\Main\DB\Exception;
 use Bitrix\Main\EO_User;
 use Bitrix\Main\EO_User_Collection;
 use Bitrix\Main\ObjectPropertyException;
@@ -16,8 +15,6 @@ use CUser;
 use Up\Schedule\Exception\AddEntityException;
 use Up\Schedule\Exception\EditEntityException;
 use Up\Schedule\Model\CoupleTable;
-use Up\Schedule\Model\EO_Group;
-use Up\Schedule\Model\EO_Subject;
 use Up\Schedule\Model\EO_SubjectTeacher;
 use Up\Schedule\Model\EO_SubjectTeacher_Collection;
 use Up\Schedule\Model\GroupTable;
@@ -131,7 +128,7 @@ class UserRepository
 
 	public static function getArrayById(int $id): ?array
 	{
-		return UserTable::query()->setSelect([
+		return (UserTable::query()->setSelect([
 												 'ID',
 												 'NAME',
 												 'LAST_NAME',
@@ -146,7 +143,7 @@ class UserRepository
 			(new Reference(
 				'UP_SCHEDULE_GROUP', GroupTable::class, Join::on('this.UF_GROUP_ID', 'ref.ID')
 			))
-		)->where('ID', $id)->fetch();
+		)->where('ID', $id)->fetch()) ?? null;
 	}
 
 	public static function getTeacherById(int $id): ?EO_User
@@ -169,9 +166,9 @@ class UserRepository
 		)->where('ID', $id)->where('ROLE', 'Преподаватель')->fetchObject();
 	}
 
-	public static function getArrayOfTeacherById(int $id): array|false
+	public static function getArrayOfTeacherById(int $id): ?array
 	{
-		return UserTable::query()->setSelect([
+		return (UserTable::query()->setSelect([
 												 'ID',
 												 'NAME',
 												 'LAST_NAME',
@@ -186,7 +183,7 @@ class UserRepository
 			(new Reference(
 				'UP_SCHEDULE_GROUP', GroupTable::class, Join::on('this.UF_GROUP_ID', 'ref.ID')
 			))
-		)->where('ID', $id)->where('ROLE', 'Преподаватель')->fetch();
+		)->where('ID', $id)->where('ROLE', 'Преподаватель')->fetch()) ?? null;
 	}
 
 	public static function getArrayForAdminById(int $id): ?array
@@ -287,7 +284,7 @@ class UserRepository
 		)->where('ROLE', 'Преподаватель')->where('SUBJECT_ID', $subjectId)->fetchCollection();
 	}
 
-	public static function getArrayOfTeachersBySubjectId(int $subjectId): ?array
+	public static function getArrayOfTeachersBySubjectId(int $subjectId): array
 	{
 		return UserTable::query()->setSelect([
 												 'ID',
@@ -310,33 +307,6 @@ class UserRepository
 			))
 		)->where('ROLE', 'Преподаватель')->where('SUBJECT_ID', $subjectId)->fetchAll();
 	}
-
-	//	public static function getArrayOfTeachersBySubjectsId(array $subjectsId): ?array
-	//	{
-	//		return UserTable::query()->setSelect([
-	//			'ID',
-	//			'NAME',
-	//			'LAST_NAME',
-	//			'EMAIL',
-	//			'ROLE' => 'UP_SCHEDULE_ROLE.TITLE',
-	//			'SUBJECT_ID' => 'UP_SCHEDULE_SUBJECT_TEACHER.SUBJECT_ID',
-	//		])->registerRuntimeField(
-	//			(new Reference(
-	//				'UP_SCHEDULE_ROLE', RoleTable::class, Join::on('this.UF_ROLE_ID', 'ref.ID')
-	//			))
-	//		)->registerRuntimeField(
-	//			(new Reference(
-	//				'UP_SCHEDULE_SUBJECT_TEACHER', SubjectTeacherTable::class, Join::on('this.ID', 'ref.TEACHER_ID')
-	//			))
-	//		)->registerRuntimeField(
-	//			(new Reference(
-	//				'UP_SCHEDULE_GROUP', GroupTable::class, Join::on('this.UF_GROUP_ID', 'ref.ID')
-	//			))
-	//		)
-	//			->where('ROLE', 'Преподаватель')
-	//			->whereIn('SUBJECT_ID', $subjectsId)
-	//			->fetchAll();
-	//	}
 
 	public static function getAllTeachers(): EO_User_Collection
 	{
@@ -368,20 +338,15 @@ class UserRepository
 		)->where('ROLE_ID', 2)->fetchAll();
 	}
 
-	public static function getArrayForAdding(array $data = []): ?array
+	public static function getArrayForAdding(array $data = []): array
 	{
 		$result = [];
-		// var_dump($data);
 		$result['LOGIN'] = $data['LOGIN'] ?? '';
 		$result['NAME'] = $data['NAME'] ?? '';
 		$result['LAST_NAME'] = $data['LAST_NAME'] ?? '';
 		$result['EMAIL'] = $data['EMAIL'] ?? '';
 		$result['PASSWORD'] = $data['PASSWORD'] ?? '';
 		$result['CONFIRM_PASSWORD'] = $data['CONFIRM_PASSWORD'] ?? '';
-
-		// $result['ROLE'] = array_column(RoleRepository::getAllArray(), 'TITLE');
-		// $result['GROUP'] = array_column(GroupRepository::getAllArray(), 'TITLE');
-
 
 		$roles = RoleRepository::getAllArray();
 		$currentRole = $data['ROLE'];
@@ -648,7 +613,7 @@ class UserRepository
 		//TODO: handle exceptions
 	}
 
-	public static function getArrayOfRelatedEntitiesById(int $id): ?array
+	public static function getArrayOfRelatedEntitiesById(int $id): array
 	{
 		$relatedEntities = [];
 		$relatedCouples = CoupleTable::query()->setSelect(

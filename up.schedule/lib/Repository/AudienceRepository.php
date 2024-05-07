@@ -15,9 +15,6 @@ use Up\Schedule\Model\AudienceTypeTable;
 use Up\Schedule\Model\CoupleTable;
 use Up\Schedule\Model\EO_Audience;
 use Up\Schedule\Model\EO_Audience_Collection;
-use Up\Schedule\Model\EO_AudienceType;
-use Up\Schedule\Model\EO_AudienceType_Collection;
-use Up\Schedule\Model\EO_Couple_Collection;
 
 class AudienceRepository
 {
@@ -76,7 +73,7 @@ class AudienceRepository
 			->fetch();
 	}
 
-	public static function getArrayForAdminById(int $id): ?array
+	public static function getArrayForAdminById(int $id): array|false
 	{
 		$result = AudienceTable::query()
 			->setSelect([
@@ -86,9 +83,9 @@ class AudienceRepository
 			->where('ID', $id)
 			->fetch();
 
-		if ($result === null)
+		if (!$result)
 		{
-			return null;
+			return false;
 		}
 
 		$result['TYPE'] = array_unique(
@@ -139,7 +136,7 @@ class AudienceRepository
 		}
 	}
 
-	public static function getArrayForAdding($data = []): ?array
+	public static function getArrayForAdding($data = []): array
 	{
 		$result = [];
 		$result['NUMBER'] = ($data['NUMBER']) ?? '';
@@ -149,6 +146,7 @@ class AudienceRepository
 				array_column(AudienceTypeRepository::getAllArray(), 'TITLE')
 			)
 		);
+
 		return $result;
 	}
 
@@ -215,7 +213,7 @@ class AudienceRepository
 		//TODO: handle exceptions
 	}
 
-	public static function getArrayOfRelatedEntitiesById(int $id): ?array
+	public static function getArrayOfRelatedEntitiesById(int $id): array
 	{
 		$relatedEntities = [];
 		$relatedCouples = CoupleTable::query()
@@ -272,7 +270,7 @@ class AudienceRepository
 			->fetchObject();
 	}
 
-	public static function getArrayOfAudiencesBySubjectId(int $id): ?array
+	public static function getArrayOfAudiencesBySubjectId(int $id): array
 	{
 		$subject = SubjectRepository::getArrayById($id);
 		$audienceTypeId = $subject['AUDIENCE_TYPE_ID'];

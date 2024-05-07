@@ -2,7 +2,6 @@
 
 namespace Up\Schedule\Controller;
 
-use Bitrix\Main\Engine\ActionFilter\Authentication;
 use Bitrix\Main\Engine\ActionFilter\Csrf;
 use Bitrix\Main\Engine\ActionFilter\HttpMethod;
 use Bitrix\Main\Engine\Controller;
@@ -44,7 +43,6 @@ class DisplayEntitiesList extends Controller
 
 		$repository = EntityService::getEntityRepositoryName($entity, false);
 
-		$entities = [];
 		if ($entity === 'teacher')
 		{
 			$currentEntity = $repository::getArrayOfTeacherById($id);

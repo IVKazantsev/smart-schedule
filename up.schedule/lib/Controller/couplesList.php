@@ -8,6 +8,7 @@ use Bitrix\Main\Engine\Controller;
 use Bitrix\Main\Error;
 use Bitrix\Main\ObjectPropertyException;
 use Bitrix\Main\SystemException;
+use Exception;
 use Up\Schedule\Exception\AddCoupleException;
 use Up\Schedule\Repository\AudienceRepository;
 use Up\Schedule\Repository\CoupleRepository;
@@ -19,6 +20,31 @@ use Up\Schedule\Service\EntityService;
 class CouplesList extends Controller
 {
 	private array $couples = [];
+
+	/**
+	 * @param array $coupleInfo
+	 *
+	 * @return void
+	 */
+	public function preprocessingCoupleInfo(array $coupleInfo): void
+	{
+		if (!EntityService::isCurrentUserAdmin())
+		{
+			$this->addError(new Error('you must be an administrator', 'inappropriate_role'));
+		}
+
+		if (
+			!$coupleInfo['GROUP_ID']
+			|| !$coupleInfo['SUBJECT_ID']
+			|| !$coupleInfo['TEACHER_ID']
+			|| !$coupleInfo['AUDIENCE_ID']
+			|| !$coupleInfo['DAY_OF_WEEK']
+			|| !$coupleInfo['NUMBER_IN_DAY']
+		)
+		{
+			$this->addError(new Error('all info must be filled', 'not_filled_couple_info'));
+		}
+	}
 
 	protected function init(): void
 	{
@@ -40,22 +66,7 @@ class CouplesList extends Controller
 
 	public function deleteCoupleAction(array $coupleInfo): array
 	{
-		if (!EntityService::isCurrentUserAdmin())
-		{
-			$this->addError(new Error('you must be an administrator', 'inappropriate_role'));
-		}
-
-		if (
-			!$coupleInfo['GROUP_ID']
-			|| !$coupleInfo['SUBJECT_ID']
-			|| !$coupleInfo['TEACHER_ID']
-			|| !$coupleInfo['AUDIENCE_ID']
-			|| !$coupleInfo['DAY_OF_WEEK']
-			|| !$coupleInfo['NUMBER_IN_DAY']
-		)
-		{
-			$this->addError(new Error('all info must be filled', 'not_filled_couple_info'));
-		}
+		$this->preprocessingCoupleInfo($coupleInfo);
 
 		try
 		{
@@ -63,7 +74,7 @@ class CouplesList extends Controller
 
 			return ['result' => true];
 		}
-		catch (\Exception)
+		catch (Exception)
 		{
 			return ['result' => false];
 		}
@@ -71,28 +82,17 @@ class CouplesList extends Controller
 
 	public function addCoupleAction(array $coupleInfo): array
 	{
-		if (!EntityService::isCurrentUserAdmin())
-		{
-			$this->addError(new Error('you must be an administrator', 'inappropriate_role'));
-		}
-
-		if (
-			!$coupleInfo['GROUP_ID']
-			|| !$coupleInfo['SUBJECT_ID']
-			|| !$coupleInfo['TEACHER_ID']
-			|| !$coupleInfo['AUDIENCE_ID']
-			|| !$coupleInfo['DAY_OF_WEEK']
-			|| !$coupleInfo['NUMBER_IN_DAY']
-		)
-		{
-			$this->addError(new Error('all info must be filled', 'not_filled_couple_info'));
-		}
-		$couplesAtThisTime = CoupleRepository::getByDayAndNumber((int)$coupleInfo['DAY_OF_WEEK'], (int)$coupleInfo['NUMBER_IN_DAY']);
+		$this->preprocessingCoupleInfo($coupleInfo);
+		$couplesAtThisTime = CoupleRepository::getByDayAndNumber(
+			(int)$coupleInfo['DAY_OF_WEEK'],
+			(int)$coupleInfo['NUMBER_IN_DAY']
+		);
 		foreach ($couplesAtThisTime as $couple)
 		{
 			if ($couple->getAudienceId() === (int)$coupleInfo['AUDIENCE_ID'])
 			{
 				$this->addError(new Error('the couple in this audience is busy at this time', 'busy_audience'));
+
 				return [
 					'result' => false,
 					'errors' => "Пара в этой аудитории в это время занята",
@@ -102,6 +102,7 @@ class CouplesList extends Controller
 			if ($couple->getTeacherId() === (int)$coupleInfo['TEACHER_ID'])
 			{
 				$this->addError(new Error('the couple with this teacher is busy at this time', 'busy_teacher'));
+
 				return [
 					'result' => false,
 					'errors' => "Пара с этим преподавателем в это время занята",
@@ -111,14 +112,13 @@ class CouplesList extends Controller
 			if ($couple->getGroupId() === (int)$coupleInfo['GROUP_ID'])
 			{
 				$this->addError(new Error('the couple in this group is busy at this time', 'busy_group'));
+
 				return [
 					'result' => false,
 					'errors' => "Пара у этой группы в это время занята",
 				];
 			}
 		}
-
-		$result = [];
 
 		try
 		{
@@ -143,7 +143,6 @@ class CouplesList extends Controller
 		}
 
 		return $result;
-
 	}
 
 	public function fetchAddCoupleDataAction(string $entity, int $id): array

@@ -4,19 +4,13 @@ namespace Up\Schedule\Repository;
 
 use Bitrix\Main\ArgumentException;
 use Bitrix\Main\ObjectPropertyException;
-use Bitrix\Main\ORM\Fields\Relations\Reference;
-use Bitrix\Main\ORM\Query\Join;
 use Bitrix\Main\ORM\Query\Query;
 use Bitrix\Main\SystemException;
 use Up\Schedule\Exception\AddEntityException;
 use Up\Schedule\Exception\EditEntityException;
-use Up\Schedule\Model\AudienceTable;
 use Up\Schedule\Model\AudienceTypeTable;
-use Up\Schedule\Model\CoupleTable;
-use Up\Schedule\Model\EO_Audience;
 use Up\Schedule\Model\EO_AudienceType;
 use Up\Schedule\Model\EO_AudienceType_Collection;
-use Up\Schedule\Model\SubjectTable;
 
 class AudienceTypeRepository
 {
@@ -32,7 +26,7 @@ class AudienceTypeRepository
 		return $result ?? null;
 	}
 
-	public static function getArrayForAdding($data = []): ?array
+	public static function getArrayForAdding($data = []): array
 	{
 		$result = [];
 		$result['TITLE'] = $data['TITLE'] ?? '';
