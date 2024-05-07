@@ -193,7 +193,7 @@ if (!defined("B_PROLOG_INCLUDED") || B_PROLOG_INCLUDED !== true)
 			</ul>
 		<?php endif; ?>
 
-		<?php if ($arResult['ENTITY']): ?>
+		<?php if ($arResult['SIDEBAR_ENTITY']): ?>
 			<ul class="menu-list box" id="schedule-display-entity-list">
 				<div class="mt-3 mb-3 is-flex is-align-items-center is-justify-content-center is-fullwidth">
 					<?= GetMessage('DISPLAY_BY') ?>:
@@ -202,7 +202,7 @@ if (!defined("B_PROLOG_INCLUDED") || B_PROLOG_INCLUDED !== true)
 					<li>
 						<a href="/<?= $entity ?>/0/"
 						   class="display-entity is-60-height is-flex is-align-items-center is-justify-content-center
-						   <?= ($arResult['ENTITY'] === $entity) ? 'selected-sidebar-entity' : '' ?>">
+						   <?= ($arResult['SIDEBAR_ENTITY'] === $entity) ? 'selected-sidebar-entity' : '' ?>">
 							<?= GetMessage('SIDEBAR_' . $arResult['LOC_ENTITIES_FOR_DISPLAY'][$key]) ?>
 						</a>
 					</li>

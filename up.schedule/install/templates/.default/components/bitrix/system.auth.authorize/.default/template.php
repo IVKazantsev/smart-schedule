@@ -1,7 +1,14 @@
-<?
-if (!defined("B_PROLOG_INCLUDED") || B_PROLOG_INCLUDED!==true)die();
-?>
-<?
+<?php
+
+/**
+ * @var array $arResult
+ * @var CMain $APPLICATION
+ */
+
+if (!defined("B_PROLOG_INCLUDED") || B_PROLOG_INCLUDED !== true)
+{
+	die();
+}
 if (!empty($arParams["~AUTH_RESULT"]))
 {
 	ShowMessage($arParams["~AUTH_RESULT"]);
@@ -12,31 +19,29 @@ if (!empty($arResult['ERROR_MESSAGE']))
 	ShowMessage($arResult['ERROR_MESSAGE']);
 }
 ?>
-<div class="column columns mt-6">
-	<div class="column p-0 is-one-third">
-		<a class="button is-60-height is-link mt-6" href="/">
-			Вернуться к расписанию
-		</a>
-	</div>
-	<div class="mt-6 box is-flex is-flex-direction-column is-align-content-center is-align-items-center column is-one-third">
-
+<div class="column columns mt-6 is-flex is-flex-direction-column is-align-items-center">
+	<div class="mt-3 box is-flex is-flex-direction-column is-align-content-center is-align-items-center column is-one-third">
 		<p class="title bx-auth-note mt-4 is-4">
-			Авторизация
+			<?= GetMessage('AUTH_TITLE') ?>
 		</p>
 
-		<form class="mt-1" name="form_auth" method="post" target="_top" action="<?=$arResult["AUTH_URL"]?>">
-			<input type="hidden" name="AUTH_FORM" value="Y" />
-			<input type="hidden" name="TYPE" value="AUTH" />
-			<?if ($arResult["BACKURL"] <> ''):?>
-				<input type="hidden" name="backurl" value="<?=$arResult["BACKURL"]?>" />
-			<?endif?>
-			<?foreach ($arResult["POST"] as $key => $value):?>
-				<input type="hidden" name="<?=$key?>" value="<?=$value?>" />
-			<?endforeach?>
+		<form class="mt-1" name="form_auth" method="post" target="_top" action="<?= $arResult["AUTH_URL"] ?>">
+			<input type="hidden" name="AUTH_FORM" value="Y"/>
+			<input type="hidden" name="TYPE" value="AUTH"/>
+			<?php
+			if ($arResult["BACKURL"] !== ''): ?>
+				<input type="hidden" name="backurl" value="<?= $arResult["BACKURL"] ?>"/>
+			<?php
+			endif ?>
+			<?php
+			foreach ($arResult["POST"] as $key => $value): ?>
+				<input type="hidden" name="<?= $key ?>" value="<?= $value ?>"/>
+			<?php
+			endforeach ?>
 			<div class="field">
-				<label class="label"><?=GetMessage("AUTH_LOGIN")?></label>
+				<label class="label"><?= GetMessage("AUTH_LOGIN") ?></label>
 				<div class="control has-icons-left">
-					<input class="input bx-auth-input form-control" placeholder="Введите логин" type="text" name="USER_LOGIN" maxlength="255" value="<?=$arResult["LAST_LOGIN"]?>" />
+					<input class="input bx-auth-input form-control" placeholder="Введите логин" type="text" name="USER_LOGIN" maxlength="255" value="<?= $arResult["LAST_LOGIN"] ?>"/>
 					<span class="icon is-small is-left">
      				<i class="fas fa-user">
 						<img width="25" height="25" src="https://img.icons8.com/pastel-glyph/25/person-male--v1.png" alt="person-male--v1"/>
@@ -45,9 +50,9 @@ if (!empty($arResult['ERROR_MESSAGE']))
 				</div>
 			</div>
 			<div class="field">
-				<label class="label"><?=GetMessage("AUTH_PASSWORD")?></label>
+				<label class="label"><?= GetMessage("AUTH_PASSWORD") ?></label>
 				<div class="control has-icons-left">
-					<input class="input bx-auth-input form-control" type="password" placeholder="Введите пароль" name="USER_PASSWORD" maxlength="255" autocomplete="off" />
+					<input class="input bx-auth-input form-control" type="password" placeholder="Введите пароль" name="USER_PASSWORD" maxlength="255" autocomplete="off"/>
 					<span class="icon is-small is-left">
       				<i class="fas fa-lock">
 						<svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="25" height="25" viewBox="0 0 128 128">
@@ -56,34 +61,41 @@ if (!empty($arResult['ERROR_MESSAGE']))
 					</i>
     			</span>
 				</div>
-				<?if($arResult["SECURE_AUTH"]):?>
-					<span class="bx-auth-secure" id="bx_auth_secure" title="<?echo GetMessage("AUTH_SECURE_NOTE")?>" style="display:none">
+				<?php
+				if ($arResult["SECURE_AUTH"]): ?>
+					<span class="bx-auth-secure" id="bx_auth_secure" title="<?php
+					echo GetMessage("AUTH_SECURE_NOTE") ?>" style="display:none">
 								<div class="bx-auth-secure-icon"></div>
 							</span>
 					<noscript>
-							<span class="bx-auth-secure" title="<?echo GetMessage("AUTH_NONSECURE_NOTE")?>">
+							<span class="bx-auth-secure" title="<?php
+							echo GetMessage("AUTH_NONSECURE_NOTE") ?>">
 								<div class="bx-auth-secure-icon bx-auth-secure-unlock"></div>
 							</span>
 					</noscript>
 					<script type="text/javascript">
 						document.getElementById('bx_auth_secure').style.display = 'inline-block';
 					</script>
-				<?endif?>
+				<?php
+				endif ?>
 			</div>
-			<?if ($arResult["STORE_PASSWORD"] == "Y"):?>
+			<?php
+			if ($arResult["STORE_PASSWORD"] == "Y"): ?>
 				<label class="checkbox">
-					<input type="checkbox" id="USER_REMEMBER" name="USER_REMEMBER" value="Y" /><label class="" for="USER_REMEMBER">&nbsp;<?=GetMessage("AUTH_REMEMBER_ME")?></label>
+					<input type="checkbox" id="USER_REMEMBER" name="USER_REMEMBER" value="Y"/><label class="" for="USER_REMEMBER">&nbsp;<?= GetMessage(
+							"AUTH_REMEMBER_ME"
+						) ?></label>
 				</label>
-			<?endif?>
-			<div class="mt-2 field buttons is-grouped is-flex is-justify-content-space-between">
+			<?php
+			endif ?>
+			<div class="mt-2 field buttons is-grouped is-flex-direction-column is-align-items-center">
 				<p class="control">
-					<input type="submit" class="is-success is-dark button" name="Login" value="<?=GetMessage("AUTH_AUTHORIZE")?>" />
+					<input type="submit" class="is-success is-dark button" name="Login"
+						   value="<?= GetMessage("AUTH_AUTHORIZE") ?>"/>
 				</p>
-<!--				<p class="control">-->
-<!--					<a class="button is-link" href="/">-->
-<!--						Вернуться-->
-<!--					</a>-->
-<!--				</p>-->
+				<a class="mb-2 is-underlined has-text-black" href="/">
+					<?= GetMessage('BACK_TO_SCHEDULE') ?>
+				</a>
 			</div>
 		</form>
 	</div>
@@ -91,27 +103,39 @@ if (!empty($arResult['ERROR_MESSAGE']))
 
 
 <script type="text/javascript">
-<?if ($arResult["LAST_LOGIN"] <> ''):?>
-try{document.form_auth.USER_PASSWORD.focus();}catch(e){}
-<?else:?>
-try{document.form_auth.USER_LOGIN.focus();}catch(e){}
-<?endif?>
+	<?php if ($arResult["LAST_LOGIN"] <> ''):?>
+	try
+	{
+		document.form_auth.USER_PASSWORD.focus();
+	}
+	catch (e)
+	{
+	}
+	<?php else:?>
+	try
+	{
+		document.form_auth.USER_LOGIN.focus();
+	}
+	catch (e)
+	{
+	}
+	<?php endif?>
 </script>
 
-<?if($arResult["AUTH_SERVICES"]):?>
+<?php
+if ($arResult["AUTH_SERVICES"]): ?>
+	<?php
+	$APPLICATION->IncludeComponent(
+		"bitrix:socserv.auth.form", "", [
+									  "AUTH_SERVICES" => $arResult["AUTH_SERVICES"],
+									  "CURRENT_SERVICE" => $arResult["CURRENT_SERVICE"],
+									  "AUTH_URL" => $arResult["AUTH_URL"],
+									  "POST" => $arResult["POST"],
+									  "SHOW_TITLES" => $arResult["FOR_INTRANET"] ? 'N' : 'Y',
+									  "FOR_SPLIT" => $arResult["FOR_INTRANET"] ? 'Y' : 'N',
+									  "AUTH_LINE" => $arResult["FOR_INTRANET"] ? 'N' : 'Y',
+								  ], $component, ["HIDE_ICONS" => "Y"]
+	);
+	?>
 <?
-$APPLICATION->IncludeComponent("bitrix:socserv.auth.form", "",
-	array(
-		"AUTH_SERVICES" => $arResult["AUTH_SERVICES"],
-		"CURRENT_SERVICE" => $arResult["CURRENT_SERVICE"],
-		"AUTH_URL" => $arResult["AUTH_URL"],
-		"POST" => $arResult["POST"],
-		"SHOW_TITLES" => $arResult["FOR_INTRANET"]?'N':'Y',
-		"FOR_SPLIT" => $arResult["FOR_INTRANET"]?'Y':'N',
-		"AUTH_LINE" => $arResult["FOR_INTRANET"]?'N':'Y',
-	),
-	$component,
-	array("HIDE_ICONS"=>"Y")
-);
-?>
-<?endif?>
+endif ?>

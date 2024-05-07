@@ -52,14 +52,20 @@ class SidebarComponent extends CBitrixComponent
 
 	protected function prepareTemplateParams(): void
 	{
-		$entity = $this->arParams['ENTITY'];
+		$entity = $this->arParams['SIDEBAR_ENTITY'];
+
+		if(!$this->arParams['IS_SCHEDULE'])
+		{
+			return;
+		}
+
 		if($entity && in_array($entity, $this->entitiesForDisplaySchedule, true))
 		{
-			$this->arResult['ENTITY'] = $entity;
+			$this->arResult['SIDEBAR_ENTITY'] = $entity;
 		}
 		else
 		{
-			$this->arResult['ENTITY'] = DEFAULT_ENTITY_TO_DISPLAY;
+			$this->arResult['SIDEBAR_ENTITY'] = DEFAULT_ENTITY_TO_DISPLAY;
 		}
 
 		$this->arResult['ENTITIES_FOR_DISPLAY'] = $this->entitiesForDisplaySchedule;

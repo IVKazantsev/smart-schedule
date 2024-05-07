@@ -111,7 +111,6 @@ class GeneticSchedule
 	}
 
 	// Функция приспособленности (evaluation function)
-
 	public function fitness(GeneticPerson $schedule): void
 	{
 		$penalty = 0;

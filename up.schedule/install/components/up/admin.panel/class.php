@@ -15,6 +15,7 @@ class AdminPanelComponent extends CBitrixComponent
 		{
 			LocalRedirect('/404/');
 		}
+
 		$this->includeComponentTemplate();
 	}
 }

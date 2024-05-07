@@ -34,7 +34,7 @@ return static function(RoutingConfigurator $routes) {
 		->group(function (RoutingConfigurator $routes) {
 			$routes->get('/{entity}/{id}/', new PublicPageController('/local/modules/up.schedule/views/schedule.php'));
 
-			$routes->get('/schedule/{entity}/{id}/', new PublicPageController('/local/modules/up.schedule/views/schedule.php'));
+			$routes->get('/schedule/{sidebarEntity}/{id}/', new PublicPageController('/local/modules/up.schedule/views/schedule.php'));
 
 			$routes->get('/admin/edit/{entity}/{id}/', new PublicPageController('/local/modules/up.schedule/views/admins-entity-edit.php'));
 			$routes->post('/admin/edit/{entity}/{id}/', new PublicPageController('/local/modules/up.schedule/views/admins-entity-edit.php'));

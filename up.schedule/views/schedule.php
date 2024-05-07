@@ -8,7 +8,8 @@ require($_SERVER["DOCUMENT_ROOT"] . "/bitrix/header.php");
 $APPLICATION->SetTitle("Schedule");
 
 $APPLICATION->IncludeComponent('up:sidebar', '', [
-	'ENTITY' => Context::getCurrent()->getRequest()->get('entity') ?? 'group',
+	'SIDEBAR_ENTITY' => Context::getCurrent()->getRequest()->get('sidebarEntity'),
+	'IS_SCHEDULE' => true,
 ]);
 
 $APPLICATION->IncludeComponent('up:couples.list', '', [
