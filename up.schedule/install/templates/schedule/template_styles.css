@@ -280,3 +280,15 @@ a:hover {
 #entity, #entity-id {
 	display: none;
 }
+
+@media (max-width: 1024px) {
+	#main-container {
+		margin: 1rem;
+	}
+}
+
+@media (max-width: 768px) {
+	.couple {
+		font-size: 1.2em;
+	}
+}

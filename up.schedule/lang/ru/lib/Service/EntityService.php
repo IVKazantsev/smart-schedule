@@ -1,8 +1,16 @@
 <?php
 
-$MESS['DAY_1_OF_WEEK'] = 'Понедельник';
-$MESS['DAY_2_OF_WEEK'] = 'Вторник';
-$MESS['DAY_3_OF_WEEK'] = 'Среда';
-$MESS['DAY_4_OF_WEEK'] = 'Четверг';
-$MESS['DAY_5_OF_WEEK'] = 'Пятница';
-$MESS['DAY_6_OF_WEEK'] = 'Суббота';
+$MESS['CREATE_COUPLE_ON'] = 'При создании пары на';
+$MESS['CREATE_STUDENT'] = 'При создании студента';
+$MESS['ERROR_OCCURRED'] = 'возникла ошибка';
+$MESS['DOES_NOT_EXISTS'] = 'не существет';
+$MESS['NOT_ADDED'] = 'не добавлен';
+$MESS['INCORRECT_SUBJECTS'] = 'неверно заданы предметы';
+
+$MESS['AUDIENCE'] = 'Аудитории';
+$MESS['FOR_AUDIENCE'] = 'Для аудитории';
+$MESS['GROUP'] = 'Группы';
+$MESS['TEACHER'] = 'Преподаватель';
+$MESS['FOR_TEACHER'] = 'Для преподавателя';
+$MESS['SUBJECT'] = 'Предмета';
+$MESS['FOR_SUBJECT'] = 'Для предмета';

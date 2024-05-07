@@ -58,7 +58,8 @@ class EntityService
 		catch (Error $error)
 		{
 			echo "$error";
-			echo "Entity $entityName not found"; die();
+			echo "Entity $entityName not found";
+			die();
 		}
 	}
 
@@ -71,7 +72,8 @@ class EntityService
 		catch (Error $error)
 		{
 			echo "$error";
-			echo "Entity $entityName not found"; die();
+			echo "Entity $entityName not found";
+			die();
 		}
 	}
 
@@ -83,7 +85,8 @@ class EntityService
 		}
 		catch (Error)
 		{
-			echo "Entity $entityName not found"; die();
+			echo "Entity $entityName not found";
+			die();
 		}
 	}
 
@@ -124,16 +127,18 @@ class EntityService
 			}
 
 			$data = [];
-			if(Context::getCurrent()?->getRequest()->isPost())
+			if (Context::getCurrent()?->getRequest()->isPost())
 			{
 				$data = self::getData($entityName);
 			}
+
 			return self::getEntityRepositoryName($entityName)::getArrayForAdding($data);
 		}
 		catch (Error $error)
 		{
 			echo "$error";
-			echo "Entity $entityName not found"; die();
+			echo "Entity $entityName not found";
+			die();
 		}
 	}
 
@@ -146,8 +151,6 @@ class EntityService
 
 	private static function getGroupData(): ?array
 	{
-		//echo "<pre>";
-
 		return [
 			'TITLE' => self::getParameter('TITLE'),
 			'SUBJECTS_TO_DELETE' => self::getDeleteSubjectsData(),
@@ -180,6 +183,7 @@ class EntityService
 			$data['SUBJECTS_TO_DELETE'] = self::getDeleteSubjectsData();
 			$data['SUBJECTS_TO_ADD'] = self::getAddSubjectsData();
 		}
+
 		return $data;
 	}
 
@@ -194,6 +198,7 @@ class EntityService
 				$subjectsToDelete[] = (int)substr($key, offset: strlen('delete_subject_'));
 			}
 		}
+
 		return $subjectsToDelete;
 	}
 
@@ -208,6 +213,7 @@ class EntityService
 				$subjectsToAdd[] = (int)$value;
 			}
 		}
+
 		return $subjectsToAdd;
 	}
 
@@ -239,11 +245,11 @@ class EntityService
 	public static function getEntityRepositoryName(string $entityName, bool $isNeedPermission = true): ?string
 	{
 		$entityName = ucfirst(($entityName));
-		if($isNeedPermission && !in_array($entityName, self::$allowedEntity, true))
+		if ($isNeedPermission && !in_array($entityName, self::$allowedEntity, true))
 		{
 			return null;
 		}
-		if($entityName === 'Teacher' || $entityName === 'Student')
+		if ($entityName === 'Teacher' || $entityName === 'Student')
 		{
 			$entityName = 'User';
 		}
@@ -257,7 +263,7 @@ class EntityService
 		{
 			$methodName = "add{$key}ToDB";
 			$result = self::$methodName($entity);
-			if($result !== '')
+			if ($result !== '')
 			{
 				return $result;
 			}
@@ -302,7 +308,7 @@ class EntityService
 			$type = AudienceTypeRepository::getByTitle($typeTitle);
 			if ($type === null)
 			{
-				return "Для аудитории {$number} неверно задан тип аудитории";
+				return GetMessage('FOR_AUDIENCE') . " $number " . GetMessage('INCORRECT_AUDIENCE_TYPE');
 			}
 			$audience->setAudienceType($type);
 
@@ -332,7 +338,7 @@ class EntityService
 			$type = AudienceTypeRepository::getByTitle($audienceTypeTitle);
 			if ($type === null)
 			{
-				return "Для предмета {$title} неверно задан тип аудитории";
+				return GetMessage('FOR_SUBJECT') . " $title " . GetMessage('INCORRECT_AUDIENCE_TYPE');
 			}
 			$subject->setAudienceType($type);
 
@@ -381,7 +387,7 @@ class EntityService
 				$subject = SubjectRepository::getByTitle($subjectName);
 				if (!$subject)
 				{
-					return "Для преподавателя {$name} {$lastName} неверно заданы предметы";
+					return GetMessage('FOR_TEACHER') . " $name $lastName " . GetMessage('INCORRECT_SUBJECTS');
 				}
 
 				$subjectTeacher = new EO_SubjectTeacher();
@@ -412,7 +418,7 @@ class EntityService
 			$group->setTitle($title);
 
 			$result = $group->save();
-			if(!$result->isSuccess())
+			if (!$result->isSuccess())
 			{
 				return implode(', ', $result->getErrorMessages());
 			}
@@ -422,8 +428,7 @@ class EntityService
 			$subjectsWithHours = explode(', ', $subjectsString);
 
 			// Разделим предметы и часы
-			$subjectsWithHours = array_map(static function(string $subjectWithHour)
-			{
+			$subjectsWithHours = array_map(static function(string $subjectWithHour) {
 				return explode('/', $subjectWithHour);
 			},
 				$subjectsWithHours);
@@ -468,9 +473,15 @@ class EntityService
 			[$name, $lastName, $groupTitle, $login, $password] = $student;
 
 			$group = GroupRepository::getByTitle($groupTitle);
-			if(!$group)
+			if (!$group)
 			{
-				return "При создании студента {$name} {$lastName} возникла ошибка: Группы {$groupTitle} не существует";
+				return GetMessage('CREATE_STUDENT')
+					. " $name $lastName "
+					. GetMessage('ERROR_OCCURRED')
+					. ':'
+					. GetMessage('GROUP')
+					. " $groupTitle "
+					. GetMessage('DOES_NOT_EXISTS');
 			}
 
 			// Сохраняем пользователя
@@ -500,30 +511,46 @@ class EntityService
 		foreach ($couples as $couple)
 		{
 			// Деструктурируем массив на поля
-			[$groupTitle, $subjectTitle, $audienceNumber, $teacherName, $teacherLastName, $dayOfWeek, $numberOfCoupleInDay] = $couple;
+			[
+				$groupTitle,
+				$subjectTitle,
+				$audienceNumber,
+				$teacherName,
+				$teacherLastName,
+				$dayOfWeek,
+				$numberOfCoupleInDay,
+			] = $couple;
 
 			$group = GroupRepository::getByTitle($groupTitle);
-			if(!$group)
+			if (!$group)
 			{
-				return "При создании пары на {$dayOfWeek}, {$numberOfCoupleInDay} пару возникла ошибка: Группы {$groupTitle} не существует";
+				return GetMessage('CREATE_COUPLE_ON') . " $dayOfWeek, $numberOfCoupleInDay " . GetMessage(
+						'ERROR_OCCURRED'
+					) . ': ' . GetMessage('GROUP') . " $groupTitle " . GetMessage('DOES_NOT_EXISTS');
 			}
 
 			$subject = SubjectRepository::getByTitle($subjectTitle);
-			if(!$subject)
+			if (!$subject)
 			{
-				return "При создании пары на {$dayOfWeek}, {$numberOfCoupleInDay} пару возникла ошибка: Предмета {$subjectTitle} не существует";
+				return GetMessage('CREATE_COUPLE_ON') . " $dayOfWeek, $numberOfCoupleInDay " . GetMessage(
+						'ERROR_OCCURRED'
+					) . ': ' . GetMessage('SUBJECT') . " $subjectTitle " . GetMessage('DOES_NOT_EXISTS');
 			}
 
 			$audience = AudienceRepository::getByNumber($audienceNumber);
-			if(!$audience)
+			if (!$audience)
 			{
-				return "При создании пары на {$dayOfWeek}, {$numberOfCoupleInDay} пару возникла ошибка: Аудитории {$audienceNumber} не существует";
+				return GetMessage('CREATE_COUPLE_ON') . " $dayOfWeek, $numberOfCoupleInDay " . GetMessage(
+						'ERROR_OCCURRED'
+					) . ': ' . GetMessage('AUDIENCE') . " $audienceNumber " . GetMessage('DOES_NOT_EXISTS');
 			}
 
 			$teacher = UserRepository::getTeacherByFirstAndLastName($teacherName, $teacherLastName);
-			if(!$teacher)
+			if (!$teacher)
 			{
-				return "При создании пары на {$dayOfWeek}, {$numberOfCoupleInDay} пару возникла ошибка: Преподаватель {$teacherName} {$teacherLastName} не добавлен";
+				return GetMessage('CREATE_COUPLE_ON') . " $dayOfWeek, $numberOfCoupleInDay " . GetMessage(
+						'ERROR_OCCURRED'
+					) . ': ' . GetMessage('TEACHER') . " $teacherName $teacherLastName" . GetMessage('NOT_ADDED');
 			}
 
 			$couple = new EO_Couple();
@@ -558,7 +585,7 @@ class EntityService
 		{
 			$repository = self::getEntityRepositoryName($entity, false);
 			$result = $repository::deleteAllFromDB();
-			if($result !== '')
+			if ($result !== '')
 			{
 				return $result;
 			}

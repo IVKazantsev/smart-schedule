@@ -95,7 +95,7 @@ class CouplesList extends Controller
 
 				return [
 					'result' => false,
-					'errors' => "Пара в этой аудитории в это время занята",
+					'errors' => GetMessage('BUSY_AUDIENCE'),
 				];
 			}
 
@@ -105,7 +105,7 @@ class CouplesList extends Controller
 
 				return [
 					'result' => false,
-					'errors' => "Пара с этим преподавателем в это время занята",
+					'errors' => GetMessage('BUSY_TEACHER'),
 				];
 			}
 
@@ -115,7 +115,7 @@ class CouplesList extends Controller
 
 				return [
 					'result' => false,
-					'errors' => "Пара у этой группы в это время занята",
+					'errors' => GetMessage('BUSY_GROUP'),
 				];
 			}
 		}

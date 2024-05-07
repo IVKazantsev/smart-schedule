@@ -22,5 +22,5 @@ if (!defined('B_PROLOG_INCLUDED') || B_PROLOG_INCLUDED !== true)
 </head>
 <body class="has-background-grey-lighter">
 <?php $APPLICATION->ShowPanel(); ?>
-<div class="container mt-4">
+<div class="container mt-4" id="main-container">
 	<div class="columns">
