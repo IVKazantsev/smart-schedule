@@ -2,13 +2,13 @@
 
 namespace Up\Schedule\Repository;
 
+use Bitrix\Main\ORM\Query\Query;
+use Up\Schedule\Exception\AddEntityException;
+use Up\Schedule\Exception\EditEntityException;
 use Up\Schedule\Model\CoupleTable;
 use Up\Schedule\Model\EO_Group;
 use Up\Schedule\Model\EO_Group_Collection;
-use Up\Schedule\Model\EO_Subject;
-use Up\Schedule\Model\EO_Subject_Collection;
 use Up\Schedule\Model\GroupTable;
-use Up\Schedule\Model\SubjectTable;
 
 class GroupRepository
 {
@@ -19,12 +19,35 @@ class GroupRepository
 
 	public static function getByTitle(string $title): ?EO_Group
 	{
-		return GroupTable::query()->setSelect(['ID', 'TITLE',])->where('TITLE', $title)->fetchObject();
+		return GroupTable::query()->setSelect(['ID', 'TITLE'])->where('TITLE', $title)->fetchObject();
 	}
 
-	public static function getAllArray(): ?array
+	public static function getAllArray(): array
 	{
-		return GroupTable::query()->setSelect(['ID', 'TITLE',])->fetchAll();
+		return GroupTable::query()->setSelect(['ID', 'TITLE'])->fetchAll();
+	}
+
+	public static function getPageWithArrays(int $entityPerPage, int $pageNumber, string $searchInput): array
+	{
+		$offset = 0;
+		if ($pageNumber > 1)
+		{
+			$offset = $entityPerPage * ($pageNumber - 1);
+		}
+
+		return GroupTable::query()->setSelect(['ID', 'TITLE'])->whereLike('TITLE', "%$searchInput%")->setLimit(
+				$entityPerPage + 1
+			)->setOffset($offset)->setOrder('ID')->fetchAll();
+	}
+
+	public static function getCountOfEntities(string $searchInput): int
+	{
+		$result = GroupTable::query()->addSelect(Query::expr()->count('ID'), 'CNT')->whereLike(
+				'TITLE',
+				"%$searchInput%"
+			)->exec();
+
+		return $result->fetch()['CNT'];
 	}
 
 	public static function getById(int $id): ?EO_Group
@@ -34,29 +57,32 @@ class GroupRepository
 
 	public static function getArrayById(int $id): ?array
 	{
-		return GroupTable::query()->setSelect(['ID', 'TITLE', 'SUBJECTS'])->where('ID', $id)->fetch();
+		$result = GroupTable::query()->setSelect(['ID', 'TITLE', 'SUBJECTS'])->where('ID', $id)->fetch();
+		if (!$result)
+		{
+			return null;
+		}
+
+		return $result;
 	}
 
-	/*	public static function getArrayById(int $id): ?array
-		{
-			return GroupTable::query()->setSelect(['ID', 'TITLE'])->where('ID', $id)->fetch();
-		}*/
-
-	public static function getArrayForAdminById(int $id): ?array
+	public static function getArrayOfGroupsBySubjectId(int $id): array
 	{
-		/*echo "<pre>";
-		$subjects = self::getById($id)?->getSubjects();
-		var_dump($subjects);*/
+		return GroupTable::query()->setSelect(['ID', 'TITLE', 'SUBJECTS'])->where('SUBJECTS.ID', $id)->fetchAll();
+	}
+
+	public static function getArrayForAdminById(int $id): array
+	{
 		$data = [];
-		$group = self::getById($id);/*GroupTable::query()
-			->setSelect(['TITLE', 'SUBJECTS'])
-			->where('ID', $id)
-			->fetch();*/
+		$group = self::getById($id);
+
 		$data['TITLE'] = $group?->getTitle();
+
 		foreach (SubjectRepository::getAll() as $subject)
 		{
 			$data['SUBJECTS']['ALL_SUBJECTS'][$subject->getId()] = $subject->getTitle();
 		}
+
 		foreach ($group?->getSubjects() as $subject)
 		{
 			$data['SUBJECTS']['CURRENT_SUBJECTS'][$subject->getId()] = $subject->getTitle();
@@ -66,23 +92,36 @@ class GroupRepository
 		return $data;
 	}
 
-	public static function getArrayForAdding(): ?array
+	public static function getArrayForAdding($data = []): array
 	{
 		$result = [];
-		$result['TITLE'] = '';
-		foreach (SubjectRepository::getAll() as $subject)
+		$result['TITLE'] = $data['TITLE'] ?? '';
+		$subjects = SubjectRepository::getAll();
+		foreach ($subjects as $subject)
 		{
 			$result['SUBJECTS']['ALL_SUBJECTS'][$subject->getId()] = $subject->getTitle();
 		}
-		$result['SUBJECTS']['CURRENT_SUBJECTS'] = [];
+
+		if ($data['SUBJECTS_TO_ADD'])
+		{
+			$currentSubjects = SubjectRepository::getByIds($data['SUBJECTS_TO_ADD']);
+			foreach ($currentSubjects as $subject)
+			{
+				$result['SUBJECTS']['CURRENT_SUBJECTS'][$subject->getId()] = $subject->getTitle();
+			}
+		}
+
 		return $result;
 	}
 
+	/**
+	 * @throws AddEntityException
+	 */
 	public static function add(array $data): void
 	{
 		if (($title = $data['TITLE']) === null)
 		{
-			throw new \Exception();
+			throw new AddEntityException(GetMessage('EMPTY_TITLE'));
 		}
 
 		$group = new EO_Group();
@@ -95,22 +134,50 @@ class GroupRepository
 				$group->addToSubjects($subject);
 			}
 		}
-		$group->save();
+
+		$result = $group->save();
+		if (!$result->isSuccess())
+		{
+			throw new AddEntityException(implode('<br>', $result->getErrorMessages()));
+		}
 	}
 
+	/**
+	 * @throws EditEntityException
+	 */
 	public static function editById(int $id, array $data): void
 	{
-		$group = self::getById($id);
-		/*$group = GroupTable::getByPrimary($id)->fetchObject();*/
+		if ($id === 0)
+		{
+			throw new EditEntityException(GetMessage('EMPTY_EDIT_GROUP'));
+		}
 
-		if ($data['TITLE'] !== null)
+		$group = self::getById($id);
+
+		if ($data['TITLE'])
 		{
 			$group?->setTitle($data['TITLE']);
 		}
-		foreach ($data['SUBJECTS_TO_DELETE'] as $subjectId)
+
+		if (!empty($data['SUBJECTS_TO_DELETE']))
 		{
-			$group?->getSubjects()->removeByPrimary($subjectId);
+			$couplesCollection = CoupleRepository::getByGroupId($id);
+			foreach ($data['SUBJECTS_TO_DELETE'] as $subjectId)
+			{
+				$group?->getSubjects()->removeByPrimary($subjectId);
+
+				foreach ($couplesCollection as $couple)
+				{
+					if ($couple->getSubjectId() !== $subjectId)
+					{
+						continue;
+					}
+
+					$couple->delete();
+				}
+			}
 		}
+
 		$subjectsToAdd = SubjectRepository::getByIds($data['SUBJECTS_TO_ADD']);
 		if ($subjectsToAdd !== null)
 		{
@@ -119,33 +186,46 @@ class GroupRepository
 				$group?->addToSubjects($subject);
 			}
 		}
-		//die;
-		//echo "posle:\n";
-		//var_dump($group); die;
-		$group?->save();
-		// TODO: handle exceptions
+
+		$result = $group?->save();
+		if (!$result->isSuccess())
+		{
+			throw new EditEntityException(implode('<br>', $result->getErrorMessages()));
+		}
 	}
 
 	public static function deleteById(int $id): void
 	{
-		$relatedCouples = CoupleTable::query()->setSelect(
-			['SUBJECT.TITLE', 'AUDIENCE.NUMBER', 'GROUP.TITLE', 'TEACHER.NAME', 'TEACHER.LAST_NAME']
-		)->where('GROUP_ID', $id)->fetchCollection();
+		$relatedCouples = CoupleTable::query()->setSelect([
+															  'SUBJECT.TITLE',
+															  'AUDIENCE.NUMBER',
+															  'GROUP.TITLE',
+															  'TEACHER.NAME',
+															  'TEACHER.LAST_NAME',
+														  ])->where('GROUP_ID', $id)->fetchCollection();
+
 		foreach ($relatedCouples as $couple)
 		{
 			$couple->delete();
 		}
+
 		GroupTable::delete($id);
 
 		//TODO: handle exceptions
 	}
 
-	public static function getArrayOfRelatedEntitiesById(int $id): ?array
+	public static function getArrayOfRelatedEntitiesById(int $id): array
 	{
 		$relatedEntities = [];
-		$relatedCouples = CoupleTable::query()->setSelect(
-				['SUBJECT.TITLE', 'AUDIENCE.NUMBER', 'GROUP.TITLE', 'TEACHER.NAME', 'TEACHER.LAST_NAME']
-			)->where('GROUP_ID', $id)->fetchAll();
+
+		$relatedCouples = CoupleTable::query()->setSelect([
+															  'SUBJECT.TITLE',
+															  'AUDIENCE.NUMBER',
+															  'GROUP.TITLE',
+															  'TEACHER.NAME',
+															  'TEACHER.LAST_NAME',
+														  ])->where('GROUP_ID', $id)->fetchAll();
+
 		if (!empty($relatedCouples))
 		{
 			$relatedEntities['COUPLES'] = $relatedCouples;
@@ -160,6 +240,7 @@ class GroupRepository
 		global $DB;
 		$DB->Query('DELETE FROM up_schedule_group');
 		$DB->Query('DELETE FROM up_schedule_group_subject');
+
 		return $DB->GetErrorSQL();
 	}
 }

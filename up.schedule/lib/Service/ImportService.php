@@ -2,10 +2,6 @@
 
 namespace Up\Schedule\Service;
 
-use Bitrix\Main\Application;
-use Bitrix\Main\DB\Connection;
-use Bitrix\Main\DB\TransactionException;
-use PhpOffice\PhpSpreadsheet\Calculation\Database\DVar;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
@@ -23,7 +19,7 @@ class ImportService
 
 		if (isset($entities['errors']))
 		{
-			return "Не удалось получить данные из таблиц: {$entities['errors']}";
+			return GetMessage('FAILED_TO_RETRIEVE_DATA') . ": {$entities['errors']}";
 		}
 
 		$DB->StartTransaction();
@@ -52,14 +48,14 @@ class ImportService
 
 	private static function getEntitiesFromSpreadsheet(Spreadsheet $spreadsheet): array
 	{
-		$audiencesTypesSheet = $spreadsheet->getSheetByName('Типы аудиторий');
-		$audiencesSheet = $spreadsheet->getSheetByName('Аудитории');
-		$subjectsSheet = $spreadsheet->getSheetByName('Предметы');
-		$teachersSheet = $spreadsheet->getSheetByName('Преподаватели');
-		$groupsSheet = $spreadsheet->getSheetByName('Группы');
-		$studentsSheet = $spreadsheet->getSheetByName('Студенты');
+		$audiencesTypesSheet = $spreadsheet->getSheetByName(GetMessage('AUDIENCE_TYPES_SPREADSHEET'));
+		$audiencesSheet = $spreadsheet->getSheetByName(GetMessage('AUDIENCES_SPREADSHEET'));
+		$subjectsSheet = $spreadsheet->getSheetByName(GetMessage('SUBJECTS_SPREADSHEET'));
+		$teachersSheet = $spreadsheet->getSheetByName(GetMessage('TEACHERS_SPREADSHEET'));
+		$groupsSheet = $spreadsheet->getSheetByName(GetMessage('GROUPS_SPREADSHEET'));
+		$studentsSheet = $spreadsheet->getSheetByName(GetMessage('STUDENTS_SPREADSHEET'));
 
-		$couplesSheet = $spreadsheet->getSheetByName('Пары');
+		$couplesSheet = $spreadsheet->getSheetByName(GetMessage('COUPLES_SPREADSHEET'));
 
 		if (
 			$audiencesTypesSheet === null
@@ -70,7 +66,7 @@ class ImportService
 			|| $studentsSheet === null
 		)
 		{
-			return ['errors' => 'Не все параметры заданы'];
+			return ['errors' => GetMessage('NOT_EVERYTHING_IS_SET')];
 		}
 
 		$audiencesTypes = self::preprocessingSheetData($audiencesTypesSheet);

@@ -1,29 +1,19 @@
 <?php
 
+if (!defined('B_PROLOG_INCLUDED') || B_PROLOG_INCLUDED !== true)
+{
+	die();
+}
+
 use Bitrix\Main\Context;
-use Bitrix\Main\Engine\CurrentUser;
-use PhpOffice\PhpSpreadsheet\IOFactory;
-use PhpOffice\PhpSpreadsheet\Spreadsheet;
-use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
-use Up\Schedule\Model\EO_Audience;
-use Up\Schedule\Model\EO_Audience_Collection;
-use Up\Schedule\Model\EO_AudienceType;
-use Up\Schedule\Model\EO_AudienceType_Collection;
-use Up\Schedule\Model\EO_Group;
-use Up\Schedule\Model\EO_GroupSubject;
-use Up\Schedule\Model\EO_GroupSubject_Collection;
-use Up\Schedule\Model\EO_Subject;
-use Up\Schedule\Model\EO_Subject_Collection;
-use Up\Schedule\Repository\AudienceTypeRepository;
-use Up\Schedule\Repository\GroupRepository;
-use Up\Schedule\Repository\SubjectRepository;
+use Up\Schedule\Service\EntityService;
 use Up\Schedule\Service\ImportService;
 
 class ImportDataComponent extends CBitrixComponent
 {
 	public function executeComponent(): void
 	{
-		if (!$this->checkRole())
+		if (!EntityService::isCurrentUserAdmin())
 		{
 			LocalRedirect('/404/');
 		}
@@ -34,11 +24,6 @@ class ImportDataComponent extends CBitrixComponent
 		}
 
 		$this->includeComponentTemplate();
-	}
-
-	protected function checkRole(): bool
-	{
-		return CurrentUser::get()->isAdmin();
 	}
 
 	protected function processImporting(): void
@@ -72,6 +57,9 @@ class ImportDataComponent extends CBitrixComponent
 		if($errors !== '')
 		{
 			$this->arResult['ERRORS'] = $errors;
+			return;
 		}
+
+		$this->arResult['SUCCESS'] = GetMessage('SUCCESS_IMPORT');
 	}
 }

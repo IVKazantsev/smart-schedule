@@ -13,6 +13,6 @@ if ((!is_null($USER)) && $USER->IsAuthorized())
 
 $APPLICATION->SetTitle("Schedule");
 
-$APPLICATION->IncludeComponent('bitrix:system.auth.authorize', '', []);
+$APPLICATION->IncludeComponent('bitrix:system.auth.authorize', '');
 
 require($_SERVER["DOCUMENT_ROOT"] . "/bitrix/footer.php");

@@ -2,57 +2,175 @@
 
 namespace Up\Schedule\Controller;
 
+use Bitrix\Main\ArgumentException;
+use Bitrix\Main\Engine\ActionFilter\Authentication;
 use Bitrix\Main\Engine\Controller;
-use Up\Schedule\Model\EO_Couple_Collection;
+use Bitrix\Main\Error;
+use Bitrix\Main\ObjectPropertyException;
+use Bitrix\Main\SystemException;
+use Exception;
+use Up\Schedule\Exception\AddCoupleException;
 use Up\Schedule\Repository\AudienceRepository;
 use Up\Schedule\Repository\CoupleRepository;
 use Up\Schedule\Repository\GroupRepository;
 use Up\Schedule\Repository\SubjectRepository;
 use Up\Schedule\Repository\UserRepository;
-use Up\Schedule\Service\CoupleService;
+use Up\Schedule\Service\EntityService;
 
 class CouplesList extends Controller
 {
 	private array $couples = [];
-	public function getCouplesListAction(): array
+
+	/**
+	 * @param array $coupleInfo
+	 *
+	 * @return void
+	 */
+	public function preprocessingCoupleInfo(array $coupleInfo): void
 	{
-		$this->fetchCouples();
+		if (!EntityService::isCurrentUserAdmin())
+		{
+			$this->addError(new Error('you must be an administrator', 'inappropriate_role'));
+		}
+
+		if (
+			!$coupleInfo['GROUP_ID']
+			|| !$coupleInfo['SUBJECT_ID']
+			|| !$coupleInfo['TEACHER_ID']
+			|| !$coupleInfo['AUDIENCE_ID']
+			|| !$coupleInfo['DAY_OF_WEEK']
+			|| !$coupleInfo['NUMBER_IN_DAY']
+		)
+		{
+			$this->addError(new Error('all info must be filled', 'not_filled_couple_info'));
+		}
+	}
+
+	protected function init(): void
+	{
+		$this->setActionConfig('getCouplesList', [
+			'-prefilters' => [
+				Authentication::class,
+			],
+		]);
+	}
+
+	public function getCouplesListAction(string $entity, int $id): array
+	{
+		$this->fetchCouples($entity, $id);
+
 		return [
 			'couples' => $this->couples,
 		];
 	}
 
-	public function addCoupleAction(): array
+	public function deleteCoupleAction(array $coupleInfo): array
 	{
-		$data = [
-			'GROUP_ID' => request()->get('GROUP_ID'),
-			'SUBJECT_ID' => request()->get('SUBJECT_ID'),
-			'TEACHER_ID' => request()->get('TEACHER_ID'),
-			'AUDIENCE_ID' => request()->get('AUDIENCE_ID'),
-			'DAY_OF_WEEK' => request()->get('DAY_OF_WEEK'),
-			'NUMBER_IN_DAY' => request()->get('NUMBER_IN_DAY'),
-		];
-		CoupleService::addCouple($data);
-		return ['result' => true];
+		$this->preprocessingCoupleInfo($coupleInfo);
+
+		try
+		{
+			CoupleRepository::deleteCouple($coupleInfo);
+
+			return ['result' => true];
+		}
+		catch (Exception)
+		{
+			return ['result' => false];
+		}
 	}
 
-	public function fetchAddCoupleDataAction(): array
+	public function addCoupleAction(array $coupleInfo): array
 	{
-		$result = [];
-		$currentGroupId = (int)request()->get('id');
-		/*$numberOfDay = (int)request()->get('numberOfDay');
-		$numberOfCouple = (int)request()->get('numberOfCouple');*/
-		$this->fetchCouples();
-		$subjects = SubjectRepository::getArrayByGroupId($currentGroupId);
-		$idListOfSubjects = array_column($subjects, 'SUBJECTSID');
-		foreach ($this->couples as $day)
+		$this->preprocessingCoupleInfo($coupleInfo);
+		$couplesAtThisTime = CoupleRepository::getByDayAndNumber(
+			(int)$coupleInfo['DAY_OF_WEEK'],
+			(int)$coupleInfo['NUMBER_IN_DAY']
+		);
+		foreach ($couplesAtThisTime as $couple)
 		{
-			foreach ($day as $couple)
+			if ($couple->getAudienceId() === (int)$coupleInfo['AUDIENCE_ID'])
 			{
-				if (($index = array_search($couple['UP_SCHEDULE_MODEL_COUPLE_SUBJECT_ID'], $idListOfSubjects, true)) !== false)
+				$this->addError(new Error('the couple in this audience is busy at this time', 'busy_audience'));
+
+				return [
+					'result' => false,
+					'errors' => GetMessage('BUSY_AUDIENCE'),
+				];
+			}
+
+			if ($couple->getTeacherId() === (int)$coupleInfo['TEACHER_ID'])
+			{
+				$this->addError(new Error('the couple with this teacher is busy at this time', 'busy_teacher'));
+
+				return [
+					'result' => false,
+					'errors' => GetMessage('BUSY_TEACHER'),
+				];
+			}
+
+			if ($couple->getGroupId() === (int)$coupleInfo['GROUP_ID'])
+			{
+				$this->addError(new Error('the couple in this group is busy at this time', 'busy_group'));
+
+				return [
+					'result' => false,
+					'errors' => GetMessage('BUSY_GROUP'),
+				];
+			}
+		}
+
+		try
+		{
+			CoupleRepository::addCouple($coupleInfo);
+			$result = [
+				'result' => true,
+			];
+		}
+		catch (ObjectPropertyException|ArgumentException|SystemException)
+		{
+			$this->addError(new Error('failed to add a couple', 'failed_to_add_couple'));
+			$result = [
+				'result' => false,
+			];
+		}
+		catch (AddCoupleException $exception)
+		{
+			$result = [
+				'result' => false,
+				'errors' => $exception->getMessage(),
+			];
+		}
+
+		return $result;
+	}
+
+	public function fetchAddCoupleDataAction(string $entity, int $id): array
+	{
+		if (!EntityService::isCurrentUserAdmin())
+		{
+			$this->addError(new Error('you must be an administrator', 'inappropriate_role'));
+		}
+
+		$result = [];
+
+		$this->fetchCouples($entity, $id);
+		$getMethodName = "getArrayBy{$entity}Id";
+		$subjects = SubjectRepository::$getMethodName($id);
+		if ($entity === 'group')
+		{
+			$idListOfSubjects = array_column($subjects, 'ID');
+			foreach ($this->couples as $day)
+			{
+				foreach ($day as $couple)
 				{
-					unset($subjects[$index]);
-					unset($idListOfSubjects[$index]);
+					if (
+						($index = array_search($couple['UP_SCHEDULE_MODEL_COUPLE_SUBJECT_ID'], $idListOfSubjects, true))
+						!== false
+					)
+					{
+						unset($subjects[$index], $idListOfSubjects[$index]);
+					}
 				}
 			}
 		}
@@ -61,19 +179,22 @@ class CouplesList extends Controller
 		{
 			$result[] = [
 				'subject' => $subject,
-				'teachers' => UserRepository::getArrayOfTeachersBySubjectId((int)$subject['SUBJECTSID']),
-				'audiences' => AudienceRepository::getArrayOfAudiencesBySubjectId((int)$subject['SUBJECTSID']),
-				];
+				'teachers' => ($entity === 'teacher') ? [UserRepository::getArrayById($id)]
+					: UserRepository::getArrayOfTeachersBySubjectId((int)$subject['ID']),
+				'audiences' => ($entity === 'audience') ? [AudienceRepository::getArrayById($id)]
+					: AudienceRepository::getArrayOfAudiencesBySubjectId((int)$subject['ID']),
+				'groups' => ($entity === 'group') ? [GroupRepository::getArrayById($id)]
+					: GroupRepository::getArrayOfGroupsBySubjectId((int)$subject['ID']),
+			];
 		}
 
 		return $result;
 	}
 
-	protected function fetchCouples(): void
+	protected function fetchCouples(string $entity, int $id): void
 	{
-		$currentGroupId = (int)request()->get('id');
-		$couples = CoupleRepository::getArrayByGroupId($currentGroupId);
-		/*$this->data['couples'] = $this->sortCouplesByWeekDay($couples);*/
+		$getMethodName = "getArrayBy{$entity}Id";
+		$couples = CoupleRepository::$getMethodName($id);
 		$this->couples = $this->sortCouplesByWeekDay($couples);
 	}
 

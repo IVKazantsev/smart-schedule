@@ -17,7 +17,7 @@ a:hover {
 	width: 15px;
 }
 
-.group-selection, .group-selection-trigger {
+.entity-selection, .entity-selection-trigger {
 	width: 100%;
 }
 
@@ -49,6 +49,13 @@ a:hover {
 	display: none;
 }
 
+.dropdown-item {
+	padding: .375rem 1rem !important;
+	text-overflow: ellipsis;
+	overflow: hidden;
+	white-space: nowrap;
+}
+
 .day-of-week, .title-of-table {
 	color: white;
 	background-color: #1b1b1b;
@@ -56,6 +63,7 @@ a:hover {
 }
 
 .couple {
+	position: relative;
 	border-radius: 0;
 	height: 120px;
 	font-size: 0.8em;
@@ -89,6 +97,12 @@ a:hover {
 
 .tabs-content > div > div.active {
 	display: flex;
+}
+
+.admin-entity-list-item {
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
 }
 
 #entity-list-app {
@@ -138,7 +152,7 @@ a:hover {
 #modal .related-entities {
 	max-height: 300px;
 	overflow-y: auto;
-	scrollbar-color: #000000 #e0e0e0;
+	scrollbar-color: #000 #e0e0e0;
 	scrollbar-width: thin;
 	overflow-x: hidden;
 }
@@ -159,6 +173,7 @@ a:hover {
 .error-title {
 	border-radius: 6px 6px 0 0;
 }
+
 .couple {
 }
 
@@ -177,11 +192,103 @@ a:hover {
 }
 
 .btn-edit-couple-container {
-	max-height: 7px;
+	position: absolute;
+	display: flex;
+	justify-content: end;
+	width: 100%;
+}
+
+.couple-edit-button {
+	height: 20px;
+	width: 20px;
+	right: 2px;
+	top: 2px;
+	background-color: white !important;
 }
 
 .btn-dropdown-couple {
-	position: relative;
-	left: 70px;
-	bottom: 10px;
+	padding: 0 1em 0 0;
+	height: 100%;
+}
+
+.couple-text {
+	line-height: 1;
+}
+
+.selected-indicator {
+	position: absolute;
+	background-color: rgba(0, 0, 0, 0.3);
+	border-radius: 6px;
+	transition: top 0.5s ease;
+}
+
+#main-content-of-admin-panel {
+	width: 100%;
+}
+
+.user-info-container {
+	width: 100%;
+	text-overflow: ellipsis;
+	overflow: hidden;
+	white-space: nowrap;
+}
+
+.entity-selection-container {
+	width: 100%;
+}
+
+#entity-selection-button {
+	text-overflow: ellipsis;
+	overflow: hidden;
+	white-space: nowrap;
+}
+
+.pagination-link, .pagination-previous , .pagination-next {
+	background-color: white !important;
+}
+
+.pagination-link.is-current {
+	background-color: #485fc7 !important;
+}
+
+.admin-entity-column {
+	justify-content: left;
+	padding: 0;
+}
+
+.is-fullheight {
+	height: 100%;
+}
+
+.sidebar-icon {
+	height: 100%;
+	max-width: 70%;
+}
+
+#messages {
+	z-index: 50;
+}
+
+.subject-of-couple {
+	overflow: hidden;
+	display: -webkit-box;
+	-webkit-line-clamp: 3;
+	line-clamp: 2;
+	-webkit-box-orient: vertical;
+}
+
+#entity, #entity-id {
+	display: none;
+}
+
+@media (max-width: 1024px) {
+	#main-container {
+		margin: 1rem;
+	}
+}
+
+@media (max-width: 768px) {
+	.couple {
+		font-size: 1.2em;
+	}
 }

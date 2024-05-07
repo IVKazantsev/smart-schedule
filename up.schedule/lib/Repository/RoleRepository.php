@@ -7,6 +7,14 @@ use Up\Schedule\Model\RoleTable;
 
 class RoleRepository
 {
+	public static function getById(int $id): ?EO_Role
+	{
+		return RoleTable::query()
+			->setSelect(['ID', 'TITLE'])
+			->where('ID', $id)
+			->fetchObject();
+	}
+
 	public static function getByTitle(string $title): ?EO_Role
 	{
 		return RoleTable::query()
@@ -15,7 +23,7 @@ class RoleRepository
 			->fetchObject();
 	}
 
-	public static function getAllArray(): ?array
+	public static function getAllArray(): array
 	{
 		return RoleTable::query()
 			->setSelect(['ID', 'TITLE'])

@@ -6,6 +6,7 @@ use Bitrix\Main\Localization\Loc,
 	Bitrix\Main\ORM\Fields\IntegerField,
 	Bitrix\Main\ORM\Fields\StringField,
 	Bitrix\Main\ORM\Fields\Validators\LengthValidator;
+use Bitrix\Main\ORM\Data\Internal\DeleteByFilterTrait;
 use Bitrix\Main\ORM\Fields\Relations\ManyToMany;
 use Bitrix\Main\ORM\Fields\Relations\Reference;
 use Bitrix\Main\ORM\Query\Join;
@@ -28,6 +29,8 @@ Loc::loadMessages(__FILE__);
 
 class SubjectTable extends DataManager
 {
+	use DeleteByFilterTrait;
+
 	/**
 	 * Returns DB table name for entity.
 	 */
@@ -75,7 +78,7 @@ class SubjectTable extends DataManager
 				GroupTable::class
 			))->configureTableName('up_schedule_group_subject'),
 			(new ManyToMany(
-				'USERS',
+				'TEACHERS',
 				UserTable::class
 			))->configureTableName('up_schedule_subject_teacher'),
 		];

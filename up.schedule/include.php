@@ -5,6 +5,7 @@ use Bitrix\Main\DB\Connection;
 use Bitrix\Main\Request;
 
 const COUPLES_NUMBER_PER_DAY = 7;
+const DEFAULT_ENTITY_TO_DISPLAY = 'group';
 
 function request(): Request
 {
