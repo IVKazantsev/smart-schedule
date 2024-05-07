@@ -7,7 +7,7 @@ if (!defined('B_PROLOG_INCLUDED') || B_PROLOG_INCLUDED !== true)
 
 use Up\Schedule\Service\EntityService;
 
-class CouplesListComponent extends CBitrixComponent
+class AutomaticSchedulePreviewComponent extends CBitrixComponent
 {
 	private array $entitiesForDisplaySchedule = [
 		'group',

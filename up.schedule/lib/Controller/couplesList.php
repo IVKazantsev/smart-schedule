@@ -140,8 +140,6 @@ class CouplesList extends Controller
 		}
 
 		$result = [];
-		/*$numberOfDay = (int)request()->get('numberOfDay');
-		$numberOfCouple = (int)request()->get('numberOfCouple');*/
 		$this->fetchCouples($entity, $id);
 		$getMethodName = "getArrayBy{$entity}Id";
 		$subjects = SubjectRepository::$getMethodName($id);

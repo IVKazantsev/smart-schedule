@@ -36,20 +36,20 @@ this.BX = this.BX || {};
 	    } else {
 	      throw new Error('CouplesList: options.rootNodeId required');
 	    }
-	    if (main_core.Type.isObject(options.entityInfo)) {
-	      this.entity = options.entityInfo.entity;
-	      this.entityId = options.entityInfo.entityId;
+	    if (!options.scheduleCouplesList) {
+	      throw new Error("CouplesList: schedule couples list in not included");
+	    }
+	    this.scheduleCouplesList = options.scheduleCouplesList;
+	    if (!main_core.Type.isStringFilled(options.entity) || !main_core.Type.isStringFilled(options.entityId)) {
+	      this.scheduleCouplesList.extractEntityFromUrl();
 	    } else {
-	      throw new Error('CouplesList: options.entityInfo required');
+	      this.entity = options.entity;
+	      this.entityId = options.entityId;
 	    }
 	    this.rootNode = document.getElementById(this.rootNodeId);
 	    if (!this.rootNode) {
 	      throw new Error("CouplesList: element with id = \"".concat(this.rootNodeId, "\" not found"));
 	    }
-	    if (!options.scheduleCouplesList) {
-	      throw new Error("CouplesList: schedule couples list in not included");
-	    }
-	    this.scheduleCouplesList = options.scheduleCouplesList;
 	    this.dataSourceIsDb = dataSourceIsDb;
 	    this.entityList = [];
 	    this.suitableEntityList = [];

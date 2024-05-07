@@ -28,7 +28,7 @@ Extension::load('up.couples-list');
 							   class="button is-fullwidth is-60-height-child"
 							   aria-haspopup="true"
 							   aria-controls="dropdown-menu"
-							   placeholder="<?= ($arResult['CURRENT_ENTITY'])
+							   placeholder="<?= ($arResult['CURRENT_ENTITY_NAME'])
 								   ? GetMessage($arResult['LOC_ENTITY']) . ' '
 								   . htmlspecialcharsbx($arResult['CURRENT_ENTITY_NAME'])
 								   : GetMessage("SELECT_{$arResult['LOC_ENTITY']}") ?>"
@@ -64,63 +64,5 @@ Extension::load('up.couples-list');
 	</div>
 </div>
 
-<script>
-	BX.ready(function () {
-		window.ScheduleCouplesList = new BX.Up.CouplesList({
-			rootNodeId: 'couples-container',
-			entity: '<?= $arResult['ENTITY'] ?>',
-			entityId: '<?= $arResult['CURRENT_ENTITY_ID'] ?>',
-		});
-
-		window.DisplayEntitiesList = new BX.Up.DisplayScheduleEntitiesList({
-			rootNodeId: 'dropdown-menu-container',
-			entityInfo: (window.ScheduleCouplesList.entity && window.ScheduleCouplesList.entityId) ? {
-				'entity': window.ScheduleCouplesList.entity,
-				'entityId': window.ScheduleCouplesList.entityId,
-			} :  window.ScheduleCouplesList.extractEntityFromUrl(),
-			scheduleCouplesList: window.ScheduleCouplesList,
-		});
-
-		const entityButtons = document.querySelectorAll('.display-entity');
-		entityButtons.forEach((button) => {
-			button.addEventListener('click', () => {
-				const address = button.href;
-				const addresses = address.split('/');
-				const entityIndex = addresses.findIndex((element) => {
-					const needles = [
-						'group',
-						'teacher',
-						'audience',
-					];
-
-					return needles.includes(element);
-				});
-
-				const entityIdIndex = entityIndex + 1;
-
-				let entity = addresses[entityIndex];
-				let entityId = addresses[entityIdIndex];
-
-				entityId = typeof Number(entityId) === 'number' ? entityId : undefined;
-				entity = typeof entity === 'string' ? entity : undefined;
-
-				const entityInfo = {
-					'entityId': entityId,
-					'entity': entity,
-				};
-
-				window.ScheduleCouplesList.entityId = entityId;
-				window.ScheduleCouplesList.entity = entity;
-				window.ScheduleCouplesList.reload();
-				window.DisplayEntitiesList.reload(entityInfo);
-			})
-		})
-	});
-
-	const dropdown = document.querySelector('.dropdown');
-	const entitySelectionInput = document.getElementById('entity-selection-button');
-	entitySelectionInput.addEventListener('input', () => {
-		window.DisplayEntitiesList.reload([], entitySelectionInput.value);
-		dropdown.classList.add('is-active');
-	})
-</script>
+<div id="entity"><?= $arResult['ENTITY'] ?></div>
+<div id="entity-id"><?= $arResult['CURRENT_ENTITY_ID'] ?></div>

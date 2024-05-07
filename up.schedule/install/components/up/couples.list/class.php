@@ -5,7 +5,6 @@ if (!defined('B_PROLOG_INCLUDED') || B_PROLOG_INCLUDED !== true)
 	die();
 }
 
-use Bitrix\Main\Engine\CurrentUser;
 use Up\Schedule\Repository\GroupRepository;
 use Up\Schedule\Repository\RoleRepository;
 use Up\Schedule\Repository\UserRepository;
@@ -33,97 +32,90 @@ class CouplesListComponent extends CBitrixComponent
 
 	public function executeComponent(): void
 	{
-		// Выставляем сущность "по умолчанию"
-		if (!$this->arParams['ENTITY'])
+		$this->defineEntityToDisplay();
+		$this->prepareTemplateParams();
+		$this->fillEntityInfo();
+		$this->includeComponentTemplate();
+	}
+
+	private function defineEntityToDisplay(): void
+	{
+		if ($this->arParams['ENTITY'])
 		{
-			$userId = EntityService::getCurrentUser()->getId();
-			$user = UserRepository::getById($userId);
-			$roleId = $user?->get('UF_ROLE_ID');
-			if (!$roleId)
+			if (!in_array($this->arParams['ENTITY'], $this->entitiesForDisplaySchedule, true))
 			{
-				$this->arParams['ENTITY'] = 'group';
-				$this->includeComponentTemplate();
-
-				return;
+				$this->arParams['ENTITY'] = DEFAULT_ENTITY_TO_DISPLAY;
+				$this->arResult['CURRENT_ENTITY_ID'] = 0;
 			}
-			$role = RoleRepository::getById($roleId);
-
-			$role = array_search($role?->getTitle(), $this->roles, true);
-			if (!array_key_exists($role, $this->entityToDisplayByRole))
-			{
-				$this->arParams['ENTITY'] = 'group';
-				$this->includeComponentTemplate();
-
-				return;
-			}
-
-			$entity = $this->entityToDisplayByRole[$role];
-			$this->arParams['ENTITY'] = $entity;
-
-			if ($role === 'admin')
-			{
-				$this->includeComponentTemplate();
-
-				return;
-			}
-
-			if($role === 'teacher')
-			{
-				$this->arResult['CURRENT_ENTITY_ID'] = $user?->getId();
-				$this->arResult['CURRENT_ENTITY'] = $user;
-			}
-			else
-			{
-				$groupId = $user?->get('UF_GROUP_ID');
-				$group = GroupRepository::getById($groupId);
-				$this->arResult['CURRENT_ENTITY_ID'] = $groupId;
-				$this->arResult['CURRENT_ENTITY'] = $group;
-			}
-		}
-		// Обрабатываем неправильные сущности
-		elseif (!in_array($this->arParams['ENTITY'], $this->entitiesForDisplaySchedule, true))
-		{
-			$this->includeComponentTemplate();
 
 			return;
 		}
 
-		$this->prepareTemplateParams();
-		$this->fetchEntityList();
-		$this->includeComponentTemplate();
-	}
-
-	protected function fetchEntityList(): void
-	{
-		$entity = $this->arParams['ENTITY'];
-		$currentEntityId = ($this->arResult['CURRENT_ENTITY_ID']) ?? (int)$this->arParams['ID'];
-		if (!$currentEntityId)
+		$userId = EntityService::getCurrentUser()->getId();
+		$user = UserRepository::getById($userId);
+		$roleId = $user?->get('UF_ROLE_ID');
+		if (!$roleId)
 		{
-			$user = CurrentUser::get();
-			if ($user)
-			{
-				$currentEntityId = $user->getId();
-			}
+			$this->arParams['ENTITY'] = DEFAULT_ENTITY_TO_DISPLAY;
+
+			return;
+		}
+		$role = RoleRepository::getById($roleId);
+
+		$role = array_search($role?->getTitle(), $this->roles, true);
+		if (!array_key_exists($role, $this->entityToDisplayByRole))
+		{
+			$this->arParams['ENTITY'] = DEFAULT_ENTITY_TO_DISPLAY;
+
+			return;
 		}
 
+		$entity = $this->entityToDisplayByRole[$role];
+		$this->arParams['ENTITY'] = $entity;
+
+		if ($role === 'admin')
+		{
+			return;
+		}
+
+		if ($role === 'teacher')
+		{
+			$this->arResult['CURRENT_ENTITY_ID'] = (int)$user?->getId();
+			$this->arResult['CURRENT_ENTITY'] = $user;
+
+			return;
+		}
+
+		$groupId = $user?->get('UF_GROUP_ID');
+		$group = GroupRepository::getById($groupId);
+		$this->arResult['CURRENT_ENTITY_ID'] = $groupId;
+		$this->arResult['CURRENT_ENTITY'] = $group;
+	}
+
+	private function fillEntityInfo(): void
+	{
+		$entity = $this->arParams['ENTITY'];
+		$this->arResult['CURRENT_ENTITY_ID'] = ($this->arResult['CURRENT_ENTITY_ID']) ?? (int)$this->arParams['ID'];
+
 		// Получим методы для получения названий сущностей
-		$fillNameMethod = "fill{$entity}NameMethod";
+		$fillNameMethod = "fill{$entity}NameMethods";
 		$this->$fillNameMethod();
 
 		$repository = EntityService::getEntityRepositoryName($entity, false);
 
 		if ($entity === 'teacher')
 		{
-			$currentEntity = $repository::getTeacherById($currentEntityId);
-			$this->arResult['ENTITIES'] = $repository::getAllTeachers();
+			$currentEntity = $repository::getTeacherById($this->arResult['CURRENT_ENTITY_ID']);
 		}
 		else
 		{
-			$currentEntity = $repository::getById($currentEntityId);
-			$this->arResult['ENTITIES'] = $repository::getAll();
+			$currentEntity = $repository::getById($this->arResult['CURRENT_ENTITY_ID']);
 		}
-		$this->arResult['CURRENT_ENTITY_ID'] = $currentEntity['ID'];
-		$this->arResult['CURRENT_ENTITY'] = $currentEntity;
+
+		if ($currentEntity)
+		{
+			$this->arResult['CURRENT_ENTITY_ID'] = $currentEntity['ID'];
+		}
 
 		$entityNameMethods = $this->arResult['ENTITY_NAME_METHODS'];
 		if (!$currentEntity)
@@ -136,21 +128,21 @@ class CouplesListComponent extends CBitrixComponent
 		}
 	}
 
-	protected function fillGroupNameMethod(): void
+	private function fillGroupNameMethods(): void
 	{
 		$this->arResult['ENTITY_NAME_METHODS'] = [
 			'getTitle',
 		];
 	}
 
-	protected function fillAudienceNameMethod(): void
+	private function fillAudienceNameMethods(): void
 	{
 		$this->arResult['ENTITY_NAME_METHODS'] = [
 			'getNumber',
 		];
 	}
 
-	protected function fillTeacherNameMethod(): void
+	private function fillTeacherNameMethods(): void
 	{
 		$this->arResult['ENTITY_NAME_METHODS'] = [
 			'getName',
@@ -158,7 +150,7 @@ class CouplesListComponent extends CBitrixComponent
 		];
 	}
 
-	protected function prepareTemplateParams(): void
+	private function prepareTemplateParams(): void
 	{
 		$this->arResult['ENTITY'] = $this->arParams['ENTITY'];
 		// mb_strtoupper for localization

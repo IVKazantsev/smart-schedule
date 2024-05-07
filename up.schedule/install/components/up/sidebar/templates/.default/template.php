@@ -200,7 +200,7 @@ if (!defined("B_PROLOG_INCLUDED") || B_PROLOG_INCLUDED !== true)
 				</div>
 				<?php foreach ($arResult['ENTITIES_FOR_DISPLAY'] as $key => $entity): ?>
 					<li>
-						<a href="/<?= $entity ?>/1/"
+						<a href="/<?= $entity ?>/0/"
 						   class="display-entity is-60-height is-flex is-align-items-center is-justify-content-center
 						   <?= ($arResult['ENTITY'] === $entity) ? 'selected-sidebar-entity' : '' ?>">
 							<?= GetMessage('SIDEBAR_' . $arResult['LOC_ENTITIES_FOR_DISPLAY'][$key]) ?>
