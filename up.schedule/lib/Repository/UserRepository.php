@@ -2,14 +2,19 @@
 
 namespace Up\Schedule\Repository;
 
+use Bitrix\Main\ArgumentException;
 use Bitrix\Main\DB\Exception;
 use Bitrix\Main\EO_User;
 use Bitrix\Main\EO_User_Collection;
+use Bitrix\Main\ObjectPropertyException;
 use Bitrix\Main\ORM\Fields\Relations\Reference;
 use Bitrix\Main\ORM\Query\Join;
 use Bitrix\Main\ORM\Query\Query;
+use Bitrix\Main\SystemException;
 use Bitrix\Main\UserTable;
 use CUser;
+use Up\Schedule\Exception\AddEntity;
+use Up\Schedule\Exception\EditEntity;
 use Up\Schedule\Model\CoupleTable;
 use Up\Schedule\Model\EO_Group;
 use Up\Schedule\Model\EO_Subject;
@@ -428,43 +433,46 @@ class UserRepository
 		return $result;
 	}
 
-	public static function add(array $data): string
+	/**
+	 * @throws AddEntity
+	 */
+	public static function add(array $data): void
 	{
 		if($data['LOGIN'] === null)
 		{
-			return 'Введите логин';
-		}
-		if($data['EMAIL'] === null)
-		{
-			return 'Введите почту';
+			throw new AddEntity('Введите логин');
 		}
 		if($data['NAME'] === null)
 		{
-			return 'Введите имя';
+			throw new AddEntity('Введите имя');
 		}
 		if($data['LAST_NAME'] === null)
 		{
-			return 'Введите фамилию';
+			throw new AddEntity('Введите фамилию');
+		}
+		if($data['EMAIL'] === null)
+		{
+			throw new AddEntity('Введите почту');
 		}
 		if($data['PASSWORD'] === null)
 		{
-			return 'Введите пароль';
+			throw new AddEntity('Введите пароль');
 		}
 		if($data['CONFIRM_PASSWORD'] === null)
 		{
-			return 'Подтвердите пароль';
+			throw new AddEntity('Подтвердите пароль');
 		}
 		if($data['PASSWORD'] !== $data['CONFIRM_PASSWORD'])
 		{
-			return 'Пароли не совпадают';
+			throw new AddEntity('Пароли не совпадают');
 		}
 		if($data['ROLE'] === null)
 		{
-			return 'Выберите роль';
+			throw new AddEntity('Выберите роль');
 		}
 
 		$fields = [];
-		$validate = function(string $fieldName, mixed $value) use (&$fields): void {
+		$validate = static function(string $fieldName, mixed $value) use (&$fields): void {
 			if ($value !== null)
 			{
 				$fields[$fieldName] = $value;
@@ -501,7 +509,7 @@ class UserRepository
 
 		if ((int)$id <= 0)
 		{
-			return $user->LAST_ERROR;
+			throw new AddEntity($user->LAST_ERROR);
 		}
 
 		if ($data['ROLE'] === 'Преподаватель')
@@ -518,12 +526,9 @@ class UserRepository
 
 			if(!$result->isSuccess())
 			{
-				return implode('<br>', $result->getErrorMessages());
+				throw new AddEntity(implode('<br>', $result->getErrorMessages()));
 			}
 		}
-
-		return '';
-		// TODO: handle exceptions
 	}
 
 	public static function getTeacherByFirstAndLastName(string $name, string $lastName): ?EO_User
@@ -538,7 +543,13 @@ class UserRepository
 		)->fetchObject();
 	}
 
-	public static function editById(int $id, array $data): string
+	/**
+	 * @throws EditEntity
+	 * @throws ObjectPropertyException
+	 * @throws ArgumentException
+	 * @throws SystemException
+	 */
+	public static function editById(int $id, array $data): void
 	{
 		$fields = [];
 
@@ -551,14 +562,14 @@ class UserRepository
 
 		if($id === 0)
 		{
-			return 'Введите пользователя для редактирования';
+			throw new EditEntity('Введите пользователя для редактирования');
 		}
 
 		if($data['PASSWORD'] !== 0)
 		{
 			if($data['PASSWORD'] !== $data['CONFIRM_PASSWORD'])
 			{
-				return 'Пароли не совпадают';
+				throw new EditEntity('Пароли не совпадают');
 			}
 
 			$validate('PASSWORD', $data['PASSWORD']);
@@ -589,7 +600,7 @@ class UserRepository
 		$result = $user->Update($id, $fields);
 		if($result === false)
 		{
-			return $user->LAST_ERROR;
+			throw new EditEntity($user->LAST_ERROR);
 		}
 
 		if ($data['ROLE'] === 'Преподаватель')
@@ -613,7 +624,7 @@ class UserRepository
 
 			if(!$result->isSuccess())
 			{
-				return implode('<br>', $result->getErrorMessages());
+				throw new EditEntity(implode('<br>', $result->getErrorMessages()));
 			}
 		}
 		else
@@ -621,9 +632,6 @@ class UserRepository
 			SubjectTeacherTable::deleteByFilter(['TEACHER_ID' => $id]);
 			CoupleTable::deleteByFilter(['TEACHER_ID' => $id]);
 		}
-
-		return '';
-		// TODO: handle exceptions
 	}
 
 	public static function deleteById(int $id): void

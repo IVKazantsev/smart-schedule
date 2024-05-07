@@ -2,9 +2,13 @@
 
 namespace Up\Schedule\Repository;
 
+use Bitrix\Main\ArgumentException;
+use Bitrix\Main\ObjectPropertyException;
 use Bitrix\Main\ORM\Fields\Relations\Reference;
 use Bitrix\Main\ORM\Query\Join;
+use Bitrix\Main\SystemException;
 use Bitrix\Main\UserTable;
+use Up\Schedule\Exception\AddCouple;
 use Up\Schedule\Model\AudienceTable;
 use Up\Schedule\Model\CoupleTable;
 use Up\Schedule\Model\EO_Couple;
@@ -25,8 +29,8 @@ class CoupleRepository
 			'TEACHER_ID' => $coupleInfo['TEACHER_ID'],
 			'AUDIENCE_ID' => $coupleInfo['AUDIENCE_ID'],
 		];
-		CoupleTable::delete($primary);
 
+		CoupleTable::delete($primary);
 	}
 
 	public static function getByGroupId(int $groupId): ?EO_Couple_Collection
@@ -61,7 +65,13 @@ class CoupleRepository
 			->fetchAll();
 	}
 
-	public static function addCouple(array $data): string
+	/**
+	 * @throws SystemException
+	 * @throws ObjectPropertyException
+	 * @throws ArgumentException
+	 * @throws AddCouple
+	 */
+	public static function addCouple(array $data): void
 	{
 		$result = (new EO_Couple())
 			->setGroup(GroupTable::getByPrimary($data['GROUP_ID'])->fetchObject())
@@ -74,10 +84,8 @@ class CoupleRepository
 
 		if(!$result->isSuccess())
 		{
-			return implode('<br>', $result->getErrorMessages());
+			throw new AddCouple(implode('<br>', $result->getErrorMessages()));
 		}
-
-		return '';
 	}
 
 	public static function deleteAllFromDB(): string

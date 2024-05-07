@@ -30,8 +30,8 @@ class CoupleService
 			];
 		}
 
-		$data['TEACHERS'] = $teachers;
-		$data['AUDIENCES'] = $audiences;
+		$data['TEACHERS'] = $teachers ?? [];
+		$data['AUDIENCES'] = $audiences ?? [];
 		$data['DAYS_OF_WEEK'] = [
 			1 => "Понедельник",
 			2 => "Вторник",

@@ -2,18 +2,18 @@
 
 namespace Up\Schedule\Controller;
 
+use Bitrix\Main\ArgumentException;
 use Bitrix\Main\Engine\ActionFilter\Authentication;
 use Bitrix\Main\Engine\Controller;
-use Bitrix\Main\Entity\Query;
 use Bitrix\Main\Error;
-use Up\Schedule\Model\EO_Couple_Collection;
-use Up\Schedule\Model\EO_Subject;
+use Bitrix\Main\ObjectPropertyException;
+use Bitrix\Main\SystemException;
+use Up\Schedule\Exception\AddCouple;
 use Up\Schedule\Repository\AudienceRepository;
 use Up\Schedule\Repository\CoupleRepository;
 use Up\Schedule\Repository\GroupRepository;
 use Up\Schedule\Repository\SubjectRepository;
 use Up\Schedule\Repository\UserRepository;
-use Up\Schedule\Service\CoupleService;
 use Up\Schedule\Service\EntityService;
 
 class CouplesList extends Controller
@@ -118,18 +118,32 @@ class CouplesList extends Controller
 			}
 		}
 
-		$errors = CoupleRepository::addCouple($coupleInfo);
-		if($errors !== '')
+		$result = [];
+
+		try
 		{
-			$this->addError(new Error('failed to add a couple', 'failed_to_add_couple'));
-			return [
-				'result' => false,
-				'errors' => $errors,
+			CoupleRepository::addCouple($coupleInfo);
+			$result = [
+				'result' => true,
 			];
 		}
-		return [
-			'result' => true,
-		];
+		catch (ObjectPropertyException|ArgumentException|SystemException)
+		{
+			$this->addError(new Error('failed to add a couple', 'failed_to_add_couple'));
+			$result = [
+				'result' => false,
+			];
+		}
+		catch (AddCouple $exception)
+		{
+			$result = [
+				'result' => false,
+				'errors' => $exception->getMessage(),
+			];
+		}
+
+		return $result;
+
 	}
 
 	public function fetchAddCoupleDataAction(string $entity, int $id): array
@@ -140,6 +154,7 @@ class CouplesList extends Controller
 		}
 
 		$result = [];
+
 		$this->fetchCouples($entity, $id);
 		$getMethodName = "getArrayBy{$entity}Id";
 		$subjects = SubjectRepository::$getMethodName($id);
