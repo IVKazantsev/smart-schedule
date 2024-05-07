@@ -14,75 +14,61 @@ class GroupRepository
 {
 	public static function getAll(): ?EO_Group_Collection
 	{
-		return GroupTable::query()
-			->setSelect(['ID', 'TITLE', 'SUBJECTS'])
-			->fetchCollection();
+		return GroupTable::query()->setSelect(['ID', 'TITLE', 'SUBJECTS'])->fetchCollection();
 	}
 
 	public static function getByTitle(string $title): ?EO_Group
 	{
-		return GroupTable::query()
-			->setSelect(['ID', 'TITLE'])
-			->where('TITLE', $title)
-			->fetchObject();
+		return GroupTable::query()->setSelect(['ID', 'TITLE'])->where('TITLE', $title)->fetchObject();
 	}
 
 	public static function getAllArray(): array
 	{
-		return GroupTable::query()
-			->setSelect(['ID', 'TITLE'])
-			->fetchAll();
+		return GroupTable::query()->setSelect(['ID', 'TITLE'])->fetchAll();
 	}
 
 	public static function getPageWithArrays(int $entityPerPage, int $pageNumber, string $searchInput): array
 	{
 		$offset = 0;
-		if($pageNumber > 1)
+		if ($pageNumber > 1)
 		{
 			$offset = $entityPerPage * ($pageNumber - 1);
 		}
 
-		return GroupTable::query()
-						 ->setSelect(['ID', 'TITLE'])
-						 ->whereLike('TITLE', "%$searchInput%")
-						 ->setLimit($entityPerPage + 1)
-						 ->setOffset($offset)
-						 ->setOrder('ID')
-						 ->fetchAll();
+		return GroupTable::query()->setSelect(['ID', 'TITLE'])->whereLike('TITLE', "%$searchInput%")->setLimit(
+				$entityPerPage + 1
+			)->setOffset($offset)->setOrder('ID')->fetchAll();
 	}
 
 	public static function getCountOfEntities(string $searchInput): int
 	{
-		$result = GroupTable::query()
-							->addSelect(Query::expr()->count('ID'), 'CNT')
-							->whereLike('TITLE', "%$searchInput%")
-							->exec();
+		$result = GroupTable::query()->addSelect(Query::expr()->count('ID'), 'CNT')->whereLike(
+				'TITLE',
+				"%$searchInput%"
+			)->exec();
 
 		return $result->fetch()['CNT'];
 	}
 
 	public static function getById(int $id): ?EO_Group
 	{
-		return GroupTable::query()
-			->setSelect(['ID', 'TITLE', 'SUBJECTS'])
-			->where('ID', $id)
-			->fetchObject();
+		return GroupTable::query()->setSelect(['ID', 'TITLE', 'SUBJECTS'])->where('ID', $id)->fetchObject();
 	}
 
 	public static function getArrayById(int $id): ?array
 	{
-		return (GroupTable::query()
-			->setSelect(['ID', 'TITLE', 'SUBJECTS'])
-			->where('ID', $id)
-			->fetch()) ?? null;
+		$result = GroupTable::query()->setSelect(['ID', 'TITLE', 'SUBJECTS'])->where('ID', $id)->fetch();
+		if (!$result)
+		{
+			return null;
+		}
+
+		return $result;
 	}
 
 	public static function getArrayOfGroupsBySubjectId(int $id): array
 	{
-		return GroupTable::query()
-						 ->setSelect(['ID', 'TITLE', 'SUBJECTS'])
-						 ->where('SUBJECTS.ID', $id)
-						 ->fetchAll();
+		return GroupTable::query()->setSelect(['ID', 'TITLE', 'SUBJECTS'])->where('SUBJECTS.ID', $id)->fetchAll();
 	}
 
 	public static function getArrayForAdminById(int $id): array
@@ -116,7 +102,7 @@ class GroupRepository
 			$result['SUBJECTS']['ALL_SUBJECTS'][$subject->getId()] = $subject->getTitle();
 		}
 
-		if($data['SUBJECTS_TO_ADD'])
+		if ($data['SUBJECTS_TO_ADD'])
 		{
 			$currentSubjects = SubjectRepository::getByIds($data['SUBJECTS_TO_ADD']);
 			foreach ($currentSubjects as $subject)
@@ -150,7 +136,7 @@ class GroupRepository
 		}
 
 		$result = $group->save();
-		if(!$result->isSuccess())
+		if (!$result->isSuccess())
 		{
 			throw new AddEntityException(implode('<br>', $result->getErrorMessages()));
 		}
@@ -168,7 +154,7 @@ class GroupRepository
 
 		$group = self::getById($id);
 
-		if($data['TITLE'])
+		if ($data['TITLE'])
 		{
 			$group?->setTitle($data['TITLE']);
 		}
@@ -202,7 +188,7 @@ class GroupRepository
 		}
 
 		$result = $group?->save();
-		if(!$result->isSuccess())
+		if (!$result->isSuccess())
 		{
 			throw new EditEntityException(implode('<br>', $result->getErrorMessages()));
 		}
@@ -210,16 +196,13 @@ class GroupRepository
 
 	public static function deleteById(int $id): void
 	{
-		$relatedCouples = CoupleTable::query()
-			->setSelect([
-				'SUBJECT.TITLE',
-					'AUDIENCE.NUMBER',
-					'GROUP.TITLE',
-					'TEACHER.NAME',
-					'TEACHER.LAST_NAME'
-			])
-			->where('GROUP_ID', $id)
-			->fetchCollection();
+		$relatedCouples = CoupleTable::query()->setSelect([
+															  'SUBJECT.TITLE',
+															  'AUDIENCE.NUMBER',
+															  'GROUP.TITLE',
+															  'TEACHER.NAME',
+															  'TEACHER.LAST_NAME',
+														  ])->where('GROUP_ID', $id)->fetchCollection();
 
 		foreach ($relatedCouples as $couple)
 		{
@@ -235,16 +218,13 @@ class GroupRepository
 	{
 		$relatedEntities = [];
 
-		$relatedCouples = CoupleTable::query()
-			->setSelect([
-				'SUBJECT.TITLE',
-				'AUDIENCE.NUMBER',
-				'GROUP.TITLE',
-				'TEACHER.NAME',
-				'TEACHER.LAST_NAME'
-			])
-			->where('GROUP_ID', $id)
-			->fetchAll();
+		$relatedCouples = CoupleTable::query()->setSelect([
+															  'SUBJECT.TITLE',
+															  'AUDIENCE.NUMBER',
+															  'GROUP.TITLE',
+															  'TEACHER.NAME',
+															  'TEACHER.LAST_NAME',
+														  ])->where('GROUP_ID', $id)->fetchAll();
 
 		if (!empty($relatedCouples))
 		{

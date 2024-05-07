@@ -60,7 +60,7 @@ if (!defined("B_PROLOG_INCLUDED") || B_PROLOG_INCLUDED !== true)
 				<a id="back-button" class="column is-1 is-offset-0 buttonLink is-60-height mb-5 box is-flex is-align-items-center is-justify-content-center" href="/admin/">
 					<?= GetMessage('BACK') ?>
 				</a>
-				<a id="add-button" class="ml-2 column is-1 buttonLink is-60-height mb-5 box is-flex is-align-items-center is-justify-content-center" onclick="location.href=getEntityAddUrl()">
+				<a id="add-button" class="ml-2 column is-1 buttonLink is-60-height mb-5 box is-flex is-align-items-center is-justify-content-center">
 					<?= GetMessage('ADD') ?>
 				</a>
 				<input id="search-input" class="input column is-60-height is-offset-4" type="text"

@@ -1,10 +1,67 @@
+function getEntityAddUrl()
+{
+	const anchor = window.location.hash;
+	const entity = anchor.slice(1, anchor.length);
+	return '/admin/add/' + entity + '/';
+}
+
+const waitForElement = (selector, callback) => {
+	const observer = new MutationObserver(mutations => {
+		mutations.forEach(mutation => {
+			mutation.addedNodes.forEach(node => {
+				if (node.matches && node.matches(selector))
+				{
+					callback(node);
+				}
+			});
+		});
+	});
+
+	observer.observe(document.body, { childList: true, subtree: true });
+};
+
 document.addEventListener('DOMContentLoaded', function() {
+	const addButton = document.getElementById('add-button');
+	addButton.addEventListener('click', (event) => {
+		addButton.href = getEntityAddUrl();
+	});
+
 	const tabButtonsContainers = document.querySelectorAll('.tabs');
 	const tabButtons = document.querySelectorAll('.tabs .column a');
 	const tabContainers = document.querySelectorAll('.tabs-content div');
 	const backButton = document.getElementById('back-button');
 
 	const entity = window.location.hash.substring(1);
+
+	waitForElement('#entity-list-app', () => {
+		BX.ready(function() {
+			window.ScheduleEntityList = new BX.Up.EntityList({
+				rootNodeId: 'entity-list-app',
+				entity: document.getElementById('entity-list-app').parentElement.id,
+			});
+
+			const searchButton = document.getElementById('search-button');
+			const searchInput = document.getElementById('search-input');
+
+			searchInput.addEventListener('keypress', function(event) {
+				if (event.key === 'Enter')
+				{
+					event.preventDefault();
+					searchButton.click();
+				}
+			});
+
+			searchButton.addEventListener('click', (event) => {
+				event.preventDefault();
+
+				window.ScheduleEntityList.reload(1, searchInput.value);
+			});
+
+			backButton.addEventListener('click', () => {
+				searchInput.value = '';
+			});
+		});
+	});
 
 	if(entity)
 	{
@@ -50,49 +107,4 @@ document.addEventListener('DOMContentLoaded', function() {
 			document.getElementById('entity-list-app').remove();
 		}
 	})
-
-	const waitForElement = (selector, callback) => {
-		const observer = new MutationObserver(mutations => {
-			mutations.forEach(mutation => {
-				mutation.addedNodes.forEach(node => {
-					if (node.matches && node.matches(selector))
-					{
-						callback(node);
-					}
-				});
-			});
-		});
-
-		observer.observe(document.body, { childList: true, subtree: true });
-	};
-
-	waitForElement('#entity-list-app', () => {
-		BX.ready(function() {
-			window.ScheduleEntityList = new BX.Up.EntityList({
-				rootNodeId: 'entity-list-app',
-				entity: document.getElementById('entity-list-app').parentElement.id,
-			});
-
-			const searchButton = document.getElementById('search-button');
-			const searchInput = document.getElementById('search-input');
-
-			searchInput.addEventListener('keypress', function(event) {
-				if (event.key === 'Enter')
-				{
-					event.preventDefault();
-					searchButton.click();
-				}
-			});
-
-			searchButton.addEventListener('click', (event) => {
-				event.preventDefault();
-
-				window.ScheduleEntityList.reload(1, searchInput.value);
-			});
-
-			backButton.addEventListener('click', () => {
-				searchInput.value = '';
-			});
-		});
-	});
 })

@@ -128,14 +128,14 @@ class UserRepository
 
 	public static function getArrayById(int $id): ?array
 	{
-		return (UserTable::query()->setSelect([
-												 'ID',
-												 'NAME',
-												 'LAST_NAME',
-												 'EMAIL',
-												 'ROLE' => 'UP_SCHEDULE_ROLE.TITLE',
-												 'GROUP' => 'UP_SCHEDULE_GROUP.TITLE',
-											 ])->registerRuntimeField(
+		$result = UserTable::query()->setSelect([
+													'ID',
+													'NAME',
+													'LAST_NAME',
+													'EMAIL',
+													'ROLE' => 'UP_SCHEDULE_ROLE.TITLE',
+													'GROUP' => 'UP_SCHEDULE_GROUP.TITLE',
+												])->registerRuntimeField(
 			(new Reference(
 				'UP_SCHEDULE_ROLE', RoleTable::class, Join::on('this.UF_ROLE_ID', 'ref.ID')
 			))
@@ -143,7 +143,13 @@ class UserRepository
 			(new Reference(
 				'UP_SCHEDULE_GROUP', GroupTable::class, Join::on('this.UF_GROUP_ID', 'ref.ID')
 			))
-		)->where('ID', $id)->fetch()) ?? null;
+		)->where('ID', $id)->fetch();
+		if (!$result)
+		{
+			return null;
+		}
+
+		return $result;
 	}
 
 	public static function getTeacherById(int $id): ?EO_User
@@ -168,14 +174,14 @@ class UserRepository
 
 	public static function getArrayOfTeacherById(int $id): ?array
 	{
-		return (UserTable::query()->setSelect([
-												 'ID',
-												 'NAME',
-												 'LAST_NAME',
-												 'EMAIL',
-												 'ROLE' => 'UP_SCHEDULE_ROLE.TITLE',
-												 'GROUP' => 'UP_SCHEDULE_GROUP.TITLE',
-											 ])->registerRuntimeField(
+		$result = UserTable::query()->setSelect([
+													'ID',
+													'NAME',
+													'LAST_NAME',
+													'EMAIL',
+													'ROLE' => 'UP_SCHEDULE_ROLE.TITLE',
+													'GROUP' => 'UP_SCHEDULE_GROUP.TITLE',
+												])->registerRuntimeField(
 			(new Reference(
 				'UP_SCHEDULE_ROLE', RoleTable::class, Join::on('this.UF_ROLE_ID', 'ref.ID')
 			))
@@ -183,7 +189,13 @@ class UserRepository
 			(new Reference(
 				'UP_SCHEDULE_GROUP', GroupTable::class, Join::on('this.UF_GROUP_ID', 'ref.ID')
 			))
-		)->where('ID', $id)->where('ROLE', 'Преподаватель')->fetch()) ?? null;
+		)->where('ID', $id)->where('ROLE', 'Преподаватель')->fetch();
+		if (!$result)
+		{
+			return null;
+		}
+
+		return $result;
 	}
 
 	public static function getArrayForAdminById(int $id): ?array
@@ -204,7 +216,7 @@ class UserRepository
 				'UP_SCHEDULE_GROUP', GroupTable::class, Join::on('this.UF_GROUP_ID', 'ref.ID')
 			))
 		)->where('ID', $id)->fetch();
-		if($user === false)
+		if ($user === false)
 		{
 			return null;
 		}
@@ -403,35 +415,35 @@ class UserRepository
 	 */
 	public static function add(array $data): void
 	{
-		if($data['LOGIN'] === null)
+		if ($data['LOGIN'] === null)
 		{
-			throw new AddEntityException('Введите логин');
+			throw new AddEntityException(GetMessage('EMPTY_LOGIN'));
 		}
-		if($data['NAME'] === null)
+		if ($data['NAME'] === null)
 		{
 			throw new AddEntityException('Введите имя');
 		}
-		if($data['LAST_NAME'] === null)
+		if ($data['LAST_NAME'] === null)
 		{
 			throw new AddEntityException('Введите фамилию');
 		}
-		if($data['EMAIL'] === null)
+		if ($data['EMAIL'] === null)
 		{
 			throw new AddEntityException('Введите почту');
 		}
-		if($data['PASSWORD'] === null)
+		if ($data['PASSWORD'] === null)
 		{
 			throw new AddEntityException('Введите пароль');
 		}
-		if($data['CONFIRM_PASSWORD'] === null)
+		if ($data['CONFIRM_PASSWORD'] === null)
 		{
 			throw new AddEntityException('Подтвердите пароль');
 		}
-		if($data['PASSWORD'] !== $data['CONFIRM_PASSWORD'])
+		if ($data['PASSWORD'] !== $data['CONFIRM_PASSWORD'])
 		{
 			throw new AddEntityException('Пароли не совпадают');
 		}
-		if($data['ROLE'] === null)
+		if ($data['ROLE'] === null)
 		{
 			throw new AddEntityException('Выберите роль');
 		}
@@ -465,7 +477,7 @@ class UserRepository
 
 		if ($data['ROLE'] === 'Администратор')
 		{
-			$group = array(1);
+			$group = [1];
 			$fields['GROUP_ID'] = $group;
 		}
 
@@ -489,7 +501,7 @@ class UserRepository
 			}
 			$result = $collection->save();
 
-			if(!$result->isSuccess())
+			if (!$result->isSuccess())
 			{
 				throw new AddEntityException(implode('<br>', $result->getErrorMessages()));
 			}
@@ -525,14 +537,14 @@ class UserRepository
 			}
 		};
 
-		if($id === 0)
+		if ($id === 0)
 		{
 			throw new EditEntityException('Введите пользователя для редактирования');
 		}
 
-		if($data['PASSWORD'] !== 0)
+		if ($data['PASSWORD'] !== 0)
 		{
-			if($data['PASSWORD'] !== $data['CONFIRM_PASSWORD'])
+			if ($data['PASSWORD'] !== $data['CONFIRM_PASSWORD'])
 			{
 				throw new EditEntityException('Пароли не совпадают');
 			}
@@ -557,13 +569,13 @@ class UserRepository
 
 		if ($data['ROLE'] === 'Администратор')
 		{
-			$group = array(1);
+			$group = [1];
 			$fields['GROUP_ID'] = $group;
 		}
 
 		$user = new CUser();
 		$result = $user->Update($id, $fields);
-		if($result === false)
+		if ($result === false)
 		{
 			throw new EditEntityException($user->LAST_ERROR);
 		}
@@ -587,7 +599,7 @@ class UserRepository
 
 			$result = $collection->save();
 
-			if(!$result->isSuccess())
+			if (!$result->isSuccess())
 			{
 				throw new EditEntityException(implode('<br>', $result->getErrorMessages()));
 			}

@@ -22,16 +22,12 @@ class SubjectRepository
 {
 	public static function getAll(): ?EO_Subject_Collection
 	{
-		return SubjectTable::query()
-			->setSelect(['ID', 'TITLE'])
-			->fetchCollection();
+		return SubjectTable::query()->setSelect(['ID', 'TITLE'])->fetchCollection();
 	}
 
 	public static function getAllArray(): array
 	{
-		return SubjectTable::query()
-			->setSelect(['ID', 'TITLE'])
-			->fetchAll();
+		return SubjectTable::query()->setSelect(['ID', 'TITLE'])->fetchAll();
 	}
 
 	public static function getPageWithArrays(int $entityPerPage, int $pageNumber, string $searchInput): array
@@ -42,34 +38,30 @@ class SubjectRepository
 			$offset = ($entityPerPage * ($pageNumber - 1));
 		}
 
-		return SubjectTable::query()
-			->setSelect(['ID', 'TITLE'])
-			->whereLike('TITLE', "%$searchInput%")
-			->setLimit($entityPerPage + 1)
-			->setOffset($offset)
-			->setOrder('ID')
-			->fetchAll();
+		return SubjectTable::query()->setSelect(['ID', 'TITLE'])->whereLike('TITLE', "%$searchInput%")->setLimit(
+				$entityPerPage + 1
+			)->setOffset($offset)->setOrder('ID')->fetchAll();
 	}
 
 	public static function getCountOfEntities(string $searchInput): int
 	{
-		$result = SubjectTable::query()
-			->addSelect(Query::expr()->count('ID'), 'CNT')
-			->whereLike(
-			'TITLE',
-			"%$searchInput%"
-			)
-			->exec();
+		$result = SubjectTable::query()->addSelect(Query::expr()->count('ID'), 'CNT')->whereLike(
+				'TITLE',
+				"%$searchInput%"
+			)->exec();
 
 		return $result->fetch()['CNT'];
 	}
 
 	public static function getArrayById(int $id): ?array
 	{
-		return (SubjectTable::query()
-			->setSelect(['ID', 'TITLE', 'AUDIENCE_TYPE_ID'])
-			->where('ID', $id)
-			->fetch()) ?? null;
+		$result = SubjectTable::query()->setSelect(['ID', 'TITLE', 'AUDIENCE_TYPE_ID'])->where('ID', $id)->fetch();
+		if (!$result)
+		{
+			return null;
+		}
+
+		return $result;
 	}
 
 	public static function getByIds(array $id): ?EO_Subject_Collection
@@ -79,17 +71,14 @@ class SubjectRepository
 			return null;
 		}
 
-		return SubjectTable::query()
-			->setSelect([
-				'TITLE',
-				'TYPE' => 'UP_SCHEDULE_AUDIENCE_TYPE.TITLE',
-			])
-			->registerRuntimeField(
+		return SubjectTable::query()->setSelect([
+													'TITLE',
+													'TYPE' => 'UP_SCHEDULE_AUDIENCE_TYPE.TITLE',
+												])->registerRuntimeField(
 				(new Reference(
 					'UP_SCHEDULE_AUDIENCE_TYPE', AudienceTypeTable::class, Join::on('this.AUDIENCE_TYPE_ID', 'ref.ID')
-			)))
-			->whereIn('ID', $id)
-			->fetchCollection();
+				))
+			)->whereIn('ID', $id)->fetchCollection();
 	}
 
 	public static function getArrayByIds(array $id): ?array
@@ -99,102 +88,84 @@ class SubjectRepository
 			return null;
 		}
 
-		return SubjectTable::query()
-			->setSelect([
-				'TITLE',
-				'TYPE' => 'UP_SCHEDULE_AUDIENCE_TYPE.TITLE',
-			])
-			->registerRuntimeField(
+		return SubjectTable::query()->setSelect([
+													'TITLE',
+													'TYPE' => 'UP_SCHEDULE_AUDIENCE_TYPE.TITLE',
+												])->registerRuntimeField(
 				(new Reference(
 					'UP_SCHEDULE_AUDIENCE_TYPE', AudienceTypeTable::class, Join::on('this.AUDIENCE_TYPE_ID', 'ref.ID')
-			)))
-			->whereIn('ID', $id)
-			->fetchAll();
+				))
+			)->whereIn('ID', $id)->fetchAll();
 	}
 
 	public static function getByTitle(string $title): ?EO_Subject
 	{
-		return SubjectTable::query()
-			->setSelect([
-				'TITLE',
-				'AUDIENCE_TYPE.TITLE',
-			])
-			->where('TITLE', $title)
-			->fetchObject();
+		return SubjectTable::query()->setSelect([
+													'TITLE',
+													'AUDIENCE_TYPE.TITLE',
+												])->where('TITLE', $title)->fetchObject();
 	}
 
 	public static function getByTitles(array $titles): ?EO_Subject_Collection
 	{
-		return SubjectTable::query()
-			->setSelect([
-				'TITLE',
-				'AUDIENCE_TYPE.TITLE',
-			])
-			->whereIn('TITLE', $titles)
-			->fetchCollection();
+		return SubjectTable::query()->setSelect([
+													'TITLE',
+													'AUDIENCE_TYPE.TITLE',
+												])->whereIn('TITLE', $titles)->fetchCollection();
 	}
 
 	public static function getArrayByGroupId(int $id): array
 	{
-		return SubjectTable::query()
-			->setSelect([
-				'ID',
-				'TITLE',
-				'AUDIENCE_TYPE.TITLE',
-				'GROUPS',
-			])
-			->where('GROUPS.ID', $id)
-			->fetchAll();
+		return SubjectTable::query()->setSelect([
+													'ID',
+													'TITLE',
+													'AUDIENCE_TYPE.TITLE',
+													'GROUPS',
+												])->where('GROUPS.ID', $id)->fetchAll();
 	}
 
 	public static function getArrayByAudienceId(int $id): array
 	{
-		return SubjectTable::query()
-			->setSelect([
-				'ID',
-				'TITLE',
-				'AUDIENCE_TYPE.TITLE',
-				'GROUPS',
-			])
-			->registerRuntimeField(
+		return SubjectTable::query()->setSelect([
+													'ID',
+													'TITLE',
+													'AUDIENCE_TYPE.TITLE',
+													'GROUPS',
+												])->registerRuntimeField(
 				new Reference(
-				'up_schedule_audience', AudienceTable::class, Join::on('this.AUDIENCE_TYPE.ID', 'ref.AUDIENCE_TYPE_ID')
-			))
-			->where('up_schedule_audience.ID', $id)
-			->fetchAll();
+					'up_schedule_audience',
+					AudienceTable::class,
+					Join::on('this.AUDIENCE_TYPE.ID', 'ref.AUDIENCE_TYPE_ID')
+				)
+			)->where('up_schedule_audience.ID', $id)->fetchAll();
 	}
 
 	// TODO
 	public static function getArrayByTeacherId(int $id): array
 	{
-		return SubjectTable::query()
-			->setSelect([
-				'ID',
-				'TITLE',
-				'AUDIENCE_TYPE.TITLE',
-				'GROUPS',
-			])
-			->registerRuntimeField(
+		return SubjectTable::query()->setSelect([
+													'ID',
+													'TITLE',
+													'AUDIENCE_TYPE.TITLE',
+													'GROUPS',
+												])->registerRuntimeField(
 				new Reference(
 					'up_schedule_subject_teacher', SubjectTeacherTable::class, Join::on('this.ID', 'ref.SUBJECT_ID')
-			))
-			->where('up_schedule_subject_teacher.TEACHER_ID', $id)
-			->fetchAll();
+				)
+			)->where('up_schedule_subject_teacher.TEACHER_ID', $id)->fetchAll();
 	}
 
 	public static function getArrayForAdminById(int $id): ?array
 	{
-		$subject = SubjectTable::query()
-			->setSelect([
-				'TITLE',
-				'TYPE' => 'UP_SCHEDULE_AUDIENCE_TYPE.TITLE',
-			])
-			->registerRuntimeField(
+		$subject = SubjectTable::query()->setSelect([
+														'TITLE',
+														'TYPE' => 'UP_SCHEDULE_AUDIENCE_TYPE.TITLE',
+													])->registerRuntimeField(
 				(new Reference(
 					'UP_SCHEDULE_AUDIENCE_TYPE', AudienceTypeTable::class, Join::on('this.AUDIENCE_TYPE_ID', 'ref.ID')
-			))
-		)->where('ID', $id)->fetch();
-		if(!$subject)
+				))
+			)->where('ID', $id)->fetch();
+		if (!$subject)
 		{
 			return null;
 		}
@@ -220,6 +191,7 @@ class SubjectRepository
 				array_column(AudienceTypeRepository::getAllArray(), 'TITLE')
 			)
 		);
+
 		return $result;
 	}
 
@@ -243,15 +215,12 @@ class SubjectRepository
 		$subject = new EO_Subject();
 		$subject->setTitle($title);
 
-		$typeEntityObject = AudienceTypeTable::query()
-			->setSelect(['ID'])
-			->where('TITLE', $type)
-			->fetchObject();
+		$typeEntityObject = AudienceTypeTable::query()->setSelect(['ID'])->where('TITLE', $type)->fetchObject();
 
 		$subject->setAudienceType($typeEntityObject);
 		$result = $subject->save();
 
-		if(!$result->isSuccess())
+		if (!$result->isSuccess())
 		{
 			throw new AddEntityException(implode('<br>', $result->getErrorMessages()));
 		}
@@ -273,7 +242,7 @@ class SubjectRepository
 		$subject = SubjectTable::getByPrimary($id)->fetchObject();
 		$type = AudienceTypeTable::query()->setSelect(['ID'])->where('TITLE', $data['TYPE'])->fetchObject();
 
-		if($data['TITLE'])
+		if ($data['TITLE'])
 		{
 			$subject->setTitle($data['TITLE']);
 		}
@@ -284,7 +253,7 @@ class SubjectRepository
 		}
 		$result = $subject->setAudienceType($type)->save();
 
-		if(!$result->isSuccess())
+		if (!$result->isSuccess())
 		{
 			throw new EditEntityException(implode('<br>', $result->getErrorMessages()));
 		}
