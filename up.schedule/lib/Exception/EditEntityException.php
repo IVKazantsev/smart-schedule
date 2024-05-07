@@ -2,7 +2,7 @@
 
 namespace Up\Schedule\Exception;
 
-class EditEntity extends \Exception
+class EditEntityException extends \Exception
 {
 
 }

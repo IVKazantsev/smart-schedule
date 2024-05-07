@@ -2,7 +2,7 @@
 
 namespace Up\Schedule\Exception;
 
-class AddCouple extends \Exception
+class AddCoupleException extends \Exception
 {
 
 }

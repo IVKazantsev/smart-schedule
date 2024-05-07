@@ -53,10 +53,6 @@ Extension::load('up.popup-message');
 </div>
 
 <script>
-	document.getElementById("excel-file").onchange = function() {
-		document.getElementById("send-excel-form").submit();
-	};
-
 	BX.ready(function () {
 		window.PopupMessages = new BX.Up.PopupMessage({
 			rootNodeId: 'messages',

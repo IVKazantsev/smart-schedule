@@ -8,7 +8,7 @@ use Bitrix\Main\ORM\Fields\Relations\Reference;
 use Bitrix\Main\ORM\Query\Join;
 use Bitrix\Main\SystemException;
 use Bitrix\Main\UserTable;
-use Up\Schedule\Exception\AddCouple;
+use Up\Schedule\Exception\AddCoupleException;
 use Up\Schedule\Model\AudienceTable;
 use Up\Schedule\Model\CoupleTable;
 use Up\Schedule\Model\EO_Couple;
@@ -69,7 +69,7 @@ class CoupleRepository
 	 * @throws SystemException
 	 * @throws ObjectPropertyException
 	 * @throws ArgumentException
-	 * @throws AddCouple
+	 * @throws AddCoupleException
 	 */
 	public static function addCouple(array $data): void
 	{
@@ -84,7 +84,7 @@ class CoupleRepository
 
 		if(!$result->isSuccess())
 		{
-			throw new AddCouple(implode('<br>', $result->getErrorMessages()));
+			throw new AddCoupleException(implode('<br>', $result->getErrorMessages()));
 		}
 	}
 

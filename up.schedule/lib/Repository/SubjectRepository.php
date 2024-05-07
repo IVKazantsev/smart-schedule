@@ -9,8 +9,8 @@ use Bitrix\Main\ORM\Query\Join;
 use Bitrix\Main\ORM\Query\Query;
 use Bitrix\Main\SystemException;
 use Bitrix\Main\UserTable;
-use Up\Schedule\Exception\AddEntity;
-use Up\Schedule\Exception\EditEntity;
+use Up\Schedule\Exception\AddEntityException;
+use Up\Schedule\Exception\EditEntityException;
 use Up\Schedule\Model\AudienceTable;
 use Up\Schedule\Model\AudienceTypeTable;
 use Up\Schedule\Model\CoupleTable;
@@ -224,7 +224,7 @@ class SubjectRepository
 
 	/**
 	 * @throws ArgumentException
-	 * @throws AddEntity
+	 * @throws AddEntityException
 	 * @throws ObjectPropertyException
 	 * @throws SystemException
 	 */
@@ -232,11 +232,11 @@ class SubjectRepository
 	{
 		if (($title = $data['TITLE']) === null)
 		{
-			throw new AddEntity('Введите название предмета');
+			throw new AddEntityException('Введите название предмета');
 		}
 		if (($type = $data['TYPE']) === null)
 		{
-			throw new AddEntity('Выберите тип аудитории');
+			throw new AddEntityException('Выберите тип аудитории');
 		}
 
 		$subject = new EO_Subject();
@@ -252,12 +252,12 @@ class SubjectRepository
 
 		if(!$result->isSuccess())
 		{
-			throw new AddEntity(implode('<br>', $result->getErrorMessages()));
+			throw new AddEntityException(implode('<br>', $result->getErrorMessages()));
 		}
 	}
 
 	/**
-	 * @throws EditEntity
+	 * @throws EditEntityException
 	 * @throws ObjectPropertyException
 	 * @throws ArgumentException
 	 * @throws SystemException
@@ -266,7 +266,7 @@ class SubjectRepository
 	{
 		if ($id === 0)
 		{
-			throw new EditEntity('Введите предмет для редактирования');
+			throw new EditEntityException('Введите предмет для редактирования');
 		}
 
 		$subject = SubjectTable::getByPrimary($id)->fetchObject();
@@ -285,7 +285,7 @@ class SubjectRepository
 
 		if(!$result->isSuccess())
 		{
-			throw new EditEntity(implode('<br>', $result->getErrorMessages()));
+			throw new EditEntityException(implode('<br>', $result->getErrorMessages()));
 		}
 
 	}

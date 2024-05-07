@@ -1,4 +1,4 @@
-window.onload = () => {
+document.addEventListener('DOMContentLoaded', function() {
 	// Выбор сущности
 	const dropdown = document.querySelector('.dropdown');
 	dropdown.addEventListener('click', function(event) {
@@ -50,4 +50,4 @@ window.onload = () => {
 		window.DisplayEntitiesList.reload([], entitySelectionInput.value);
 		dropdown.classList.add('is-active');
 	});
-};
+});

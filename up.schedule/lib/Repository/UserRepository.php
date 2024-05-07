@@ -13,8 +13,8 @@ use Bitrix\Main\ORM\Query\Query;
 use Bitrix\Main\SystemException;
 use Bitrix\Main\UserTable;
 use CUser;
-use Up\Schedule\Exception\AddEntity;
-use Up\Schedule\Exception\EditEntity;
+use Up\Schedule\Exception\AddEntityException;
+use Up\Schedule\Exception\EditEntityException;
 use Up\Schedule\Model\CoupleTable;
 use Up\Schedule\Model\EO_Group;
 use Up\Schedule\Model\EO_Subject;
@@ -434,41 +434,41 @@ class UserRepository
 	}
 
 	/**
-	 * @throws AddEntity
+	 * @throws AddEntityException
 	 */
 	public static function add(array $data): void
 	{
 		if($data['LOGIN'] === null)
 		{
-			throw new AddEntity('Введите логин');
+			throw new AddEntityException('Введите логин');
 		}
 		if($data['NAME'] === null)
 		{
-			throw new AddEntity('Введите имя');
+			throw new AddEntityException('Введите имя');
 		}
 		if($data['LAST_NAME'] === null)
 		{
-			throw new AddEntity('Введите фамилию');
+			throw new AddEntityException('Введите фамилию');
 		}
 		if($data['EMAIL'] === null)
 		{
-			throw new AddEntity('Введите почту');
+			throw new AddEntityException('Введите почту');
 		}
 		if($data['PASSWORD'] === null)
 		{
-			throw new AddEntity('Введите пароль');
+			throw new AddEntityException('Введите пароль');
 		}
 		if($data['CONFIRM_PASSWORD'] === null)
 		{
-			throw new AddEntity('Подтвердите пароль');
+			throw new AddEntityException('Подтвердите пароль');
 		}
 		if($data['PASSWORD'] !== $data['CONFIRM_PASSWORD'])
 		{
-			throw new AddEntity('Пароли не совпадают');
+			throw new AddEntityException('Пароли не совпадают');
 		}
 		if($data['ROLE'] === null)
 		{
-			throw new AddEntity('Выберите роль');
+			throw new AddEntityException('Выберите роль');
 		}
 
 		$fields = [];
@@ -509,7 +509,7 @@ class UserRepository
 
 		if ((int)$id <= 0)
 		{
-			throw new AddEntity($user->LAST_ERROR);
+			throw new AddEntityException($user->LAST_ERROR);
 		}
 
 		if ($data['ROLE'] === 'Преподаватель')
@@ -526,7 +526,7 @@ class UserRepository
 
 			if(!$result->isSuccess())
 			{
-				throw new AddEntity(implode('<br>', $result->getErrorMessages()));
+				throw new AddEntityException(implode('<br>', $result->getErrorMessages()));
 			}
 		}
 	}
@@ -544,7 +544,7 @@ class UserRepository
 	}
 
 	/**
-	 * @throws EditEntity
+	 * @throws EditEntityException
 	 * @throws ObjectPropertyException
 	 * @throws ArgumentException
 	 * @throws SystemException
@@ -562,14 +562,14 @@ class UserRepository
 
 		if($id === 0)
 		{
-			throw new EditEntity('Введите пользователя для редактирования');
+			throw new EditEntityException('Введите пользователя для редактирования');
 		}
 
 		if($data['PASSWORD'] !== 0)
 		{
 			if($data['PASSWORD'] !== $data['CONFIRM_PASSWORD'])
 			{
-				throw new EditEntity('Пароли не совпадают');
+				throw new EditEntityException('Пароли не совпадают');
 			}
 
 			$validate('PASSWORD', $data['PASSWORD']);
@@ -600,7 +600,7 @@ class UserRepository
 		$result = $user->Update($id, $fields);
 		if($result === false)
 		{
-			throw new EditEntity($user->LAST_ERROR);
+			throw new EditEntityException($user->LAST_ERROR);
 		}
 
 		if ($data['ROLE'] === 'Преподаватель')
@@ -624,7 +624,7 @@ class UserRepository
 
 			if(!$result->isSuccess())
 			{
-				throw new EditEntity(implode('<br>', $result->getErrorMessages()));
+				throw new EditEntityException(implode('<br>', $result->getErrorMessages()));
 			}
 		}
 		else

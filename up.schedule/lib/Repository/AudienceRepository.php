@@ -8,8 +8,8 @@ use Bitrix\Main\ORM\Fields\Relations\Reference;
 use Bitrix\Main\ORM\Query\Join;
 use Bitrix\Main\ORM\Query\Query;
 use Bitrix\Main\SystemException;
-use Up\Schedule\Exception\AddEntity;
-use Up\Schedule\Exception\EditEntity;
+use Up\Schedule\Exception\AddEntityException;
+use Up\Schedule\Exception\EditEntityException;
 use Up\Schedule\Model\AudienceTable;
 use Up\Schedule\Model\AudienceTypeTable;
 use Up\Schedule\Model\CoupleTable;
@@ -105,17 +105,17 @@ class AudienceRepository
 	 * @throws ArgumentException
 	 * @throws ObjectPropertyException
 	 * @throws SystemException
-	 * @throws AddEntity
+	 * @throws AddEntityException
 	 */
 	public static function add(array $data): void
 	{
 		if (($number = $data['NUMBER']) === null)
 		{
-			throw new AddEntity('Введите номер аудитории');
+			throw new AddEntityException('Введите номер аудитории');
 		}
 		if (($type = $data['TYPE']) === null)
 		{
-			throw new AddEntity('Выберите тип аудитории');
+			throw new AddEntityException('Выберите тип аудитории');
 		}
 		$audience = new EO_Audience();
 
@@ -131,7 +131,7 @@ class AudienceRepository
 
 		if(!$result->isSuccess())
 		{
-			throw new AddEntity(
+			throw new AddEntityException(
 				implode(
 					'<br>', $result->getErrorMessages()
 				)
@@ -153,7 +153,7 @@ class AudienceRepository
 	}
 
 	/**
-	 * @throws EditEntity
+	 * @throws EditEntityException
 	 * @throws ObjectPropertyException
 	 * @throws ArgumentException
 	 * @throws SystemException
@@ -162,7 +162,7 @@ class AudienceRepository
 	{
 		if ($id === 0)
 		{
-			throw new EditEntity('Введите аудиторию для редактирования');
+			throw new EditEntityException('Введите аудиторию для редактирования');
 		}
 
 		$audience = AudienceTable::getByPrimary($id)
@@ -188,7 +188,7 @@ class AudienceRepository
 
 		if(!$result->isSuccess())
 		{
-			throw new EditEntity(implode('<br>', $result->getErrorMessages()));
+			throw new EditEntityException(implode('<br>', $result->getErrorMessages()));
 		}
 	}
 

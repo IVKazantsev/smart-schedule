@@ -43,26 +43,30 @@ Extension::load('up.popup-message');
 
 		<?php foreach ($arResult['ENTITY'] as $key => $field): ?>
 			<div class="is-60-height box edit-fields">
-				<?php if (is_array($field)): ?>
+					<div class="field">
+						<label class="label"><?= GetMessage($key) ?></label>
+						<div class="control">
+							<input class="input"
+								   minlength="<?= ($key === 'PASSWORD') || ($key === 'CONFIRM_PASSWORD') ? 6 : '' ?>"
+								   type="<?= ($arResult['INPUT_TYPES_OF_FIELDS'][$key])
+									   ?? $arResult['INPUT_TYPES_OF_FIELDS']['DEFAULT'] ?>"
+								   name="<?= $key ?>"
+								   value="<?= ($field) ?? '' ?>"
+								   placeholder="<?= GetMessage("ENTER_$key") ?>">
+						</div>
+					</div>
+			</div>
+		<?php endforeach; ?>
+
+		<?php foreach ($arResult['SELECTABLE_FIELDS'] as $key => $field): ?>
+			<div class="is-60-height box edit-fields">
+				<div class="field">
 					<label class="label"><?= GetMessage($key) ?></label>
 					<?php if (GetMessage('CHANGE_' . $key . '_WARNING')): ?>
 						<div class="has-text-danger"><?= GetMessage('CHANGE_' . $key . '_WARNING') ?></div>
 					<?php endif; ?>
 
 					<?php if ($key === 'SUBJECTS'): ?>
-						<?php
-						$allSubjectsString = '';
-						foreach ($field['ALL_SUBJECTS'] as $subjectId => $subjectTitle)
-						{
-							$allSubjectsString .= "<option value='$subjectId'> " . str_replace(
-									'`',
-									'',
-									htmlspecialcharsbx(
-										$subjectTitle
-									)
-								) . "</option>";
-						}
-						?>
 						<div id="subjectContainer">
 							<?php if (!empty($field['CURRENT_SUBJECTS'])): ?>
 								<div class="has-text-danger mb-2">
@@ -99,30 +103,7 @@ Extension::load('up.popup-message');
 							</div>
 						</div>
 					<?php endif; ?>
-				<?php else: ?>
-					<div class="field">
-						<label class="label"><?= GetMessage($key) ?></label>
-						<div class="control">
-							<input class="input"
-								   minlength="<?= ($key === 'PASSWORD') || ($key === 'CONFIRM_PASSWORD') ? 6 : '' ?>"
-								   type="<?php
-								   if (($key === 'PASSWORD') || ($key === 'CONFIRM_PASSWORD'))
-								   {
-									   echo 'password';
-								   }
-								   elseif ($key === 'EMAIL')
-								   {
-									   echo 'email';
-								   }
-								   else
-								   {
-									   echo 'text';
-								   }
-								   ?>" name="<?= $key ?>" value="<?= ($field) ?? '' ?>"
-								   placeholder="<?= GetMessage("ENTER_$key") ?>">
-						</div>
-					</div>
-				<?php endif; ?>
+				</div>
 			</div>
 		<?php endforeach; ?>
 
@@ -148,63 +129,13 @@ Extension::load('up.popup-message');
 			newListItem.innerHTML = `<div class="select">
 										<label>
 											<select class="mb-1" name="add_subject_` + i + `">
-													<?= $allSubjectsString ?>
+													<?= $arResult['ALL_SUBJECTS_STRING'] ?>
 											</select>
 										</label>
 									</div>`;
 			document.querySelector('#subjectContainer').appendChild(newListItem);
 			i++;
 		});
-	}
-
-	const buttons = document.querySelectorAll('.btnDelete');
-
-	function handleDeleteClick(e)
-	{
-		const elementId = e.target.id;
-		const lengthOfSubstr = 'delete_subject_'.length;
-		const itemId = elementId.slice(lengthOfSubstr, elementId.length);
-		const currentSubject = document.getElementById('current_subject_' + itemId);
-		currentSubject.remove();
-	}
-
-	buttons.forEach((button) => {
-		button.addEventListener('click', handleDeleteClick);
-	});
-
-	roleSelect = document.querySelector('[name=\'ROLE\']');
-	if (roleSelect)
-	{
-		groupSelect = document.querySelector('[name=\'GROUP\']');
-		groupContainer = groupSelect.closest('.edit-fields');
-
-		addSubject = document.getElementById('addSubject');
-		subjectsContainer = addSubject.closest('.edit-fields');
-
-		roleDisplayingBySelectValue();
-
-		roleSelect.addEventListener('change', () => {
-			roleDisplayingBySelectValue();
-		});
-	}
-
-	function roleDisplayingBySelectValue()
-	{
-		if (roleSelect.value === 'Администратор')
-		{
-			groupContainer.style.display = 'none';
-			subjectsContainer.style.display = 'none';
-		}
-		else if (roleSelect.value === 'Преподаватель')
-		{
-			groupContainer.style.display = 'none';
-			subjectsContainer.style.display = 'block';
-		}
-		else if (roleSelect.value === 'Студент')
-		{
-			groupContainer.style.display = 'block';
-			subjectsContainer.style.display = 'none';
-		}
 	}
 
 	BX.ready(function() {

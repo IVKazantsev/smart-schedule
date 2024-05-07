@@ -2,5 +2,5 @@
 
 namespace Up\Schedule\Exception;
 
-class AddEntity extends \Exception
+class AddEntityException extends \Exception
 {}

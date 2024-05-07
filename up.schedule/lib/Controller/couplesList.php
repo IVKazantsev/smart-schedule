@@ -8,7 +8,7 @@ use Bitrix\Main\Engine\Controller;
 use Bitrix\Main\Error;
 use Bitrix\Main\ObjectPropertyException;
 use Bitrix\Main\SystemException;
-use Up\Schedule\Exception\AddCouple;
+use Up\Schedule\Exception\AddCoupleException;
 use Up\Schedule\Repository\AudienceRepository;
 use Up\Schedule\Repository\CoupleRepository;
 use Up\Schedule\Repository\GroupRepository;
@@ -134,7 +134,7 @@ class CouplesList extends Controller
 				'result' => false,
 			];
 		}
-		catch (AddCouple $exception)
+		catch (AddCoupleException $exception)
 		{
 			$result = [
 				'result' => false,

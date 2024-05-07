@@ -3,8 +3,8 @@
 namespace Up\Schedule\Repository;
 
 use Bitrix\Main\ORM\Query\Query;
-use Up\Schedule\Exception\AddEntity;
-use Up\Schedule\Exception\EditEntity;
+use Up\Schedule\Exception\AddEntityException;
+use Up\Schedule\Exception\EditEntityException;
 use Up\Schedule\Model\CoupleTable;
 use Up\Schedule\Model\EO_Couple;
 use Up\Schedule\Model\EO_Group;
@@ -133,13 +133,13 @@ class GroupRepository
 	}
 
 	/**
-	 * @throws AddEntity
+	 * @throws AddEntityException
 	 */
 	public static function add(array $data): void
 	{
 		if (($title = $data['TITLE']) === null)
 		{
-			throw new AddEntity('Введите название группы');
+			throw new AddEntityException('Введите название группы');
 		}
 
 		$group = new EO_Group();
@@ -156,18 +156,18 @@ class GroupRepository
 		$result = $group->save();
 		if(!$result->isSuccess())
 		{
-			throw new AddEntity(implode('<br>', $result->getErrorMessages()));
+			throw new AddEntityException(implode('<br>', $result->getErrorMessages()));
 		}
 	}
 
 	/**
-	 * @throws EditEntity
+	 * @throws EditEntityException
 	 */
 	public static function editById(int $id, array $data): void
 	{
 		if ($id === 0)
 		{
-			throw new EditEntity('Введите группу для редактирования');
+			throw new EditEntityException('Введите группу для редактирования');
 		}
 
 		$group = self::getById($id);
@@ -208,7 +208,7 @@ class GroupRepository
 		$result = $group?->save();
 		if(!$result->isSuccess())
 		{
-			throw new EditEntity(implode('<br>', $result->getErrorMessages()));
+			throw new EditEntityException(implode('<br>', $result->getErrorMessages()));
 		}
 	}
 

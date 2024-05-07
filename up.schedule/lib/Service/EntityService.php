@@ -10,8 +10,8 @@ use Bitrix\Main\ObjectPropertyException;
 use Bitrix\Main\SystemException;
 use CUser;
 use Error;
-use Up\Schedule\Exception\AddEntity;
-use Up\Schedule\Exception\EditEntity;
+use Up\Schedule\Exception\AddEntityException;
+use Up\Schedule\Exception\EditEntityException;
 use Up\Schedule\Model\EO_Audience;
 use Up\Schedule\Model\EO_Audience_Collection;
 use Up\Schedule\Model\EO_AudienceType;
@@ -99,7 +99,7 @@ class EntityService
 	}
 
 	/**
-	 * @throws EditEntity
+	 * @throws EditEntityException
 	 * @throws ObjectPropertyException
 	 * @throws ArgumentException
 	 * @throws SystemException
@@ -114,7 +114,7 @@ class EntityService
 
 	/**
 	 * @throws ArgumentException
-	 * @throws AddEntity
+	 * @throws AddEntityException
 	 * @throws ObjectPropertyException
 	 * @throws SystemException
 	 */

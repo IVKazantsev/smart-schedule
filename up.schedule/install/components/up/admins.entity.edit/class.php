@@ -7,14 +7,17 @@ if (!defined('B_PROLOG_INCLUDED') || B_PROLOG_INCLUDED !== true)
 
 use Bitrix\Main\ArgumentException;
 use Bitrix\Main\Context;
-use Bitrix\Main\Engine\CurrentUser;
 use Bitrix\Main\ObjectPropertyException;
 use Bitrix\Main\SystemException;
-use Up\Schedule\Exception\EditEntity;
+use Up\Schedule\Exception\EditEntityException;
 use Up\Schedule\Service\EntityService;
 
 class AdminsEntityEditComponent extends CBitrixComponent
 {
+	private array $nonEditableFields = [
+		'LOGIN',
+	];
+
 	public function executeComponent(): void
 	{
 		if (!EntityService::isCurrentUserAdmin())
@@ -27,9 +30,48 @@ class AdminsEntityEditComponent extends CBitrixComponent
 			$this->processEditing();
 		}
 
-		$entity = $this->getEntityInfo();
-		$this->arResult['ENTITY'] = $entity;
+		$this->arResult['ENTITY'] = $this->getEntityInfo();
+
+		$this->prepareEntityFields();
 		$this->includeComponentTemplate();
+	}
+
+	private function prepareEntityFields(): void
+	{
+		$this->arResult['NON_EDITABLE_FIELDS'] = [];
+		$this->arResult['SELECTABLE_FIELDS'] = [];
+
+		foreach ($this->arResult['ENTITY'] as $key => $field)
+		{
+			if(in_array($key, $this->nonEditableFields, true))
+			{
+				$this->arResult['NON_EDITABLE_FIELDS'][$key] = $field;
+				unset($this->arResult['ENTITY'][$key]);
+
+				continue;
+			}
+
+			if(is_array($field))
+			{
+				$this->arResult['SELECTABLE_FIELDS'][$key] = $field;
+				unset($this->arResult['ENTITY'][$key]);
+			}
+
+			if($key === 'SUBJECTS')
+			{
+				$this->arResult['ALL_SUBJECTS_STRING'] = '';
+				foreach ($field['ALL_SUBJECTS'] as $subjectId => $subjectTitle)
+				{
+					$this->arResult['ALL_SUBJECTS_STRING'] .= "<option value='$subjectId'> " . str_replace(
+							'`',
+							'',
+							htmlspecialcharsbx(
+								$subjectTitle
+							)
+						) . "</option>";
+				}
+			}
+		}
 	}
 
 	public function getEntityInfo(): ?array
@@ -46,7 +88,7 @@ class AdminsEntityEditComponent extends CBitrixComponent
 	{
 		if (!check_bitrix_sessid())
 		{
-			$this->arResult['ERRORS'] = 'Сессия истекла';
+			$this->arResult['ERRORS'] = GetMessage('SESSION_EXPIRED');
 
 			return;
 		}
@@ -56,7 +98,7 @@ class AdminsEntityEditComponent extends CBitrixComponent
 
 		if (!$entityId || !$entityName)
 		{
-			$this->arResult['ERRORS'] = 'Не задана сущность для редактирования';
+			$this->arResult['ERRORS'] = GetMessage('EMPTY_ENTITY');
 
 			return;
 		}
@@ -68,10 +110,10 @@ class AdminsEntityEditComponent extends CBitrixComponent
 		}
 		catch (ArgumentException|ObjectPropertyException|SystemException)
 		{
-			$this->arResult['ERRORS'] = 'Что-то пошло не так';
+			$this->arResult['ERRORS'] = GetMessage('SOMETHING_WENT_WRONG');
 			return;
 		}
-		catch (EditEntity $exception)
+		catch (EditEntityException $exception)
 		{
 			$this->arResult['ERRORS'] = $exception->getMessage();
 			return;

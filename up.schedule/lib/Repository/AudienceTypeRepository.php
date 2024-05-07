@@ -8,8 +8,8 @@ use Bitrix\Main\ORM\Fields\Relations\Reference;
 use Bitrix\Main\ORM\Query\Join;
 use Bitrix\Main\ORM\Query\Query;
 use Bitrix\Main\SystemException;
-use Up\Schedule\Exception\AddEntity;
-use Up\Schedule\Exception\EditEntity;
+use Up\Schedule\Exception\AddEntityException;
+use Up\Schedule\Exception\EditEntityException;
 use Up\Schedule\Model\AudienceTable;
 use Up\Schedule\Model\AudienceTypeTable;
 use Up\Schedule\Model\CoupleTable;
@@ -50,13 +50,13 @@ class AudienceTypeRepository
 	}
 
 	/**
-	 * @throws AddEntity
+	 * @throws AddEntityException
 	 */
 	public static function add(array $data): void
 	{
 		if (($title = $data['TITLE']) === null)
 		{
-			throw new AddEntity('Введите название типа аудитории');
+			throw new AddEntityException('Введите название типа аудитории');
 		}
 
 		$audienceType = new EO_AudienceType();
@@ -65,7 +65,7 @@ class AudienceTypeRepository
 
 		if(!$result->isSuccess())
 		{
-			throw new AddEntity(
+			throw new AddEntityException(
 				implode(
 					'<br>', $result->getErrorMessages()
 				)
@@ -74,7 +74,7 @@ class AudienceTypeRepository
 	}
 
 	/**
-	 * @throws EditEntity
+	 * @throws EditEntityException
 	 * @throws ObjectPropertyException
 	 * @throws ArgumentException
 	 * @throws SystemException
@@ -83,7 +83,7 @@ class AudienceTypeRepository
 	{
 		if ($id === 0)
 		{
-			throw new EditEntity('Введите тип аудитории для редактирования');
+			throw new EditEntityException('Введите тип аудитории для редактирования');
 		}
 
 		$type = AudienceTypeTable::getByPrimary($id)
@@ -98,7 +98,7 @@ class AudienceTypeRepository
 
 		if(!$result->isSuccess())
 		{
-			throw new EditEntity(implode('<br>', $result->getErrorMessages()));
+			throw new EditEntityException(implode('<br>', $result->getErrorMessages()));
 		}
 	}
 

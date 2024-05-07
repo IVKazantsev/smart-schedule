@@ -7,10 +7,9 @@ if (!defined('B_PROLOG_INCLUDED') || B_PROLOG_INCLUDED !== true)
 
 use Bitrix\Main\ArgumentException;
 use Bitrix\Main\Context;
-use Bitrix\Main\Engine\CurrentUser;
 use Bitrix\Main\ObjectPropertyException;
 use Bitrix\Main\SystemException;
-use Up\Schedule\Exception\AddEntity;
+use Up\Schedule\Exception\AddEntityException;
 use Up\Schedule\Service\EntityService;
 
 class AdminsEntityAddComponent extends CBitrixComponent
@@ -27,9 +26,45 @@ class AdminsEntityAddComponent extends CBitrixComponent
 			$this->processAdding();
 		}
 
-		$entity = $this->getEntityInfo();
-		$this->arResult['ENTITY'] = $entity;
+		$this->arResult['ENTITY'] = $this->getEntityInfo();
+
+		$this->prepareEntityFields();
 		$this->includeComponentTemplate();
+	}
+
+	private function prepareEntityFields(): void
+	{
+		$this->arResult['SELECTABLE_FIELDS'] = [];
+		$this->arResult['INPUT_TYPES_OF_FIELDS'] = [
+			'PASSWORD' => 'password',
+			'CONFIRM_PASSWORD' => 'password',
+			'EMAIL' => 'email',
+			'DEFAULT' => 'text',
+		];
+
+		foreach ($this->arResult['ENTITY'] as $key => $field)
+		{
+			if (is_array($field))
+			{
+				$this->arResult['SELECTABLE_FIELDS'][$key] = $field;
+				unset($this->arResult['ENTITY'][$key]);
+			}
+
+			if ($key === 'SUBJECTS')
+			{
+				$this->arResult['ALL_SUBJECTS_STRING'] = '';
+				foreach ($field['ALL_SUBJECTS'] as $subjectId => $subjectTitle)
+				{
+					$this->arResult['ALL_SUBJECTS_STRING'] .= "<option value='$subjectId'> " . str_replace(
+							'`',
+							'',
+							htmlspecialcharsbx(
+								$subjectTitle
+							)
+						) . "</option>";
+				}
+			}
+		}
 	}
 
 	public function getEntityInfo(): ?array
@@ -64,12 +99,14 @@ class AdminsEntityAddComponent extends CBitrixComponent
 		}
 		catch (ArgumentException|ObjectPropertyException|SystemException)
 		{
-			$this->arResult['ERRORS'] = 'Что-то пошло не так';
+			$this->arResult['ERRORS'] = GetMessage('SOMETHING_WENT_WRONG');
+
 			return;
 		}
-		catch (AddEntity $exception)
+		catch (AddEntityException $exception)
 		{
 			$this->arResult['ERRORS'] = $exception->getMessage();
+
 			return;
 		}
 	}
