@@ -2,7 +2,6 @@
 
 namespace Up\Schedule\Service;
 
-use Bitrix\Main\Application;
 use Bitrix\Main\ArgumentException;
 use Bitrix\Main\Context;
 use Bitrix\Main\Engine\CurrentUser;
@@ -34,30 +33,20 @@ use Up\Schedule\Repository\UserRepository;
 class EntityService
 {
 	private static array $allowedEntity = [
-		'Group',
-		'Subject',
 		'User',
 		'Audience',
 		'AudienceType',
+		'Group',
+		'Subject',
 	];
 
-	private static array $entitiesToClean = [
+	private static array $entitiesToCleanFromDB = [
 		'User',
 		'Audience',
 		'AudienceType',
 		'Group',
 		'Subject',
 		'Couple',
-	];
-
-	private static array $daysOfWeek = [
-		1 => 'Понедельник',
-		'Вторник',
-		'Среда',
-		'Четверг',
-		'Пятница',
-		'Суббота',
-		'Воскресенье',
 	];
 
 	public static function getEntityById(string $entityName, int $entityId): ?array
@@ -545,7 +534,7 @@ class EntityService
 
 			if (is_string($dayOfWeek))
 			{
-				$dayOfWeek = array_search($dayOfWeek, self::$daysOfWeek, true);
+				$dayOfWeek = array_search($dayOfWeek, LocalizationService::getWeekDays(), true);
 			}
 
 			$couple->setWeekDay($dayOfWeek);
@@ -565,7 +554,7 @@ class EntityService
 
 	public static function clearEntitiesFromDB(): string
 	{
-		foreach (self::$entitiesToClean as $entity)
+		foreach (self::$entitiesToCleanFromDB as $entity)
 		{
 			$repository = self::getEntityRepositoryName($entity, false);
 			$result = $repository::deleteAllFromDB();

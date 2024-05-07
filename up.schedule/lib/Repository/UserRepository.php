@@ -421,31 +421,31 @@ class UserRepository
 		}
 		if ($data['NAME'] === null)
 		{
-			throw new AddEntityException('Введите имя');
+			throw new AddEntityException(GetMessage('EMPTY_NAME'));
 		}
 		if ($data['LAST_NAME'] === null)
 		{
-			throw new AddEntityException('Введите фамилию');
+			throw new AddEntityException(GetMessage('EMPTY_LAST_NAME'));
 		}
 		if ($data['EMAIL'] === null)
 		{
-			throw new AddEntityException('Введите почту');
+			throw new AddEntityException(GetMessage('EMPTY_EMAIL'));
 		}
 		if ($data['PASSWORD'] === null)
 		{
-			throw new AddEntityException('Введите пароль');
+			throw new AddEntityException(GetMessage('EMPTY_PASSWORD'));
 		}
 		if ($data['CONFIRM_PASSWORD'] === null)
 		{
-			throw new AddEntityException('Подтвердите пароль');
+			throw new AddEntityException(GetMessage('EMPTY_CONFIRM_PASSWORD'));
 		}
 		if ($data['PASSWORD'] !== $data['CONFIRM_PASSWORD'])
 		{
-			throw new AddEntityException('Пароли не совпадают');
+			throw new AddEntityException(GetMessage('DIFFERENT_PASSWORDS'));
 		}
 		if ($data['ROLE'] === null)
 		{
-			throw new AddEntityException('Выберите роль');
+			throw new AddEntityException(GetMessage('EMPTY_ROLE'));
 		}
 
 		$fields = [];
@@ -539,14 +539,14 @@ class UserRepository
 
 		if ($id === 0)
 		{
-			throw new EditEntityException('Введите пользователя для редактирования');
+			throw new EditEntityException(GetMessage('EMPTY_EDIT_USER'));
 		}
 
 		if ($data['PASSWORD'] !== 0)
 		{
 			if ($data['PASSWORD'] !== $data['CONFIRM_PASSWORD'])
 			{
-				throw new EditEntityException('Пароли не совпадают');
+				throw new EditEntityException(GetMessage('DIFFERENT_PASSWORDS'));
 			}
 
 			$validate('PASSWORD', $data['PASSWORD']);

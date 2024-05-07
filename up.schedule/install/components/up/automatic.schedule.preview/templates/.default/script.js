@@ -1,4 +1,4 @@
-window.onload = () => {
+document.addEventListener('DOMContentLoaded', function() {
 	const dropdown = document.querySelector('.dropdown');
 	dropdown.addEventListener('click', function(event) {
 		event.stopPropagation();
@@ -7,9 +7,10 @@ window.onload = () => {
 	});
 
 	document.body.addEventListener('click', (event) => {
-		if(event._isClick === true) {
+		if (event._isClick === true)
+		{
 			return;
 		}
 		dropdown.classList.remove('is-active');
 	});
-}
+});

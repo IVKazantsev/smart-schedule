@@ -97,13 +97,15 @@ this.BX = this.BX || {};
 	    key: "loadList",
 	    value: function loadList() {
 	      var _this$entity,
+	        _this$entityId,
 	        _this2 = this;
 	      this.entity = (_this$entity = this.entity) !== null && _this$entity !== void 0 ? _this$entity : this.defaultEntity;
+	      this.entityId = (_this$entityId = this.entityId) !== null && _this$entityId !== void 0 ? _this$entityId : 0;
 	      return new Promise(function (resolve, reject) {
 	        BX.ajax.runAction('up:schedule.api.displayEntitiesList.getDisplayEntitiesList', {
 	          data: {
 	            entity: _this2.entity,
-	            id: Number(_this2.entityId)
+	            id: _this2.entityId
 	          }
 	        }).then(function (response) {
 	          var data = response.data;
@@ -124,19 +126,19 @@ this.BX = this.BX || {};
 	        this.rootNode.appendChild(message);
 	        return;
 	      }
+	      if (isStateChanged && !this.currentEntity) {
+	        document.getElementById('entity-selection-button').placeholder = main_core.Loc.getMessage('SELECT_' + this.locEntity);
+	        document.getElementById('entity-selection-button').value = '';
+	      }
+	      var linkPrefix = '';
+	      if (!this.dataSourceIsDb) {
+	        linkPrefix = '/scheduling/preview';
+	      }
 	      this.suitableEntityList.forEach(function (entity) {
 	        var entityLink;
-	        var linkPrefix = '';
-	        if (!_this3.dataSourceIsDb) {
-	          linkPrefix = '/scheduling/preview';
-	        }
 	        if (_this3.currentEntity) {
 	          entityLink = main_core.Tag.render(_templateObject2 || (_templateObject2 = babelHelpers.taggedTemplateLiteral(["\n\t\t\t\t<a href=\"", "/", "/", "/\"\n\t\t\t\tclass=\"dropdown-item ", "\">\n\t\t\t\t", "\n\t\t\t\t</a>\n\t\t\t"])), linkPrefix, Validator.escapeHTML(_this3.entity), entity['ID'], entity['ID'] === _this3.currentEntity['ID'] ? 'is-active' : '', Validator.escapeHTML(entity['NAMING']));
 	        } else {
-	          if (isStateChanged) {
-	            document.getElementById('entity-selection-button').placeholder = main_core.Loc.getMessage('SELECT_' + _this3.locEntity);
-	            document.getElementById('entity-selection-button').value = '';
-	          }
 	          entityLink = main_core.Tag.render(_templateObject3 || (_templateObject3 = babelHelpers.taggedTemplateLiteral(["\n\t\t\t\t<a href=\"", "/", "/", "/\"\n\t\t\t\tclass=\"dropdown-item\">", "\n\t\t\t\t</a>\n\t\t\t"])), linkPrefix, Validator.escapeHTML(_this3.entity), entity['ID'], Validator.escapeHTML(entity['NAMING']));
 	        }
 	        _this3.rootNode.appendChild(entityLink);
@@ -163,7 +165,6 @@ this.BX = this.BX || {};
 	          }
 	          _this3.scheduleCouplesList.extractEntityFromUrl();
 	          _this3.scheduleCouplesList.reload();
-	          _this3.reload();
 	        });
 	      });
 	    }

@@ -50,7 +50,7 @@ class AudienceTypeRepository
 	{
 		if (($title = $data['TITLE']) === null)
 		{
-			throw new AddEntityException('Введите название типа аудитории');
+			throw new AddEntityException(GetMessage('EMPTY_TITLE'));
 		}
 
 		$audienceType = new EO_AudienceType();
@@ -77,7 +77,7 @@ class AudienceTypeRepository
 	{
 		if ($id === 0)
 		{
-			throw new EditEntityException('Введите тип аудитории для редактирования');
+			throw new EditEntityException(GetMessage('EMPTY_EDIT_AUDIENCE_TYPE'));
 		}
 
 		$type = AudienceTypeTable::getByPrimary($id)

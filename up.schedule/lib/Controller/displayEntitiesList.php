@@ -27,14 +27,9 @@ class DisplayEntitiesList extends Controller
 
 	public function getDisplayEntitiesListAction(string $entity = '', int $id = 0): array
 	{
-		if ($entity === '')
+		if ($entity === '' || !in_array($entity, $this->entitiesForDisplaySchedule, true))
 		{
 			$entity = 'group';
-		}
-		// Обрабатываем неправильные сущности
-		elseif (!in_array($entity, $this->entitiesForDisplaySchedule, true))
-		{
-			return [];
 		}
 
 		// Получим методы для получения названий сущностей
@@ -62,14 +57,14 @@ class DisplayEntitiesList extends Controller
 			$entities[$i]['NAMING'] = '';
 		}
 
-		$lestMethod = end($entityNameIndexes);
+		$lastMethod = end($entityNameIndexes);
 		foreach ($entityNameIndexes as $methodIndex)
 		{
 			for ($i = 0; $i < $entitiesCount; $i++)
 			{
 				$entities[$i]['NAMING'] .= $entities[$i][$methodIndex];
 
-				if($methodIndex !== $lestMethod)
+				if($methodIndex !== $lastMethod)
 				{
 					$entities[$i]['NAMING'] .= ' ';
 				}

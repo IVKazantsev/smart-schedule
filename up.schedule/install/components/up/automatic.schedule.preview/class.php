@@ -18,24 +18,17 @@ class AutomaticSchedulePreviewComponent extends CBitrixComponent
 	public function executeComponent(): void
 	{
 		// Выставляем сущность "по умолчанию"
-		if (!$this->arParams['ENTITY'])
+		if (!$this->arParams['ENTITY'] || !in_array($this->arParams['ENTITY'], $this->entitiesForDisplaySchedule, true))
 		{
-			$this->arParams['ENTITY'] = 'group';
-		}
-		// Обрабатываем неправильные сущности
-		elseif (!in_array($this->arParams['ENTITY'], $this->entitiesForDisplaySchedule, true))
-		{
-			$this->includeComponentTemplate();
-
-			return;
+			$this->arParams['ENTITY'] = DEFAULT_ENTITY_TO_DISPLAY;
 		}
 
 		$this->prepareTemplateParams();
-		$this->fetchEntityList();
+		$this->fillEntityInfo();
 		$this->includeComponentTemplate();
 	}
 
-	protected function fetchEntityList(): void
+	protected function fillEntityInfo(): void
 	{
 		$entity = $this->arParams['ENTITY'];
 		$currentEntityId = (int)$this->arParams['ID'];
@@ -49,12 +42,10 @@ class AutomaticSchedulePreviewComponent extends CBitrixComponent
 		if ($entity === 'teacher')
 		{
 			$currentEntity = $repository::getTeacherById($currentEntityId);
-			$this->arResult['ENTITIES'] = $repository::getAllTeachers();
 		}
 		else
 		{
 			$currentEntity = $repository::getById($currentEntityId);
-			$this->arResult['ENTITIES'] = $repository::getAll();
 		}
 		$this->arResult['CURRENT_ENTITY_ID'] = $currentEntity['ID'];
 		$this->arResult['CURRENT_ENTITY'] = $currentEntity;

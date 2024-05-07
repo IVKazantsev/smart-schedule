@@ -108,11 +108,11 @@ class AudienceRepository
 	{
 		if (($number = $data['NUMBER']) === null)
 		{
-			throw new AddEntityException('Введите номер аудитории');
+			throw new AddEntityException(GetMessage('EMPTY_NUMBER'));
 		}
 		if (($type = $data['TYPE']) === null)
 		{
-			throw new AddEntityException('Выберите тип аудитории');
+			throw new AddEntityException(GetMessage('EMPTY_AUDIENCE_TYPE'));
 		}
 		$audience = new EO_Audience();
 
@@ -160,7 +160,7 @@ class AudienceRepository
 	{
 		if ($id === 0)
 		{
-			throw new EditEntityException('Введите аудиторию для редактирования');
+			throw new EditEntityException(GetMessage('EMPTY_EDIT_AUDIENCE'));
 		}
 
 		$audience = AudienceTable::getByPrimary($id)

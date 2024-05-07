@@ -205,11 +205,11 @@ class SubjectRepository
 	{
 		if (($title = $data['TITLE']) === null)
 		{
-			throw new AddEntityException('Введите название предмета');
+			throw new AddEntityException(GetMessage('EMPTY_TITLE'));
 		}
 		if (($type = $data['TYPE']) === null)
 		{
-			throw new AddEntityException('Выберите тип аудитории');
+			throw new AddEntityException(GetMessage('EMPTY_AUDIENCE_TYPE'));
 		}
 
 		$subject = new EO_Subject();
@@ -236,7 +236,7 @@ class SubjectRepository
 	{
 		if ($id === 0)
 		{
-			throw new EditEntityException('Введите предмет для редактирования');
+			throw new EditEntityException(GetMessage('EMPTY_EDIT_SUBJECT'));
 		}
 
 		$subject = SubjectTable::getByPrimary($id)->fetchObject();
@@ -277,9 +277,13 @@ class SubjectRepository
 	public static function getArrayOfRelatedEntitiesById(int $id): array
 	{
 		$relatedEntities = [];
-		$relatedCouples = CoupleTable::query()->setSelect(
-			['SUBJECT.TITLE', 'AUDIENCE.NUMBER', 'GROUP.TITLE', 'TEACHER.NAME', 'TEACHER.LAST_NAME']
-		)->where('SUBJECT_ID', $id)->fetchAll();
+		$relatedCouples = CoupleTable::query()->setSelect([
+			'SUBJECT.TITLE',
+			'AUDIENCE.NUMBER',
+			'GROUP.TITLE',
+			'TEACHER.NAME',
+			'TEACHER.LAST_NAME'
+		])->where('SUBJECT_ID', $id)->fetchAll();
 		if (!empty($relatedCouples))
 		{
 			$relatedEntities['COUPLES'] = $relatedCouples;

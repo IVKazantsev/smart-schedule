@@ -121,7 +121,7 @@ class GroupRepository
 	{
 		if (($title = $data['TITLE']) === null)
 		{
-			throw new AddEntityException('Введите название группы');
+			throw new AddEntityException(GetMessage('EMPTY_TITLE'));
 		}
 
 		$group = new EO_Group();
@@ -149,7 +149,7 @@ class GroupRepository
 	{
 		if ($id === 0)
 		{
-			throw new EditEntityException('Введите группу для редактирования');
+			throw new EditEntityException(GetMessage('EMPTY_EDIT_GROUP'));
 		}
 
 		$group = self::getById($id);

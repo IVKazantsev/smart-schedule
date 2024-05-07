@@ -99,6 +99,7 @@ export class DisplayScheduleEntitiesList
 	loadList()
 	{
 		this.entity = (this.entity) ?? this.defaultEntity;
+		this.entityId = (this.entityId) ?? 0;
 		return new Promise((resolve, reject) => {
 			BX.ajax.runAction(
 				'up:schedule.api.displayEntitiesList.getDisplayEntitiesList',
@@ -106,7 +107,7 @@ export class DisplayScheduleEntitiesList
 					data:
 						{
 							entity: this.entity,
-							id: Number(this.entityId),
+							id: this.entityId,
 						},
 				},
 			).then((response) => {
@@ -135,13 +136,20 @@ export class DisplayScheduleEntitiesList
 			return;
 		}
 
+		if (isStateChanged && !this.currentEntity)
+		{
+			document.getElementById('entity-selection-button').placeholder = Loc.getMessage('SELECT_' + this.locEntity);
+			document.getElementById('entity-selection-button').value = '';
+		}
+
+		let linkPrefix = '';
+		if (!this.dataSourceIsDb)
+		{
+			linkPrefix = '/scheduling/preview';
+		}
+
 		this.suitableEntityList.forEach((entity) => {
 			let entityLink;
-			let linkPrefix = '';
-			if (!this.dataSourceIsDb)
-			{
-				linkPrefix = '/scheduling/preview';
-			}
 
 			if (this.currentEntity)
 			{
@@ -154,11 +162,6 @@ export class DisplayScheduleEntitiesList
 			}
 			else
 			{
-				if (isStateChanged)
-				{
-					document.getElementById('entity-selection-button').placeholder = Loc.getMessage('SELECT_' + this.locEntity);
-					document.getElementById('entity-selection-button').value = '';
-				}
 				entityLink = Tag.render`
 				<a href="${linkPrefix}/${Validator.escapeHTML(this.entity)}/${entity['ID']}/"
 				class="dropdown-item">${Validator.escapeHTML(entity['NAMING'])}
@@ -186,7 +189,7 @@ export class DisplayScheduleEntitiesList
 				});
 				entityLink.classList.add('is-active');
 
-				document.getElementById('entity-selection-button').placeholder = Loc.getMessage(this.locEntity) + ' ' +Validator.escapeHTML(entityLink.textContent);
+				document.getElementById('entity-selection-button').placeholder = Loc.getMessage(this.locEntity) + ' ' + Validator.escapeHTML(entityLink.textContent);
 				document.getElementById('entity-selection-button').value = '';
 
 				if (history.pushState)
@@ -197,8 +200,6 @@ export class DisplayScheduleEntitiesList
 
 				this.scheduleCouplesList.extractEntityFromUrl();
 				this.scheduleCouplesList.reload();
-
-				this.reload();
 			});
 		});
 	}
