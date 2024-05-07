@@ -2,10 +2,15 @@
 
 namespace Up\Schedule\Service;
 
-use Bitrix\Main\Application;
+use Bitrix\Main\ArgumentException;
 use Bitrix\Main\Context;
-use Bitrix\Main\DB\TransactionException;
+use Bitrix\Main\Engine\CurrentUser;
+use Bitrix\Main\ObjectPropertyException;
+use Bitrix\Main\SystemException;
 use CUser;
+use Error;
+use Up\Schedule\Exception\AddEntityException;
+use Up\Schedule\Exception\EditEntityException;
 use Up\Schedule\Model\EO_Audience;
 use Up\Schedule\Model\EO_Audience_Collection;
 use Up\Schedule\Model\EO_AudienceType;
@@ -28,14 +33,14 @@ use Up\Schedule\Repository\UserRepository;
 class EntityService
 {
 	private static array $allowedEntity = [
-		'Group',
-		'Subject',
 		'User',
 		'Audience',
 		'AudienceType',
+		'Group',
+		'Subject',
 	];
 
-	private static array $entitiesToClean = [
+	private static array $entitiesToCleanFromDB = [
 		'User',
 		'Audience',
 		'AudienceType',
@@ -44,26 +49,17 @@ class EntityService
 		'Couple',
 	];
 
-	private static array $daysOfWeek = [
-		1 => 'Понедельник',
-		'Вторник',
-		'Среда',
-		'Четверг',
-		'Пятница',
-		'Суббота',
-		'Воскресенье',
-	];
-
 	public static function getEntityById(string $entityName, int $entityId): ?array
 	{
 		try
 		{
 			return self::getEntityRepositoryName($entityName)::getArrayForAdminById($entityId);
 		}
-		catch (\Error $error)
+		catch (Error $error)
 		{
 			echo "$error";
-			echo "Entity $entityName not found"; die();
+			echo "Entity $entityName not found";
+			die();
 		}
 	}
 
@@ -73,10 +69,11 @@ class EntityService
 		{
 			return self::getEntityRepositoryName($entityName)::getArrayOfRelatedEntitiesById($entityId);
 		}
-		catch (\Error $error)
+		catch (Error $error)
 		{
 			echo "$error";
-			echo "Entity $entityName not found"; die();
+			echo "Entity $entityName not found";
+			die();
 		}
 	}
 
@@ -86,40 +83,38 @@ class EntityService
 		{
 			return self::getEntityRepositoryName($entityName)::deleteById($entityId);
 		}
-		catch (\Error)
+		catch (Error)
 		{
-			echo "Entity $entityName not found"; die();
-		}
-	}
-	public static function editEntityById(string $entityName, int $entityId): ?array
-	{
-		try
-		{
-			return self::getEntityRepositoryName($entityName)::editById(
-				$entityId,
-				self::getData($entityName)
-			);
-		}
-		catch (\Error $error)
-		{
-			echo "$error";
-			echo "Entity $entityName not found"; die();
+			echo "Entity $entityName not found";
+			die();
 		}
 	}
 
-	public static function addEntity(string $entityName)
+	/**
+	 * @throws EditEntityException
+	 * @throws ObjectPropertyException
+	 * @throws ArgumentException
+	 * @throws SystemException
+	 */
+	public static function editEntityById(string $entityName, int $entityId): void
 	{
-		try
-		{
-			return self::getEntityRepositoryName($entityName)::add(
-				self::getData($entityName)
-			);
-		}
-		catch (\Error $error)
-		{
-			echo "$error";
-			echo "Entity $entityName not added"; die();
-		}
+		(self::getEntityRepositoryName($entityName))::editById(
+			$entityId,
+			self::getData($entityName)
+		);
+	}
+
+	/**
+	 * @throws ArgumentException
+	 * @throws AddEntityException
+	 * @throws ObjectPropertyException
+	 * @throws SystemException
+	 */
+	public static function addEntity(string $entityName): void
+	{
+		(self::getEntityRepositoryName($entityName))::add(
+			self::getData($entityName)
+		);
 	}
 
 	public static function getEntityInfoForAdding(string $entityName): ?array
@@ -130,38 +125,32 @@ class EntityService
 			{
 				return null;
 			}
-			return self::getEntityRepositoryName($entityName)::getArrayForAdding();
+
+			$data = [];
+			if (Context::getCurrent()?->getRequest()->isPost())
+			{
+				$data = self::getData($entityName);
+			}
+
+			return self::getEntityRepositoryName($entityName)::getArrayForAdding($data);
 		}
-		catch (\Error $error)
+		catch (Error $error)
 		{
 			echo "$error";
-			echo "Entity $entityName not found"; die();
+			echo "Entity $entityName not found";
+			die();
 		}
 	}
 
-	private static function getData(string $entityName): ?array
+	public static function getData(string $entityName): ?array
 	{
-		switch ($entityName)
-		{
-			case 'group':
-				return self::getGroupData();
-			case 'audience':
-				return self::getAudienceData();
-			case 'user':
-				return self::getUserData();
-			case 'subject':
-				return self::getSubjectData();
-			case 'audienceType':
-				return self::getAudienceTypeData();
-			default:
-				return null;
-		}
+		$getDataMethodName = 'get' . $entityName . 'Data';
+
+		return self::$getDataMethodName();
 	}
 
 	private static function getGroupData(): ?array
 	{
-		//echo "<pre>";
-
 		return [
 			'TITLE' => self::getParameter('TITLE'),
 			'SUBJECTS_TO_DELETE' => self::getDeleteSubjectsData(),
@@ -180,10 +169,10 @@ class EntityService
 	private static function getUserData(): ?array
 	{
 		$data = [
+			'LOGIN' => self::getParameter('LOGIN'),
 			'NAME' => self::getParameter('NAME'),
 			'LAST_NAME' => self::getParameter('LAST_NAME'),
 			'EMAIL' => self::getParameter('EMAIL'),
-			'LOGIN' => self::getParameter('LOGIN'),
 			'PASSWORD' => self::getParameter('PASSWORD'),
 			'CONFIRM_PASSWORD' => self::getParameter('CONFIRM_PASSWORD'),
 			'ROLE' => self::getParameter('ROLE'),
@@ -194,6 +183,7 @@ class EntityService
 			$data['SUBJECTS_TO_DELETE'] = self::getDeleteSubjectsData();
 			$data['SUBJECTS_TO_ADD'] = self::getAddSubjectsData();
 		}
+
 		return $data;
 	}
 
@@ -208,6 +198,7 @@ class EntityService
 				$subjectsToDelete[] = (int)substr($key, offset: strlen('delete_subject_'));
 			}
 		}
+
 		return $subjectsToDelete;
 	}
 
@@ -222,6 +213,7 @@ class EntityService
 				$subjectsToAdd[] = (int)$value;
 			}
 		}
+
 		return $subjectsToAdd;
 	}
 
@@ -250,12 +242,16 @@ class EntityService
 		return null;
 	}
 
-	private static function getEntityRepositoryName(string $entityName, bool $isNeedPermission = true): ?string
+	public static function getEntityRepositoryName(string $entityName, bool $isNeedPermission = true): ?string
 	{
 		$entityName = ucfirst(($entityName));
-		if($isNeedPermission && !in_array($entityName, self::$allowedEntity, true))
+		if ($isNeedPermission && !in_array($entityName, self::$allowedEntity, true))
 		{
 			return null;
+		}
+		if ($entityName === 'Teacher' || $entityName === 'Student')
+		{
+			$entityName = 'User';
 		}
 
 		return '\Up\Schedule\Repository\\' . $entityName . 'Repository';
@@ -267,7 +263,7 @@ class EntityService
 		{
 			$methodName = "add{$key}ToDB";
 			$result = self::$methodName($entity);
-			if($result !== '')
+			if ($result !== '')
 			{
 				return $result;
 			}
@@ -312,7 +308,7 @@ class EntityService
 			$type = AudienceTypeRepository::getByTitle($typeTitle);
 			if ($type === null)
 			{
-				return "Для аудитории {$number} неверно задан тип аудитории";
+				return GetMessage('FOR_AUDIENCE') . " $number " . GetMessage('INCORRECT_AUDIENCE_TYPE');
 			}
 			$audience->setAudienceType($type);
 
@@ -342,7 +338,7 @@ class EntityService
 			$type = AudienceTypeRepository::getByTitle($audienceTypeTitle);
 			if ($type === null)
 			{
-				return "Для предмета {$title} неверно задан тип аудитории";
+				return GetMessage('FOR_SUBJECT') . " $title " . GetMessage('INCORRECT_AUDIENCE_TYPE');
 			}
 			$subject->setAudienceType($type);
 
@@ -391,7 +387,7 @@ class EntityService
 				$subject = SubjectRepository::getByTitle($subjectName);
 				if (!$subject)
 				{
-					return "Для преподавателя {$name} {$lastName} неверно заданы предметы";
+					return GetMessage('FOR_TEACHER') . " $name $lastName " . GetMessage('INCORRECT_SUBJECTS');
 				}
 
 				$subjectTeacher = new EO_SubjectTeacher();
@@ -421,8 +417,8 @@ class EntityService
 
 			$group->setTitle($title);
 
-			$result = $group->save(true);
-			if(!$result->isSuccess())
+			$result = $group->save();
+			if (!$result->isSuccess())
 			{
 				return implode(', ', $result->getErrorMessages());
 			}
@@ -432,8 +428,7 @@ class EntityService
 			$subjectsWithHours = explode(', ', $subjectsString);
 
 			// Разделим предметы и часы
-			$subjectsWithHours = array_map(static function(string $subjectWithHour)
-			{
+			$subjectsWithHours = array_map(static function(string $subjectWithHour) {
 				return explode('/', $subjectWithHour);
 			},
 				$subjectsWithHours);
@@ -478,9 +473,15 @@ class EntityService
 			[$name, $lastName, $groupTitle, $login, $password] = $student;
 
 			$group = GroupRepository::getByTitle($groupTitle);
-			if(!$group)
+			if (!$group)
 			{
-				return "При создании студента {$name} {$lastName} возникла ошибка: Группы {$groupTitle} не существует";
+				return GetMessage('CREATE_STUDENT')
+					. " $name $lastName "
+					. GetMessage('ERROR_OCCURRED')
+					. ':'
+					. GetMessage('GROUP')
+					. " $groupTitle "
+					. GetMessage('DOES_NOT_EXISTS');
 			}
 
 			// Сохраняем пользователя
@@ -504,36 +505,52 @@ class EntityService
 		return '';
 	}
 
-	private static function addCouplesToDB(array $couples): string
+	public static function addCouplesToDB(array $couples): string
 	{
 		$couplesCollection = new EO_Couple_Collection();
 		foreach ($couples as $couple)
 		{
 			// Деструктурируем массив на поля
-			[$groupTitle, $subjectTitle, $audienceNumber, $teacherName, $teacherLastName, $dayOfWeek, $numberOfCoupleInDay] = $couple;
+			[
+				$groupTitle,
+				$subjectTitle,
+				$audienceNumber,
+				$teacherName,
+				$teacherLastName,
+				$dayOfWeek,
+				$numberOfCoupleInDay,
+			] = $couple;
 
 			$group = GroupRepository::getByTitle($groupTitle);
-			if(!$group)
+			if (!$group)
 			{
-				return "При создании пары на {$dayOfWeek}, {$numberOfCoupleInDay} пару возникла ошибка: Группы {$groupTitle} не существует";
+				return GetMessage('CREATE_COUPLE_ON') . " $dayOfWeek, $numberOfCoupleInDay " . GetMessage(
+						'ERROR_OCCURRED'
+					) . ': ' . GetMessage('GROUP') . " $groupTitle " . GetMessage('DOES_NOT_EXISTS');
 			}
 
 			$subject = SubjectRepository::getByTitle($subjectTitle);
-			if(!$subject)
+			if (!$subject)
 			{
-				return "При создании пары на {$dayOfWeek}, {$numberOfCoupleInDay} пару возникла ошибка: Предмета {$subjectTitle} не существует";
+				return GetMessage('CREATE_COUPLE_ON') . " $dayOfWeek, $numberOfCoupleInDay " . GetMessage(
+						'ERROR_OCCURRED'
+					) . ': ' . GetMessage('SUBJECT') . " $subjectTitle " . GetMessage('DOES_NOT_EXISTS');
 			}
 
 			$audience = AudienceRepository::getByNumber($audienceNumber);
-			if(!$audience)
+			if (!$audience)
 			{
-				return "При создании пары на {$dayOfWeek}, {$numberOfCoupleInDay} пару возникла ошибка: Аудитории {$audienceNumber} не существует";
+				return GetMessage('CREATE_COUPLE_ON') . " $dayOfWeek, $numberOfCoupleInDay " . GetMessage(
+						'ERROR_OCCURRED'
+					) . ': ' . GetMessage('AUDIENCE') . " $audienceNumber " . GetMessage('DOES_NOT_EXISTS');
 			}
 
 			$teacher = UserRepository::getTeacherByFirstAndLastName($teacherName, $teacherLastName);
-			if(!$teacher)
+			if (!$teacher)
 			{
-				return "При создании пары на {$dayOfWeek}, {$numberOfCoupleInDay} пару возникла ошибка: Преподаватель {$teacherName} {$teacherLastName} не добавлен";
+				return GetMessage('CREATE_COUPLE_ON') . " $dayOfWeek, $numberOfCoupleInDay " . GetMessage(
+						'ERROR_OCCURRED'
+					) . ': ' . GetMessage('TEACHER') . " $teacherName $teacherLastName" . GetMessage('NOT_ADDED');
 			}
 
 			$couple = new EO_Couple();
@@ -541,8 +558,13 @@ class EntityService
 			$couple->setSubject($subject);
 			$couple->setAudience($audience);
 			$couple->setTeacher($teacher);
-			$dayNumberOfWeek = array_search($dayOfWeek, self::$daysOfWeek, true);
-			$couple->setWeekDay($dayNumberOfWeek);
+
+			if (is_string($dayOfWeek))
+			{
+				$dayOfWeek = array_search($dayOfWeek, LocalizationService::getWeekDays(), true);
+			}
+
+			$couple->setWeekDay($dayOfWeek);
 			$couple->setCoupleNumberInDay($numberOfCoupleInDay);
 
 			$couplesCollection->add($couple);
@@ -559,16 +581,26 @@ class EntityService
 
 	public static function clearEntitiesFromDB(): string
 	{
-		foreach (self::$entitiesToClean as $entity)
+		foreach (self::$entitiesToCleanFromDB as $entity)
 		{
 			$repository = self::getEntityRepositoryName($entity, false);
 			$result = $repository::deleteAllFromDB();
-			if($result !== '')
+			if ($result !== '')
 			{
 				return $result;
 			}
 		}
 
 		return '';
+	}
+
+	public static function isCurrentUserAdmin(): bool
+	{
+		return CurrentUser::get()->isAdmin();
+	}
+
+	public static function getCurrentUser(): CurrentUser
+	{
+		return CurrentUser::get();
 	}
 }

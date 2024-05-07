@@ -1,11 +1,9 @@
 <?php
+
 namespace Up\Schedule\Model;
 
-use Bitrix\Main\Localization\Loc,
-	Bitrix\Main\ORM\Data\DataManager,
-	Bitrix\Main\ORM\Fields\IntegerField,
-	Bitrix\Main\ORM\Fields\StringField,
-	Bitrix\Main\ORM\Fields\Validators\LengthValidator;
+use Bitrix\Main\Localization\Loc, Bitrix\Main\ORM\Data\DataManager, Bitrix\Main\ORM\Fields\IntegerField, Bitrix\Main\ORM\Fields\StringField, Bitrix\Main\ORM\Fields\Validators\LengthValidator;
+use Bitrix\Main\ORM\Data\Internal\DeleteByFilterTrait;
 use Bitrix\Main\ORM\Fields\Relations\Reference;
 use Bitrix\Main\ORM\Query\Join;
 
@@ -23,9 +21,10 @@ Loc::loadMessages(__FILE__);
  *
  * @package Up\Schedule
  **/
-
 class AudienceTable extends DataManager
 {
+	use DeleteByFilterTrait;
+
 	/**
 	 * Returns DB table name for entity.
 	 */
@@ -41,32 +40,27 @@ class AudienceTable extends DataManager
 	{
 		return [
 			new IntegerField(
-				'ID',
-				[
-					'primary' => true,
-					'autocomplete' => true,
-					'title' => Loc::getMessage('AUDIENCE_ENTITY_ID_FIELD')
-				]
+				'ID', [
+						'primary' => true,
+						'autocomplete' => true,
+						'title' => Loc::getMessage('AUDIENCE_ENTITY_ID_FIELD'),
+					]
 			),
 			new StringField(
-				'NUMBER',
-				[
-					'required' => true,
-					'validation' => [__CLASS__, 'validateNumber'],
-					'title' => Loc::getMessage('AUDIENCE_ENTITY_NUMBER_FIELD')
-				]
+				'NUMBER', [
+							'required' => true,
+							'validation' => [__CLASS__, 'validateNumber'],
+							'title' => Loc::getMessage('AUDIENCE_ENTITY_NUMBER_FIELD'),
+						]
 			),
 			new IntegerField(
-				'AUDIENCE_TYPE_ID',
-				[
-					'required' => true,
-					'title' => Loc::getMessage('AUDIENCE_ENTITY_AUDIENCE_TYPE_ID_FIELD')
-				]
+				'AUDIENCE_TYPE_ID', [
+									  'required' => true,
+									  'title' => Loc::getMessage('AUDIENCE_ENTITY_AUDIENCE_TYPE_ID_FIELD'),
+								  ]
 			),
 			(new Reference(
-				'AUDIENCE_TYPE',
-				AudienceTypeTable::class,
-				Join::on('this.AUDIENCE_TYPE_ID', 'ref.ID')
+				'AUDIENCE_TYPE', AudienceTypeTable::class, Join::on('this.AUDIENCE_TYPE_ID', 'ref.ID')
 			))->configureJoinType('inner'),
 		];
 	}

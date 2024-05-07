@@ -1,3 +1,9 @@
 <?php
 
-$MESS['UP_SCHEDULE_ENTITY_LIST'] = 'Что-нибудь';
+$MESS['TITLE'] = 'Название';
+$MESS['NAME'] = 'Имя';
+$MESS['EMAIL'] = 'Почта';
+$MESS['ROLE'] = 'Роль';
+$MESS['NUMBER'] = 'Номер';
+$MESS['TYPE'] = 'Тип';
+$MESS['LOGIN'] = 'Логин';

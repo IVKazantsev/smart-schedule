@@ -4,6 +4,7 @@ namespace Up\Schedule\AutomaticSchedule;
 
 use Bitrix\Main\EO_User;
 use Bitrix\Main\EO_User_Collection;
+use Up\Schedule\Model\CoupleTable;
 use Up\Schedule\Model\EO_Audience;
 use Up\Schedule\Model\EO_Audience_Collection;
 use Up\Schedule\Model\EO_Couple;
@@ -16,18 +17,14 @@ use Up\Schedule\Repository\UserRepository;
 //TODO:Исправить возможность создания с накладками по парам у групп
 class GeneticPerson
 {
-	private int $fitness;
+	// Значение функции приспособленности
+	private int $fitness = PHP_INT_MAX;
 
 	// Группы с неполным расписанием
 	private EO_Group_Collection $groups;
 
 	// Коллекция всех расставленных пар
 	public EO_Couple_Collection $couples;
-
-	public function setCouples(EO_Couple_Collection $couples): void
-	{
-		$this->couples = $couples;
-	}
 
 	// Массив, в котором на месте [i][j] лежит коллекция свободных для пары в i день на j месте аудиторий
 	public array $freeAudiencesInCouple;
@@ -47,6 +44,7 @@ class GeneticPerson
 	{
 		$this->groups = clone $groups;
 		$this->couples = new EO_Couple_Collection();
+
 		// Заполняем поля класса всевозможными сущностями
 		for ($i = 1; $i <= 6; $i++)
 		{
@@ -61,7 +59,9 @@ class GeneticPerson
 
 		foreach ($this->groups as $group)
 		{
-			$this->freeCouplesForGroups[$group->getId()] = array_fill(1, 6, array_fill(1, 7, $group->getSubjects()));
+			$this->freeCouplesForGroups[$group->getId()] = array_fill(
+				1, 6, array_fill(1, 7, $group->getSubjects())
+			);
 		}
 
 		// Генерируем пары, пока не закончатся группы, у которых есть нераставленные пары
@@ -85,14 +85,21 @@ class GeneticPerson
 
 			$this->couples->add($couple);
 
-			// TODO: Если у предмета больше 1 часа в неделю
 			$this->groups->getByPrimary($couple->getGroup()->getId())->getSubjects()->removeByPrimary(
 					$couple->getSubject()->getId()
 				);
 
-			$this->freeCouplesForGroups[$couple->getGroup()->getId()]
-			[$couple->getWeekDay()]
-			[$couple->getCoupleNumberInDay()]?->removeByPrimary($couple->getSubject()->getId());
+			foreach ($this->freeCouplesForGroups[$couple->getGroupId()] as $dayKey => $day)
+			{
+				foreach ($day as $coupleKey => $subjectCollection)
+				{
+						$this->freeCouplesForGroups[$couple->getGroupId()][$dayKey][$coupleKey]?->removeByPrimary(
+							$couple->getSubjectId()
+						);
+				}
+			}
+			unset($this->freeCouplesForGroups[$couple->getGroupId()][$couple->getWeekDay()][$couple->getCoupleNumberInDay()]);
+
 
 			$this->freeTeachersInCouple[$couple->getWeekDay()]
 			[$couple->getCoupleNumberInDay()]?->removeByPrimary($couple->getTeacher()->getId());
@@ -100,6 +107,52 @@ class GeneticPerson
 			$this->freeAudiencesInCouple[$couple->getWeekDay()]
 			[$couple->getCoupleNumberInDay()]?->removeByPrimary($couple->getAudience()->getId());
 		}
+	}
+
+	public function __serialize(): array
+	{
+
+		return [
+			'couples' => self::coupleCollectionToArray($this->couples),
+			'fitness' => $this->fitness,
+		];
+	}
+	public function __unserialize(array $data): void
+	{
+		$this->couples = self::coupleArrayToCollection($data['couples']);
+		$this->fitness = $data['fitness'];
+	}
+
+	public static function coupleCollectionToArray(EO_Couple_Collection $collectionOfCouples): array
+	{
+		$result = [];
+		foreach ($collectionOfCouples as $item)
+		{
+			$values = $item->collectValues();
+			$result[] = [
+				'COUPLE_NUMBER_IN_DAY' => $values['COUPLE_NUMBER_IN_DAY'],
+				'AUDIENCE_ID' => $values['AUDIENCE_ID'],
+				'AUDIENCE' => $values['AUDIENCE']->collectValues(),
+				'GROUP_ID' => $values['GROUP_ID'],
+				'GROUP' => $values['GROUP']->collectValues(),
+				'SUBJECT_ID' => $values['SUBJECT_ID'],
+				'SUBJECT' => $values['SUBJECT']->collectValues(),
+				'TEACHER_ID' => $values['TEACHER_ID'],
+				'TEACHER' => $values['TEACHER']->collectValues(),
+				'WEEK_DAY' => $values['WEEK_DAY']
+			];
+		}
+		return $result;
+	}
+
+	private static function coupleArrayToCollection(array $arrayOfCouples): EO_Couple_Collection
+	{
+		return CoupleTable::wakeUpCollection($arrayOfCouples);
+	}
+
+	public function setCouples(EO_Couple_Collection $couples): void
+	{
+		$this->couples = $couples;
 	}
 
 	public function createRandomCouple(): null|EO_Couple|false
@@ -134,11 +187,13 @@ class GeneticPerson
 				}
 			}
 		}
+
 		// Если мест нет, то имеем, что у группы есть невыставленный предмет => расписание нам не подходит
 		if (empty($freeCouplesForSubject))
 		{
 			return false;
 		}
+
 		// Ищем свободное у группы место для пары, пока не найдем
 		while (true)
 		{
@@ -164,6 +219,7 @@ class GeneticPerson
 
 			// Свободные аудитории и преподаватели на этой паре
 			$freeAudiences = $this->freeAudiencesInCouple[$randDay][$randCoupleNumber];
+
 			// Избавляемся от ситуации, когда имеем пустую коллекцию свободных аудиторий в этой паре
 			if ($freeAudiences->isEmpty())
 			{
@@ -185,7 +241,6 @@ class GeneticPerson
 			}
 
 			// Берем рандомную аудиторию
-			//TODO: Тип аудитории
 			$randAudience = $this->getRandEntityFromCollection($freeAudiences);
 
 			// Берем только тех преподавателей, которые преподают данный предмет

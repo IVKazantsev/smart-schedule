@@ -7,6 +7,7 @@ if (!check_bitrix_sessid())
 }
 
 CAdminMessage::ShowNote(GetMessage('MOD_UNINST_OK'));
+
 ?>
 
 <form action="<?= $APPLICATION->GetCurPage() ?>">
