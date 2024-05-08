@@ -38,7 +38,7 @@ if (!empty($arResult['ERROR_MESSAGE']))
 				<input type="hidden" name="<?= $key ?>" value="<?= $value ?>"/>
 			<?php
 			endforeach ?>
-			<div class="field">
+			<div class="field ml-2 mr-2">
 				<label class="label"><?= GetMessage("AUTH_LOGIN") ?></label>
 				<div class="control has-icons-left">
 					<input class="input bx-auth-input form-control" placeholder="Введите логин" type="text" name="USER_LOGIN" maxlength="255" value="<?= $arResult["LAST_LOGIN"] ?>"/>
@@ -49,7 +49,7 @@ if (!empty($arResult['ERROR_MESSAGE']))
     			</span>
 				</div>
 			</div>
-			<div class="field">
+			<div class="field ml-2 mr-2">
 				<label class="label"><?= GetMessage("AUTH_PASSWORD") ?></label>
 				<div class="control has-icons-left">
 					<input class="input bx-auth-input form-control" type="password" placeholder="Введите пароль" name="USER_PASSWORD" maxlength="255" autocomplete="off"/>
@@ -81,7 +81,7 @@ if (!empty($arResult['ERROR_MESSAGE']))
 			</div>
 			<?php
 			if ($arResult["STORE_PASSWORD"] == "Y"): ?>
-				<label class="checkbox">
+				<label class="checkbox ml-2 mr-2">
 					<input type="checkbox" id="USER_REMEMBER" name="USER_REMEMBER" value="Y"/><label class="" for="USER_REMEMBER">&nbsp;<?= GetMessage(
 							"AUTH_REMEMBER_ME"
 						) ?></label>
