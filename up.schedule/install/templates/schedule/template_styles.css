@@ -203,7 +203,17 @@ a:hover {
 	width: 20px;
 	right: 2px;
 	top: 2px;
-	background-color: white !important;
+	font-weight: bold;
+	opacity: .8;
+	/*background-color: white !important;*/
+}
+
+.couple-add-button {
+	background-color: #649464 !important;
+}
+
+.couple-remove-button {
+	background-color: #8c5454 !important;
 }
 
 .btn-dropdown-couple {
