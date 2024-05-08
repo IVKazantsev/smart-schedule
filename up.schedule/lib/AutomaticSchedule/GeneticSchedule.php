@@ -24,7 +24,7 @@ class GeneticSchedule
 	private int $percentageOfSelection = 50; // Процент особей,"выживающих" при отборе
 	private int $maxGenerations = 1000; // Ограничение на максимальное количество поколений(итераций алгоритма)
 
-	private int $limitOfFitness = 150; // Порог функции приспособленности (если ниже этого значения, то расписание пригодно)
+	private int $limitOfFitness = 60; // Порог функции приспособленности (если ниже этого значения, то расписание пригодно)
 	private int $mutationRate = 20; // Процент мутации
 
 	public readonly EO_Group_Collection $groups;
@@ -37,7 +37,8 @@ class GeneticSchedule
 		'overfulfilment' => 500, // Недовыполнение плана
 		'underfulfilment' => 500, // Перевыполнение плана
 		'big_spaces' => 10, // Штраф за большие окна между парами
-		'difference_between_min_and_max' => 10, // Штраф за большое расхождение в количестве пар между днями
+		'difference_between_min_and_max' => 30, // Штраф за большое расхождение в количестве пар между днями
+		'non_first' => 30 // Штраф за пары с отклонением от первой
 	];
 
 	/**
@@ -153,13 +154,30 @@ class GeneticSchedule
 			{
 				$penalty += self::$pricesOfPenalty['couple-group'];
 			}
+			$firstCoupleKey = array_key_first($couplesOnWeekForGroup[$couple->getGroupId()][$couple->getWeekDay()]);
+			if($couple->getCoupleNumberInDay() === $firstCoupleKey)
+			{
+				$penalty += $couple->getCoupleNumberInDay() * self::$pricesOfPenalty['non-first'];
+			}
+
 			if (($couplesOnWeekForTeacher[$couple->getTeacherId()][$couple->getWeekDay()][$couple->getCoupleNumberInDay()]) > 1)
 			{
 				$penalty += self::$pricesOfPenalty['couple-teacher'];
 			}
+			$firstCoupleKey = array_key_first($couplesOnWeekForTeacher[$couple->getTeacherId()][$couple->getWeekDay()]);
+			if($couple->getCoupleNumberInDay() === $firstCoupleKey)
+			{
+				$penalty += $couple->getCoupleNumberInDay() * self::$pricesOfPenalty['non-first'];
+			}
+
 			if (($couplesOnWeekForAudience[$couple->getAudienceId()][$couple->getWeekDay()][$couple->getCoupleNumberInDay()]) > 1)
 			{
 				$penalty += self::$pricesOfPenalty['couple-audience'];
+			}
+			$firstCoupleKey = array_key_first($couplesOnWeekForAudience[$couple->getAudienceId()][$couple->getWeekDay()]);
+			if($couple->getCoupleNumberInDay() === $firstCoupleKey)
+			{
+				$penalty += $couple->getCoupleNumberInDay() * self::$pricesOfPenalty['non-first'];
 			}
 		}
 

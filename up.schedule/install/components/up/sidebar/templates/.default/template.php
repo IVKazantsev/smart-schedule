@@ -85,7 +85,7 @@ if (!defined("B_PROLOG_INCLUDED") || B_PROLOG_INCLUDED !== true)
 				<li>
 					<a class="pl-2 pr-2 is-60-height is-flex is-align-items-center is-justify-content-center"
 					   href="/admin/">
-						<div class="column is-2 p-0">
+						<div class="column is-2 is-fullheight p-0">
 							<svg class="sidebar-icon" version="1.1" id="Layer_1"
 								 xmlns="http://www.w3.org/2000/svg"
 								 xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
@@ -109,7 +109,7 @@ if (!defined("B_PROLOG_INCLUDED") || B_PROLOG_INCLUDED !== true)
 				<li>
 					<a class="pl-2 pr-2 is-60-height is-flex is-align-items-center is-justify-content-center"
 					   href="/scheduling/">
-						<div class="column is-2 p-0">
+						<div class="column is-2 is-fullheight p-0">
 							<svg class="sidebar-icon" version="1.1" id="Layer_1"
 								 xmlns="http://www.w3.org/2000/svg"
 								 xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
@@ -148,7 +148,7 @@ if (!defined("B_PROLOG_INCLUDED") || B_PROLOG_INCLUDED !== true)
 				<li>
 					<a class="pl-2 pr-2 is-60-height is-flex is-align-items-center is-justify-content-center"
 					   href="/">
-						<div class="column is-2 p-0">
+						<div class="column is-fullheight is-2 p-0">
 							<svg class="sidebar-icon" version="1.1" id="Layer_1"
 								 xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
 								 x="0px" y="0px"
@@ -166,7 +166,7 @@ if (!defined("B_PROLOG_INCLUDED") || B_PROLOG_INCLUDED !== true)
 				<li>
 					<a class="pl-2 pr-2 is-60-height is-flex is-align-items-center is-justify-content-center"
 					   href="/import/">
-						<div class="column is-2 p-0">
+						<div class="column is-2 p-0 is-fullheight">
 							<svg class="sidebar-icon" version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg"
 								 xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
 								viewBox="0 0 64 64" enable-background="new 0 0 64 64" xml:space="preserve">

@@ -243,7 +243,7 @@ export class CouplesList
 					{
 						editCoupleButton = Tag.render`
 							<button 
-							data-target="modal-js-example" type="button" id="button-remove-${day}-${i}" class="couple-edit-button is-size-6 button pb-0 pt-0 is-size-7 pl-2 pr-2">
+							data-target="modal-js-example" type="button" id="button-remove-${day}-${i}" class="has-text-white has-background-danger couple-remove-button couple-edit-button is-size-6 button pb-0 pt-0 is-size-7 pl-2 pr-2">
 								-
 							</button>
 						`;
@@ -259,7 +259,7 @@ export class CouplesList
 					{
 						editCoupleButton = Tag.render`
 							<button 
-							data-target="modal-js-example" type="button" id="button-add-${day}-${i}" class="couple-edit-button button is-size-7 pb-0 pt-0 pl-2 pr-2">
+							data-target="modal-js-example" type="button" id="button-add-${day}-${i}" class="has-text-white has-background-success couple-add-button couple-edit-button button is-size-7 pb-0 pt-0 pl-2 pr-2">
 								+
 							</button>
 						`;

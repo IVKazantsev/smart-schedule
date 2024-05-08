@@ -24,16 +24,16 @@ document.addEventListener('DOMContentLoaded', function() {
 		let addSubject = document.getElementById('addSubject');
 		let subjectsContainer = addSubject.closest('.edit-fields');
 
-		roleDisplayingBySelectValue();
+		roleDisplayingBySelectValue(groupContainer, subjectsContainer);
 
 		roleSelect.addEventListener('change', () => {
-			roleDisplayingBySelectValue();
+			roleDisplayingBySelectValue(groupContainer, subjectsContainer);
 		});
 	}
 
-	function roleDisplayingBySelectValue()
+	function roleDisplayingBySelectValue(groupContainer, subjectsContainer)
 	{
-		if (roleSelect.value === 'Администратор')
+		if (roleSelect.value === 'Администратор' || roleSelect.value === '')
 		{
 			groupContainer.style.display = 'none';
 			subjectsContainer.style.display = 'none';
